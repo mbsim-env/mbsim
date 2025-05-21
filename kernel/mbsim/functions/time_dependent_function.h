@@ -54,7 +54,7 @@ namespace MBSim {
         if(stage == Element::preInit)
           n = f->getRetSize().first;
       }
-      void setDynamicSystemSolver(DynamicSystemSolver* sys) {
+      void setDynamicSystemSolver(DynamicSystemSolver* sys) override {
         Function<Ret(fmatvec::VecV,double)>::setDynamicSystemSolver(sys);
 	f->setDynamicSystemSolver(sys);
       }

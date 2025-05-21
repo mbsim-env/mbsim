@@ -171,8 +171,8 @@ namespace MBSim {
        * \brief update smooth link force law
        * \param simulation time
        */
-      virtual void updater(int j=0);
-      virtual void updateJrla(int j=0);
+      void updater(int j=0) override;
+      void updateJrla(int j=0) override;
       virtual void updaterdt();
       void updatewb() override;
       void updateg() override;
