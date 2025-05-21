@@ -7,6 +7,35 @@ import torch.optim as optim
 import torch.nn.functional as F
 from collections import deque
 import fmpy
+import os
+from scipy.integrate import RK45
+
+def setTime(t):
+  global fmu
+  fmu.setTime(t)
+
+def setState(z):
+  global fmu, nz
+  _pz = z.ctypes.data_as(fmpy.fmi1.POINTER(fmpy.fmi1.c_double))
+  fmu.setContinuousStates(_pz, nz)
+
+def getValue(index):
+  global fmu
+  return np.array(fmu.getReal(index))
+
+def setValue(index,value):
+  global fmu
+  fmu.setReal(vr=index, value=value)
+
+def dgl(t,z):
+  global fmu, nz
+  zd = np.zeros(nz)
+  _pz = z.ctypes.data_as(fmpy.fmi1.POINTER(fmpy.fmi1.c_double))
+  _pzd = zd.ctypes.data_as(fmpy.fmi1.POINTER(fmpy.fmi1.c_double))
+  fmu.setTime(t)
+  fmu.setContinuousStates(_pz, nz)
+  fmu.getDerivatives(_pzd, nz)
+  return zd
 
 class Value(nn.Module):
 
@@ -39,15 +68,23 @@ nO = 4
 nA = 1
 sA = 10
 nS = 3
-batchSize = 128
 tau = 0.005
 gamma = 0.99
+batchSize = 128
+load = False
+save = True
+training = True
+
 valueNet = Value(nO, nA)
 actorNet = Actor(nO, nA, sA)
 valueTargetNet = Value(nO, nA)
 actorTargetNet = Actor(nO, nA, sA)
+if load:
+  valueNet.load_state_dict(torch.load("value_net.pt", weights_only=True))
+  actorNet.load_state_dict(torch.load("actor_net.pt", weights_only=True))
 valueTargetNet.load_state_dict(valueNet.state_dict())
 actorTargetNet.load_state_dict(actorNet.state_dict())
+
 memory = deque([], maxlen=10000)
 valueOptimizer = optim.AdamW(valueNet.parameters(), lr=1e-4, amsgrad=True)
 actorOptimizer = optim.AdamW(actorNet.parameters(), lr=1e-4, amsgrad=True)
@@ -56,6 +93,7 @@ def evalAction(state):
     a = actorNet(torch.tensor(state, dtype=torch.float32)).numpy()
     a += nS*np.random.randn(nA)
   return np.clip(a, -sA, sA)
+
 def optimize_model():
   if len(memory) < batchSize:
     return
@@ -91,19 +129,35 @@ def optimize_model():
   torch.nn.utils.clip_grad_value_(actorNet.parameters(), 100)
   actorOptimizer.step()
 
-training = True
 steps = 0
 
 fmu_filename = 'mbsim.fmu'
+fmupath = os.path.abspath('.')+'/fmu'
+#print(fmupath)
+if os.path.exists(fmupath):
+  print("use existing fmu")
+  unzipdir = fmupath
+else:
+  print("extract fmu")
+  unzipdir = fmpy.extract(fmu_filename,fmupath)
+
 model_description = fmpy.read_model_description(fmu_filename)
-unzipdir = fmpy.extract(fmu_filename)
 fmu_args = {'guid': model_description.guid, 'modelIdentifier': model_description.modelExchange.modelIdentifier, 'unzipDirectory': unzipdir}
+
 fmu = fmpy.fmi1.FMU1Model(**fmu_args)
+
 fmu.instantiate()
+
 vrs = {}
 for variable in model_description.modelVariables:vrs[variable.name] = variable.valueReference
+
+#iP = [vrs["training"]]
 iO = [vrs["Links.'Observation'[0]"], vrs["Links.'Observation'[1]"], vrs["Links.'Observation'[2]"], vrs["Links.'Observation'[3]"]]
+iT = [vrs["Links.'Termination'"]]
+iR = [vrs["Links.'Reward'"]]
 iA = [vrs["Links.'Action'"]]
+
+#fmu.setReal(vr=iP, value=[training])
 fmu.initialize()
 
 nz = 4
@@ -111,33 +165,30 @@ dz = np.zeros(nz)
 _pdz = dz.ctypes.data_as(fmpy.fmi1.POINTER(fmpy.fmi1.c_double))
 
 dt = 0.02
-
-for n in range(0,500):
-  t = 0
-  fmu.setTime(t)
-  z = np.random.uniform(-0.05,0.05,nz)
-  _pz = z.ctypes.data_as(fmpy.fmi1.POINTER(fmpy.fmi1.c_double))
-  fmu.setContinuousStates(_pz,nz)
-
-  for i in range(0,int(10/dt)):
-    observation = np.array(fmu.getReal(iO))
+maxSteps = 500
+nMaxSteps = 0
+tEnd = 10
+for n in range(0,maxSteps):
+  z0 = np.random.uniform(-0.05,0.05,nz)
+  rk45 = RK45(dgl, 0, z0, tEnd, max_step=0.02, atol=1e-3, rtol=1e-3)
+  i = 0
+  while rk45.t<tEnd:
+    i += 1
+    observation = getValue(iO)
     action = evalAction(observation)
-    fmu.setReal(vr=iA, value=action)
-    fmu.getDerivatives(_pdz, nz)
-    t += dt
-    z += dz*dt
-    fmu.setTime(t)
-    fmu.setContinuousStates(_pz, nz)
-    nextObservation = np.array(fmu.getReal(iO))
+    setValue(iA,action)
+    rk45.step()
+    setTime(rk45.t)
+    setState(rk45.y)
+    nextObservation = getValue(iO)
+    reward = getValue(iR)
+    termination = bool(getValue(iT)[0])
 
-    termination = False
-    r = 1
-    if abs(nextObservation[0])>2.5 or abs(nextObservation[1])>0.2:
-      termination = True
-      r = -100
-  
-    memory.append(np.block([observation, action, nextObservation, np.array([r])]))
-  
+    if not training:
+      continue
+
+    memory.append(np.block([observation, action, nextObservation, reward]))
+
     optimize_model()
   
     valueTargetNetStateDict = valueTargetNet.state_dict()
@@ -155,4 +206,14 @@ for n in range(0,500):
     if termination:
       steps += i
       break
-  print("end of episode:",n,"steps",i,"total steps",steps)
+  print(f"episode {n}, time {rk45.t:.1f}, steps {i}, total steps {steps}")
+  if rk45.t>=tEnd:
+    nMaxSteps += 1
+  else:
+    nMaxSteps = 0
+  if nMaxSteps >= 5:
+    break
+
+if save:
+  torch.save(valueNet.state_dict(), "value_net.pt")
+  torch.save(actorNet.state_dict(), "actor_net.pt")
