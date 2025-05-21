@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
-<MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
+<Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
+
+  <Parameter>
+     <import action="addAllVarsAsParams">import numpy as np</import>
+     <import action="addAllVarsAsParams">import sympy as sp</import>
+     <import action="addAllVarsAsParams">import os</import>
+     <scalarParameter name="training">True</scalarParameter>
+  </Parameter>
+
+  <MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
 
     <evaluator xmlns="http://www.mbsim-env.de/MBXMLUtils">python</evaluator>
 
@@ -8,12 +17,11 @@
         <scalarParameter name="l">0.5</scalarParameter>
         <scalarParameter name="mK">1</scalarParameter>
         <scalarParameter name="mS">0.1</scalarParameter>
-        <import action="addAllVarsAsParams">import numpy as np</import>
-      </Parameter>
+        <stringParameter name="neuralNetworkPath">os.path.abspath(os.curdir)</stringParameter>
+    </Parameter>
       <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
-        <plotFeatureRecursive value="generalizedPosition">True</plotFeatureRecursive>
-        <plotFeatureRecursive value="generalizedVelocity">True</plotFeatureRecursive>
-        <plotFeatureRecursive value="ns1:signal" xmlns:ns1="http://www.mbsim-env.de/MBSimControl">True</plotFeatureRecursive>
+        <plotFeatureRecursive value="plotRecursive">not training</plotFeatureRecursive>
+        <plotFeatureRecursive value="openMBV">not training</plotFeatureRecursive>
         <frames/>
         <contours/>
         <groups/>
@@ -74,46 +82,46 @@
             </enableOpenMBVFrameC>
           </RigidBody>
           <RigidBody name="Pendel">
-          <generalizedInitialPosition>
-            <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-              <ele>0.1</ele>
+            <generalizedInitialPosition>
+              <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                <ele>0.1</ele>
             </xmlVector>
           </generalizedInitialPosition>
-          <frameOfReference ref="../Object[Klotz]/Frame[P]"/>
-          <frameForKinematics ref="Frame[P]"/>
-          <mass unit="kg">mS</mass>
-          <inertiaTensor unit="kg*m^2">
-            <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
-              <row>
-                <ele>0.01</ele>
-                <ele>0</ele>
-                <ele>0</ele>
+            <frameOfReference ref="../Object[Klotz]/Frame[P]"/>
+            <frameForKinematics ref="Frame[P]"/>
+            <mass unit="kg">mS</mass>
+            <inertiaTensor unit="kg*m^2">
+              <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                <row>
+                  <ele>0.01</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
               </row>
-              <row>
-                <ele>0</ele>
-                <ele>0.01</ele>
-                <ele>0</ele>
+                <row>
+                  <ele>0</ele>
+                  <ele>0.01</ele>
+                  <ele>0</ele>
               </row>
-              <row>
-                <ele>0</ele>
-                <ele>0</ele>
-                <ele>1/12*mS*(2*l)**2</ele>
+                <row>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>1/12*mS*(2*l)**2</ele>
               </row>
             </xmlMatrix>
           </inertiaTensor>
-          <stateDependentRotation>
-            <CompositeFunction>
-              <outerFunction>
-                <RotationAboutZAxis/>
+            <stateDependentRotation>
+              <CompositeFunction>
+                <outerFunction>
+                  <RotationAboutZAxis/>
               </outerFunction>
-              <innerFunction>
-                <LinearFunction>
-                  <a1>-1</a1>
+                <innerFunction>
+                  <LinearFunction>
+                    <a1>-1</a1>
                 </LinearFunction>
               </innerFunction>
             </CompositeFunction>
           </stateDependentRotation>
-          <frames>
+            <frames>
               <FixedRelativeFrame name="P">
                 <enableOpenMBV>
                   <size unit="dm">1</size>
@@ -127,30 +135,29 @@
                 </relativePosition>
               </FixedRelativeFrame>
             </frames><contours/>
-          <openMBVRigidBody>
-            <Cuboid xmlns="http://www.mbsim-env.de/OpenMBV" name="Cuboid2">
-              <diffuseColor>
-                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                  <ele>0.156111</ele>
-                  <ele>0.570275</ele>
-                  <ele>0.976471</ele>
+            <openMBVRigidBody>
+              <Cuboid xmlns="http://www.mbsim-env.de/OpenMBV" name="Cuboid2">
+                <diffuseColor>
+                  <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                    <ele>0.156111</ele>
+                    <ele>0.570275</ele>
+                    <ele>0.976471</ele>
                 </xmlVector>
               </diffuseColor>
-              <transparency unit="-">0.3</transparency>
-              <length unit="m">
-                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                  <ele>l/10</ele>
-                  <ele>2*l</ele>
-                  <ele>l/10</ele>
+                <transparency unit="-">0.3</transparency>
+                <length unit="m">
+                  <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                    <ele>l/10</ele>
+                    <ele>2*l</ele>
+                    <ele>l/10</ele>
                 </xmlVector>
               </length>
             </Cuboid>
           </openMBVRigidBody>
-          <enableOpenMBVFrameC>
+            <enableOpenMBVFrameC>
               <size unit="dm">1</size>
             </enableOpenMBVFrameC></RigidBody>
-        </objects>
-        <links>
+        </objects><links>
           <KineticExcitation name="Kinetic excitation" xmlns="http://www.mbsim-env.de/MBSim">
             <connect ref2="../Object[Klotz]/Frame[C]"/>
             <forceDirection unit="-">
@@ -193,37 +200,82 @@
             <inputSignal ref="../Link[u0]"/>
             <inputSignal ref="../Link[u1]"/>
           </Multiplexer>
-          <ExternSignalSource xmlns="http://www.mbsim-env.de/MBSimControl" name="Action">
-            <sourceSize>1</sourceSize>
-          </ExternSignalSource>
           <ExternSignalSink xmlns="http://www.mbsim-env.de/MBSimControl" name="Observation">
             <inputSignal ref="../Link[z]"/>
-          </ExternSignalSink>
+          </ExternSignalSink><Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="1" counterName="n" onlyif="training">
+            <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="TerminationSignal">
+              <inputSignal ref="../Link[Observation]"/>
+              <multiplexInputSignals>True</multiplexInputSignals>
+              <function>
+                <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim">
+                  <definition arg1="u" arg1Dim="4">
+                    <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                      <ele>sp.Piecewise((1,(sp.Abs(u[0])&gt;2.5) | (sp.Abs(u[1])&gt;0.2)), (0,1))</ele>
+                  </xmlVector>
+                </definition>
+              </SymbolicFunction>
+            </function>
+          </SignalOperation></Embed>
+          <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="1" counterName="n" onlyif="training">
+            <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="RewardSignal">
+              <inputSignal ref="../Link[TerminationSignal]"/>
+              <multiplexInputSignals>True</multiplexInputSignals>
+              <function>
+                <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim">
+                  <definition arg1="u" arg1Dim="1">
+                    <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                      <ele>sp.Piecewise((-100, u[0]&gt;0.1), (1,1))</ele>
+                  </xmlVector>
+                </definition>
+              </SymbolicFunction>
+            </function>
+          </SignalOperation></Embed>
+          <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="1" counterName="n" onlyif="training">
+            <ExternSignalSink xmlns="http://www.mbsim-env.de/MBSimControl" name="Termination">
+              <inputSignal ref="../Link[TerminationSignal]"/>
+          </ExternSignalSink></Embed>
+          <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="1" counterName="n" onlyif="training">
+            <ExternSignalSink xmlns="http://www.mbsim-env.de/MBSimControl" name="Reward">
+              <inputSignal ref="../Link[RewardSignal]"/>
+          </ExternSignalSink></Embed>
+          <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="1" counterName="n" onlyif="training">
+            <?MBSimGUI_EnabledCount 1?>
+            <Parameter/>
+            <ExternSignalSource xmlns="http://www.mbsim-env.de/MBSimControl" name="Action">
+              <sourceSize>1</sourceSize>
+            </ExternSignalSource>
+          </Embed>
+          <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="1" counterName="n" onlyif="not training">
+            <ActorSignal xmlns="http://mbsimReinforcementLearning" name="Action">
+             <signal xmlns="http://www.mbsim-env.de/MBSimControl" ref="../Link[z]"/>
+             <neuralNetworkPath xmlns="http://mbsimReinforcementLearning">neuralNetworkPath</neuralNetworkPath>
+           </ActorSignal></Embed>
         </links>
         <constraints/>
         <observers>
-        </observers>
-        <enableOpenMBVFrameI>
+        </observers><enableOpenMBVFrameI>
           <size unit="dm">1</size>
-        </enableOpenMBVFrameI>
-        <environments>
+        </enableOpenMBVFrameI><environments>
           <MBSimEnvironment>
             <accelerationOfGravity unit="m/s^2">
               <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                 <ele>0</ele>
                 <ele>-9.8</ele>
                 <ele>0</ele>
-              </xmlVector>
-            </accelerationOfGravity>
-          </MBSimEnvironment>
-        </environments>
+            </xmlVector>
+          </accelerationOfGravity>
+        </MBSimEnvironment>
+      </environments>
       </DynamicSystemSolver>
     </Embed>
     <DOPRI5Integrator xmlns="http://www.mbsim-env.de/MBSim">
-    <startTime unit="s">0</startTime>
-    <endTime unit="s">10</endTime>
-    <plotStepSize unit="s">1e-2</plotStepSize>
+      <startTime unit="s">0</startTime>
+      <endTime unit="s">10</endTime>
+      <plotStepSize unit="s">1e-2</plotStepSize>
   </DOPRI5Integrator>
-  
 
-</MBSimProject>
+  </MBSimProject>
+
+
+
+</Embed>

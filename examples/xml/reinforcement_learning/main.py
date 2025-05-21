@@ -1,3 +1,4 @@
+import subprocess
 import random
 import math
 import numpy as np
@@ -10,32 +11,25 @@ import fmpy
 import os
 from scipy.integrate import RK45
 
-def setTime(t):
-  global fmu
-  fmu.setTime(t)
+load = False
+save = True
+training = True
+simulation = True
 
-def setState(z):
-  global fmu, nz
-  _pz = z.ctypes.data_as(fmpy.fmi1.POINTER(fmpy.fmi1.c_double))
-  fmu.setContinuousStates(_pz, nz)
-
-def getValue(index):
-  global fmu
-  return np.array(fmu.getReal(index))
-
-def setValue(index,value):
-  global fmu
-  fmu.setReal(vr=index, value=value)
-
-def dgl(t,z):
-  global fmu, nz
-  zd = np.zeros(nz)
-  _pz = z.ctypes.data_as(fmpy.fmi1.POINTER(fmpy.fmi1.c_double))
-  _pzd = zd.ctypes.data_as(fmpy.fmi1.POINTER(fmpy.fmi1.c_double))
-  fmu.setTime(t)
-  fmu.setContinuousStates(_pz, nz)
-  fmu.getDerivatives(_pzd, nz)
-  return zd
+nz = 4
+nO = 4
+nA = 1
+sA = 10
+nS = 3 if training else 0
+tau = 0.005
+gamma = 0.99
+batchSize = 128
+maxLen = 10000
+nEpisodes = 500
+tEnd = 10
+dtMax = 0.02
+atol = 1e-3
+rtol = 1e-3
 
 class Value(nn.Module):
 
@@ -64,16 +58,32 @@ class Actor(nn.Module):
     x = F.relu(self.layer2(x))
     return self.scale*F.tanh(self.layer3(x))
 
-nO = 4
-nA = 1
-sA = 10
-nS = 3
-tau = 0.005
-gamma = 0.99
-batchSize = 128
-load = False
-save = True
-training = True
+def setTime(t):
+  global fmu
+  fmu.setTime(t)
+
+def setState(z):
+  global fmu, nz
+  _pz = z.ctypes.data_as(fmpy.fmi1.POINTER(fmpy.fmi1.c_double))
+  fmu.setContinuousStates(_pz, nz)
+
+def getValue(index):
+  global fmu
+  return np.array(fmu.getReal(index))
+
+def setValue(index,value):
+  global fmu
+  fmu.setReal(vr=index, value=value)
+
+def dgl(t,z):
+  global fmu, nz
+  zd = np.zeros(nz)
+  _pz = z.ctypes.data_as(fmpy.fmi1.POINTER(fmpy.fmi1.c_double))
+  _pzd = zd.ctypes.data_as(fmpy.fmi1.POINTER(fmpy.fmi1.c_double))
+  fmu.setTime(t)
+  fmu.setContinuousStates(_pz, nz)
+  fmu.getDerivatives(_pzd, nz)
+  return zd
 
 valueNet = Value(nO, nA)
 actorNet = Actor(nO, nA, sA)
@@ -85,7 +95,7 @@ if load:
 valueTargetNet.load_state_dict(valueNet.state_dict())
 actorTargetNet.load_state_dict(actorNet.state_dict())
 
-memory = deque([], maxlen=10000)
+memory = deque([], maxlen=maxLen)
 valueOptimizer = optim.AdamW(valueNet.parameters(), lr=1e-4, amsgrad=True)
 actorOptimizer = optim.AdamW(actorNet.parameters(), lr=1e-4, amsgrad=True)
 def evalAction(state):
@@ -131,17 +141,18 @@ def optimize_model():
 
 steps = 0
 
-fmu_filename = 'mbsim.fmu'
-fmupath = os.path.abspath('.')+'/fmu'
-#print(fmupath)
-if os.path.exists(fmupath):
+fmuFileName = 'mbsim.fmu'
+if not os.path.isfile(fmuFileName):
+  subprocess.run(["mbsimCreateFMU", "--noparam", "--modulePath", "mbsimReinforcementLearning", "MBS.mbsx"])
+fmuPath = os.path.abspath('.')+'/fmu'
+if os.path.exists(fmuPath):
   print("use existing fmu")
-  unzipdir = fmupath
+  unzipdir = fmuPath
 else:
   print("extract fmu")
-  unzipdir = fmpy.extract(fmu_filename,fmupath)
+  unzipdir = fmpy.extract(fmuFileName,fmuPath)
 
-model_description = fmpy.read_model_description(fmu_filename)
+model_description = fmpy.read_model_description(fmuFileName)
 fmu_args = {'guid': model_description.guid, 'modelIdentifier': model_description.modelExchange.modelIdentifier, 'unzipDirectory': unzipdir}
 
 fmu = fmpy.fmi1.FMU1Model(**fmu_args)
@@ -160,17 +171,13 @@ iA = [vrs["Links.'Action'"]]
 #fmu.setReal(vr=iP, value=[training])
 fmu.initialize()
 
-nz = 4
 dz = np.zeros(nz)
 _pdz = dz.ctypes.data_as(fmpy.fmi1.POINTER(fmpy.fmi1.c_double))
 
-dt = 0.02
-maxSteps = 500
 nMaxSteps = 0
-tEnd = 10
-for n in range(0,maxSteps):
+for n in range(0,nEpisodes):
   z0 = np.random.uniform(-0.05,0.05,nz)
-  rk45 = RK45(dgl, 0, z0, tEnd, max_step=0.02, atol=1e-3, rtol=1e-3)
+  rk45 = RK45(dgl, 0, z0, tEnd, max_step=dtMax, atol=atol, rtol=rtol)
   i = 0
   while rk45.t<tEnd:
     i += 1
@@ -217,3 +224,11 @@ for n in range(0,maxSteps):
 if save:
   torch.save(valueNet.state_dict(), "value_net.pt")
   torch.save(actorNet.state_dict(), "actor_net.pt")
+
+if simulation:
+  if os.path.isfile("actor_net.pt"):
+    subprocess.run(["mbsimxml", "--modulePath", "mbsimReinforcementLearning", "training=False", "MBS.mbsx"])
+    if os.path.isfile("MBS.ombvx"):
+      subprocess.run(["openmbv", "MBS.ombvx"])
+  else:
+    print("Simulation can not be started. File \"actor_net.pt\" does not exist.")

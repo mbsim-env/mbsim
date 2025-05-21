@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MBSimModule xmlns="http://www.mbsim-env.de/MBSimModule">
+  <schemas>
+    <PythonGenerated moduleName="mbsimReinforcementLearning" location="."/>
+  </schemas>
+  <libraries>
+    <PythonModule moduleName="mbsimReinforcementLearning" location="."/>
+  </libraries>
+</MBSimModule>
