@@ -11,9 +11,9 @@ import fmpy
 import os
 from scipy.integrate import RK45
 
-load = False
-save = True
-training = True
+load = True
+save = False
+training = False
 simulation = True
 
 nz = 4
@@ -25,7 +25,7 @@ tau = 0.005
 gamma = 0.99
 batchSize = 128
 maxLen = 10000
-nEpisodes = 500
+nEpisodes = 0 if (not training and simulation) else 500
 tEnd = 10
 dtMax = 0.02
 atol = 1e-3
