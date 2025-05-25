@@ -28,8 +28,8 @@ maxLen = 10000
 nEpisodes = 0 if (not training and simulation) else 500
 tEnd = 10
 dtMax = 0.02
-atol = 1e-3
-rtol = 1e-3
+atol = 1e-6
+rtol = 1e-6
 
 class Value(nn.Module):
 
@@ -175,45 +175,59 @@ dz = np.zeros(nz)
 _pdz = dz.ctypes.data_as(fmpy.fmi1.POINTER(fmpy.fmi1.c_double))
 
 nMaxSteps = 0
+
 for n in range(0,nEpisodes):
   z0 = np.random.uniform(-0.05,0.05,nz)
-  rk45 = RK45(dgl, 0, z0, tEnd, max_step=dtMax, atol=atol, rtol=rtol)
+  rk45 = RK45(dgl, 0, z0, tEnd, atol=atol, rtol=rtol)
+  tU = dtMax
   i = 0
-  while rk45.t<tEnd:
-    i += 1
+
+  while rk45.t < tEnd:
     observation = getValue(iO)
     action = evalAction(observation)
     setValue(iA,action)
-    rk45.step()
-    setTime(rk45.t)
-    setState(rk45.y)
-    nextObservation = getValue(iO)
-    reward = getValue(iR)
-    termination = bool(getValue(iT)[0])
 
-    if not training:
-      continue
+    while rk45.t < tU:
+      rk45.step()
 
-    memory.append(np.block([observation, action, nextObservation, reward]))
+    dout = rk45.dense_output();
+    termination = False
 
-    optimize_model()
-  
-    valueTargetNetStateDict = valueTargetNet.state_dict()
-    valueNetStateDict = valueNet.state_dict()
-    for key in valueNetStateDict:
-      valueTargetNetStateDict[key] = valueNetStateDict[key]*tau + valueTargetNetStateDict[key]*(1-tau)
-    valueTargetNet.load_state_dict(valueTargetNetStateDict)
-  
-    actorTargetNetStateDict = actorTargetNet.state_dict()
-    actorNetStateDict = actorNet.state_dict()
-    for key in actorNetStateDict:
-      actorTargetNetStateDict[key] = actorNetStateDict[key]*tau + actorTargetNetStateDict[key]*(1-tau)
-    actorTargetNet.load_state_dict(actorTargetNetStateDict)
-  
+    while tU < rk45.t and not termination:
+      zU = dout(tU)
+      setTime(tU)
+      setState(zU)
+      nextObservation = getValue(iO)
+      reward = getValue(iR)
+      termination = bool(getValue(iT)[0])
+      tU = tU + dtMax
+      i += 1
+
+      if training:
+        memory.append(np.block([observation, action, nextObservation, reward]))
+        observation = nextObservation
+        action = evalAction(observation)
+
+        optimize_model()
+
+        valueTargetNetStateDict = valueTargetNet.state_dict()
+        valueNetStateDict = valueNet.state_dict()
+        for key in valueNetStateDict:
+          valueTargetNetStateDict[key] = valueNetStateDict[key]*tau + valueTargetNetStateDict[key]*(1-tau)
+        valueTargetNet.load_state_dict(valueTargetNetStateDict)
+
+        actorTargetNetStateDict = actorTargetNet.state_dict()
+        actorNetStateDict = actorNet.state_dict()
+        for key in actorNetStateDict:
+          actorTargetNetStateDict[key] = actorNetStateDict[key]*tau + actorTargetNetStateDict[key]*(1-tau)
+        actorTargetNet.load_state_dict(actorTargetNetStateDict)
+
     if termination:
       steps += i
       break
+
   print(f"episode {n}, time {rk45.t:.1f}, steps {i}, total steps {steps}")
+
   if rk45.t>=tEnd:
     nMaxSteps += 1
   else:
