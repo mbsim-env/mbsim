@@ -78,19 +78,24 @@ namespace MBSimControl {
       Vec3 r(INIT, 0.0);
       if(position) r = position->evalSignal();
       if(openMBVArrow) {
-        vector<double> data;
-        data.push_back(getTime());
-        data.push_back(r(0));
-        data.push_back(r(1));
-        data.push_back(r(2));
-        data.push_back(s(0));
-        data.push_back(s(1));
-        data.push_back(s(2));
-        data.push_back(ombvArrow->getColorRepresentation()?nrm2(s):0.5);
+        array<double,8> data;
+        data[0] = getTime();
+        data[1] = r(0);
+        data[2] = r(1);
+        data[3] = r(2);
+        data[4] = s(0);
+        data[5] = s(1);
+        data[6] = s(2);
+        data[7] = ombvArrow->getColorRepresentation()?nrm2(s):0.5;
         openMBVArrow->append(data);
       }
-      if(openMBVIvScreenAnnotation && !openMBVIvScreenAnnotation->getEnvironment())
-        openMBVIvScreenAnnotation->append(s);
+      if(openMBVIvScreenAnnotation && !openMBVIvScreenAnnotation->getEnvironment()) {
+        vector<double> data(1+s.size());
+        data[0] = getTime();
+        for(int i = 0; i < s.size(); ++i)
+          data[i+1] = s(i);
+        openMBVIvScreenAnnotation->append(data);
+      }
     }
     Observer::plot();
   }
