@@ -102,34 +102,34 @@ namespace MBSim {
       if(openMBVForce.size()) {
         int off = ombvArrow->getSideOfInteraction()==0?getNumberOfForces()/2:0;
         for(size_t i=0; i<openMBVForce.size(); i++) {
-          vector<double> data;
-          data.push_back(getTime());
+          array<double,8> data;
+          data[0] = getTime();
           Vec3 toPoint=getPointOfApplication(off+i)->evalPosition();
-          data.push_back(toPoint(0));
-          data.push_back(toPoint(1));
-          data.push_back(toPoint(2));
+          data[1] = toPoint(0);
+          data[2] = toPoint(1);
+          data[3] = toPoint(2);
           Vec3 WF = evalForce(off+i);
-          data.push_back(WF(0));
-          data.push_back(WF(1));
-          data.push_back(WF(2));
-          data.push_back((this->*evalOMBVForceColorRepresentation[ombvArrow->getColorRepresentation()])());
+          data[4] = WF(0);
+          data[5] = WF(1);
+          data[6] = WF(2);
+          data[7] = (this->*evalOMBVForceColorRepresentation[ombvArrow->getColorRepresentation()])();
           openMBVForce[i]->append(data);
         }
       }
       if(openMBVMoment.size()) {
         int off = ombvArrow->getSideOfInteraction()==0?getNumberOfForces()/2:0;
         for(size_t i=0; i<openMBVMoment.size(); i++) {
-          vector<double> data;
-          data.push_back(getTime());
+          array<double,8> data;
+          data[0] = getTime();
           Vec3 toPoint=getPointOfApplication(off+i)->evalPosition();
-          data.push_back(toPoint(0));
-          data.push_back(toPoint(1));
-          data.push_back(toPoint(2));
+          data[1] = toPoint(0);
+          data[2] = toPoint(1);
+          data[3] = toPoint(2);
           Vec3 WM = evalMoment(off+i);
-          data.push_back(WM(0));
-          data.push_back(WM(1));
-          data.push_back(WM(2));
-          data.push_back((this->*evalOMBVMomentColorRepresentation[ombvArrow->getColorRepresentation()])());
+          data[4] = WM(0);
+          data[5] = WM(1);
+          data[6] = WM(2);
+          data[7] = (this->*evalOMBVMomentColorRepresentation[ombvArrow->getColorRepresentation()])();
           openMBVMoment[i]->append(data);
         }
       }

@@ -79,15 +79,15 @@ namespace MBSim {
 
       WrOFromPoint = frame[0]->evalPosition();
       WrOToPoint   = frame[1]->evalPosition();
-      vector<double> data;
-      data.push_back(getTime());
-      data.push_back(WrOFromPoint(0));
-      data.push_back(WrOFromPoint(1));
-      data.push_back(WrOFromPoint(2));
-      data.push_back(WrOToPoint(0));
-      data.push_back(WrOToPoint(1));
-      data.push_back(WrOToPoint(2));
-      data.push_back((this->*evalOMBVColorRepresentation[ombvCoilSpring->getColorRepresentation()])());
+      array<double,8> data;
+      data[0] = getTime();
+      data[1] = WrOFromPoint(0);
+      data[2] = WrOFromPoint(1);
+      data[3] = WrOFromPoint(2);
+      data[4] = WrOToPoint(0);
+      data[5] = WrOToPoint(1);
+      data[6] = WrOToPoint(2);
+      data[7] = (this->*evalOMBVColorRepresentation[ombvCoilSpring->getColorRepresentation()])();
       coilspringOpenMBV->append(data);
     }
     FixedFrameLink::plot();

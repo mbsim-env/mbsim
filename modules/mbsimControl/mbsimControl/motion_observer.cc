@@ -90,15 +90,15 @@ namespace MBSimControl {
 	AIK = AIB*ABK;
 	cardan = MBSim::AIK2Cardan(AIK);
 
-        vector<double> data;
-        data.push_back(getTime());
-        data.push_back(rOQ(0));
-        data.push_back(rOQ(1));
-        data.push_back(rOQ(2));
-        data.push_back(cardan(0));
-        data.push_back(cardan(1));
-        data.push_back(cardan(2));
-        data.push_back(0);
+        array<double,8> data;
+        data[0] = getTime();
+        data[1] = rOQ(0);
+        data[2] = rOQ(1);
+        data[3] = rOQ(2);
+        data[4] = cardan(0);
+        data[5] = cardan(1);
+        data[6] = cardan(2);
+        data[7] = 0;
 	static_pointer_cast<OpenMBV::RigidBody>(openMBVBody)->append(data);
       }
     }

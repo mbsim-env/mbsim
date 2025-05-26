@@ -337,39 +337,39 @@ namespace MBSimHydraulics {
       WrON/=double(nTrans+nRot);
       if (openMBVArrows.size()) {
         for (unsigned int i=0; i<nTrans; i++) {
-          vector<double> data;
+          array<double,8> data;
           Vec toPoint=connectedTransFrames[i].frame->evalPosition();
           Vec dir=(
               connectedTransFrames[i].frame->evalOrientation() *
               connectedTransFrames[i].normal
               ) *
             openMBVArrowSize*1e-5*evalGeneralizedForce()(0);
-          data.push_back(getTime());
-          data.push_back(toPoint(0));
-          data.push_back(toPoint(1));
-          data.push_back(toPoint(2));
-          data.push_back(dir(0));
-          data.push_back(dir(1));
-          data.push_back(dir(2));
-          data.push_back(1.);
+          data[0] = getTime();
+          data[1] = toPoint(0);
+          data[2] = toPoint(1);
+          data[3] = toPoint(2);
+          data[4] = dir(0);
+          data[5] = dir(1);
+          data[6] = dir(2);
+          data[7] = 1.;
           openMBVArrows[i]->append(data);
         }
         for (unsigned int i=0; i<nRot; i++) {
-          vector<double> data;
+          array<double,8> data;
           Vec toPoint=connectedRotFrames[i].frame->evalPosition();
           Vec dir=(
               connectedRotFrames[i].frame->evalOrientation() *
               connectedRotFrames[i].normal
               ) *
             openMBVArrowSize*1e-5*evalGeneralizedForce()(0);
-          data.push_back(getTime());
-          data.push_back(toPoint(0));
-          data.push_back(toPoint(1));
-          data.push_back(toPoint(2));
-          data.push_back(dir(0));
-          data.push_back(dir(1));
-          data.push_back(dir(2));
-          data.push_back(1.);
+          data[0] = getTime();
+          data[1] = toPoint(0);
+          data[2] = toPoint(1);
+          data[3] = toPoint(2);
+          data[4] = dir(0);
+          data[5] = dir(1);
+          data[6] = dir(2);
+          data[7] = 1.;
           openMBVArrows[nTrans+i]->append(data);
         }
       }

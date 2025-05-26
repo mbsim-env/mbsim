@@ -300,17 +300,17 @@ namespace MBSim {
 
   void RigidBody::plot() {
     if(plotFeature[ref(openMBV)] and openMBVBody) {
-      vector<double> data;
-      data.push_back(getTime());
+      array<double,8> data;
+      data[0] = getTime();
       Vec3 WrOS=openMBVFrame->evalPosition();
       Vec3 cardan=AIK2Cardan(openMBVFrame->getOrientation());
-      data.push_back(WrOS(0));
-      data.push_back(WrOS(1));
-      data.push_back(WrOS(2));
-      data.push_back(cardan(0));
-      data.push_back(cardan(1));
-      data.push_back(cardan(2));
-      data.push_back(0);
+      data[1] = WrOS(0);
+      data[2] = WrOS(1);
+      data[3] = WrOS(2);
+      data[4] = cardan(0);
+      data[5] = cardan(1);
+      data[6] = cardan(2);
+      data[7] = 0;
       static_pointer_cast<OpenMBV::RigidBody>(openMBVBody)->append(data);
     }
     Body::plot();

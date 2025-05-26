@@ -220,16 +220,16 @@ namespace MBSim {
 
   void RigidContour::plot() {
     if(plotFeature[openMBV] && openMBVRigidBody) {
-      vector<double> data;
-      data.push_back(getTime());
-      data.push_back(R->evalPosition()(0));
-      data.push_back(R->getPosition()(1));
-      data.push_back(R->getPosition()(2));
+      array<double,8> data;
+      data[0] = getTime();
+      data[1] = R->evalPosition()(0);
+      data[2] = R->getPosition()(1);
+      data[3] = R->getPosition()(2);
       Vec3 cardan=AIK2Cardan(R->evalOrientation());
-      data.push_back(cardan(0));
-      data.push_back(cardan(1));
-      data.push_back(cardan(2));
-      data.push_back(0);
+      data[4] = cardan(0);
+      data[5] = cardan(1);
+      data[6] = cardan(2);
+      data[7] = 0;
       openMBVRigidBody->append(data);
     }
     Contour::plot();

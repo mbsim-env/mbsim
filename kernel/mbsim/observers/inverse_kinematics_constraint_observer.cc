@@ -107,31 +107,31 @@ namespace MBSim {
     if(plotFeature[openMBV]) {
       if(ombv) {
         for(size_t i=0; i<openMBVForce.size(); i++) {
-          vector<double> data;
-          data.push_back(getTime());
+          array<double,8> data;
+          data[0] = getTime();
           Vec3 toPoint=constraint->getMechanicalLink(i)->getPointOfApplication(0)->evalPosition();
-          data.push_back(toPoint(0));
-          data.push_back(toPoint(1));
-          data.push_back(toPoint(2));
+          data[1] = toPoint(0);
+          data[2] = toPoint(1);
+          data[3] = toPoint(2);
           Vec3 WF = constraint->getMechanicalLink(i)->evalForce(0);
-          data.push_back(WF(0));
-          data.push_back(WF(1));
-          data.push_back(WF(2));
-          data.push_back((this->*evalOMBVForceColorRepresentation[ombv->getColorRepresentation()])(i));
+          data[4] = WF(0);
+          data[5] = WF(1);
+          data[6] = WF(2);
+          data[7] = (this->*evalOMBVForceColorRepresentation[ombv->getColorRepresentation()])(i);
           openMBVForce[i]->append(data);
         }
         for(size_t i=0; i<openMBVMoment.size(); i++) {
-          vector<double> data;
-          data.push_back(getTime());
+          array<double,8> data;
+          data[0] = getTime();
           Vec3 toPoint=constraint->getMechanicalLink(i)->getPointOfApplication(0)->evalPosition();
-          data.push_back(toPoint(0));
-          data.push_back(toPoint(1));
-          data.push_back(toPoint(2));
+          data[1] = toPoint(0);
+          data[2] = toPoint(1);
+          data[3] = toPoint(2);
           Vec3 WM = constraint->getMechanicalLink(i)->evalMoment(0);
-          data.push_back(WM(0));
-          data.push_back(WM(1));
-          data.push_back(WM(2));
-          data.push_back((this->*evalOMBVMomentColorRepresentation[ombv->getColorRepresentation()])(i));
+          data[4] = WM(0);
+          data[5] = WM(1);
+          data[6] = WM(2);
+          data[7] = (this->*evalOMBVMomentColorRepresentation[ombv->getColorRepresentation()])(i);
           openMBVMoment[i]->append(data);
         }
       }

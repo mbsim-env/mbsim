@@ -242,15 +242,15 @@ namespace MBSimHydraulics {
 	Element::plot(QHyd*hydEnv->getSpecificMass()*60.);
       }
       if(plotFeature[openMBV] and openMBVSphere) {
-        vector<double> data;
-        data.push_back(getTime());
-        data.push_back(WrON(0));
-        data.push_back(WrON(1));
-        data.push_back(WrON(2));
-        data.push_back(0);
-        data.push_back(0);
-        data.push_back(0);
-        data.push_back(evalGeneralizedForce()(0));
+        array<double,8> data;
+        data[0] = getTime();
+        data[1] = WrON(0);
+        data[2] = WrON(1);
+        data[3] = WrON(2);
+        data[4] = 0;
+        data[5] = 0;
+        data[6] = 0;
+        data[7] = evalGeneralizedForce()(0);
         openMBVSphere->append(data);
       }
     }

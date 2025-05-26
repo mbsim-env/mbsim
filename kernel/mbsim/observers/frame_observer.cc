@@ -125,72 +125,72 @@ namespace MBSim {
     }
     if(plotFeature[openMBV]) {
       if(openMBVPosition) {
-        vector<double> data;
-        data.push_back(getTime());
-        data.push_back(0);
-        data.push_back(0);
-        data.push_back(0);
+        array<double,8> data;
+        data[0] = getTime();
+        data[1] = 0;
+        data[2] = 0;
+        data[3] = 0;
         Vec3 r = frame->evalPosition();
-        data.push_back(r(0));
-        data.push_back(r(1));
-        data.push_back(r(2));
-        data.push_back((this->*evalOMBVPositionColorRepresentation[ombvPositionArrow->getColorRepresentation()])());
+        data[4] = r(0);
+        data[5] = r(1);
+        data[6] = r(2);
+        data[7] = (this->*evalOMBVPositionColorRepresentation[ombvPositionArrow->getColorRepresentation()])();
         openMBVPosition->append(data);
       }
       if(openMBVVelocity) {
-        vector<double> data;
-        data.push_back(getTime());
+        array<double,8> data;
+        data[0] = getTime();
         Vec3 r = frame->evalPosition();
-        data.push_back(r(0));
-        data.push_back(r(1));
-        data.push_back(r(2));
+        data[1] = r(0);
+        data[2] = r(1);
+        data[3] = r(2);
         Vec3 v = frame->evalVelocity();
-        data.push_back(v(0));
-        data.push_back(v(1));
-        data.push_back(v(2));
-        data.push_back((this->*evalOMBVVelocityColorRepresentation[ombvVelocityArrow->getColorRepresentation()])());
+        data[4] = v(0);
+        data[5] = v(1);
+        data[6] = v(2);
+        data[7] = (this->*evalOMBVVelocityColorRepresentation[ombvVelocityArrow->getColorRepresentation()])();
         openMBVVelocity->append(data);
       }
       if(openMBVAngularVelocity) {
-        vector<double> data;
-        data.push_back(getTime());
+        array<double,8> data;
+        data[0] = getTime();
         Vec3 r = frame->evalPosition();
-        data.push_back(r(0));
-        data.push_back(r(1));
-        data.push_back(r(2));
+        data[1] = r(0);
+        data[2] = r(1);
+        data[3] = r(2);
         Vec3 om = frame->evalAngularVelocity();
-        data.push_back(om(0));
-        data.push_back(om(1));
-        data.push_back(om(2));
-        data.push_back((this->*evalOMBVAngularVelocityColorRepresentation[ombvAngularVelocityArrow->getColorRepresentation()])());
+        data[4] = om(0);
+        data[5] = om(1);
+        data[6] = om(2);
+        data[7] = (this->*evalOMBVAngularVelocityColorRepresentation[ombvAngularVelocityArrow->getColorRepresentation()])();
         openMBVAngularVelocity->append(data);
       }
       if(openMBVAcceleration) {
-        vector<double> data;
-        data.push_back(getTime());
+        array<double,8> data;
+        data[0] = getTime();
         Vec3 r = frame->evalPosition();
-        data.push_back(r(0));
-        data.push_back(r(1));
-        data.push_back(r(2));
+        data[1] = r(0);
+        data[2] = r(1);
+        data[3] = r(2);
         Vec3 a = frame->evalAcceleration();
-        data.push_back(a(0));
-        data.push_back(a(1));
-        data.push_back(a(2));
-        data.push_back((this->*evalOMBVAccelerationColorRepresentation[ombvAccelerationArrow->getColorRepresentation()])());
+        data[4] = a(0);
+        data[5] = a(1);
+        data[6] = a(2);
+        data[7] = (this->*evalOMBVAccelerationColorRepresentation[ombvAccelerationArrow->getColorRepresentation()])();
         openMBVAcceleration->append(data);
       }
       if(openMBVAngularAcceleration) {
-        vector<double> data;
-        data.push_back(getTime());
+        array<double,8> data;
+        data[0] = getTime();
         Vec3 r = frame->evalPosition();
-        data.push_back(r(0));
-        data.push_back(r(1));
-        data.push_back(r(2));
+        data[1] = r(0);
+        data[2] = r(1);
+        data[3] = r(2);
         Vec3 psi = frame->evalAngularAcceleration();
-        data.push_back(psi(0));
-        data.push_back(psi(1));
-        data.push_back(psi(2));
-        data.push_back((this->*evalOMBVAngularAccelerationColorRepresentation[ombvAngularAccelerationArrow->getColorRepresentation()])());
+        data[4] = psi(0);
+        data[5] = psi(1);
+        data[6] = psi(2);
+        data[7] = (this->*evalOMBVAngularAccelerationColorRepresentation[ombvAngularAccelerationArrow->getColorRepresentation()])();
         openMBVAngularAcceleration->append(data);
       }
     }

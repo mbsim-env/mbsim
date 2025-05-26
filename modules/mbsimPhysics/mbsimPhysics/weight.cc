@@ -129,17 +129,17 @@ namespace MBSimPhysics {
     if(plotFeature[openMBV] and ombvArrow) {
       int off = ombvArrow->getSideOfInteraction()==0?getNumberOfForces()/2:0;
       for(size_t i=0; i<openMBVForce.size(); i++) {
-        vector<double> data;
-        data.push_back(getTime());
+        array<double,8> data;
+        data[0] = getTime();
         Vec3 toPoint=getPointOfApplication(off+i)->evalPosition();
-        data.push_back(toPoint(0));
-        data.push_back(toPoint(1));
-        data.push_back(toPoint(2));
+        data[1] = toPoint(0);
+        data[2] = toPoint(1);
+        data[3] = toPoint(2);
         Vec3 WF = evalForce(off+i);
-        data.push_back(WF(0));
-        data.push_back(WF(1));
-        data.push_back(WF(2));
-        data.push_back(ombvArrow->getColorRepresentation()?nrm2(evalForce()):1);
+        data[4] = WF(0);
+        data[5] = WF(1);
+        data[6] = WF(2);
+        data[7] = ombvArrow->getColorRepresentation()?nrm2(evalForce()):1;
         openMBVForce[i]->append(data);
       }
     }

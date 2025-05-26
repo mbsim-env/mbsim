@@ -224,110 +224,110 @@ namespace MBSim {
     }
     if(plotFeature[openMBV]) {
       if(FWeight) {
-        vector<double> data;
-        data.push_back(getTime());
+        array<double,8> data;
+        data[0] = getTime();
         Vec3 G = body->getMass()*ds->getMBSimEnvironment()->getAccelerationOfGravity();
-        data.push_back(rOS(0));
-        data.push_back(rOS(1));
-        data.push_back(rOS(2));
-        data.push_back(G(0));
-        data.push_back(G(1));
-        data.push_back(G(2));
-        data.push_back(ombvWeight->getColorRepresentation()?nrm2(G):1.0);
+        data[1] = rOS(0);
+        data[2] = rOS(1);
+        data[3] = rOS(2);
+        data[4] = G(0);
+        data[5] = G(1);
+        data[6] = G(2);
+        data[7] = ombvWeight->getColorRepresentation()?nrm2(G):1.0;
         FWeight->append(data);
       }
       if(ombvForce) {
         int off = ombvForce->getSideOfInteraction()==0?1:0;
         for(size_t i=0; i<FArrow.size(); i++) {
-          vector<double> data;
-          data.push_back(getTime());
+          array<double,8> data;
+          data[0] = getTime();
           Vec3 toPoint=body->getJoint()->getPointOfApplication(off+i)->evalPosition();
-          data.push_back(toPoint(0));
-          data.push_back(toPoint(1));
-          data.push_back(toPoint(2));
+          data[1] = toPoint(0);
+          data[2] = toPoint(1);
+          data[3] = toPoint(2);
           Vec3 F = body->getJoint()->evalForce(off+i);
-          data.push_back(F(0));
-          data.push_back(F(1));
-          data.push_back(F(2));
-          data.push_back(ombvForce->getColorRepresentation()?nrm2(F):1.0);
+          data[4] = F(0);
+          data[5] = F(1);
+          data[6] = F(2);
+          data[7] = ombvForce->getColorRepresentation()?nrm2(F):1.0;
           FArrow[i]->append(data);
         }
       }
       if(ombvMoment) {
         int off = ombvMoment->getSideOfInteraction()==0?1:0;
         for(size_t i=0; i<MArrow.size(); i++) {
-          vector<double> data;
-          data.push_back(getTime());
+          array<double,8> data;
+          data[0] = getTime();
           Vec3 toPoint=body->getJoint()->getPointOfApplication(off+i)->evalPosition();
-          data.push_back(toPoint(0));
-          data.push_back(toPoint(1));
-          data.push_back(toPoint(2));
+          data[1] = toPoint(0);
+          data[2] = toPoint(1);
+          data[3] = toPoint(2);
           Vec3 M = body->getJoint()->evalMoment(off+i);
-          data.push_back(M(0));
-          data.push_back(M(1));
-          data.push_back(M(2));
-          data.push_back(ombvMoment->getColorRepresentation()?nrm2(M):1.0);
+          data[4] = M(0);
+          data[5] = M(1);
+          data[6] = M(2);
+          data[7] = ombvMoment->getColorRepresentation()?nrm2(M):1.0;
           MArrow[i]->append(data);
         }
       }
       if(openMBVAxisOfRotation) {
-        vector<double> data;
-        data.push_back(getTime());
-        data.push_back(r(0));
-        data.push_back(r(1));
-        data.push_back(r(2));
-        data.push_back(dir(0));
-        data.push_back(dir(1));
-        data.push_back(dir(2));
-        data.push_back(ombvAxisOfRotation->getColorRepresentation()?nrm2(dir):0);
+        array<double,8> data;
+        data[0] = getTime();
+        data[1] = r(0);
+        data[2] = r(1);
+        data[3] = r(2);
+        data[4] = dir(0);
+        data[5] = dir(1);
+        data[6] = dir(2);
+        data[7] = ombvAxisOfRotation->getColorRepresentation()?nrm2(dir):0;
         openMBVAxisOfRotation->append(data);
       }
       if(openMBVMomentum) {
-        vector<double> data;
-        data.push_back(getTime());
-        data.push_back(rOS(0));
-        data.push_back(rOS(1));
-        data.push_back(rOS(2));
-        data.push_back(p(0));
-        data.push_back(p(1));
-        data.push_back(p(2));
-        data.push_back(ombvMomentum->getColorRepresentation()?nrm2(p):1);
+        array<double,8> data;
+        data[0] = getTime();
+        data[1] = rOS(0);
+        data[2] = rOS(1);
+        data[3] = rOS(2);
+        data[4] = p(0);
+        data[5] = p(1);
+        data[6] = p(2);
+        data[7] = ombvMomentum->getColorRepresentation()?nrm2(p):1;
         openMBVMomentum->append(data);
       }
       if(openMBVAngularMomentum) {
-        vector<double> data;
-        data.push_back(getTime());
-        data.push_back(rOR(0));
-        data.push_back(rOR(1));
-        data.push_back(rOR(2));
-        data.push_back(L(0));
-        data.push_back(L(1));
-        data.push_back(L(2));
-        data.push_back(ombvAngularMomentum->getColorRepresentation()?nrm2(L):1);
+        array<double,8> data;
+        data[0] = getTime();
+        data[1] = rOR(0);
+        data[2] = rOR(1);
+        data[3] = rOR(2);
+        data[4] = L(0);
+        data[5] = L(1);
+        data[6] = L(2);
+        data[7] = ombvAngularMomentum->getColorRepresentation()?nrm2(L):1;
         openMBVAngularMomentum->append(data);
       }
       if(openMBVDerivativeOfMomentum) {
-        vector<double> data;
-        data.push_back(getTime());
-        data.push_back(rOS(0));
-        data.push_back(rOS(1));
-        data.push_back(rOS(2));
-        data.push_back(pd(0));
-        data.push_back(pd(1));
-        data.push_back(pd(2));
-        data.push_back(ombvDerivativeOfMomentum->getColorRepresentation()?nrm2(pd):1);
+        array<double,8> data;
+        data[0] = getTime();
+        data[1] = rOS(0);
+        data[2] = rOS(1);
+        data[3] = rOS(2);
+        data[4] = pd(0);
+        data[5] = pd(1);
+        data[6] = pd(2);
+        data[7] = ombvDerivativeOfMomentum->getColorRepresentation()?nrm2(pd):1;
         openMBVDerivativeOfMomentum->append(data);
       }
       if(openMBVDerivativeOfAngularMomentum) {
-        vector<double> data;
-        data.push_back(getTime());
-        data.push_back(rOR(0));
-        data.push_back(rOR(1));
-        data.push_back(rOR(2));
-        data.push_back(Ld(0));
-        data.push_back(Ld(1));
-        data.push_back(Ld(2));
-        data.push_back(ombvDerivativeOfAngularMomentum->getColorRepresentation()?nrm2(Ld):1);
+        array<double,8> data;
+        data[0] = getTime();
+        data[1] = rOR(0);
+        data[2] = rOR(1);
+        data[3] = rOR(2);
+        data[4] = Ld(0);
+        data[5] = Ld(1);
+        data[6] = Ld(2);
+        data[7] = ombvDerivativeOfAngularMomentum->getColorRepresentation()?nrm2(Ld):1;
         openMBVDerivativeOfAngularMomentum->append(data);
       }
     }

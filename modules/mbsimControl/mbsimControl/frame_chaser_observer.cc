@@ -94,15 +94,15 @@ namespace MBSimControl {
         // convert revCardan to cardan and set openmbv frame data
         auto T2=MBSim::Cardan2AIK(-revCardan(0),-revCardan(1),-revCardan(2)).T();
         auto cardan=MBSim::AIK2Cardan(T2);
-        vector<double> data;
-        data.push_back(getTime());
-        data.push_back(r(0));
-        data.push_back(r(1));
-        data.push_back(r(2));
-        data.push_back(cardan(0));
-        data.push_back(cardan(1));
-        data.push_back(cardan(2));
-        data.push_back(0);
+        array<double,8> data;
+        data[0] = getTime();
+        data[1] = r(0);
+        data[2] = r(1);
+        data[3] = r(2);
+        data[4] = cardan(0);
+        data[5] = cardan(1);
+        data[6] = cardan(2);
+        data[7] = 0;
         openMBVFrame->append(data);
       }
     }
