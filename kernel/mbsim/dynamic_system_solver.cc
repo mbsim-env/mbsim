@@ -467,23 +467,32 @@ namespace MBSim {
       if(plotFeature[plotRecursive])
         hdf5File = std::make_shared<H5::File>(fileName, H5::File::write);
 
-      Group::init(stage, config);
-
-      if (plotFeature[openMBV]) {
-        // add MBSimEnvironment OpenMBV objects
-        auto envs=getMBSimEnvironment()->getOpenMBVObjects();
-        if(!envs.empty()) {
-          auto openmbvEnv=OpenMBV::ObjectFactory::create<OpenMBV::Group>();
-          openmbvEnv->setName("environments");
-          openMBVGrp->addObject(openmbvEnv);
-          for(auto env : envs) {
+      // add MBSimEnvironment OpenMBV objects (before and after DSS)
+      auto envObjects = [this](bool beforeDSS) {
+        if (plotFeature[openMBV]) {
+          shared_ptr<OpenMBV::Group> openmbvEnv;
+          for(auto [env, preDSS] : getMBSimEnvironment()->getOpenMBVObjects()) {
+            if((preDSS && !beforeDSS) || (!preDSS && beforeDSS))
+              continue;
+            if(!openmbvEnv) {
+              if(!openMBVGrp)
+                openMBVGrp = OpenMBV::ObjectFactory::create<OpenMBV::Group>();
+              openmbvEnv=OpenMBV::ObjectFactory::create<OpenMBV::Group>();
+              openmbvEnv->setName(beforeDSS?"preDSS":"environments");
+              openmbvEnv->setExpand(!beforeDSS);
+              openMBVGrp->addObject(openmbvEnv);
+            }
             env->setEnvironment(true);
             openmbvEnv->addObject(env);
           }
         }
-        // write openmbv files
-        openMBVGrp->write(true, truncateSimulationFiles);
-      }
+      };
+      envObjects(true); // before DSS
+      Group::init(stage, config);
+      envObjects(false); // after DSS
+
+      if (plotFeature[openMBV])
+        openMBVGrp->write(true, truncateSimulationFiles); // write openmbv files
     }
     else
       Group::init(stage, config);

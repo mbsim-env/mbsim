@@ -449,7 +449,8 @@ namespace MBSim {
         plotVectorSerie = nullptr;
       }
       if (plotFeature[openMBV]) {
-        openMBVGrp = OpenMBV::ObjectFactory::create<OpenMBV::Group>();
+        if(!openMBVGrp) // e.g. DSS may have already done this
+          openMBVGrp = OpenMBV::ObjectFactory::create<OpenMBV::Group>();
         openMBVGrp->setName(name);
         if (parent)
           parent->getGroupsOpenMBVGrp()->addObject(openMBVGrp);
