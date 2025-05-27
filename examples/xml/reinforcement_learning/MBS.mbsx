@@ -1,17 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
-
   <Parameter>
      <import action="addAllVarsAsParams">import numpy as np</import>
      <import action="addAllVarsAsParams">import sympy as sp</import>
      <import action="addAllVarsAsParams">import os</import>
      <scalarParameter name="training">True</scalarParameter>
   </Parameter>
-
   <MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
-
     <evaluator xmlns="http://www.mbsim-env.de/MBXMLUtils">python</evaluator>
-
     <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
       <Parameter>
         <scalarParameter name="l">0.5</scalarParameter>
@@ -218,18 +214,20 @@
           </SignalOperation></Embed>
           <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="1" counterName="n" onlyif="training">
             <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="RewardSignal">
-              <inputSignal ref="../Link[TerminationSignal]"/>
+              <inputSignal ref="../Link[Time]"/>
+              <inputSignal ref="../Link[q1]"/>
               <multiplexInputSignals>True</multiplexInputSignals>
               <function>
                 <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim">
-                  <definition arg1="u" arg1Dim="1">
+                  <definition arg1="s" arg1Dim="2">
                     <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                      <ele>sp.Piecewise((-100, u[0]&gt;0.1), (1,1))</ele>
-                  </xmlVector>
-                </definition>
-              </SymbolicFunction>
-            </function>
-          </SignalOperation></Embed>
+                      <ele>s[0] - 100*s[1]**2</ele>
+                    </xmlVector>
+                  </definition>
+                </SymbolicFunction>
+              </function>
+            </SignalOperation>
+          </Embed>
           <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="1" counterName="n" onlyif="training">
             <ExternSignalSink xmlns="http://www.mbsim-env.de/MBSimControl" name="Termination">
               <inputSignal ref="../Link[TerminationSignal]"/>
@@ -239,8 +237,7 @@
               <inputSignal ref="../Link[RewardSignal]"/>
           </ExternSignalSink></Embed>
           <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="1" counterName="n" onlyif="training">
-            <?MBSimGUI_EnabledCount 1?>
-            <Parameter/>
+<?MBSimGUI_EnabledCount 1?>
             <ExternSignalSource xmlns="http://www.mbsim-env.de/MBSimControl" name="Action">
               <sourceSize>1</sourceSize>
             </ExternSignalSource>
@@ -250,6 +247,13 @@
              <signal xmlns="http://www.mbsim-env.de/MBSimControl" ref="../Link[z]"/>
              <neuralNetworkPath xmlns="http://mbsimReinforcementLearning">neuralNetworkPath</neuralNetworkPath>
            </ActorSignal></Embed>
+          <FunctionSensor xmlns="http://www.mbsim-env.de/MBSimControl" name="Time">
+            <function>
+              <LinearFunction xmlns="http://www.mbsim-env.de/MBSim">
+                <a1>1</a1>
+              </LinearFunction>
+            </function>
+          </FunctionSensor>
         </links>
         <constraints/>
         <observers>
@@ -273,9 +277,5 @@
       <endTime unit="s">10</endTime>
       <plotStepSize unit="s">1e-2</plotStepSize>
   </DOPRI5Integrator>
-
   </MBSimProject>
-
-
-
 </Embed>
