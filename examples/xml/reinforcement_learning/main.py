@@ -143,7 +143,16 @@ steps = 0
 
 fmuFileName = 'mbsim.fmu'
 if not os.path.isfile(fmuFileName):
-  subprocess.run(["mbsimCreateFMU", "--noparam", "--modulePath", "mbsimReinforcementLearning", "MBS.mbsx"])
+  if not os.path.isfile('catalog.xml'):
+    print("create catalog")
+    ret = subprocess.run(["mbsimxml", "--dumpXMLCatalog", "catalog.xml", "--modulePath", "mbsimReinforcementLearning"])
+    print(ret)
+  if not os.path.isfile('MBSflat.xml'):
+    print("preprocess model file")
+    ret = subprocess.run(["mbxmlutilspp", "--xmlCatalog", "catalog.xml", "-o", "MBSflat.mbsx", "MBS.mbsx"])
+    print(ret)
+  print("create fmu")
+  subprocess.run(["mbsimCreateFMU", "--noparam", "MBSflat.mbsx"])
 fmuPath = os.path.abspath('.')+'/fmu'
 if os.path.exists(fmuPath):
   print("use existing fmu")
