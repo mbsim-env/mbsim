@@ -696,7 +696,7 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="openMBVObject" minOccurs="0" maxOccurs="unbounded">
+          <xs:element name="openMBVObject" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 Visualisierung der Umgebung (nicht bewegte Objekte).
@@ -707,14 +707,6 @@
                 <xs:element ref="ombv:Object"/>
                 <xs:element ref="pv:Embed"/>
               </xs:choice>
-              <xs:attribute name="preDSS" type="pv:booleanFullEval">
-                <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                  Environment openMBVObject Objekte werden üblicherweisse nach dem DynamicSystemSolver Object in den
-                  Visualisierungstree eingehängt. Wenn preDSS True ist wird da Objekt for DynamicSystemSolver eingehängt.
-                  Damit können z.B. IV Objekte definiert werden (DEF &lt;name&gt; ...)welche im gesamten DynamicSystemSolver IV
-                  Tree referenziert (REF &lt;name&gt;) werden können.
-                </xs:documentation></xs:annotation>
-              </xs:attribute>
             </xs:complexType>
           </xs:element>
         </xs:sequence> 

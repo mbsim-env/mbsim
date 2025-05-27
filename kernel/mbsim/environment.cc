@@ -40,24 +40,20 @@ namespace MBSim {
     e=E(element)->getFirstElementChildNamed(MBSIM%"accelerationOfGravity");
     setAccelerationOfGravity(E(e)->getText<Vec3>());
 
-    for(e=E(element)->getFirstElementChildNamed(MBSIM%"openMBVObject"); e!=nullptr;
-        e=E(e)->getNextElementSiblingNamed(MBSIM%"openMBVObject")) {
-      bool preDSS=false;
-      if(E(e)->hasAttribute("preDSS") && (E(e)->getAttribute("preDSS")=="true" || E(e)->getAttribute("preDSS")=="1"))
-        preDSS=true;
+    e=E(element)->getFirstElementChildNamed(MBSIM%"openMBVObject");
+    if(e)
       for(DOMElement *ee=e->getFirstElementChild(); ee!=nullptr; ee=ee->getNextElementSibling()) {
         auto object=OpenMBV::ObjectFactory::create<OpenMBV::Object>(ee);
-        addOpenMBVObject(object, preDSS);
+        addOpenMBVObject(object);
         object->initializeUsingXML(ee);
       }
-    }
   }
 
-  void MBSimEnvironment::addOpenMBVObject(const std::shared_ptr<OpenMBV::Object> &object, bool preDSS) {
-    openMBVObject.emplace_back(object, preDSS);
+  void MBSimEnvironment::addOpenMBVObject(const std::shared_ptr<OpenMBV::Object> &object) {
+    openMBVObject.emplace_back(object);
   }
 
-  std::vector<std::pair<std::shared_ptr<OpenMBV::Object>, bool>> MBSimEnvironment::getOpenMBVObjects() {
+  std::vector<std::shared_ptr<OpenMBV::Object>> MBSimEnvironment::getOpenMBVObjects() {
     return openMBVObject;
   }
 
