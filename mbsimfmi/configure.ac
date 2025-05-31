@@ -75,6 +75,9 @@ PKG_CHECK_MODULES(FMUPPXMLDEPS, mbxmlutils mbsimxml)
 PKG_CHECK_MODULES(CREATEDEPS, mbsimxml mbsim mbsimControl mbxmlutils)
 PKG_CHECK_MODULES(LIBARCHIVEDEPS, libarchive)
 
+PYCPPWRAPPER_LIBS_MAIN="$(pkg-config --variable=Libs_main pycppwrapper)"
+AC_SUBST([PYCPPWRAPPER_LIBS_MAIN])
+
 AC_CONFIG_FILES([Makefile 3rdparty/Makefile general/Makefile createfmu/Makefile mbsimfmi/Makefile test/Makefile])
 hardcode_into_libs=no # do not add hardcoded libdirs to ltlibraries
 hardcode_libdir_flag_spec_CXX= # do not add hardcodeed libdirs to ltbinaries

@@ -26,7 +26,7 @@ libconstitutivelaws_la_SOURCES = bilateral_constraint.cc\
 				 magic_formula_62.cc
 
 libconstitutivelaws_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS) 
-libconstitutivelaws_la_LIBADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS) 
+libconstitutivelaws_la_LIBADD = $(LDFLAGS_NOUNDEF) $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS) 
 
 constitutivelawsincludedir = $(includedir)/mbsim/constitutive_laws
 constitutivelawsinclude_HEADERS = bilateral_constraint.h\

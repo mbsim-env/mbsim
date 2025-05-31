@@ -28,7 +28,7 @@ libfunction_la_SOURCES = identity_function.cc\
 
 functionincludedir = $(includedir)/mbsim/functions
 
-libfunction_la_LIBADD = kinematics/libkinematics.la
+libfunction_la_LIBADD = $(LDFLAGS_NOUNDEF) kinematics/libkinematics.la
 libfunction_la_LIBADD += kinetics/libkinetics.la
 libfunction_la_LIBADD += contact/libcontact.la
 libfunction_la_LIBADD += $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
