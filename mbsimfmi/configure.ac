@@ -75,7 +75,11 @@ PKG_CHECK_MODULES(FMUPPXMLDEPS, mbxmlutils mbsimxml)
 PKG_CHECK_MODULES(CREATEDEPS, mbsimxml mbsim mbsimControl mbxmlutils)
 PKG_CHECK_MODULES(LIBARCHIVEDEPS, libarchive)
 
-PYCPPWRAPPER_LIBS_MAIN="$(pkg-config --variable=Libs_main pycppwrapper)"
+if test "_$host_os" != "_mingw32"; then
+  PYCPPWRAPPER_LIBS_MAIN="$(pkg-config --variable=Libs_main pycppwrapper)"
+else
+  PYCPPWRAPPER_LIBS_MAIN=""
+fi
 AC_SUBST([PYCPPWRAPPER_LIBS_MAIN])
 
 AC_CONFIG_FILES([Makefile 3rdparty/Makefile general/Makefile createfmu/Makefile mbsimfmi/Makefile test/Makefile])
