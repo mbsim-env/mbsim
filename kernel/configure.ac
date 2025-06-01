@@ -138,7 +138,7 @@ AC_SUBST([PYTHON_LIBDIR])
 if test "_$host_os" != "_mingw32"; then
   PYTHON_LIBS_OPT=""
 else
-  PYTHON_LIBS_OPT"$PYTHON_LIBS"
+  PYTHON_LIBS_OPT="$PYTHON_LIBS"
 fi
 AC_SUBST([PYTHON_LIBS_OPT])
 
