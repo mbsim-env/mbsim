@@ -7,6 +7,7 @@
 #include <cfenv>
 #include <cassert>
 #include <mbxmlutils/eval.h>
+#include <mbxmlutils/pycppwrapper_mainlib.h>
 #include <mbsimxml/mbsimflatxml.h>
 #include <boost/dll.hpp>
 #include <mbxmlutilshelper/shared_library.h>
@@ -544,6 +545,14 @@ int main(int argc, char *argv[]) {
                      installPath/LIBDIR/("libmbsimsrc_fmi"+SHEXT));
       cout<<endl;
     }
+
+#ifndef _WIN32
+    // mbsim depends on python but is not linked on Linux with python -> add python library
+    // (on Windows the python library is already added as a dependency)
+    auto [PYMAINLIB, PYMAINLIBFILE] = PythonCpp::getPythonMainLib(installPath.string());
+    copyShLibToFMU(parserNoneVali, fmuFile, path("resources")/"local"/LIBDIR/PYMAINLIBFILE, path("resources")/"local"/LIBDIR,
+                   PYMAINLIB+"/"+PYMAINLIBFILE);
+#endif
 
     cout<<"Copy MBSim FMI wrapper library and dependencies to FMU."<<endl;
     string fmuLibName(cosim?"mbsim_cosim":"mbsim_me");
