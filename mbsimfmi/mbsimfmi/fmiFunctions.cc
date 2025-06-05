@@ -72,9 +72,11 @@ extern "C" {
       // remove trailing /binaries/<os>/mbism.so
       for(int i=0; i<3; ++i)
         s=fmuDir.find_last_of("/\\", s)-1;
+#ifndef _WIN32
       // load python
       auto PYMAINLIBFILE = PythonCpp::getPythonMainLib({}).second;
       SharedLibrary::load(fmuDir.substr(0, s+1)+"/resources/local/"+LIBDIR+"/"+PYMAINLIBFILE, true);
+#endif
       // load main mbsim FMU library
       auto fmiInstanceCreate=SharedLibrary::getSymbol<fmiInstanceCreatePtr>(
         fmuDir.substr(0, s+1)+"/resources/local/"+LIBDIR+"/libmbsimXXX_fmi"+SHEXT, "fmiInstanceCreate");
