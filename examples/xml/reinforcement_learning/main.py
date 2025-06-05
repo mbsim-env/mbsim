@@ -11,25 +11,27 @@ import fmpy
 import os
 from scipy.integrate import RK45
 
-load = True
-save = False
-training = False
+load = False
+save = True
+training = True
 simulation = True
 
 nz = 4
 nO = 4
 nA = 1
 sA = 10
-nS = 3 if training else 0
 tau = 0.005
 gamma = 0.99
 batchSize = 128
 maxLen = 10000
 nEpisodes = 0 if (not training and simulation) else 500
 tEnd = 10
-dtMax = 0.02
 atol = 1e-6
-rtol = 1e-6
+rtol = 1e-3
+epsStart = 0.9
+epsEnd = 0.05
+epsDecay = 2000
+fmuPlot = False
 
 class Value(nn.Module):
 
@@ -98,11 +100,15 @@ actorTargetNet.load_state_dict(actorNet.state_dict())
 memory = deque([], maxlen=maxLen)
 valueOptimizer = optim.AdamW(valueNet.parameters(), lr=1e-4, amsgrad=True)
 actorOptimizer = optim.AdamW(actorNet.parameters(), lr=1e-4, amsgrad=True)
+
 def evalAction(state):
-  with torch.no_grad():
-    a = actorNet(torch.tensor(state, dtype=torch.float32)).numpy()
-    a += nS*np.random.randn(nA)
-  return np.clip(a, -sA, sA)
+  epsThreshold = epsEnd+(epsStart-epsEnd)*math.exp(-steps/epsDecay)
+  sample = random.random()
+  if not training or sample>epsThreshold:
+    with torch.no_grad():
+      return actorNet(torch.tensor(state, dtype=torch.float32)).numpy()
+  else:
+    return (np.random.rand(nA)-0.5)*2*sA
 
 def optimize_model():
   if len(memory) < batchSize:
@@ -188,61 +194,60 @@ nMaxSteps = 0
 for n in range(0,nEpisodes):
   z0 = np.random.uniform(-0.05,0.05,nz)
   rk45 = RK45(dgl, 0, z0, tEnd, atol=atol, rtol=rtol)
-  tU = dtMax
   i = 0
+  observation = getValue(iO)
+  action = evalAction(observation)
 
-  while rk45.t < tEnd:
-    observation = getValue(iO)
-    action = evalAction(observation)
+  while rk45.t < tEnd-1e-2:
     setValue(iA,action)
 
-    while rk45.t < tU:
-      rk45.step()
+    rk45.step()
 
-    dout = rk45.dense_output();
+    if fmuPlot:
+      fmu.completedIntegratorStep()
+
     termination = False
 
-    while tU < rk45.t and not termination:
-      zU = dout(tU)
-      setTime(tU)
-      setState(zU)
-      nextObservation = getValue(iO)
-      reward = getValue(iR)
-      termination = bool(getValue(iT)[0])
-      tU = tU + dtMax
-      i += 1
+    setTime(rk45.t)
+    setState(rk45.y)
+    nextObservation = getValue(iO)
+    reward = getValue(iR)
+    termination = bool(getValue(iT)[0])
+    i += 1
 
-      if training:
-        memory.append(np.block([observation, action, nextObservation, reward]))
-        observation = nextObservation
-        action = evalAction(observation)
+    if training:
+      memory.append(np.block([observation, action, nextObservation, reward]))
+      observation = nextObservation
+      action = evalAction(observation)
 
-        optimize_model()
+      optimize_model()
 
-        valueTargetNetStateDict = valueTargetNet.state_dict()
-        valueNetStateDict = valueNet.state_dict()
-        for key in valueNetStateDict:
-          valueTargetNetStateDict[key] = valueNetStateDict[key]*tau + valueTargetNetStateDict[key]*(1-tau)
-        valueTargetNet.load_state_dict(valueTargetNetStateDict)
+      valueTargetNetStateDict = valueTargetNet.state_dict()
+      valueNetStateDict = valueNet.state_dict()
+      for key in valueNetStateDict:
+        valueTargetNetStateDict[key] = valueNetStateDict[key]*tau + valueTargetNetStateDict[key]*(1-tau)
+      valueTargetNet.load_state_dict(valueTargetNetStateDict)
 
-        actorTargetNetStateDict = actorTargetNet.state_dict()
-        actorNetStateDict = actorNet.state_dict()
-        for key in actorNetStateDict:
-          actorTargetNetStateDict[key] = actorNetStateDict[key]*tau + actorTargetNetStateDict[key]*(1-tau)
-        actorTargetNet.load_state_dict(actorTargetNetStateDict)
+      actorTargetNetStateDict = actorTargetNet.state_dict()
+      actorNetStateDict = actorNet.state_dict()
+      for key in actorNetStateDict:
+        actorTargetNetStateDict[key] = actorNetStateDict[key]*tau + actorTargetNetStateDict[key]*(1-tau)
+      actorTargetNet.load_state_dict(actorTargetNetStateDict)
 
     if termination:
-      steps += i
       break
 
+  steps += i
   print(f"episode {n}, time {rk45.t:.1f}, steps {i}, total steps {steps}")
 
-  if rk45.t>=tEnd:
+  if rk45.t>=tEnd-1e-2:
     nMaxSteps += 1
   else:
     nMaxSteps = 0
   if nMaxSteps >= 5:
     break
+
+fmu.terminate()
 
 if save:
   torch.save(valueNet.state_dict(), "value_net.pt")

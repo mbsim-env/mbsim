@@ -81,8 +81,8 @@
             <generalizedInitialPosition>
               <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                 <ele>0.1</ele>
-            </xmlVector>
-          </generalizedInitialPosition>
+              </xmlVector>
+            </generalizedInitialPosition>
             <frameOfReference ref="../Object[Klotz]/Frame[P]"/>
             <frameForKinematics ref="Frame[P]"/>
             <mass unit="kg">mS</mass>
@@ -92,31 +92,22 @@
                   <ele>0.01</ele>
                   <ele>0</ele>
                   <ele>0</ele>
-              </row>
+                </row>
                 <row>
                   <ele>0</ele>
                   <ele>0.01</ele>
                   <ele>0</ele>
-              </row>
+                </row>
                 <row>
                   <ele>0</ele>
                   <ele>0</ele>
                   <ele>1/12*mS*(2*l)**2</ele>
-              </row>
-            </xmlMatrix>
-          </inertiaTensor>
+                </row>
+              </xmlMatrix>
+            </inertiaTensor>
             <stateDependentRotation>
-              <CompositeFunction>
-                <outerFunction>
-                  <RotationAboutZAxis/>
-              </outerFunction>
-                <innerFunction>
-                  <LinearFunction>
-                    <a1>-1</a1>
-                </LinearFunction>
-              </innerFunction>
-            </CompositeFunction>
-          </stateDependentRotation>
+              <RotationAboutZAxis/>
+            </stateDependentRotation>
             <frames>
               <FixedRelativeFrame name="P">
                 <enableOpenMBV>
@@ -138,22 +129,23 @@
                     <ele>0.156111</ele>
                     <ele>0.570275</ele>
                     <ele>0.976471</ele>
-                </xmlVector>
-              </diffuseColor>
+                  </xmlVector>
+                </diffuseColor>
                 <transparency unit="-">0.3</transparency>
                 <length unit="m">
                   <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                     <ele>l/10</ele>
                     <ele>2*l</ele>
                     <ele>l/10</ele>
-                </xmlVector>
-              </length>
-            </Cuboid>
-          </openMBVRigidBody>
+                  </xmlVector>
+                </length>
+              </Cuboid>
+            </openMBVRigidBody>
             <enableOpenMBVFrameC>
               <size unit="dm">1</size>
             </enableOpenMBVFrameC></RigidBody>
-        </objects><links>
+        </objects>
+        <links>
           <KineticExcitation name="Kinetic excitation" xmlns="http://www.mbsim-env.de/MBSim">
             <connect ref2="../Object[Klotz]/Frame[C]"/>
             <forceDirection unit="-">
@@ -237,7 +229,8 @@
               <inputSignal ref="../Link[RewardSignal]"/>
           </ExternSignalSink></Embed>
           <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="1" counterName="n" onlyif="training">
-<?MBSimGUI_EnabledCount 1?>
+
+            <?MBSimGUI_EnabledCount 1?>
             <ExternSignalSource xmlns="http://www.mbsim-env.de/MBSimControl" name="Action">
               <sourceSize>1</sourceSize>
             </ExternSignalSource>
@@ -278,4 +271,5 @@
       <plotStepSize unit="s">1e-2</plotStepSize>
   </DOPRI5Integrator>
   </MBSimProject>
+
 </Embed>
