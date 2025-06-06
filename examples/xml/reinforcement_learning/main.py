@@ -108,7 +108,7 @@ def evalAction(state):
     with torch.no_grad():
       return actorNet(torch.tensor(state, dtype=torch.float32)).numpy()
   else:
-    return (np.random.rand(nA)-0.5)*2*sA
+    return np.random.uniform(-sA,sA,1)
 
 def optimize_model():
   if len(memory) < batchSize:
