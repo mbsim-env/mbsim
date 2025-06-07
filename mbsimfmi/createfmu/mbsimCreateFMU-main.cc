@@ -549,7 +549,7 @@ int main(int argc, char *argv[]) {
 #ifndef _WIN32
     // mbsim depends on python but is not linked on Linux with python -> add python library
     // (on Windows the python library is already added as a dependency)
-    auto [PYMAINLIB, PYMAINLIBFILE] = PythonCpp::getPythonMainLib(installPath.string());
+    auto [PYMAINLIB, PYMAINLIBFILE, _] = PythonCpp::getPythonMainLib(installPath.string());
     copyShLibToFMU(parserNoneVali, fmuFile, path("resources")/"local"/LIBDIR/PYMAINLIBFILE, path("resources")/"local"/LIBDIR,
                    PYMAINLIB+"/"+PYMAINLIBFILE);
 #endif
