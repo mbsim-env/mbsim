@@ -606,3 +606,62 @@
    fun:_ZN10OpenMBVGUI10MainWindowC1ERNSt7__cxx114listINS1_12basic_stringIcSt11char_traitsIcESaIcEEESaIS7_EEEb
    fun:_ZN8MBSimGUI10MainWindow17initInlineOpenMBVEv
 }
+{
+   python init
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:malloc
+   obj:/usr/bin/python*
+   ...
+   obj:/usr/bin/python*
+   fun:_PyEval_EvalFrameDefault
+   fun:_PyFunction_Vectorcall
+}
+{
+   python init
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:malloc
+   fun:PyUnicode_Substring
+   ...
+   obj:/usr/bin/python*
+   fun:_PyEval_EvalFrameDefault
+   fun:_PyFunction_Vectorcall
+}
+{
+   python init
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:_Znwm
+   fun:mbsim_fmiInstantiateModel
+   obj:/usr/lib/x86_64-linux-gnu/libffi.so*
+   obj:/usr/lib/x86_64-linux-gnu/libffi.so*
+   fun:ffi_call
+   obj:/usr/lib/python*/lib-dynload/_ctypes.cpython-*-x86_64-linux-gnu.so
+}
+{
+   python init
+   Memcheck:Free
+   fun:free
+   obj:/usr/bin/python*
+   obj:*/libpython*.so*
+   obj:*/libpython*.so*
+   fun:_PyEval_EvalFrameDefault
+   obj:*/libpython*.so*
+   obj:*/libpython*.so*
+   fun:PyObject_CallMethodObjArgs
+   fun:PyImport_ImportModuleLevelObject
+}
+{
+   python init
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:_Znwm
+   fun:_ZN11xercesc_3_217MemoryManagerImpl8allocateEm
+   ...
+   fun:mbsim_fmiInstantiateModel
+   obj:/usr/lib/x86_64-linux-gnu/libffi.so*
+   obj:/usr/lib/x86_64-linux-gnu/libffi.so*
+   fun:ffi_call
+   obj:/usr/lib/python*/lib-dynload/_ctypes.cpython-*-x86_64-linux-gnu.so
+}
