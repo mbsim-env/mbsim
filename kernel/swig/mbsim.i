@@ -12,6 +12,13 @@
 #include "mbsim/functions/contact/funcpair_planarcontour_point.h"
 #include "mbsim/numerics/functions/newton_method_jacobian_functions.h"
 #include "mbsim/numerics/functions/damping_functions.h"
+#include "mbsim/frames/frame.h"
+#include "mbsim/contours/contour.h"
+#include "mbsim/group.h"
+#include "mbsim/objects/object.h"
+#include "mbsim/links/link.h"
+#include "mbsim/constraints/constraint.h"
+#include "mbsim/observers/observer.h"
 using namespace MBSim; // SWIGs namespace handling seems to be buggy -> this fixes this
 %}
 
@@ -27,6 +34,14 @@ using namespace MBSim; // SWIGs namespace handling seems to be buggy -> this fix
 // wrap the following classes
 %include "mbsim/utils/plotfeatureenum.h"
 %include "mbsim/element.h"
+%template(getByPath_Element   ) MBSim::Element::getByPath<MBSim::Element   >;
+%template(getByPath_Frame     ) MBSim::Element::getByPath<MBSim::Frame     >;
+%template(getByPath_Contour   ) MBSim::Element::getByPath<MBSim::Contour   >;
+%template(getByPath_Group     ) MBSim::Element::getByPath<MBSim::Group     >;
+%template(getByPath_Object    ) MBSim::Element::getByPath<MBSim::Object    >;
+%template(getByPath_Link      ) MBSim::Element::getByPath<MBSim::Link      >;
+%template(getByPath_Constraint) MBSim::Element::getByPath<MBSim::Constraint>;
+%template(getByPath_Observer  ) MBSim::Element::getByPath<MBSim::Observer  >;
 
 
 
