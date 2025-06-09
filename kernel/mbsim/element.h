@@ -28,6 +28,7 @@
 #include "mbsim/namespace.h"
 #include "mbsim/mbsim_event.h"
 #include <hdf5serie/vectorserie.h>
+#include <boost/core/demangle.hpp>
 
 namespace OpenMBV {
   class Group;
@@ -340,7 +341,7 @@ namespace MBSim {
     if(t)
       return t;
     else
-       throwError(std::string("Cannot cast this element to type ")+typeid(T).name()+".");
+       throwError(std::string("Cannot cast this element to type ")+boost::core::demangle(typeid(T).name())+".");
   }
 
 }
