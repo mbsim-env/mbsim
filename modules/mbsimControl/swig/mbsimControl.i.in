@@ -38,6 +38,9 @@ namespace MBSim {
 #include "mbsimControl/link_sensors.h"
 #include "mbsimControl/frame_sensors.h"
 #include "mbsimControl/signal_sensors.h"
+#include "mbsimControl/extern_signal_source.h"
+#include "mbsimControl/extern_signal_sink.h"
+#include "mbsimControl/utils.h"
 %}
 
 %include "mbsimControl/signal_.h"
@@ -45,6 +48,9 @@ namespace MBSim {
 %include "mbsimControl/link_sensors.h"
 %include "mbsimControl/frame_sensors.h"
 %include "mbsimControl/signal_sensors.h"
+%include "mbsimControl/extern_signal_source.h"
+%include "mbsimControl/extern_signal_sink.h"
+%include "mbsimControl/utils.h"
 
 %pythoncode %{
 

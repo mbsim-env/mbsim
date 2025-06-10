@@ -29,8 +29,6 @@ using namespace MBSim;
 
 namespace MBSimControl {
 
-  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, ExternSignalSource)
-
   const PlotFeatureEnum signal;
 
   MBSIM_OBJECTFACTORY_REGISTERENUM(MBSim::PlotFeatureEnum, MBSIMCONTROL, signal)
@@ -45,7 +43,6 @@ namespace MBSimControl {
     }
     Link::init(stage, config);
   }
-
 
   void Signal::plot() {
     if(plotFeature[plotRecursive] and plotFeature[signal])

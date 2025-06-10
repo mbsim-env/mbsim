@@ -19,6 +19,7 @@ libmbsimControl_la_SOURCES = \
   nonlinear_transfer_system.cc\
   massless_spring_damper.cc\
   signal_function.cc\
+  extern_signal_source.cc\
   extern_signal_sink.cc\
   frame_chaser_observer.cc \
   signal_observer.cc \
@@ -28,7 +29,8 @@ libmbsimControl_la_SOURCES = \
   duration.cc \
   state_machine.cc \
   state_machine_sensor.cc \
-  linear_system_analyzer.cc
+  linear_system_analyzer.cc \
+  utils.cc
 
 libmbsimControl_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS)
 libmbsimControl_la_LIBADD = $(DEPS_LIBS)
@@ -63,7 +65,8 @@ mbsimControlinclude_HEADERS = \
   duration.h \
   state_machine.h \
   state_machine_sensor.h \
-  linear_system_analyzer.h
+  linear_system_analyzer.h \
+  utils.h
 
 include $(prefix)/share/mbxmlutils/python/deplibs.mk
 install-exec-hook: deplibs.target

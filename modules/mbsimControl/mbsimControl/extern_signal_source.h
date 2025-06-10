@@ -28,20 +28,12 @@ namespace MBSimControl {
   class ExternSignalSource : public Signal {
     public:
       ExternSignalSource(const std::string &name="") : Signal(name) {}
-      void init(InitStage stage, const MBSim::InitConfigSet &config) override {
-        Signal::init(stage, config);
-        if(stage==unknownStage)
-          // initialize external signal with 0 (required to avoid an undefined value if the signal is not set)
-          s=fmatvec::VecV(getSignalSize(), fmatvec::INIT, 0.0);
-      }
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
       void setSourceSize(int size) { s.resize(size); }
       int getSignalSize() const override { return s.size(); }
       void updateSignal() override { upds = false; }
       void setSignal(const fmatvec::VecV& input) { assert(s.size()==input.size()); s=input; }
-      void initializeUsingXML(xercesc::DOMElement *element) override {
-        Signal::initializeUsingXML(element);
-        setSourceSize(MBXMLUtils::E(MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMCONTROL%"sourceSize"))->getText<int>());
-      }
+      void initializeUsingXML(xercesc::DOMElement *element) override;
   };
 
 }
