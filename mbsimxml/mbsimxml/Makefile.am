@@ -14,13 +14,13 @@ libmbsimflatxml_la_SOURCES = mbsimflatxml.cc
 libmbsimflatxml_la_CPPFLAGS = $(DEPS_CFLAGS) $(PYCPPWRAPPER_CFLAGS) -D_hypot=hypot # -D_hypot is a MSVS/python bug workaround
 libmbsimflatxml_la_LIBADD = $(DEPS_LIBS) $(PYCPPWRAPPER_LIBS) -l@BOOST_FILESYSTEM_LIB@ -l@BOOST_SYSTEM_LIB@ $(EXTRA_LIBS)
 mbsimflatxmlincludedir = $(includedir)/mbsimxml
-mbsimflatxmlinclude_HEADERS = mbsimflatxml.h
+mbsimflatxmlinclude_HEADERS = namespace.h mbsimflatxml.h
 
-libmbsimxml_la_SOURCES = mbsimxml.cc
+libmbsimxml_la_SOURCES = mbsimxml.cc project.cc
 libmbsimxml_la_CPPFLAGS = $(DEPS_CFLAGS) $(PYCPPWRAPPER_CFLAGS) -D_hypot=hypot # -D_hypot is a MSVS/python bug workaround
 libmbsimxml_la_LIBADD = $(DEPS_LIBS) $(PYCPPWRAPPER_LIBS)
 mbsimxmlincludedir = $(includedir)/mbsimxml
-mbsimxmlinclude_HEADERS = mbsimxml.h set_current_path.h
+mbsimxmlinclude_HEADERS = mbsimxml.h set_current_path.h project.h
 
 
 bin_PROGRAMS = mbsimflatxml mbsimxml

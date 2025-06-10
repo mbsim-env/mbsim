@@ -1,4 +1,4 @@
-SUBDIRS = mbsimxml
+SUBDIRS = mbsimxml swig
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = mbsimflatxml.pc mbsimxml.pc

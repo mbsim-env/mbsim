@@ -25,6 +25,7 @@ AC_ARG_WITH(windres,
 AC_SUBST([WINDRES])
 
 AM_CONDITIONAL([COND_WIN32], [test "_$host_os" = "_mingw32"])
+AM_CONDITIONAL([COND_LOWRAM], [test "_$LOWRAM" == "_1"])
 
 PKG_CHECK_MODULES(DEPS, mbsim openmbvcppinterface)
 PKG_CHECK_MODULES(MBXMLUTILS, mbxmlutils)
@@ -97,22 +98,6 @@ if test "$cross_compiling" == "yes"; then
   XC_EXEC_PREFIX=wine
 fi
 
-dnl Check for python
-AC_ARG_WITH([pythonversion], [  --with-pythonversion=VER  The version of python to build for (default: $(python3 --version | sed -re "s/.*\<(3\.[[0-9]]+)\..*/\1/")).],
-  [pythonversion="$withval"],[pythonversion=$(python3 --version | sed -re "s/.*\<(3\.[[0-9]]+)\..*/\1/")])
-PKG_CHECK_MODULES(PYTHON, python-$pythonversion-embed, [pythonfound=yes], [
-  PKG_CHECK_MODULES(PYTHON, python-$pythonversion, [pythonfound=yes], [pythonfound=no])
-])
-PKG_CHECK_MODULES(PYCPPWRAPPER, pycppwrapper)
-if test "_$PYTHON_BIN" == "_"; then
-  PYTHON_BIN="$(pkg-config --variable=exec_prefix python-$pythonversion)/bin/python$pythonversion"
-fi
-PYTHON_PREFIX="$(pkg-config --variable=exec_prefix python-$pythonversion)"
-AC_DEFINE_UNQUOTED([PYTHON_PREFIX], ["$PYTHON_PREFIX"], [Python prefix])
-PYTHON_SUBDIR=$(echo $($XC_EXEC_PREFIX $PYTHON_BIN -c 'import sysconfig; print(sysconfig.get_config_var("LIBDEST")[[len(sysconfig.get_config_var("prefix"))+1:]])' | dos2unix) | sed -re 's|\\|/|g')
-AC_DEFINE_UNQUOTED([PYTHON_SUBDIR], ["$PYTHON_SUBDIR"], [Python library subdir])
-AC_DEFINE_UNQUOTED([PYTHON_VERSION], ["$pythonversion"], [Python version])
-AC_SUBST([PYTHON_VERSION],[$pythonversion])
 
 CPPFLAGS="$CPPFLAGS -pedantic -Wall -Werror -Wno-unknown-pragmas -Wno-long-long"
 if test "_$host_os" != "_mingw32"; then
@@ -122,7 +107,63 @@ fi
 LDFLAGS="$LDFLAGS $LDFLAGS_LIBTOOL -no-undefined -Wl,--no-undefined"
 test "_$host_os" != "_mingw32" && LDFLAGS="$LDFLAGS -Wl,--disable-new-dtags,-rpath,\\\$\$ORIGIN/../lib"
 
-AC_CONFIG_FILES([Makefile mbsimxml/Makefile xmldoc/Makefile mbsimflatxml.pc mbsimxml.pc])
+dnl Check for SWIG
+AC_ARG_WITH([swigpath], [  --with-swigpath=PATH  The path to the swig program.],
+  [swigpath="$withval"],[swigpath=""])
+
+AC_PATH_PROG([swig],[swig],[no],[${swigpath:-$PATH}])
+if test "_$swig" != "_no"; then
+  SWIGVERSION=$($swig -version | sed -rne "s/^SWIG Version (.*)$/\1/p")
+  AC_MSG_NOTICE([Using SWIG version $SWIGVERSION])
+  SWIGVERSION_=$[[$(echo $SWIGVERSION | sed -re "s/^([0-9]+)\.([0-9]+)\.([0-9]+)$/\1*1000000+\2*1000+\3/")]]
+  if test $SWIGVERSION_ -lt $[[3*1000000+0*1000+11]]; then
+    AC_MSG_ERROR([SWIG >= 3.0.11])
+  fi
+else
+  AC_MSG_ERROR([SWIG not found])
+fi
+dnl Check for python
+AC_ARG_WITH([pythonversion], [  --with-pythonversion=VER  The version of python to build for (default: $(python3 --version | sed -re "s/.*\<(3\.[[0-9]]+)\..*/\1/")).],
+  [pythonversion="$withval"],[pythonversion=$(python3 --version | sed -re "s/.*\<(3\.[[0-9]]+)\..*/\1/")])
+PKG_CHECK_MODULES(PYTHON, python-$pythonversion-embed, [pythonfound=yes], [
+  PKG_CHECK_MODULES(PYTHON, python-$pythonversion, [pythonfound=yes], [pythonfound=no])
+])
+PKG_CHECK_MODULES(PYCPPWRAPPER, pycppwrapper)
+if test "$cross_compiling" == "yes" -o "_$host_os" == "_mingw32"; then
+  pythonshext=".pyd"
+else
+  pythonshext=".so"
+fi
+AC_SUBST([PYTHON_SHEXT], [$pythonshext])
+PYTHON_PREFIX="$(pkg-config --variable=exec_prefix python-$pythonversion)"
+AC_DEFINE_UNQUOTED([PYTHON_PREFIX], ["$PYTHON_PREFIX"], [Python prefix])
+PYTHON_SUBDIR=$(echo $($XC_EXEC_PREFIX $PYTHON_BIN -c 'import sysconfig; print(sysconfig.get_config_var("LIBDEST")[[len(sysconfig.get_config_var("prefix"))+1:]])' | dos2unix) | sed -re 's|\\|/|g')
+AC_DEFINE_UNQUOTED([PYTHON_SUBDIR], ["$PYTHON_SUBDIR"], [Python library subdir])
+AC_DEFINE_UNQUOTED([PYTHON_VERSION], ["$pythonversion"], [Python version])
+AC_SUBST([PYTHON_VERSION],[$pythonversion])
+
+if test "_$PYTHON_BIN" == "_"; then
+  PYTHON_BIN="$(pkg-config --variable=exec_prefix python-$pythonversion)/bin/python$pythonversion"
+fi
+AC_SUBST([PYTHON_BIN])
+
+PYTHON_LIBDIR=$($XC_EXEC_PREFIX $PYTHON_BIN -c 'import sysconfig; print(sysconfig.get_config_var("LIBDEST"))' | dos2unix)
+if test "$cross_compiling" == "yes"; then
+  PYTHON_LIBDIR=$(readlink -f $(winepath -u $PYTHON_LIBDIR))
+fi
+if test -d $PYTHON_LIBDIR/python$pythonversion/site-packages/numpy/core/include; then
+  PYTHON_LIBDIR=$PYTHON_LIBDIR/python$pythonversion
+elif test -d $PYTHON_LIBDIR/site-packages/numpy/core/include; then
+  PYTHON_LIBDIR=$PYTHON_LIBDIR
+elif test -d /usr/lib/python3/dist-packages/numpy/core/include; then # debian special handling
+  PYTHON_LIBDIR=/usr/lib/python3
+else
+AC_MSG_ERROR([Numpy header not found in directory $PYTHON_LIBDIR/python$pythonversion/site-packages/numpy/core/include or $PYTHON_LIBDIR/site-packages/numpy/core/include])
+fi
+AC_SUBST([PYTHON_LIBDIR])
+
+
+AC_CONFIG_FILES([Makefile mbsimxml/Makefile xmldoc/Makefile mbsimflatxml.pc mbsimxml.pc swig/Makefile swig/.swig_prepare/Makefile swig/mbsimxml.i])
 AC_CONFIG_FILES([run_error_checks.sh], [chmod +x run_error_checks.sh])
 
 hardcode_into_libs=no # do not add hardcoded libdirs to ltlibraries

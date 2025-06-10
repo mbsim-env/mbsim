@@ -8,10 +8,9 @@
 #include <boost/filesystem/fstream.hpp>
 #include <utility>
 #include <mbxmlutilshelper/dom.h>
+#include "namespace.h"
 
 namespace MBSim {
-
-  const MBXMLUtils::NamespaceURI MBSIMXML("http://www.mbsim-env.de/MBSimXML", {"mx", "mbsimxml"});
 
   class DynamicSystemSolver;
   class Solver;
