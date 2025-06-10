@@ -1,0 +1,23 @@
+// wrap MBSim with directors (and all protected class data)
+%module(directors="1", allprotected="1") mbsimxml
+
+// include the general mbsim SWIG configuration (used by all MBSim modules)
+%import  "@prefix@/share/mbsim/fmatvec.i"
+%include "@prefix@/share/mbsim/mbsim_include.i"
+
+// includes needed in the generated swig c++ code
+%{
+namespace MBSim {
+}
+#include <config.h> // to use consistent preprocessor defines
+#include "mbsimxml/project.h"
+%}
+
+%include "mbsimxml/project.h"
+
+%pythoncode %{
+
+# XML namespace of this module (prefixed with { and postfixed with })
+NS="{http://www.mbsim-env.de/MBSim}"
+
+%}
