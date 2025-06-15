@@ -4,6 +4,7 @@
 #include <stdexcept>
 #include <utility>
 #include <mbxmlutilshelper/shared_library.h>
+#include <mbxmlutils/pycppwrapper_mainlib.h>
 
 #define BOOST_ERROR_CODE_HEADER_ONLY
 #include <mbxmlutilshelper/thislinelocation.h>
@@ -71,6 +72,12 @@ extern "C" {
       // remove trailing /binaries/<os>/mbism.so
       for(int i=0; i<3; ++i)
         s=fmuDir.find_last_of("/\\", s)-1;
+#ifndef _WIN32
+      // load python
+      auto [_, PYMAINLIBFILE, pythonLoaded] = PythonCpp::getPythonMainLib({});
+      if(!pythonLoaded)
+        SharedLibrary::load(fmuDir.substr(0, s+1)+"/resources/local/"+LIBDIR+"/"+PYMAINLIBFILE, true);
+#endif
       // load main mbsim FMU library
       auto fmiInstanceCreate=SharedLibrary::getSymbol<fmiInstanceCreatePtr>(
         fmuDir.substr(0, s+1)+"/resources/local/"+LIBDIR+"/libmbsimXXX_fmi"+SHEXT, "fmiInstanceCreate");

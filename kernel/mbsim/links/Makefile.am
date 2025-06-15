@@ -37,7 +37,7 @@ liblink_la_SOURCES = link.cc\
 		     generalized_initial_velocity.cc
 
 liblink_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS) 
-liblink_la_LIBADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS) 
+liblink_la_LIBADD = $(LDFLAGS_NOUNDEF) $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS) 
 
 linkincludedir = $(includedir)/mbsim/links
 linkinclude_HEADERS = link.h\

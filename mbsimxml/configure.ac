@@ -104,6 +104,12 @@ PKG_CHECK_MODULES(PYTHON, python-$pythonversion-embed, [pythonfound=yes], [
   PKG_CHECK_MODULES(PYTHON, python-$pythonversion, [pythonfound=yes], [pythonfound=no])
 ])
 PKG_CHECK_MODULES(PYCPPWRAPPER, pycppwrapper)
+if test "_$host_os" != "_mingw32"; then
+  PYCPPWRAPPER_LIBS_MAIN="$(pkg-config --variable=Libs_main pycppwrapper)"
+else
+  PYCPPWRAPPER_LIBS_MAIN=""
+fi
+AC_SUBST([PYCPPWRAPPER_LIBS_MAIN])
 if test "_$PYTHON_BIN" == "_"; then
   PYTHON_BIN="$(pkg-config --variable=exec_prefix python-$pythonversion)/bin/python$pythonversion"
 fi
@@ -119,7 +125,14 @@ if test "_$host_os" != "_mingw32"; then
   CPPFLAGS="$CPPFLAGS -fPIC"
 fi
 
-LDFLAGS="$LDFLAGS $LDFLAGS_LIBTOOL -no-undefined -Wl,--no-undefined"
+if test "_$host_os" != "_mingw32"; then
+  LDFLAGS="$LDFLAGS $LDFLAGS_LIBTOOL"
+  LDFLAGS_NOUNDEF="-no-undefined -Wl,--no-undefined"
+else
+  LDFLAGS="$LDFLAGS $LDFLAGS_LIBTOOL -no-undefined -Wl,--no-undefined"
+  LDFLAGS_NOUNDEF=""
+fi
+AC_SUBST([LDFLAGS_NOUNDEF], [$LDFLAGS_NOUNDEF])
 test "_$host_os" != "_mingw32" && LDFLAGS="$LDFLAGS -Wl,--disable-new-dtags,-rpath,\\\$\$ORIGIN/../lib"
 
 AC_CONFIG_FILES([Makefile mbsimxml/Makefile xmldoc/Makefile mbsimflatxml.pc mbsimxml.pc])

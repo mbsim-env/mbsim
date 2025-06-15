@@ -21,7 +21,7 @@ libkinematics_la_SOURCES = translation_along_x_axis.cc\
 
 kinematicsincludedir = $(includedir)/mbsim/functions/kinematics
 
-libkinematics_la_LIBADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
+libkinematics_la_LIBADD = $(LDFLAGS_NOUNDEF) $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
 libkinematics_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS)
 
 kinematicsinclude_HEADERS = kinematics.h\
