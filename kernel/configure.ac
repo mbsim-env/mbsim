@@ -135,6 +135,12 @@ else
   AC_MSG_ERROR([Numpy header not found in directory $PYTHON_LIBDIR/python$pythonversion/site-packages/numpy/core/include or $PYTHON_LIBDIR/site-packages/numpy/core/include])
 fi
 AC_SUBST([PYTHON_LIBDIR])
+if test "_$host_os" != "_mingw32"; then
+  PYTHON_LIBS_OPT=""
+else
+  PYTHON_LIBS_OPT="$PYTHON_LIBS"
+fi
+AC_SUBST([PYTHON_LIBS_OPT])
 
 AC_PATH_PROG([swig],[swig],[no],[${swigpath:-$PATH}])
 if test "_$swig" != "_no"; then
@@ -153,7 +159,14 @@ AC_SUBST([MBXMLUTILSBINDIR],[$(pkg-config mbxmlutils --variable BINDIR)])
 AC_SUBST([MBXMLUTILSDOCDIR],[$(pkg-config mbxmlutils --variable DOCDIR)])
 AC_SUBST([MBXMLUTILSSCHEMADIR],[$(pkg-config mbxmlutils --variable SCHEMADIR)])
 
-LDFLAGS="$LDFLAGS $LDFLAGS_LIBTOOL -no-undefined -Wl,--no-undefined"
+if test "_$host_os" != "_mingw32"; then
+  LDFLAGS="$LDFLAGS $LDFLAGS_LIBTOOL"
+  LDFLAGS_NOUNDEF="-no-undefined -Wl,--no-undefined"
+else
+  LDFLAGS="$LDFLAGS $LDFLAGS_LIBTOOL -no-undefined -Wl,--no-undefined"
+  LDFLAGS_NOUNDEF=""
+fi
+AC_SUBST([LDFLAGS_NOUNDEF], [$LDFLAGS_NOUNDEF])
 test "_$host_os" != "_mingw32" && LDFLAGS="$LDFLAGS -Wl,--disable-new-dtags,-rpath,\\\$\$ORIGIN/../lib"
 
 AM_EXTRA_RECURSIVE_TARGETS([swig-unwrapped])

@@ -10,7 +10,7 @@ libframe_la_SOURCES = frame.cc\
 		      floating_contour_frame.cc
 
 libframe_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS) 
-libframe_la_LIBADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS) 
+libframe_la_LIBADD = $(LDFLAGS_NOUNDEF) $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS) 
 
 frameincludedir = $(includedir)/mbsim/frames
 frameinclude_HEADERS = frame.h\

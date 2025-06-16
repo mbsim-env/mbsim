@@ -33,7 +33,7 @@ libmbsimControl_la_SOURCES = \
   utils.cc
 
 libmbsimControl_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS)
-libmbsimControl_la_LIBADD = $(DEPS_LIBS)
+libmbsimControl_la_LIBADD = $(LDFLAGS_NOUNDEF) $(DEPS_LIBS)
 
 mbsimControlincludedir = $(includedir)/mbsimControl
 mbsimControlinclude_HEADERS = \

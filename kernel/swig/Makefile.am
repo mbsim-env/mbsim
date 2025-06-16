@@ -80,7 +80,7 @@ AM_CPPFLAGS = -I$(top_srcdir) -Dprotected=public -DMBSIM_COMPILE_SWIG $(PYTHON_C
   $(DEPS_CFLAGS) -Wno-unused-label -Wno-array-bounds -D_hypot=hypot # -D_hypot is a MSVS/python bug workaround
 
 # link flags for libtool libraries
-_fmatvec_la_LDFLAGS = -module -shrext $(PYTHON_SHEXT) -avoid-version $(PYTHON_LIBS) $(FMATVEC_LIBS)
+_fmatvec_la_LDFLAGS = -module -shrext $(PYTHON_SHEXT) -avoid-version $(PYTHON_LIBS_OPT) $(FMATVEC_LIBS)
 _mbsim_la_LDFLAGS = $(AM_LDFLAGS) ../mbsim/libmbsim.la $(PYCPPWRAPPER_LIBS)
 # set default link flags for all __mbsim_partXXX.la targets
 AM_LDFLAGS = -module -shrext $(PYTHON_SHEXT) -avoid-version ../mbsim/libmbsim.la $(PYCPPWRAPPER_LIBS) $(DEPS_LIBS)

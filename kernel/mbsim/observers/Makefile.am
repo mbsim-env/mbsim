@@ -12,7 +12,7 @@ libobserver_la_SOURCES = observer.cc\
 
 observerincludedir = $(includedir)/mbsim/observers
 
-libobserver_la_LIBADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
+libobserver_la_LIBADD = $(LDFLAGS_NOUNDEF) $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
 libobserver_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS)
 
 observerinclude_HEADERS = observer.h\

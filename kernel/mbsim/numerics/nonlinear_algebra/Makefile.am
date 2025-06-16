@@ -5,7 +5,7 @@ libnonlinear_algebra_la_SOURCES = multi_dimensional_fixpoint_solver.cc\
 nonlinear_algebraincludedir = $(includedir)/mbsim/numerics/nonlinear_algebra
 
 libnonlinear_algebra_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS)
-libnonlinear_algebra_la_LIBADD = $(DEPS_LIBS)
+libnonlinear_algebra_la_LIBADD = $(LDFLAGS_NOUNDEF) $(DEPS_LIBS)
 
 nonlinear_algebrainclude_HEADERS = multi_dimensional_fixpoint_solver.h\
                                    multi_dimensional_newton_method.h

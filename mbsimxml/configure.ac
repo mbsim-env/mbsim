@@ -99,14 +99,6 @@ if test "$cross_compiling" == "yes"; then
 fi
 
 
-CPPFLAGS="$CPPFLAGS -pedantic -Wall -Werror -Wno-unknown-pragmas -Wno-long-long"
-if test "_$host_os" != "_mingw32"; then
-  CPPFLAGS="$CPPFLAGS -fPIC"
-fi
-
-LDFLAGS="$LDFLAGS $LDFLAGS_LIBTOOL -no-undefined -Wl,--no-undefined"
-test "_$host_os" != "_mingw32" && LDFLAGS="$LDFLAGS -Wl,--disable-new-dtags,-rpath,\\\$\$ORIGIN/../lib"
-
 dnl Check for SWIG
 AC_ARG_WITH([swigpath], [  --with-swigpath=PATH  The path to the swig program.],
   [swigpath="$withval"],[swigpath=""])
@@ -129,12 +121,15 @@ PKG_CHECK_MODULES(PYTHON, python-$pythonversion-embed, [pythonfound=yes], [
   PKG_CHECK_MODULES(PYTHON, python-$pythonversion, [pythonfound=yes], [pythonfound=no])
 ])
 PKG_CHECK_MODULES(PYCPPWRAPPER, pycppwrapper)
-if test "$cross_compiling" == "yes" -o "_$host_os" == "_mingw32"; then
-  pythonshext=".pyd"
+if test "_$host_os" != "_mingw32"; then
+  PYCPPWRAPPER_LIBS_MAIN="$(pkg-config --variable=Libs_main pycppwrapper)"
 else
-  pythonshext=".so"
+  PYCPPWRAPPER_LIBS_MAIN=""
 fi
-AC_SUBST([PYTHON_SHEXT], [$pythonshext])
+AC_SUBST([PYCPPWRAPPER_LIBS_MAIN])
+if test "_$PYTHON_BIN" == "_"; then
+  PYTHON_BIN="$(pkg-config --variable=exec_prefix python-$pythonversion)/bin/python$pythonversion"
+fi
 PYTHON_PREFIX="$(pkg-config --variable=exec_prefix python-$pythonversion)"
 AC_DEFINE_UNQUOTED([PYTHON_PREFIX], ["$PYTHON_PREFIX"], [Python prefix])
 PYTHON_SUBDIR=$(echo $($XC_EXEC_PREFIX $PYTHON_BIN -c 'import sysconfig; print(sysconfig.get_config_var("LIBDEST")[[len(sysconfig.get_config_var("prefix"))+1:]])' | dos2unix) | sed -re 's|\\|/|g')
@@ -142,26 +137,20 @@ AC_DEFINE_UNQUOTED([PYTHON_SUBDIR], ["$PYTHON_SUBDIR"], [Python library subdir])
 AC_DEFINE_UNQUOTED([PYTHON_VERSION], ["$pythonversion"], [Python version])
 AC_SUBST([PYTHON_VERSION],[$pythonversion])
 
-if test "_$PYTHON_BIN" == "_"; then
-  PYTHON_BIN="$(pkg-config --variable=exec_prefix python-$pythonversion)/bin/python$pythonversion"
+CPPFLAGS="$CPPFLAGS -pedantic -Wall -Werror -Wno-unknown-pragmas -Wno-long-long"
+if test "_$host_os" != "_mingw32"; then
+  CPPFLAGS="$CPPFLAGS -fPIC"
 fi
-AC_SUBST([PYTHON_BIN])
 
-PYTHON_LIBDIR=$($XC_EXEC_PREFIX $PYTHON_BIN -c 'import sysconfig; print(sysconfig.get_config_var("LIBDEST"))' | dos2unix)
-if test "$cross_compiling" == "yes"; then
-  PYTHON_LIBDIR=$(readlink -f $(winepath -u $PYTHON_LIBDIR))
-fi
-if test -d $PYTHON_LIBDIR/python$pythonversion/site-packages/numpy/core/include; then
-  PYTHON_LIBDIR=$PYTHON_LIBDIR/python$pythonversion
-elif test -d $PYTHON_LIBDIR/site-packages/numpy/core/include; then
-  PYTHON_LIBDIR=$PYTHON_LIBDIR
-elif test -d /usr/lib/python3/dist-packages/numpy/core/include; then # debian special handling
-  PYTHON_LIBDIR=/usr/lib/python3
+if test "_$host_os" != "_mingw32"; then
+  LDFLAGS="$LDFLAGS $LDFLAGS_LIBTOOL"
+  LDFLAGS_NOUNDEF="-no-undefined -Wl,--no-undefined"
 else
-AC_MSG_ERROR([Numpy header not found in directory $PYTHON_LIBDIR/python$pythonversion/site-packages/numpy/core/include or $PYTHON_LIBDIR/site-packages/numpy/core/include])
+  LDFLAGS="$LDFLAGS $LDFLAGS_LIBTOOL -no-undefined -Wl,--no-undefined"
+  LDFLAGS_NOUNDEF=""
 fi
-AC_SUBST([PYTHON_LIBDIR])
-
+AC_SUBST([LDFLAGS_NOUNDEF], [$LDFLAGS_NOUNDEF])
+test "_$host_os" != "_mingw32" && LDFLAGS="$LDFLAGS -Wl,--disable-new-dtags,-rpath,\\\$\$ORIGIN/../lib"
 
 AC_CONFIG_FILES([Makefile mbsimxml/Makefile xmldoc/Makefile mbsimflatxml.pc mbsimxml.pc swig/Makefile swig/.swig_prepare/Makefile swig/mbsimxml.i])
 AC_CONFIG_FILES([run_error_checks.sh], [chmod +x run_error_checks.sh])

@@ -26,11 +26,12 @@ mbsimxmlinclude_HEADERS = mbsimxml.h set_current_path.h project.h
 bin_PROGRAMS = mbsimflatxml mbsimxml
 
 mbsimflatxml_CPPFLAGS = $(DEPS_CFLAGS)
-mbsimflatxml_LDFLAGS = -L.
+mbsimflatxml_LDFLAGS = -L.  $(PYCPPWRAPPER_LIBS_MAIN)
 mbsimflatxml_LDADD = $(DEPS_LIBS) ./libmbsimflatxml.la $(PYCPPWRAPPER_LIBS) -lmbsim -l@BOOST_TIMER_LIB@ -l@BOOST_CHRONO_LIB@ $(MAYBE_WIN32_mbsimflatxml_OBJ)
 mbsimflatxml_SOURCES = mbsimflatxml-main.cc
 
 mbsimxml_CPPFLAGS = $(DEPS_CFLAGS) $(MBXMLUTILS_CFLAGS)
+mbsimxml_LDFLAGS = $(PYCPPWRAPPER_LIBS_MAIN)
 mbsimxml_LDADD = ./libmbsimflatxml.la ./libmbsimxml.la $(DEPS_LIBS) $(PYCPPWRAPPER_LIBS) $(MBXMLUTILS_LIBS) -l@BOOST_FILESYSTEM_LIB@ -l@BOOST_SYSTEM_LIB@ $(MAYBE_WIN32_mbsimxml_OBJ)
 mbsimxml_SOURCES = mbsimxml-main.cc
 

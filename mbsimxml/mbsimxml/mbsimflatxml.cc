@@ -145,6 +145,7 @@ set<boost::filesystem::path> MBSimXML::loadModules(const set<boost::filesystem::
           if(E(e)->getTagName()==MBSIMMODULE%"PythonModule") {
             string moduleName=E(e)->getAttribute("moduleName");
             initPython();
+            GilState gil;
             boost::filesystem::path location=E(e)->convertPath(E(e)->getAttribute("location"));
             if(stage==SearchPath) {
               // add python path

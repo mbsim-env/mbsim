@@ -9,7 +9,7 @@ AM_CPPFLAGS = $(FMATVEC_CFLAGS)
 LDADD = $(FMATVEC_LIBS)
 
 libnurbs_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS)
-libnurbs_la_LIBADD = $(DEPS_LIBS)
+libnurbs_la_LIBADD = $(LDFLAGS_NOUNDEF) $(DEPS_LIBS)
 
 nurbsinclude_HEADERS = nurbs_curve.h\
                        nurbs_defs.h\

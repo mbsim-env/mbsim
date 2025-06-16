@@ -116,6 +116,7 @@ shared_ptr<DOMDocument> getMBSimXMLCatalog(const set<bfs::path> &searchDirs) {
           if(E(e)->getTagName()==MBSIMMODULE%"PythonGenerated") {
             string moduleName=E(e)->getAttribute("moduleName");
             initPython();
+            GilState gil;
             boost::filesystem::path location=E(e)->convertPath(E(e)->getAttribute("location"));
             if(stage==SearchPath) {
               // add python path

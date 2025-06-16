@@ -45,7 +45,7 @@ libcontactkinematics_la_SOURCES = contact_kinematics.cc\
 contactkinematicsincludedir = $(includedir)/mbsim/contact_kinematics
 
 libcontactkinematics_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS)
-libcontactkinematics_la_LIBADD =  $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
+libcontactkinematics_la_LIBADD =  $(LDFLAGS_NOUNDEF) $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
 
 contactkinematicsinclude_HEADERS = contact_kinematics.h\
 				   point_line.h\

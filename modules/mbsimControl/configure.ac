@@ -45,7 +45,14 @@ if test $doxygen = "no" ; then
   AC_MSG_RESULT([cannot generate documentation. 'doxygen' required.])
 fi
 
-LDFLAGS="$LDFLAGS $LDFLAGS_LIBTOOL -no-undefined -Wl,--no-undefined"
+if test "_$host_os" != "_mingw32"; then
+  LDFLAGS="$LDFLAGS $LDFLAGS_LIBTOOL"
+  LDFLAGS_NOUNDEF="-no-undefined -Wl,--no-undefined"
+else
+  LDFLAGS="$LDFLAGS $LDFLAGS_LIBTOOL -no-undefined -Wl,--no-undefined"
+  LDFLAGS_NOUNDEF=""
+fi
+AC_SUBST([LDFLAGS_NOUNDEF], [$LDFLAGS_NOUNDEF])
 test "_$host_os" != "_mingw32" && LDFLAGS="$LDFLAGS -Wl,--disable-new-dtags,-rpath,\\\$\$ORIGIN/../lib"
 
 if test "$cross_compiling" == "yes"; then

@@ -57,6 +57,13 @@ PKG_CHECK_MODULES(OPENMBV, [openmbv])
 
 PKG_CHECK_MODULES(MBXMLUTILS, [mbxmlutils])
 
+if test "_$host_os" != "_mingw32"; then
+  PYCPPWRAPPER_LIBS_MAIN="$(pkg-config --variable=Libs_main pycppwrapper)"
+else
+  PYCPPWRAPPER_LIBS_MAIN=""
+fi
+AC_SUBST([PYCPPWRAPPER_LIBS_MAIN])
+
 AC_ARG_ENABLE([inlineombv],[  --disable-inlineombv  disable inline openmbv],[inlineombv="no"],[inlineombv="yes"]) if test "$inlineombv" = "yes"; then
   AC_DEFINE([INLINE_OPENMBV],[1],[Use inline openmbv])
 fi
