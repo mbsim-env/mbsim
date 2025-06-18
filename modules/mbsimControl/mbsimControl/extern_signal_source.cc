@@ -41,15 +41,3 @@ namespace MBSimControl {
   }
 
 }
-
-namespace MBSim {
-  template<> MBSimControl::ExternSignalSource* Element::getByPath(const std::string &path, bool initialCaller) const {
-    Element *e = getByPathElement(path, initialCaller);
-    auto *t=dynamic_cast<MBSimControl::ExternSignalSource*>(e);
-    if(t)
-      return t;
-    else
-      throwError(std::string("Cannot cast this element to type ")+typeid(MBSimControl::ExternSignalSource).name()+".");
-  }
-}
-

@@ -25,6 +25,8 @@ AC_ARG_WITH(windres,
 AC_SUBST([WINDRES])
 
 AM_CONDITIONAL([COND_WIN32], [test "_$host_os" = "_mingw32"])
+
+AC_ARG_WITH([lowram], [  --with-lowram  Disable parallel build for subdirs known to need mutch memory], [LOWRAM="1"], [LOWRAM="0"])
 AM_CONDITIONAL([COND_LOWRAM], [test "_$LOWRAM" == "_1"])
 
 PKG_CHECK_MODULES(DEPS, mbsim openmbvcppinterface)
@@ -114,6 +116,7 @@ if test "_$swig" != "_no"; then
 else
   AC_MSG_ERROR([SWIG not found])
 fi
+
 dnl Check for python
 AC_ARG_WITH([pythonversion], [  --with-pythonversion=VER  The version of python to build for (default: $(python3 --version | sed -re "s/.*\<(3\.[[0-9]]+)\..*/\1/")).],
   [pythonversion="$withval"],[pythonversion=$(python3 --version | sed -re "s/.*\<(3\.[[0-9]]+)\..*/\1/")])
@@ -121,6 +124,12 @@ PKG_CHECK_MODULES(PYTHON, python-$pythonversion-embed, [pythonfound=yes], [
   PKG_CHECK_MODULES(PYTHON, python-$pythonversion, [pythonfound=yes], [pythonfound=no])
 ])
 PKG_CHECK_MODULES(PYCPPWRAPPER, pycppwrapper)
+if test "$cross_compiling" == "yes" -o "_$host_os" == "_mingw32"; then
+  pythonshext=".pyd"
+else
+  pythonshext=".so"
+fi
+AC_SUBST([PYTHON_SHEXT], [$pythonshext])
 if test "_$host_os" != "_mingw32"; then
   PYCPPWRAPPER_LIBS_MAIN="$(pkg-config --variable=Libs_main pycppwrapper)"
 else
@@ -130,10 +139,6 @@ AC_SUBST([PYCPPWRAPPER_LIBS_MAIN])
 if test "_$PYTHON_BIN" == "_"; then
   PYTHON_BIN="$(pkg-config --variable=exec_prefix python-$pythonversion)/bin/python$pythonversion"
 fi
-PYTHON_PREFIX="$(pkg-config --variable=exec_prefix python-$pythonversion)"
-AC_DEFINE_UNQUOTED([PYTHON_PREFIX], ["$PYTHON_PREFIX"], [Python prefix])
-PYTHON_SUBDIR=$(echo $($XC_EXEC_PREFIX $PYTHON_BIN -c 'import sysconfig; print(sysconfig.get_config_var("LIBDEST")[[len(sysconfig.get_config_var("prefix"))+1:]])' | dos2unix) | sed -re 's|\\|/|g')
-AC_DEFINE_UNQUOTED([PYTHON_SUBDIR], ["$PYTHON_SUBDIR"], [Python library subdir])
 AC_DEFINE_UNQUOTED([PYTHON_VERSION], ["$pythonversion"], [Python version])
 AC_SUBST([PYTHON_VERSION],[$pythonversion])
 

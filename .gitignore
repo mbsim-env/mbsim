@@ -79,6 +79,8 @@ mbsimgui/test-driver
 mbsimxml/INSTALL
 mbsimxml/compile
 mbsimxml/Makefile.in
+mbsimxml/swig/Makefile.in
+mbsimxml/swig/.swig_prepare/Makefile.in
 mbsimxml/aclocal.m4
 mbsimxml/autom4te.cache/
 mbsimxml/config.guess

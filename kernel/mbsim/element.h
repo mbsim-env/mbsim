@@ -341,7 +341,7 @@ namespace MBSim {
     if(t)
       return t;
     else
-       throwError(std::string("Cannot cast this element to type ")+boost::core::demangle(typeid(T).name())+".");
+      throwError(std::string("Cannot cast this element to type ")+boost::core::demangle(typeid(T).name())+".");
   }
 
 }

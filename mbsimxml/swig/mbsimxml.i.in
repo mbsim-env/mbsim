@@ -18,6 +18,6 @@ namespace MBSim {
 %pythoncode %{
 
 # XML namespace of this module (prefixed with { and postfixed with })
-NS="{http://www.mbsim-env.de/MBSim}"
+NS="{http://www.mbsim-env.de/MBSimXML}"
 
 %}
