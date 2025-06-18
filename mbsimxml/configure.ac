@@ -139,6 +139,8 @@ AC_SUBST([PYCPPWRAPPER_LIBS_MAIN])
 if test "_$PYTHON_BIN" == "_"; then
   PYTHON_BIN="$(pkg-config --variable=exec_prefix python-$pythonversion)/bin/python$pythonversion"
 fi
+PYTHON_PREFIX="$(pkg-config --variable=exec_prefix python-$pythonversion)"
+AC_DEFINE_UNQUOTED([PYTHON_PREFIX], ["$PYTHON_PREFIX"], [Python prefix])
 AC_DEFINE_UNQUOTED([PYTHON_VERSION], ["$pythonversion"], [Python version])
 AC_SUBST([PYTHON_VERSION],[$pythonversion])
 
