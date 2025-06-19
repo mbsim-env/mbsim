@@ -147,3 +147,31 @@ using namespace fmatvec; // SWIGs namespace handling seems to be buggy -> this f
 %include "mbsim/constitutive_laws/generalized_impact_law.h"
 %include "mbsim/constitutive_laws/bilateral_impact.h"
 %include "mbsim/constitutive_laws/unilateral_newton_impact.h"
+
+%inline %{
+  namespace MBSim {
+    // create cast functions named castElementTo_TYPE where TYPE is the argument
+    CAST_MBSIM_ELEMENT_TO(FrictionForceLaw)
+    CAST_MBSIM_ELEMENT_TO(PlanarCoulombFriction)
+    CAST_MBSIM_ELEMENT_TO(PlanarStribeckFriction)
+    CAST_MBSIM_ELEMENT_TO(RegularizedFriction)
+    CAST_MBSIM_ELEMENT_TO(RegularizedPlanarFriction)
+    CAST_MBSIM_ELEMENT_TO(RegularizedSpatialFriction)
+    CAST_MBSIM_ELEMENT_TO(SpatialCoulombFriction)
+    CAST_MBSIM_ELEMENT_TO(SpatialStribeckFriction)
+    CAST_MBSIM_ELEMENT_TO(FrictionImpactLaw)
+    CAST_MBSIM_ELEMENT_TO(PlanarCoulombImpact)
+    CAST_MBSIM_ELEMENT_TO(PlanarStribeckImpact)
+    CAST_MBSIM_ELEMENT_TO(SpatialCoulombImpact)
+    CAST_MBSIM_ELEMENT_TO(SpatialStribeckImpact)
+    CAST_MBSIM_ELEMENT_TO(GeneralizedForceLaw)
+    CAST_MBSIM_ELEMENT_TO(BilateralConstraint)
+    CAST_MBSIM_ELEMENT_TO(RegularizedConstraint)
+    CAST_MBSIM_ELEMENT_TO(RegularizedBilateralConstraint)
+    CAST_MBSIM_ELEMENT_TO(RegularizedUnilateralConstraint)
+    CAST_MBSIM_ELEMENT_TO(UnilateralConstraint)
+    CAST_MBSIM_ELEMENT_TO(GeneralizedImpactLaw)
+    CAST_MBSIM_ELEMENT_TO(BilateralImpact)
+    CAST_MBSIM_ELEMENT_TO(UnilateralNewtonImpact)
+  }
+%}

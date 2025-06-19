@@ -52,6 +52,28 @@ namespace MBSim {
 %include "mbsimControl/extern_signal_sink.h"
 %include "mbsimControl/utils.h"
 
+%inline %{
+  namespace MBSimControl {
+    // create cast functions named castElementTo_TYPE where TYPE is the argument
+    CAST_MBSIM_ELEMENT_TO(Signal)
+    CAST_MBSIM_ELEMENT_TO(Sensor)
+    CAST_MBSIM_ELEMENT_TO(LinkSensor)
+    CAST_MBSIM_ELEMENT_TO(GeneralizedRelativePositionSensor)
+    CAST_MBSIM_ELEMENT_TO(GeneralizedRelativeVelocitySensor)
+    CAST_MBSIM_ELEMENT_TO(GeneralizedForceSensor)
+    CAST_MBSIM_ELEMENT_TO(FrameSensor)
+    CAST_MBSIM_ELEMENT_TO(PositionSensor)
+    CAST_MBSIM_ELEMENT_TO(OrientationSensor)
+    CAST_MBSIM_ELEMENT_TO(VelocitySensor)
+    CAST_MBSIM_ELEMENT_TO(AngularVelocitySensor)
+    CAST_MBSIM_ELEMENT_TO(AccelerationSensor)
+    CAST_MBSIM_ELEMENT_TO(AngularAccelerationSensor)
+    CAST_MBSIM_ELEMENT_TO(SignalSensor)
+    CAST_MBSIM_ELEMENT_TO(ExternSignalSource)
+    CAST_MBSIM_ELEMENT_TO(ExternSignalSink)
+  }
+%}
+
 %pythoncode %{
 
 # XML namespace of this module (prefixed with { and postfixed with })

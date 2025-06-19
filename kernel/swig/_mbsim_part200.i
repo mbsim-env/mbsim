@@ -98,3 +98,26 @@ using namespace fmatvec; // SWIGs namespace handling seems to be buggy -> this f
 %include "mbsim/contours/cuboid.h"
 %include "mbsim/contours/room.h"
 %include "mbsim/contours/edge.h"
+
+%inline %{
+  namespace MBSim {
+    // create cast functions named castElementTo_TYPE where TYPE is the argument
+    CAST_MBSIM_ELEMENT_TO(Constraint)
+    CAST_MBSIM_ELEMENT_TO(MechanicalConstraint)
+    CAST_MBSIM_ELEMENT_TO(GeneralizedConstraint)
+    CAST_MBSIM_ELEMENT_TO(JointConstraint)
+    CAST_MBSIM_ELEMENT_TO(GeneralizedDualConstraint)
+    CAST_MBSIM_ELEMENT_TO(GeneralizedAccelerationConstraint)
+    CAST_MBSIM_ELEMENT_TO(GeneralizedPositionConstraint)
+    CAST_MBSIM_ELEMENT_TO(GeneralizedVelocityConstraint)
+    CAST_MBSIM_ELEMENT_TO(Contour)
+    CAST_MBSIM_ELEMENT_TO(ContourInterpolation)
+    CAST_MBSIM_ELEMENT_TO(ContourQuad)
+    CAST_MBSIM_ELEMENT_TO(RigidContour)
+    CAST_MBSIM_ELEMENT_TO(Circle)
+    CAST_MBSIM_ELEMENT_TO(CompoundContour)
+    CAST_MBSIM_ELEMENT_TO(Cuboid)
+    CAST_MBSIM_ELEMENT_TO(Room)
+    CAST_MBSIM_ELEMENT_TO(Edge)
+  }
+%}

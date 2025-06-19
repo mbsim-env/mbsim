@@ -201,6 +201,11 @@ void _typemapInDOMElement(xercesc::DOMElement *&_1, PyObject *_input) {
 
 %}
 
+%inline %{
+// helper define for casting MBSim::Element
+#define CAST_MBSIM_ELEMENT_TO(T) T* castElementTo_##T(MBSim::Element *e) { return dynamic_cast<T*>(e); }
+%}
+
 %init %{
 // create a global, cross python modules, mbsim object using python capsule (in a dummy module named _mbsimGlobalsModule)
 mbsimGlobals=static_cast<_MBSimGlobals*>(PyCapsule_Import("mbsim._mbsimGlobals", false));

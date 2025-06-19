@@ -164,3 +164,11 @@ using namespace fmatvec; // SWIGs namespace handling seems to be buggy -> this f
 %include "mbsim/utils/colors.h"
 %include "mbsim/links/tyre_contact.h"
 %include "mbsim/constitutive_laws/tyre_model.h"
+
+%inline %{
+  namespace MBSim {
+    // create cast functions named castElementTo_TYPE where TYPE is the argument
+    CAST_MBSIM_ELEMENT_TO(TyreContact)
+    CAST_MBSIM_ELEMENT_TO(TyreModel)
+  }
+%}

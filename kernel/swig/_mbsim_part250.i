@@ -112,3 +112,25 @@ using namespace fmatvec; // SWIGs namespace handling seems to be buggy -> this f
 %include "mbsim/group.h"
 %rename(global_) MBSim::DynamicSystemSolver::global; // global is a python keyword -> rename it to global_
 %include "mbsim/dynamic_system_solver.h"
+
+%inline %{
+  namespace MBSim {
+    // create cast functions named castElementTo_TYPE where TYPE is the argument
+    CAST_MBSIM_ELEMENT_TO(Frustum)
+    CAST_MBSIM_ELEMENT_TO(Line)
+    CAST_MBSIM_ELEMENT_TO(LineSegment)
+    CAST_MBSIM_ELEMENT_TO(PlanarContour)
+    CAST_MBSIM_ELEMENT_TO(PlanarFrustum)
+    CAST_MBSIM_ELEMENT_TO(Plane)
+    CAST_MBSIM_ELEMENT_TO(Plate)
+    CAST_MBSIM_ELEMENT_TO(PlaneWithFrustum)
+    CAST_MBSIM_ELEMENT_TO(Point)
+    CAST_MBSIM_ELEMENT_TO(PolynomialFrustum)
+    CAST_MBSIM_ELEMENT_TO(SpatialContour)
+    CAST_MBSIM_ELEMENT_TO(Sphere)
+    CAST_MBSIM_ELEMENT_TO(DynamicSystem)
+    CAST_MBSIM_ELEMENT_TO(Graph)
+    CAST_MBSIM_ELEMENT_TO(Group)
+    CAST_MBSIM_ELEMENT_TO(DynamicSystemSolver)
+  }
+%}

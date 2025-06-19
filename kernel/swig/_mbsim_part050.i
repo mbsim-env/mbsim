@@ -56,3 +56,19 @@ using namespace fmatvec; // SWIGs namespace handling seems to be buggy -> this f
 %include "mbsim/frames/floating_relative_contour_frame.h"
 %include "mbsim/frames/fixed_relative_frame.h"
 %include "mbsim/frames/floating_relative_frame.h"
+
+%inline %{
+  namespace MBSim {
+    // create cast functions named castElementTo_TYPE where TYPE is the argument
+    CAST_MBSIM_ELEMENT_TO(Link)
+    CAST_MBSIM_ELEMENT_TO(MechanicalLink)
+    CAST_MBSIM_ELEMENT_TO(FrameLink)
+    CAST_MBSIM_ELEMENT_TO(Frame)
+    CAST_MBSIM_ELEMENT_TO(ContourFrame)
+    CAST_MBSIM_ELEMENT_TO(FixedContourFrame)
+    CAST_MBSIM_ELEMENT_TO(FloatingContourFrame)
+    CAST_MBSIM_ELEMENT_TO(FloatingRelativeContourFrame)
+    CAST_MBSIM_ELEMENT_TO(FixedRelativeFrame)
+    CAST_MBSIM_ELEMENT_TO(FloatingRelativeFrame)
+  }
+%}

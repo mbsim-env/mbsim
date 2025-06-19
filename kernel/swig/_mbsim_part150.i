@@ -75,3 +75,26 @@ using namespace fmatvec; // SWIGs namespace handling seems to be buggy -> this f
 %include "mbsim/links/generalized_acceleration_excitation.h"
 %include "mbsim/links/generalized_position_excitation.h"
 %include "mbsim/links/generalized_velocity_excitation.h"
+
+%inline %{
+  namespace MBSim {
+    // create cast functions named castElementTo_TYPE where TYPE is the argument
+    CAST_MBSIM_ELEMENT_TO(Contact)
+    CAST_MBSIM_ELEMENT_TO(ContourLink)
+    CAST_MBSIM_ELEMENT_TO(FixedFrameLink)
+    CAST_MBSIM_ELEMENT_TO(FloatingFrameLink)
+    CAST_MBSIM_ELEMENT_TO(DirectionalSpringDamper)
+    CAST_MBSIM_ELEMENT_TO(IsotropicRotationalSpringDamper)
+    CAST_MBSIM_ELEMENT_TO(Joint)
+    CAST_MBSIM_ELEMENT_TO(KineticExcitation)
+    CAST_MBSIM_ELEMENT_TO(SpringDamper)
+    CAST_MBSIM_ELEMENT_TO(RigidBodyLink)
+    CAST_MBSIM_ELEMENT_TO(DualRigidBodyLink)
+    CAST_MBSIM_ELEMENT_TO(GeneralizedFriction)
+    CAST_MBSIM_ELEMENT_TO(GeneralizedSpringDamper)
+    CAST_MBSIM_ELEMENT_TO(GeneralizedKinematicExcitation)
+    CAST_MBSIM_ELEMENT_TO(GeneralizedAccelerationExcitation)
+    CAST_MBSIM_ELEMENT_TO(GeneralizedPositionExcitation)
+    CAST_MBSIM_ELEMENT_TO(GeneralizedVelocityExcitation)
+  }
+%}

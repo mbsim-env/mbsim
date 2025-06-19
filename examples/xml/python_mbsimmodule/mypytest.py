@@ -80,14 +80,26 @@ class PySpringDamperPyScriptInit(mbsim.FixedFrameLink):
     return True
 
   def init(self, stage, config):
-    if stage==self.plotting:
+    if stage==self.resolveStringRef:
+      # test getByPath_*
+      l1=self.getByPath_Link("../Link[SpringRef]")
+      l2=self.getByPath_Link("/Link[SpringRef]")
+      if l1.getPath()!=l2.getPath():
+        raise RuntimeError("getByPath_Link returns wrong output!")
+      l3=mbsim.castElementTo_SpringDamper(l1)
+      if l3 is None:
+        raise RuntimeError("Casting Link to SpringDamper is not possible!")
+      super(PySpringDamperPyScriptInit, self).init(stage, config)
+    elif stage==self.plotting:
       if self.getPlotFeature(mbsim.plotRecursive):
         if self.getPlotFeature(pyTestPlotFeature):
           self.plotColumns.push_back("sin")
       if self.getPlotFeature(mbsim.openMBV):
         self.coilspringOpenMBV.setName(self.name)
         self.parent.getOpenMBVGrp().addObject(self.coilspringOpenMBV)
-    super(PySpringDamperPyScriptInit, self).init(stage, config)
+      super(PySpringDamperPyScriptInit, self).init(stage, config)
+    else:
+      super(PySpringDamperPyScriptInit, self).init(stage, config)
 
   def plot(self):
     if self.getPlotFeature(mbsim.plotRecursive):

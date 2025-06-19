@@ -48,3 +48,12 @@ using namespace fmatvec; // SWIGs namespace handling seems to be buggy -> this f
 %include "mbsim/objects/object.h"
 %include "mbsim/objects/body.h"
 %include "mbsim/objects/rigid_body.h"
+
+%inline %{
+  namespace MBSim {
+    // create cast functions named castElementTo_TYPE where TYPE is the argument
+    CAST_MBSIM_ELEMENT_TO(Object)
+    CAST_MBSIM_ELEMENT_TO(Body)
+    CAST_MBSIM_ELEMENT_TO(RigidBody)
+  }
+%}
