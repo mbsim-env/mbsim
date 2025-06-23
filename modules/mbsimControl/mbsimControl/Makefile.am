@@ -29,8 +29,7 @@ libmbsimControl_la_SOURCES = \
   duration.cc \
   state_machine.cc \
   state_machine_sensor.cc \
-  linear_system_analyzer.cc \
-  utils.cc
+  linear_system_analyzer.cc
 
 libmbsimControl_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS)
 libmbsimControl_la_LIBADD = $(LDFLAGS_NOUNDEF) $(DEPS_LIBS)
@@ -65,8 +64,7 @@ mbsimControlinclude_HEADERS = \
   duration.h \
   state_machine.h \
   state_machine_sensor.h \
-  linear_system_analyzer.h \
-  utils.h
+  linear_system_analyzer.h
 
 include $(prefix)/share/mbxmlutils/python/deplibs.mk
 install-exec-hook: deplibs.target
