@@ -319,6 +319,7 @@ namespace MBSim {
         std::vector<std::vector<double>>
       >> plotAttribute;
 
+    public: // addToPlot / plot is public to allow helper classes/functions to handle plots in a element
       void addToPlot(const std::string &name);
       void addToPlot(const std::string &name, int size);
       void addToPlot(const std::string &name, const std::vector<std::string> &iname);
