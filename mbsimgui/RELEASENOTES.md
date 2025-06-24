@@ -3,7 +3,7 @@ Release NEXT
 
 MBSimXML
 --------
-- Added a new class MBSimProject and SWIG Python directors in order to have access to mbsim xml models from Python. 
+- Added a new class MBSimProject and SWIG Python directors in order to have access to mbsim xml models from Python.
 
 
 Release 10.4
