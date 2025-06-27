@@ -136,7 +136,7 @@ nodist_libmbsimgui_la_SOURCES=$(libmbsimgui_QT_BUILT_SOURCES)
 
 mbsimgui_CPPFLAGS = $(OPENMBV_CFLAGS) $(QWT_CFLAGS)
 
-mbsimgui_LDFLAGS = $(PYCPPWRAPPER_LIBS_MAIN) $(MBXMLUTILS_LIBS) $(OPENMBV_LIBS) $(QWT_LIBS)
+mbsimgui_LDFLAGS = $(MBXMLUTILS_LIBS) $(OPENMBV_LIBS) $(QWT_LIBS)
 mbsimgui_LDADD = libmbsimgui.la $(MAYBE_WIN32_mbsimgui_OBJ)
 
 mbsimgui_SOURCES = $(MAYBE_SIGWATCH_SRC) \
