@@ -84,6 +84,7 @@ int main(int argc, char *argv[]) {
     // help
     if(argc<2 || find(args.begin(), args.end(), "-h")!=args.end() || find(args.begin(), args.end(), "--help")!=args.end()) {
       cout<<"Usage: "<<argv[0]<<" [-h|--help] [--nocompress] [--cosim] [--param <name> [--param <name> ...]]"<<endl;
+      cout<<"  [--modulePath <dir> [--modulePath <dir> ...]]"<<endl;
       cout<<"  [-C <dir/file>|--CC] <MBSim Project XML File>|<MBSim FMI shared library>"<<endl;
       cout<<endl;
       cout<<"Create Functional Mock-Up Unit (FMI/FMU 1.0)."<<endl;
@@ -102,6 +103,13 @@ int main(int argc, char *argv[]) {
       cout<<"                            Only for XML project files."<<endl;
       cout<<"--nocompress                Zip FMU without compression."<<endl;
       cout<<"--cosim                     Generate a FMI for Cosimulation FMU instead of a FMI for Model-Exchange FMU."<<endl;
+      cout<<"--modulePath <dir>          Add <dir> to MBSim module search path. The central MBSim installation"<<endl;
+      cout<<"                            module dir and the current dir is always included."<<endl;
+      cout<<"                            Also added are all directories listed in the file"<<endl;
+      cout<<"                            Linux: $HOME/.config/mbsim-env/mbsimxml.modulepath"<<endl;
+      cout<<"                            Windows: %APPDATA%\\mbsim-env\\mbsimxml.modulepath"<<endl;
+      cout<<"                            This file contains one directory per line."<<endl;
+      cout<<"                            Note: The search path only holds for creation but not at runtime of the FMU."<<endl;
       cout<<"-C <dir/file>               Change current to dir to <dir>/dir of <file> first."<<endl;
       cout<<"                            All arguments are still relative to the original current dir."<<endl;
       cout<<"--CC                        Change current dir to dir of <mbsimprjfile> first."<<endl;
@@ -152,6 +160,13 @@ int main(int argc, char *argv[]) {
       cosim=true;
       args.erase(i);
     }
+    set<boost::filesystem::path> searchDirs;
+    while((i=find(args.begin(), args.end(), "--modulePath"))!=args.end()) {
+      auto i2=i; i2++;
+      searchDirs.insert(*i2);
+      args.erase(i);
+      args.erase(i2);
+    }
 
     // get model file
     if(args.size()!=1) {
@@ -169,7 +184,7 @@ int main(int argc, char *argv[]) {
 
     // load all MBSim modules
     cout<<"Load MBSim modules."<<endl;
-    set<path> moduleLibs=MBSimXML::loadModules();
+    set<path> moduleLibs=MBSimXML::loadModules(searchDirs);
     // check for errors during ObjectFactory
     string errorMsg3(ObjectFactory::getAndClearErrorMsg());
     if(!errorMsg3.empty()) {
@@ -201,7 +216,7 @@ int main(int argc, char *argv[]) {
     // Create dss from XML file
     if(xmlFile) {
       cout<<"Create MBSimXML XML schema including all modules."<<endl;
-      auto xmlCatalog=getMBSimXMLCatalog();
+      auto xmlCatalog=getMBSimXMLCatalog(searchDirs);
 
       // preprocess XML file
       cout<<"Preprocess XML project file."<<endl;
