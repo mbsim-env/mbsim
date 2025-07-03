@@ -87,12 +87,11 @@ namespace MBSimGUI {
       std::string nameToken("name=\"");
       if(data.substr(0, nameToken.length())!=nameToken)
         continue;
-      auto end=data.find("\" ", nameToken.length());
-      if(end==std::string::npos) {
-        end=data.find("\"\n", nameToken.length());
-        if(end==std::string::npos)
-          continue;
-      }
+      auto end1=data.find("\" ", nameToken.length());
+      auto end2=data.find("\"\n", nameToken.length());
+      auto end=std::min(end1, end2);
+      if(end==std::string::npos)
+        continue;
 
       // add the context action
       std::string name=data.substr(nameToken.length(), end-nameToken.length());
