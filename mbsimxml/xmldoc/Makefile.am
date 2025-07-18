@@ -7,7 +7,7 @@ XSDFILES = http___www_mbsim-env_de_MBXMLUtils/mbxmlutils.xsd\
   http___www_mbsim-env_de_MBSimXML/mbsimproject.xsd\
   http___www_mbsim-env_de_OpenMBV/openmbv.xsd
 
-all: mbsimxml.html http___www_mbsim-env_de_MBSimXML/index.html
+all: mbsimxml.html .mbsimxml.done
 
 # list of all xsd files: variables XSDFILES and all MBSim modules
 .DELETE_ON_ERROR: xsdfiles.txt
@@ -42,10 +42,10 @@ mbsimxml.html: $(srcdir)/genContent.xsl combindedSchema.xsd
 
 
 
-http___www_mbsim-env_de_MBSimXML/index.html: @MBXMLUTILSSCHEMA@/http___www_mbsim-env_de_MBSimXML/mbsimproject.xsd
+.mbsimxml.done: @MBXMLUTILSSCHEMA@/http___www_mbsim-env_de_MBSimXML/mbsimproject.xsd @MBXMLUTILSSCHEMA@/http___www_mbsim-env_de_MBSim/mbsim.xsd
 	@MBXMLUTILSBINDIR@/mbxmlutils-xsd2html.sh @MBXMLUTILSSCHEMA@/http___www_mbsim-env_de_MBSimXML/mbsimproject.xsd none none MBSimXML MBSimXML:: @MBXMLUTILSSCHEMA@/http___www_mbsim-env_de_MBSim/mbsim.xsd
 
-install-data-local:
+install-data-local: .mbsimxml.done
 	cp -r http___* @MBXMLUTILSDOCDIR@
 
 
