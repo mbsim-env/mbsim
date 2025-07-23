@@ -624,6 +624,7 @@ namespace MBSimGUI {
     // Hence, we keep here the old macro base mechanism and use Q_OBJECT and moc for this class.
     connect(inlineOpenMBVMW, SIGNAL(objectSelected(std::string, OpenMBVGUI::Object*)), this, SLOT(selectElement(const std::string&, OpenMBVGUI::Object*)));
     connect(inlineOpenMBVMW, SIGNAL(objectDoubleClicked(std::string, OpenMBVGUI::Object*)), this, SLOT(openElementEditor()));
+    connect(inlineOpenMBVMW, SIGNAL(fileReloaded(OpenMBVGUI::Group*)), this, SLOT(fileReloadedSlot()));
 
 #if BOOST_VERSION >= 107400
     using bfs__copy_options = bfs::copy_options;
@@ -648,11 +649,12 @@ namespace MBSimGUI {
     bfs__copy_file(getInstallPath()/"share"/"mbsimgui"/"MBS_tmp.ombvx",  uniqueTempDir/"MBS_tmp.ombvx",  overwrite_existing);
     bfs__copy_file(getInstallPath()/"share"/"mbsimgui"/"MBS_tmp.ombvh5", uniqueTempDir/"MBS_tmp.ombvh5", overwrite_existing);
     inlineOpenMBVMW->openFile(uniqueTempDir.generic_string()+"/MBS_tmp.ombvx");
-    connect(inlineOpenMBVMW, &OpenMBVGUI::MainWindow::fileReloaded, this, [this](){
-      if(callViewAllAfterFileReloaded)
-        inlineOpenMBVMW->viewAllSlot();
-      callViewAllAfterFileReloaded = false;
-    });
+  }
+
+  void MainWindow::fileReloadedSlot() {
+    if(callViewAllAfterFileReloaded)
+      inlineOpenMBVMW->viewAllSlot();
+    callViewAllAfterFileReloaded = false;
   }
 
   MainWindow::~MainWindow() {

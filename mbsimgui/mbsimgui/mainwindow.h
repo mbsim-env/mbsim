@@ -192,6 +192,7 @@ namespace MBSimGUI {
       std::unique_ptr<NewParamLevelHeap> evalNPL;
     private slots:
       void selectElement(const std::string& ID, OpenMBVGUI::Object *obj);
+      void fileReloadedSlot();
       void abstractViewFilterOptionsChanged();
 
     public:
