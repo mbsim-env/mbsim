@@ -671,17 +671,18 @@ namespace MBSimGUI {
     bfs__copy_file(getInstallPath()/"share"/"mbsimgui"/"MBS_tmp.ombvx",  uniqueTempDir/"MBS_tmp.ombvx",  overwrite_existing);
     bfs__copy_file(getInstallPath()/"share"/"mbsimgui"/"MBS_tmp.ombvh5", uniqueTempDir/"MBS_tmp.ombvh5", overwrite_existing);
     inlineOpenMBVMW->openFile(uniqueTempDir.generic_string()+"/MBS_tmp.ombvx");
-    connect(inlineOpenMBVMW, &OpenMBVGUI::MainWindow::fileReloaded, this, [this](){
-      if(callViewAllAfterFileReloaded)
-        inlineOpenMBVMW->viewAllSlot();
-      callViewAllAfterFileReloaded = false;
+  }
 
-      QModelIndex index = elementView->selectionModel()->currentIndex();
-      auto *model = static_cast<ElementTreeModel*>(elementView->model());
-      auto *element=dynamic_cast<Element*>(model->getItem(index)->getItemData());
-      if(element)
-        highlightObject(element->getID());
-    });
+  void MainWindow::fileReloaded() {
+    if(callViewAllAfterFileReloaded)
+      inlineOpenMBVMW->viewAllSlot();
+    callViewAllAfterFileReloaded = false;
+
+    QModelIndex index = elementView->selectionModel()->currentIndex();
+    auto *model = static_cast<ElementTreeModel*>(elementView->model());
+    auto *element=dynamic_cast<Element*>(model->getItem(index)->getItemData());
+    if(element)
+      highlightObject(element->getID());
   }
 
   void MainWindow::fileReloadedSlot() {
