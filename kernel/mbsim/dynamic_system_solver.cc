@@ -111,6 +111,7 @@ namespace MBSim {
     };
 
     for (int stage = 0; stage < LASTINITSTAGE; stage++) {
+      DynamicSystemSolver::throwIfExitRequested();
       msg(Info) << "Initializing stage " << stage << "/" << LASTINITSTAGE - 1 << " \"" << InitStageStrings[stage] << "\" " << endl;
       init((InitStage) stage, InitConfigSet());
       msg(Info) << "Done initializing stage " << stage << "/" << LASTINITSTAGE - 1 << endl;
@@ -1341,6 +1342,7 @@ namespace MBSim {
   }
 
   DynamicSystemSolver::SignalHandler::SignalHandler() {
+    exitRequest = false;
     #ifndef _WIN32
     oldSigHup=signal(SIGHUP, sigInterruptHandler);
     #endif
@@ -1428,8 +1430,6 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::constructor() {
-    exitRequest = false;
-    exitRequestPrinted = false;
     plotFeature[plotRecursive] = true;
     plotFeatureForChildren[plotRecursive] = true;
     plotFeature[openMBV] = true;

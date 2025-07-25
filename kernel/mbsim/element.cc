@@ -83,6 +83,7 @@ namespace MBSim {
   }
 
   void Element::init(InitStage stage, const InitConfigSet &config) {
+    DynamicSystemSolver::throwIfExitRequested();
     if(stage==preInit)
       updatePlotFeatures();
     else if(stage==plotting) {
@@ -245,6 +246,7 @@ namespace MBSim {
   }
 
   void Element::initializeUsingXML(DOMElement *element) {
+    DynamicSystemSolver::throwIfExitRequested();
     // set the XML location of this element which can be used, later, by exceptions.
     domEvalError=DOMEvalException("", element);
 

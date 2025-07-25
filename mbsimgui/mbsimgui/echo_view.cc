@@ -136,6 +136,7 @@ namespace MBSimGUI {
       int start;
       while((start=outText.indexOf(span))!=-1) {
         auto end=outText.indexOf("</span>", start);
+        if(end==-1) break;
         outText.replace(start, end-start+7, "");
       }
     }
@@ -283,10 +284,10 @@ R"+(</pre>
   }
 
   void EchoView::updateDebug() {
+    mw->restartProcessRefresh(); // needed to update the --stdout debug~... argument of the refresh mbsimxml process
     if(enableDebug->isChecked()) {
       showDebug->setDisabled(false);
       showDebug->setChecked(true);
-      mw->refresh();
     }
     else {
       showDebug->setDisabled(true);

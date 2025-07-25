@@ -143,36 +143,37 @@ namespace MBSimGUI {
         addSeparator();
         for(auto &ca : contextAction) {
           addAction(ca.first.c_str(), [ca, element](){
-              // this code is run when the action is triggered
-              mw->clearEchoView();
-              try {
+            // this code is run when the action is triggered
+            mw->clearEchoView();
+            try {
               auto parameterLevels = mw->updateParameters(element);
               auto [counterName, values]=MainWindow::evaluateForAllArrayPattern(parameterLevels, ca.second,
-                  element->getXMLElement(), true, true, false, true, [element, ca](const std::vector<std::string>& counterNames, const std::vector<int> &counts){
+                element->getXMLElement(), true, true, false, true, [element, ca](const std::vector<std::string>& counterNames, const std::vector<int> &counts) {
                   fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<std::endl<<"Running context action '"<<ca.first<<"' with ";
                   for(size_t i=0; i<counterNames.size(); ++i)
-                  fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<(i!=0?", ":"")<<counterNames[i]<<"="<<counts[i];
+                    fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<(i!=0?", ":"")<<counterNames[i]<<"="<<counts[i];
                   fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<":"<<std::endl;
-                  mw->updateEchoView();
+                  mw->updateEchoView("");
                   auto code=Evaluator::getElementObjCode(element);
                   if(!code.empty())
-                  mw->eval->addParam("mbsimgui_element", mw->eval->stringToValue(code));
-                  });
-              mw->updateEchoView();
-              }
-              catch(const DOMEvalException &ex) {
+                    mw->eval->addParam("mbsimgui_element", mw->eval->stringToValue(code));
+                }
+              );
+              mw->updateEchoView("");
+            }
+            catch(const DOMEvalException &ex) {
               // DOMEvalException is already passed thought escapeFunc -> skip escapeFunc (if enabled on the fmatvec::Atom streams) from duing another escaping
               fmatvec::Atom::msgStatic(fmatvec::Atom::Error)<<std::flush<<std::skipws<<ex.what()<<std::flush<<std::noskipws<<std::endl;
-              mw->updateEchoView();
-              }
-              catch(const std::exception &ex) {
-                fmatvec::Atom::msgStatic(fmatvec::Atom::Error)<<ex.what()<<std::endl;
-                mw->updateEchoView();
-              }
-              catch(...) {
-                fmatvec::Atom::msgStatic(fmatvec::Atom::Error)<<"Unknown exception"<<std::endl;
-                mw->updateEchoView();
-              }
+              mw->updateEchoView("");
+            }
+            catch(const std::exception &ex) {
+              fmatvec::Atom::msgStatic(fmatvec::Atom::Error)<<ex.what()<<std::endl;
+              mw->updateEchoView("");
+            }
+            catch(...) {
+              fmatvec::Atom::msgStatic(fmatvec::Atom::Error)<<"Unknown exception"<<std::endl;
+              mw->updateEchoView("");
+            }
           });
         }
       }

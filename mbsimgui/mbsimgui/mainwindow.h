@@ -106,9 +106,10 @@ namespace MBSimGUI {
       std::shared_ptr<bool> debugStreamFlag;
       QString projectFile;
       QProcess process;
+      QProcess processRefresh;
       OpenMBVGUI::MainWindow *inlineOpenMBVMW;
       boost::filesystem::path uniqueTempDir;
-      QAction *actionSave, *actionSaveProject, *actionSimulate, *actionInterrupt, *actionKill, *actionOpenMBV, *actionH5plotserie, *actionLinearSystemAnalysis, *actionStateTable, *actionSaveDataAs, *actionSaveMBSimH5DataAs, *actionSaveOpenMBVDataAs, *actionRefresh, *actionDebug, *actionSaveStateVectorAs, *actionSaveStateTableAs, *actionSaveLinearSystemAnalysisAs, *actionUndo, *actionRedo;
+      QAction *actionSave, *actionSaveProject, *actionSimulate, *actionInterrupt, *actionKill, *actionOpenMBV, *actionH5plotserie, *actionLinearSystemAnalysis, *actionStateTable, *actionSaveDataAs, *actionSaveMBSimH5DataAs, *actionSaveOpenMBVDataAs, *actionRefresh, *actionCreateFMU, *actionSaveStateVectorAs, *actionSaveStateTableAs, *actionSaveLinearSystemAnalysisAs, *actionUndo, *actionRedo;
       OpenMBVGUI::AbstractViewFilter *elementViewFilter, *parameterViewFilter;
       QTimer autoSaveTimer;
       QElapsedTimer processStatusTimer     , processOutputTimer;
@@ -171,7 +172,6 @@ namespace MBSimGUI {
       void h5plotserie();
       void linearSystemAnalysis();
       void showStateTable();
-      void debug();
       void kill();
       void createFMU();
       void elementChanged(const QModelIndex &current);
@@ -188,7 +188,8 @@ namespace MBSimGUI {
       void createNewEvaluator();
 
       int openedEditors { 0 };
-      int mbsimxmlQueuedTask { -1 };
+      void startProcessRefresh();
+      QMetaObject::Connection processRefreshFinishedConnection;
       std::unique_ptr<NewParamLevelHeap> evalNPL;
     private slots:
       void selectElement(const std::string& ID, OpenMBVGUI::Object *obj);
@@ -203,8 +204,6 @@ namespace MBSimGUI {
       std::shared_ptr<MBXMLUtils::Eval> eval;
       xercesc::DOMImplementation *impl;
       xercesc::DOMLSSerializer *serializer;
-      void mbsimxmlQueue();
-      void mbsimxml(int task);
       const boost::filesystem::path& getUniqueTempDir() const { return uniqueTempDir; }
       void addParameter(Parameter *parameter, EmbedItemData *parent);
       void addFrame(Frame *frame, Element *parent);
@@ -220,7 +219,7 @@ namespace MBSimGUI {
       void removeParameter(EmbedItemData *parent);
       xercesc::DOMElement* pasteElement(Element *parent, Element *element);
       xercesc::DOMElement* loadEmbedItemData(EmbedItemData *parent, const QString &title);
-      void updateEchoView();
+      void updateEchoView(const QByteArray &data);
       void updateStatusMessage(std::string s);
       void clearEchoView(const QString &initialText="");
 
@@ -336,6 +335,9 @@ namespace MBSimGUI {
       void flexibleBodyTool();
       FlexibleBodyTool *getFlexibleBodyTool() { return fbt; }
       void expandToDepth(int depth);
+      void restartProcessRefresh() { processRefresh.closeWriteChannel(); }
+      void setProcessActionsEnabled(bool enabled);
+      void setSimulateActionsEnabled(bool enabled);
 
       // Prepare the MainWindow for a "quasi" modal dialog open.
       // The MainWindow will still be active (the dialog to open is none modal) but many features of the MainWindow

@@ -130,6 +130,7 @@ set<boost::filesystem::path> MBSimXML::loadModules(const set<boost::filesystem::
         for(xercesc::DOMElement *e=E(doc->getDocumentElement())->getFirstElementChildNamed(MBSIMMODULE%"libraries")->
             getFirstElementChild();
             e!=nullptr; e=e->getNextElementSibling()) {
+          DynamicSystemSolver::throwIfExitRequested();
           if(stage==Loading && E(e)->getTagName()==MBSIMMODULE%"CppLibrary") {
             string location=E(e)->getAttribute("location");
             bool global=false;
@@ -164,8 +165,10 @@ set<boost::filesystem::path> MBSimXML::loadModules(const set<boost::filesystem::
     }
 
   // load MBSim modules which are not already loaded
-  for(const auto & it : moduleLibFile)
+  for(const auto & it : moduleLibFile) {
+    DynamicSystemSolver::throwIfExitRequested();
     SharedLibrary::load(it.string(), moduleLibFlag[it]);
+  }
 
   return moduleLibFile;
 }
@@ -295,7 +298,6 @@ void MBSimXML::main(const unique_ptr<Solver>& solver, const unique_ptr<DynamicSy
       auto start=std::chrono::high_resolution_clock::now();
       solver->setSystem(dss.get());
       {
-        DynamicSystemSolver::SignalHandler dummy; // install signal handler for next line (and deinstall on scope exit)
         // run solver->execute and then run solver-postprocessing even if execute failded
         bool executePassed=false;
         try {

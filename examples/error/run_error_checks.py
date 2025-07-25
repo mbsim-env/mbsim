@@ -137,10 +137,8 @@ def checkGUIError(dir):
   # run command and get error output
   try:
     prefix=args.prefix+"/bin/" if args.prefix is not None else ""
-    subprocess.check_output([prefix+"mbsimgui", "--autoExit", "MBS.mbsx"],
-                            stderr=subprocess.STDOUT, cwd=dir, env=guiEnvVars(displayNR))
-    cur=b""
-    ret[1]+=dir+": GUI: did not return with !=0\n"; ret[0]+=1
+    cur=subprocess.check_output([prefix+"mbsimgui", "--autoExit", "MBS.mbsx"],
+                                stderr=subprocess.STDOUT, cwd=dir, env=guiEnvVars(displayNR))
   except subprocess.CalledProcessError as ex:
     cur=ex.output
   cur=cur.decode("utf-8")

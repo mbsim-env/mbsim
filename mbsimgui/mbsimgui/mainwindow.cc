@@ -96,8 +96,6 @@ namespace bfs=boost::filesystem;
 
 namespace MBSimGUI {
 
-  bool currentTask;
-
   MainWindow *mw;
 
   bool MainWindow::exitOK = true;
@@ -299,12 +297,14 @@ namespace MBSimGUI {
     menuBar()->addMenu(miscMenu);
 
     auto exportMenu = new QMenu("Data Export", menuBar());
+
     actionSaveDataAs = exportMenu->addAction("Export all data", this, &MainWindow::saveDataAs);
     actionSaveMBSimH5DataAs = exportMenu->addAction("Export MBSim data file", this, &MainWindow::saveMBSimH5DataAs);
     actionSaveOpenMBVDataAs = exportMenu->addAction("Export OpenMBV data", this, &MainWindow::saveOpenMBVDataAs);
     actionSaveStateVectorAs = exportMenu->addAction("Export state vector", this, &MainWindow::saveStateVectorAs);
     actionSaveStateTableAs = exportMenu->addAction("Export state table", this, &MainWindow::saveStateTableAs);
     actionSaveLinearSystemAnalysisAs = exportMenu->addAction("Export linear system analysis", this, &MainWindow::saveLinearSystemAnalysisAs);
+
     menuBar()->addMenu(exportMenu);
 
     auto *dockMenu=new QMenu("Docks", menuBar());
@@ -327,10 +327,10 @@ namespace MBSimGUI {
     runMenu->addAction(actionSimulate);
     actionSimulate->setStatusTip(tr("Simulate the multibody system"));
     connect(actionSimulate,&QAction::triggered,this,&MainWindow::simulate);
-    actionInterrupt = runBar->addAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_MediaStop)),"Interrupt simulation");
+    actionInterrupt = runBar->addAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_MediaStop)),"Interrupt background tasks");
     runMenu->addAction(actionInterrupt);
     connect(actionInterrupt,&QAction::triggered,this,&MainWindow::interrupt);
-    actionKill = runBar->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"kill.svg").string())),"Kill simulation");
+    actionKill = runBar->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"kill.svg").string())),"Kill background tasks");
     runMenu->addAction(actionKill);
     connect(actionKill,&QAction::triggered,this,&MainWindow::kill);
     actionOpenMBV = runBar->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"openmbv.svg").string())),"OpenMBV");
@@ -349,15 +349,12 @@ namespace MBSimGUI {
     QToolBar *miscBar = addToolBar("Misc Toolbar");
     miscBar->setObjectName("toolbar/misc");
     toolMenu->addAction(miscBar->toggleViewAction());
-    QAction *actionCreateFMU = miscBar->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"FMI_bare.svg").string())),"Create FMU");
+    actionCreateFMU = miscBar->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"FMI_bare.svg").string())),"Create FMU");
     miscMenu->addAction(actionCreateFMU);
     connect(actionCreateFMU,&QAction::triggered,this,&MainWindow::createFMU);
     QAction *actionFem = miscBar->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"fbt.svg").string())),"Flexible body tool");
     miscMenu->addAction(actionFem);
     connect(actionFem,&QAction::triggered,this,&MainWindow::flexibleBodyTool);
-    actionDebug = miscBar->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"debug.svg").string())),"Debug model");
-    miscMenu->addAction(actionDebug);
-    connect(actionDebug,&QAction::triggered,this,&MainWindow::debug);
     QAction *actionConvert = miscBar->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"convert.svg").string())),"Convert file");
     miscMenu->addAction(actionConvert);
     connect(actionConvert,&QAction::triggered,this,&MainWindow::convertDocument);
@@ -445,6 +442,8 @@ namespace MBSimGUI {
         updateStatusMessage(s);
       }));
 
+    startProcessRefresh();
+
     QWidget *centralWidget = new QWidget(this);
     setCentralWidget(centralWidget);
     auto *mainlayout = new QHBoxLayout;
@@ -452,12 +451,14 @@ namespace MBSimGUI {
     centralWidget->setLayout(mainlayout);
     mainlayout->addWidget(inlineOpenMBVMW);
 
-    connect(&process,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),this,&MainWindow::processFinished);
-    connect(&process,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),this,&MainWindow::mbsimxmlQueue);
+    connect(&process,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
+      this, &MainWindow::processFinished);
+    processRefreshFinishedConnection=connect(&processRefresh,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
+      this, &MainWindow::startProcessRefresh);
 
     // if process has new error output call statusBar()->showMessage(...) but only every 250ms
     processStatusTimer.start();
-    connect(&process,&QProcess::readyReadStandardError,[this](){
+    auto readyReadStandardError = [this]() {
       int e=processStatusTimer.elapsed();
       if(e<250) {
         // last output is less then 250ms ago -> if a "single shot" output is not yet active start one
@@ -468,35 +469,92 @@ namespace MBSimGUI {
       // last output is more then 250ms ago -> stop "single shot" output, restart timer, and update output
       processStatusSingleShot.stop();
       processStatusTimer.restart();
-      updateStatusMessage(process.readAllStandardError().data());
-    });
+      if(process.isOpen()) {
+        auto output=process.readAllStandardError();
+        if(!output.isEmpty())
+          updateStatusMessage(output.constData());
+      }
+      auto output=processRefresh.readAllStandardError();
+      if(!output.isEmpty())
+        updateStatusMessage(output.constData());
+    };
+    connect(&process,&QProcess::readyReadStandardError,readyReadStandardError);
+    connect(&processRefresh,&QProcess::readyReadStandardError,readyReadStandardError);
     processStatusSingleShot.setSingleShot(true);
     connect(&processStatusSingleShot, &QTimer::timeout, [this](){
       // if this gets called new output is available but not yet outputed -> output now and restart timer
       processStatusTimer.restart();
-      updateStatusMessage(process.readAllStandardError().data());
+      if(process.isOpen()) {
+        auto output=process.readAllStandardError();
+        if(!output.isEmpty())
+          updateStatusMessage(output.constData());
+      }
+      auto output=processRefresh.readAllStandardError();
+      if(!output.isEmpty())
+        updateStatusMessage(output.constData());
     });
 
-    // if process has new standard output call updateEchoView but only every 250ms
+    // if process has new standard output call updateEchoView but only every 100ms
     processOutputTimer.start();
-    connect(&process,&QProcess::readyReadStandardOutput,[this](){
+    auto readyReadStandardOutput = [this, &arg]() {
       int e=processOutputTimer.elapsed();
-      if(e<250) {
-        // last output is less then 250ms ago -> if a "single shot" output is not yet active start one
+      if(e<100) {
+        // last output is less then 100ms ago -> if a "single shot" output is not yet active start one
         if(!processOutputSingleShot.isActive())
-          processOutputSingleShot.start(250-e);
+          processOutputSingleShot.start(100-e);
         return;
       }
-      // last output is more then 250ms ago -> stop "single shot" output, restart timer, and update output
+      // last output is more then 100ms ago -> stop "single shot" output, restart timer, and update output
       processOutputSingleShot.stop();
       processOutputTimer.restart();
-      updateEchoView();
-    });
+      if(process.isOpen()) {
+        auto output=process.readAllStandardOutput();
+        if(!output.isEmpty())
+          updateEchoView(output);
+      }
+      if(!arg.contains("--autoExit")) { // do not read from processRefresh if --autoExit
+        auto output=processRefresh.readAllStandardOutput();
+        if(!output.isEmpty())
+          updateEchoView(output);
+      }
+    };
+    connect(&process,&QProcess::readyReadStandardOutput,readyReadStandardOutput);
+    if(!arg.contains("--autoExit")) // normal run (no --autoExit) -> pass also the output of processRefresh to readyReadStandardOutput
+      connect(&processRefresh,&QProcess::readyReadStandardOutput,readyReadStandardOutput);
+    else { // --autoExit case
+      // do not restart processRefresh (mbsimxml)
+      disconnect(processRefreshFinishedConnection);
+      // store all output of processRefresh in "allOutput" and ...
+      static QString allOutput;
+      connect(&processRefresh,&QProcess::readyReadStandardOutput,[this](){
+        allOutput+=processRefresh.readAllStandardOutput();
+        // ... if "Load, parse and validate input stream." is found in the output then mbsimxml has already started
+        // and we can now close the write stream to exit mbsimxml after the content is processed which will call
+        // QProcess::finished at the end
+        if(allOutput.contains("Load, parse and validate input stream."))
+          processRefresh.closeWriteChannel();
+      });
+      // if QProcess::finished gets called dump all output to cout and close MainWindow
+      connect(&processRefresh,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
+      [this](int exitCode, QProcess::ExitStatus exitStatus){
+        cout<<allOutput.toStdString();
+        close();
+      });
+    }
     processOutputSingleShot.setSingleShot(true);
-    connect(&processOutputSingleShot, &QTimer::timeout, [this](){
+    connect(&processOutputSingleShot, &QTimer::timeout, [this,&arg](){
       // if this gets called new output is available but not yet outputed -> output now and restart timer
       processOutputTimer.restart();
-      updateEchoView();
+      if(process.isOpen()) {
+        auto output=process.readAllStandardOutput();
+        if(!output.isEmpty())
+          updateEchoView(output);
+      }
+      if(!arg.contains("--autoExit")) { // do not read from processRefresh if --autoExit
+        auto output=processRefresh.readAllStandardOutput();
+        if(!output.isEmpty())
+          updateEchoView(output);
+      }
     });
 
     setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
@@ -526,20 +584,6 @@ namespace MBSimGUI {
       }
     }
 
-    // auto exit if everything is finished
-    if(arg.contains("--autoExit")) {
-      process.setProcessChannelMode(QProcess::ForwardedChannels);
-      auto timer=new QTimer(this);
-      connect(timer, &QTimer::timeout, this, [this, timer](){
-        if(process.state()==QProcess::NotRunning) {
-          timer->stop();
-          if(!close())
-            timer->start(100);
-        }
-      });
-      timer->start(100);
-    }
-
     if(projectFile.size())
       loadProject(QDir::current().absoluteFilePath(projectFile));
     else
@@ -560,49 +604,28 @@ namespace MBSimGUI {
   }
 
   void MainWindow::processFinished(int exitCode, QProcess::ExitStatus exitStatus) {
-    updateEchoView();
-    if(currentTask==1) {
-      QModelIndex index = elementView->selectionModel()->currentIndex();
-      auto *model = static_cast<ElementTreeModel*>(elementView->model());
-      auto *element=dynamic_cast<Element*>(model->getItem(index)->getItemData());
-      if(element)
-        highlightObject(element->getID());
-    }
-    else {
-      if(exitStatus == QProcess::NormalExit) {
-        QSettings settings;
-        bool saveFinalStateVector = settings.value("mainwindow/options/savestatevector", false).toBool();
-        if(settings.value("mainwindow/options/autoexport", false).toBool()) {
-	  QString dir = settings.value("mainwindow/options/autoexportdir", "./").toString();
-	  saveMBSimH5Data(dir+"/MBS.mbsh5");
-	  saveOpenMBVXMLData(dir+"/MBS.ombvx");
-	  saveOpenMBVH5Data(dir+"/MBS.ombvh5");
-	  saveLinearSystemAnalysis(dir+"/eigenanalysis.mat");
-	  saveInputTable(dir+"/inputtable.asc");
-	  saveOutputTable(dir+"/outputtable.asc");
-	  if(saveFinalStateVector)
-	    saveStateVector(dir+"/statevector.asc");
-	  saveStateTable(dir+"/statetable.asc");
-        }
-        actionSaveDataAs->setDisabled(false);
-	actionSaveStateTableAs->setDisabled(false);
-	actionSaveMBSimH5DataAs->setDisabled(false);
-	actionSaveOpenMBVDataAs->setDisabled(false);
-	if(saveFinalStateVector)
-	  actionSaveStateVectorAs->setDisabled(false);
-	if(dynamic_cast<LinearSystemAnalyzer*>(project->getSolver())) {
-	  actionSaveLinearSystemAnalysisAs->setDisabled(false);
-	  actionLinearSystemAnalysis->setDisabled(false);
-	}
+    if(process.isOpen())
+      updateEchoView(process.readAllStandardOutput());
+    if(exitStatus == QProcess::NormalExit) {
+      QSettings settings;
+      bool saveFinalStateVector = settings.value("mainwindow/options/savestatevector", false).toBool();
+      if(settings.value("mainwindow/options/autoexport", false).toBool()) {
+        QString dir = settings.value("mainwindow/options/autoexportdir", "./").toString();
+        saveMBSimH5Data(dir+"/MBS.mbsh5");
+        saveOpenMBVXMLData(dir+"/MBS.ombvx");
+        saveOpenMBVH5Data(dir+"/MBS.ombvh5");
+        saveLinearSystemAnalysis(dir+"/eigenanalysis.mat");
+        saveInputTable(dir+"/inputtable.asc");
+        saveOutputTable(dir+"/outputtable.asc");
+        if(saveFinalStateVector)
+          saveStateVector(dir+"/statevector.asc");
+        saveStateTable(dir+"/statetable.asc");
       }
-      else {
-        setExitBad();
-      }
+      setSimulateActionsEnabled(true);
     }
-    actionSimulate->setDisabled(false);
-    actionInterrupt->setDisabled(true);
-    actionKill->setDisabled(true);
-    actionDebug->setDisabled(false);
+    else
+      setExitBad();
+    setProcessActionsEnabled(true);
     statusBar()->showMessage(tr("Ready"));
   }
 
@@ -648,6 +671,17 @@ namespace MBSimGUI {
     bfs__copy_file(getInstallPath()/"share"/"mbsimgui"/"MBS_tmp.ombvx",  uniqueTempDir/"MBS_tmp.ombvx",  overwrite_existing);
     bfs__copy_file(getInstallPath()/"share"/"mbsimgui"/"MBS_tmp.ombvh5", uniqueTempDir/"MBS_tmp.ombvh5", overwrite_existing);
     inlineOpenMBVMW->openFile(uniqueTempDir.generic_string()+"/MBS_tmp.ombvx");
+    connect(inlineOpenMBVMW, &OpenMBVGUI::MainWindow::fileReloaded, this, [this](){
+      if(callViewAllAfterFileReloaded)
+        inlineOpenMBVMW->viewAllSlot();
+      callViewAllAfterFileReloaded = false;
+
+      QModelIndex index = elementView->selectionModel()->currentIndex();
+      auto *model = static_cast<ElementTreeModel*>(elementView->model());
+      auto *element=dynamic_cast<Element*>(model->getItem(index)->getItemData());
+      if(element)
+        highlightObject(element->getID());
+    });
   }
 
   void MainWindow::fileReloadedSlot() {
@@ -657,8 +691,10 @@ namespace MBSimGUI {
   }
 
   MainWindow::~MainWindow() {
-    process.waitForFinished(-1);
-    if(process.exitStatus()!=QProcess::NormalExit || process.exitCode()!=0)
+    disconnect(processRefreshFinishedConnection);
+    processRefresh.closeWriteChannel();
+    processRefresh.waitForFinished(-1);
+    if(processRefresh.exitStatus()!=QProcess::NormalExit || processRefresh.exitCode()!=0)
       setExitBad();
     if(lsa) delete lsa;
     if(st) delete st;
@@ -876,13 +912,7 @@ namespace MBSimGUI {
       setWindowModified(false);
       actionOpenMBV->setDisabled(true);
       actionH5plotserie->setDisabled(true);
-      actionLinearSystemAnalysis->setDisabled(true);
-      actionSaveDataAs->setDisabled(true);
-      actionSaveMBSimH5DataAs->setDisabled(true);
-      actionSaveOpenMBVDataAs->setDisabled(true);
-      actionSaveStateVectorAs->setDisabled(true);
-      actionSaveStateTableAs->setDisabled(true);
-      actionSaveLinearSystemAnalysisAs->setDisabled(true);
+      setSimulateActionsEnabled(false);
       actionSave->setDisabled(true);
       actionSaveProject->setDisabled(true);
       projectFile="";
@@ -947,13 +977,7 @@ namespace MBSimGUI {
       setWindowModified(false);
       actionOpenMBV->setDisabled(true);
       actionH5plotserie->setDisabled(true);
-      actionLinearSystemAnalysis->setDisabled(true);
-      actionSaveDataAs->setDisabled(true);
-      actionSaveMBSimH5DataAs->setDisabled(true);
-      actionSaveOpenMBVDataAs->setDisabled(true);
-      actionSaveStateVectorAs->setDisabled(true);
-      actionSaveStateTableAs->setDisabled(true);
-      actionSaveLinearSystemAnalysisAs->setDisabled(true);
+      setSimulateActionsEnabled(false);
       actionSave->setDisabled(false);
       actionSaveProject->setDisabled(false);
       if(updateRecent) {
@@ -1491,31 +1515,77 @@ namespace MBSimGUI {
     QFile::copy(QString::fromStdString(uniqueTempDir.generic_string())+"/linear_system_analysis.h5",file);
   }
 
-  void MainWindow::mbsimxmlQueue() {
-    // this function is called whenever "process" finishes
-    // -> if a new task is queued run it now.
-    if(mbsimxmlQueuedTask!=-1) {
-      int newtask=mbsimxmlQueuedTask;
-      mbsimxmlQueuedTask=-1;
-      mbsimxml(newtask);
+  void MainWindow::startProcessRefresh() {
+    QStringList arg;
+    arg.append("--stopafterfirststep");
+    arg.append("--savestatetable");
+
+    // we print everything except status messages to stdout
+    arg.append("--stdout"); arg.append(R"#(info~<span class="MBSIMGUI_INFO">~</span>~HTML)#");
+    arg.append("--stdout"); arg.append(R"#(warn~<span class="MBSIMGUI_WARN">~</span>~HTML)#");
+    *debugStreamFlag=echoView->debugEnabled(); // processRefresh is restarted if debugEnabled changes
+    if(*debugStreamFlag) {
+      arg.append("--stdout"); arg.append(R"#(debug~<span class="MBSIMGUI_DEBUG">~</span>~HTML)#");
     }
+    arg.append("--stdout"); arg.append(R"#(error~<span class="MBSIMGUI_ERROR">~</span>~HTML)#");
+    arg.append("--stdout"); arg.append(R"#(depr~<span class="MBSIMGUI_DEPRECATED">~</span>~HTML)#");
+    // status message go to stderr
+    arg.append("--stderr"); arg.append("status~~\n");
+
+    // we change the current directory (see below) hence we need to add the current dir as modulePath
+    arg.append("--modulePath");
+    arg.append(QDir::currentPath());
+
+    arg.append("--onlyLatestStdin"); // skip all input except the latest one
+    arg.append("-"); // input stream mode of mbsimxml
+    QString uniqueTempDir_ = QString::fromStdString(uniqueTempDir.generic_string());
+    processRefresh.setWorkingDirectory(uniqueTempDir_);
+    processRefresh.start(QString::fromStdString((getInstallPath()/"bin"/"mbsimxml").string()), arg);
+    refresh();
   }
 
-  void MainWindow::mbsimxml(int task) {
-    // try to stop a old task
-    process.terminate();
-    // if a old task is still running queue the new one (start it if the old has finished, see above)
-    if(process.state()!=QProcess::NotRunning) {
-      mbsimxmlQueuedTask=task;
+  void MainWindow::refresh() {
+    if(!this->doc)
       return;
+
+    statusBar()->showMessage(tr("Refresh"));
+
+    shared_ptr<DOMDocument> doc=mbxmlparser->createDocument();
+    doc->setDocumentURI(X()%D(this->doc)->getDocumentFilename().string());
+    auto *newDocElement = static_cast<DOMElement*>(doc->importNode(this->doc->getDocumentElement(), true));
+    doc->insertBefore(newDocElement, nullptr);
+
+    project->processIDAndHref(newDocElement);
+
+    // disable plotting in DSS
+    auto dssEle=newDocElement;
+    if(E(dssEle)->getTagName()!=MBSIMXML%"MBSimProject")
+      dssEle=E(dssEle)->getFirstElementChildNamed(MBSIMXML%"MBSimProject");
+    if(auto x=E(dssEle)->getFirstElementChildNamed(MBSIM%"DynamicSystemSolver"); x==nullptr) {
+      dssEle=E(dssEle)->getFirstElementChildNamed(PV%"Embed");
+      dssEle=E(dssEle)->getFirstElementChildNamed(MBSIM%"DynamicSystemSolver");
     }
-
-    currentTask = task;
-
-    if(task==0)
-      statusBar()->showMessage(tr("Simulate"));
     else
-      statusBar()->showMessage(tr("Refresh"));
+      dssEle=x;
+    E(dssEle)->setAttribute("name","MBS_tmp");
+    DOMElement *ele1 = D(dssEle->getOwnerDocument())->createElement( MBSIM%"plotFeatureRecursive" );
+    E(ele1)->setAttribute("value","plotRecursive");
+    ele1->insertBefore(dssEle->getOwnerDocument()->createTextNode(X()%project->getVarFalse().toStdString()), nullptr);
+    dssEle->insertBefore( ele1, dssEle->getFirstElementChild() );
+
+    clearEchoView("Running 'mbsimxml':\n\n");
+    echoView->showXMLCode(false);
+    echoView->updateOutput(true);
+    string projectString;
+    DOMParser::serializeToString(doc.get(), projectString);
+    processRefresh.write(projectString.data(), projectString.size());
+    processRefresh.write("\0", 1);
+  }
+
+  void MainWindow::simulate() {
+    setProcessActionsEnabled(false);
+
+    statusBar()->showMessage(tr("Simulate"));
 
     shared_ptr<DOMDocument> doc=mbxmlparser->createDocument();
     doc->setDocumentURI(X()%D(this->doc)->getDocumentFilename().string());
@@ -1524,41 +1594,25 @@ namespace MBSimGUI {
     project->processIDAndHref(newDocElement);
 
     QString uniqueTempDir_ = QString::fromStdString(uniqueTempDir.generic_string());
-    auto projectFile=uniqueTempDir_+"/Project.mbsx";
-
-    actionSimulate->setDisabled(true);
-    actionInterrupt->setDisabled(false);
-    actionKill->setDisabled(false);
-    if(task==0) {
-      actionSaveDataAs->setDisabled(true);
-      actionSaveMBSimH5DataAs->setDisabled(true);
-      actionSaveOpenMBVDataAs->setDisabled(true);
-      actionSaveStateVectorAs->setDisabled(true);
-      actionSaveStateTableAs->setDisabled(true);
-      actionSaveLinearSystemAnalysisAs->setDisabled(true);
-      actionOpenMBV->setDisabled(false);
-      actionH5plotserie->setDisabled(false);
-      actionLinearSystemAnalysis->setDisabled(true);
-    }
+    QString projectFile = uniqueTempDir_+"/MBS_tmp.mbsx";
+    setSimulateActionsEnabled(false);
+    actionOpenMBV->setDisabled(false);
+    actionH5plotserie->setDisabled(false);
 
     clearEchoView("Running 'mbsimxml':\n\n");
     echoView->showXMLCode(false);
-    *debugStreamFlag=echoView->debugEnabled();
-    echoView->updateOutput(true);
+
     DOMParser::serialize(doc.get(), projectFile.toStdString());
     QStringList arg;
     QSettings settings;
-    if(currentTask==1)
-      arg.append("--stopafterfirststep");
-    else {
-      if(settings.value("mainwindow/options/savestatevector", false).toBool())
-        arg.append("--savefinalstatevector");
-    }
+    if(settings.value("mainwindow/options/savestatevector", false).toBool())
+      arg.append("--savefinalstatevector");
     arg.append("--savestatetable");
 
     // we print everything except status messages to stdout
     arg.append("--stdout"); arg.append(R"#(info~<span class="MBSIMGUI_INFO">~</span>~HTML)#");
     arg.append("--stdout"); arg.append(R"#(warn~<span class="MBSIMGUI_WARN">~</span>~HTML)#");
+    *debugStreamFlag=echoView->debugEnabled();
     if(*debugStreamFlag) {
       arg.append("--stdout"); arg.append(R"#(debug~<span class="MBSIMGUI_DEBUG">~</span>~HTML)#");
     }
@@ -1574,14 +1628,6 @@ namespace MBSimGUI {
     arg.append(projectFile);
     process.setWorkingDirectory(uniqueTempDir_);
     process.start(QString::fromStdString((getInstallPath()/"bin"/"mbsimxml").string()), arg);
-  }
-
-  void MainWindow::simulate() {
-    mbsimxml(0);
-  }
-
-  void MainWindow::refresh() {
-    mbsimxml(1);
   }
 
   void MainWindow::openmbv() {
@@ -1602,7 +1648,7 @@ namespace MBSimGUI {
     if(QFile::exists(file1) and QFile::exists(file2)) {
       if(not lsa) {
 	lsa = new LinearSystemAnalysisDialog(this);
-	connect(&process,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),this,[=](){ if(currentTask==0) lsa->updateWidget(); });
+	connect(&process,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),this,[=](){ lsa->updateWidget(); });
       }
       lsa->show();
     }
@@ -1617,42 +1663,6 @@ namespace MBSimGUI {
       }
       st->show();
     }
-  }
-
-  void MainWindow::debug() {
-    currentTask = 0;
-    shared_ptr<DOMDocument> doc=mbxmlparser->createDocument();
-    doc->setDocumentURI(X()%D(this->doc)->getDocumentFilename().string());
-    auto *newDocElement = static_cast<DOMElement*>(doc->importNode(this->doc->getDocumentElement(), true));
-    doc->insertBefore(newDocElement, nullptr);
-    project->processIDAndHref(newDocElement);
-    QString uniqueTempDir_ = QString::fromStdString(uniqueTempDir.generic_string());
-    QString projectFile = uniqueTempDir_+"/Project.mbsx";
-    serializer->writeToURI(doc.get(), X()%projectFile.toStdString());
-    QStringList arg;
-    arg.append("--stopafterfirststep");
-
-    // we print everything except status messages to stdout
-    arg.append("--stdout"); arg.append(R"#(info~<span class="MBSIMGUI_INFO">~</span>~HTML)#");
-    arg.append("--stdout"); arg.append(R"#(warn~<span class="MBSIMGUI_WARN">~</span>~HTML)#");
-    if(*debugStreamFlag) {
-      arg.append("--stdout"); arg.append(R"#(debug~<span class="MBSIMGUI_DEBUG">~</span>~HTML)#");
-    }
-    arg.append("--stdout"); arg.append(R"#(error~<span class="MBSIMGUI_ERROR">~</span>~HTML)#");
-    arg.append("--stdout"); arg.append(R"#(depr~<span class="MBSIMGUI_DEPRECATED">~</span>~HTML)#");
-    // status message go to stderr
-    arg.append("--stderr"); arg.append("status~~\n");
-
-    // we change the current directory (see below) hence we need to add the current dir as modulePath
-    arg.append("--modulePath");
-    arg.append(QDir::currentPath());
-
-    arg.append(projectFile);
-    clearEchoView("Running 'mbsimxml' in debug mode:\n\n");
-    echoView->showXMLCode(true);
-    process.setWorkingDirectory(uniqueTempDir_);
-    process.start(QString::fromStdString((getInstallPath()/"bin"/"mbsimxml").string()), arg);
-    statusBar()->showMessage(tr("Debug model"));
   }
 
   void MainWindow::selectElement(const string& ID, OpenMBVGUI::Object *obj) {
@@ -2953,19 +2963,21 @@ namespace MBSimGUI {
   }
 
   void MainWindow::interrupt() {
-    if(process.state()==QProcess::NotRunning)
+    if(process.state()==QProcess::NotRunning && processRefresh.state()==QProcess::NotRunning)
       return;
-    echoView->addOutputText("<span class=\"MBSIMGUI_ERROR\">'Interrupt simulation' clicked</span>\n");
+    echoView->addOutputText("<span class=\"MBSIMGUI_ERROR\">'Interrupt background tasks' clicked</span>\n");
     echoView->updateOutput(true);
     process.terminate();
+    processRefresh.terminate();
   }
 
   void MainWindow::kill() {
-    if(process.state()==QProcess::NotRunning)
+    if(process.state()==QProcess::NotRunning && processRefresh.state()==QProcess::NotRunning)
       return;
-    echoView->addOutputText("<span class=\"MBSIMGUI_ERROR\">'Kill simulation' clicked</span>\n");
+    echoView->addOutputText("<span class=\"MBSIMGUI_ERROR\">'Kill background tasks' clicked</span>\n");
     echoView->updateOutput(true);
     process.kill();
+    processRefresh.kill();
   }
 
   void MainWindow::flexibleBodyTool() {
@@ -2982,6 +2994,8 @@ namespace MBSimGUI {
   }
 
   void MainWindow::createFMU() {
+    setProcessActionsEnabled(false);
+
     QFileInfo projectFile = QFileInfo(getProjectFilePath());
     CreateFMUDialog dialog(projectFile.absolutePath()+"/"+projectFile.baseName()+".fmu");
     int result = dialog.exec();
@@ -2997,7 +3011,7 @@ namespace MBSimGUI {
 	  doc->insertBefore(newDocElement, nullptr);
 	  project->processIDAndHref(newDocElement);
 	  QString uniqueTempDir_ = QString::fromStdString(uniqueTempDir.generic_string());
-	  QString projectFile = uniqueTempDir_+"/Project.mbsx";
+	  QString projectFile = uniqueTempDir_+"/MBS_tmp.mbsx";
 	  serializer->writeToURI(doc.get(), X()%projectFile.toStdString());
 	  QStringList arg;
 	  if(dialog.cosim()) arg.append("--cosim");
@@ -3019,9 +3033,8 @@ namespace MBSimGUI {
     }
   }
 
-  void MainWindow::updateEchoView() {
-    auto data=process.readAllStandardOutput();
-    echoView->addOutputText(data.data());
+  void MainWindow::updateEchoView(const QByteArray &data) {
+    echoView->addOutputText(data.constData());
     echoView->updateOutput(true);
   }
 
@@ -3282,6 +3295,33 @@ namespace MBSimGUI {
       elementView->expandToDepth(elementView->selectionModel()->currentIndex(),depth);
     else if(parameterView->hasFocus())
       parameterView->expandToDepth(parameterView->selectionModel()->currentIndex(),depth);
+  }
+
+  void MainWindow::setProcessActionsEnabled(bool enabled) {
+    actionSimulate->setEnabled(enabled);
+    actionCreateFMU->setEnabled(enabled);
+  }
+
+  void MainWindow::setSimulateActionsEnabled(bool enabled) {
+    actionSaveDataAs->setEnabled(enabled);
+    actionSaveMBSimH5DataAs->setEnabled(enabled);
+    actionSaveOpenMBVDataAs->setEnabled(enabled);
+    actionSaveStateTableAs->setEnabled(enabled);
+    if(enabled) {
+      QSettings settings;
+      bool saveFinalStateVector = settings.value("mainwindow/options/savestatevector", false).toBool();
+      if(saveFinalStateVector)
+        actionSaveStateVectorAs->setEnabled(true);
+      if(dynamic_cast<LinearSystemAnalyzer*>(project->getSolver())) {
+        actionSaveLinearSystemAnalysisAs->setEnabled(true);
+        actionLinearSystemAnalysis->setEnabled(true);
+      }
+    }
+    else {
+      actionSaveStateVectorAs->setEnabled(false);
+      actionSaveLinearSystemAnalysisAs->setEnabled(false);
+      actionLinearSystemAnalysis->setEnabled(false);
+    }
   }
 
   void MainWindow::prepareForPropertyDialogOpen() {
