@@ -3015,14 +3015,19 @@ namespace MBSimGUI {
 
   void MainWindow::updateStatusMessage(const string &s) {
     static string ss;
-    ss=s;
+    ss+=s;
     auto out=[this](){
       // show only last line
-      assert(ss[ss.length()-1]=='\n');
-      ss.resize(ss.length()-1);
-      auto i=ss.rfind('\n');
-      i = i==string::npos ? 0 : i+1;
-      statusBar()->showMessage(QString::fromStdString(ss.substr(i)));
+      if(ss.empty())
+        return;
+      auto end = ss[ss.length()-1]=='\n' ? ss.length()-1 : ss.rfind('\n');
+      if(end==string::npos)
+        return;
+      auto start = ss.rfind('\n', end-1);
+      if(start==string::npos)
+        start=0;
+      statusBar()->showMessage(QString::fromStdString(ss.substr(start, end-start)));
+      ss=ss.substr(end+1);
     };
 
     static qint64 last=0;
