@@ -307,8 +307,6 @@ int main(int argc, char *argv[]) {
       vector<bfs::path> dependencies;
 
       try {
-        DynamicSystemSolver::SignalHandler dummy; // install signal handler for next line (and deinstall on scope exit)
-
         // run preprocessor
 
         stringstream MBSIMPRJstream;
@@ -338,6 +336,9 @@ int main(int argc, char *argv[]) {
           }
           MBSIMPRJstream.str(std::move(str)); // this warning will be gone with c++20
         }
+
+        DynamicSystemSolver::SignalHandler dummy; // install signal handler from now on (and deinstall on scope exit)
+
         Preprocess preprocess = MBSIMPRJ=="-" ?
           Preprocess(MBSIMPRJstream, parser, AUTORELOADTIME>0) : // ctor for input by stdin
           Preprocess(MBSIMPRJ, parser, AUTORELOADTIME>0);        // ctor for input by filename
