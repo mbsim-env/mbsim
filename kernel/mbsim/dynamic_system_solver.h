@@ -438,6 +438,7 @@ namespace MBSim {
 #ifndef SWIG
       class SignalHandler {
         public:
+          // This resets the DSS flags exitRequest and silentExit to false
           SignalHandler();
           ~SignalHandler();
         private:
@@ -450,18 +451,18 @@ namespace MBSim {
       };
 #endif
 
+      // This function should be called repeatetly in mbsim, at least in heavy work parts of the code.
+      // If the DSS exitRequest flag is set a error message is printed and a std::runtime_error exception is thrown to interrupt.
+      // If silent is true or the DSS silentExit flag is set then not message is printed and a SilentError is thrown.
       static void throwIfExitRequested(bool silent=false) {
         if(exitRequest) {
-          if(!silent)
+          if(!silent && !silentExit) {
             msgStatic(fmatvec::Atom::Error)<<"User requested a exit (throw exception now)."<<std::endl;
-          throw std::runtime_error("Exception due to user requested exit.");
+            throw std::runtime_error("Exception due to user requested exit.");
+          }
+          msgStatic(fmatvec::Atom::Info)<<"User requested a silent exit (throw exception now)."<<std::endl;
+          throw SilentError();
         }
-      }
-
-      static bool exitRequested(bool silent=false) {
-        if(exitRequest && !silent)
-          msgStatic(fmatvec::Atom::Error)<<"User requested a exit (caller will handle this request now)."<<std::endl;
-        return exitRequest;
       }
 
       // TODO just for testing
@@ -639,6 +640,9 @@ namespace MBSim {
 
       void setqdequ(bool qdequ_) { qdequ = qdequ_; }
       bool getqdequ() { return qdequ; }
+
+      /** interrupt at the next interruption point */
+      static void interrupt(bool silent=false);
 
     protected:
       /**
@@ -911,6 +915,7 @@ namespace MBSim {
     private:
       /**
        * \brief handler for user interrupt signal
+       * Set the DSS flag exitRequest to true.
        */
       static void sigInterruptHandler(int);
 
@@ -920,10 +925,12 @@ namespace MBSim {
       void constructor();
 
       /**
-       * \brief boolean signal evaluation for end integration set by user
+       * \brief boolean flags to store a user requested interruption
        */
       static std::atomic<bool> exitRequest;
       static_assert(decltype(exitRequest)::is_always_lock_free);
+      // flag to indicate if a user requested interruption should be silent.
+      static std::atomic<bool> silentExit;
 
       /**
        * \brief is a state read from a file

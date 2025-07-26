@@ -75,6 +75,10 @@ namespace MBSim {
       // just a string to store the memory which is returned by the what() function
       mutable std::string whatMsg;
   };
+
+  class SilentError : public std::exception {
+  };
+
 }
 
 #endif /* _MBSIM_EVENT_H */

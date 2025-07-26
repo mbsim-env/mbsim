@@ -127,8 +127,9 @@ int main(int argc, char *argv[]) {
           <<"                         If the input contains relative references to other files then the root element of the input"<<endl
           <<"                         must be tagged using a 'MBXMLUtils_OriginalFilename' XML-Processing-Instruction element."<<endl
           <<"                         Must be the last argument!"<<endl
-          <<"--onlyLatestStdin        If '-' and --onlyLatestStdin is used input files on stdin are skipped if already"<<endl
-          <<"                         a newer input file is waiting on the input buffer."<<endl;
+          <<"--onlyLatestStdin        If '-' and --onlyLatestStdin is used, inputs on stdin are skipped if already"<<endl
+          <<"                         a newer input is waiting on the input buffer and the currently running input"<<endl
+          <<"                         is interrupted silently before starting the new input."<<endl;
       return 0;
     }
 
@@ -294,6 +295,7 @@ int main(int argc, char *argv[]) {
             break;
           }
           lastStdinContent=str; // ... or set lastStdinContent to the read content
+          DynamicSystemSolver::interrupt(true); // silently interrupt a already running simulation (we want always to run the latest input only)
         };
       });
     }
@@ -308,6 +310,8 @@ int main(int argc, char *argv[]) {
 
       try {
         // run preprocessor
+
+        unique_ptr<DynamicSystemSolver::SignalHandler> sigHandler; // install signal handler from now on (and deinstall on scope exit)
 
         stringstream MBSIMPRJstream;
         if(MBSIMPRJ=="-") {
@@ -328,16 +332,16 @@ int main(int argc, char *argv[]) {
             }
             if(cinEOF) // if EOF has reached break this outer loop which exits this program
               break;
+            sigHandler=make_unique<DynamicSystemSolver::SignalHandler>(); // this must be called inside of the lock of mu [unique_lock l(mu)]
           }
           else {
             getline(cin, str, '\0'); // read the next file content (up to next null-char or EOF)
             if(cin.eof())
               break;
+            sigHandler=make_unique<DynamicSystemSolver::SignalHandler>();
           }
           MBSIMPRJstream.str(std::move(str)); // this warning will be gone with c++20
         }
-
-        DynamicSystemSolver::SignalHandler dummy; // install signal handler from now on (and deinstall on scope exit)
 
         Preprocess preprocess = MBSIMPRJ=="-" ?
           Preprocess(MBSIMPRJstream, parser, AUTORELOADTIME>0) : // ctor for input by stdin
@@ -415,6 +419,9 @@ int main(int argc, char *argv[]) {
 
         if(AUTORELOADTIME>0)
           dependencies = preprocess.getDependencies();
+      }
+      catch(const SilentError &) {
+        fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<flush<<skipws<<"Exception due to silent user requested exit."<<flush<<noskipws<<endl;
       }
       catch(const MBSimError &ex) {
         // DOMEvalException is already passed thought escapeFunc -> skip escapeFunc (if enabled on the fmatvec::Atom streams) from duing another escaping

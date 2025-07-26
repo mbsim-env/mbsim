@@ -493,10 +493,10 @@ namespace MBSimGUI {
       static QString allOutput;
       connect(&processRefresh,&QProcess::readyReadStandardOutput,[this](){
         allOutput+=processRefresh.readAllStandardOutput();
-        // ... if "Load, parse and validate input stream." is found in the output then mbsimxml has already started
+        // ... if 'MBXMLUTILS_PREPROCESS_CTOR' is found in the output then mbsimxml has already started
         // and we can now close the write stream to exit mbsimxml after the content is processed which will call
         // QProcess::finished at the end
-        if(allOutput.contains("Load, parse and validate input stream."))
+        if(allOutput.contains("MBXMLUTILS_PREPROCESS_CTOR"))
           processRefresh.closeWriteChannel();
       });
       // if QProcess::finished gets called dump all output to cout and close MainWindow
@@ -1524,7 +1524,7 @@ namespace MBSimGUI {
     ele1->insertBefore(dssEle->getOwnerDocument()->createTextNode(X()%project->getVarFalse().toStdString()), nullptr);
     dssEle->insertBefore( ele1, dssEle->getFirstElementChild() );
 
-    clearEchoView("Running 'mbsimxml':\n\n");
+    clearEchoView("");
     echoView->showXMLCode(false);
     echoView->updateOutput(true);
     string projectString;
@@ -1550,7 +1550,7 @@ namespace MBSimGUI {
     actionOpenMBV->setDisabled(false);
     actionH5plotserie->setDisabled(false);
 
-    clearEchoView("Running 'mbsimxml':\n\n");
+    clearEchoView("Running 'mbsimxml' to simulate the model:\n\n");
     echoView->showXMLCode(false);
 
     DOMParser::serialize(doc.get(), projectFile.toStdString());
@@ -2968,7 +2968,7 @@ namespace MBSimGUI {
 	  if(dialog.cosim()) arg.append("--cosim");
 	  if(dialog.nocompress()) arg.append("--nocompress");
 	  arg.append(projectFile);
-	  clearEchoView("Running 'createFMU':\n\n");
+	  clearEchoView("Running 'createFMU' to create a FMU from the model:\n\n");
 	  echoView->showXMLCode(false);
 	  process.setWorkingDirectory(uniqueTempDir_);
 	  fmuFileName = dialog.getFileName();
@@ -2985,7 +2985,20 @@ namespace MBSimGUI {
   }
 
   void MainWindow::updateEchoView(const QByteArray &data) {
-    echoView->addOutputText(data.constData());
+    if(process.isOpen())
+      // if a process (simulation) is running just add the new output
+      echoView->addOutputText(data.constData());
+    else {
+      // if no process (simulation) is running and MBXMLUTILS_PREPROCESS_CTOR was found -> skip the output before MBXMLUTILS_PREPROCESS_CTOR
+      // (this is used to avoid the message about exiting the last existing mbsimxml run)
+      auto idx=data.lastIndexOf("<a name=\"MBXMLUTILS_PREPROCESS_CTOR\"/>");
+      if(idx==-1)
+        echoView->addOutputText(data.constData());
+      else {
+        clearEchoView("");
+        echoView->addOutputText(data.constData()+idx);
+      }
+    }
 
     static qint64 last=0;
     static QTimer singleShot;

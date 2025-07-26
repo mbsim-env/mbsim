@@ -57,6 +57,7 @@ namespace MBSim {
   bool gflag = false;
 
   atomic<bool> DynamicSystemSolver::exitRequest = false;
+  atomic<bool> DynamicSystemSolver::silentExit = false;
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, DynamicSystemSolver)
 
@@ -1343,6 +1344,7 @@ namespace MBSim {
 
   DynamicSystemSolver::SignalHandler::SignalHandler() {
     exitRequest = false;
+    silentExit = false;
     #ifndef _WIN32
     oldSigHup=signal(SIGHUP, sigInterruptHandler);
     #endif
@@ -1360,6 +1362,11 @@ namespace MBSim {
 
   void DynamicSystemSolver::sigInterruptHandler(int) {
     exitRequest = true;
+  }
+
+  void DynamicSystemSolver::interrupt(bool silent) {
+    exitRequest = true;
+    silentExit = silent;
   }
 
   void DynamicSystemSolver::writez(string fileName, bool formatH5) {
