@@ -46,7 +46,7 @@ namespace MBSimGUI {
 
   extern MainWindow *mw;
 
-  EchoView::EchoView(QWidget *parent) : QMainWindow(parent) {
+  EchoView::EchoView() : QMainWindow() {
     // QMainWindow set the window flag Qt::Window in its ctor but we use this QMainWindow as a widget
     // -> reset the windows flag to Qt::Widget
     setWindowFlags(Qt::Widget); // we cannot do this by : QMainWindow(parent, Qt::Widget) since QMainWindow overwrites this later on

@@ -103,6 +103,29 @@ namespace MBSimGUI {
   MainWindow::MainWindow(QStringList &arg) : project(nullptr), inlineOpenMBVMW(nullptr), allowUndo(true), maxUndo(10), autoRefresh(true), statusUpdate(true), doc(), elementBuffer(nullptr,false), parameterBuffer(nullptr,false) {
     QSettings settings;
 
+    echoView = new EchoView();
+
+    // initialize streams
+    auto outputFunc=[this](const string &s){
+      updateEchoView(s.c_str());
+    };
+    debugStreamFlag=std::make_shared<bool>(false);
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Info      , std::make_shared<bool>(true),
+      make_shared<fmatvec::PrePostfixedStream>("<span class=\"MBSIMGUI_INFO\">", "</span>", outputFunc, DOMEvalException::htmlEscaping));
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Warn      , std::make_shared<bool>(true),
+      make_shared<fmatvec::PrePostfixedStream>("<span class=\"MBSIMGUI_WARN\">", "</span>", outputFunc, DOMEvalException::htmlEscaping));
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Debug     , debugStreamFlag             ,
+      make_shared<fmatvec::PrePostfixedStream>("<span class=\"MBSIMGUI_DEBUG\">", "</span>", outputFunc, DOMEvalException::htmlEscaping));
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Error     , std::make_shared<bool>(true),
+      make_shared<fmatvec::PrePostfixedStream>("<span class=\"MBSIMGUI_ERROR\">", "</span>", outputFunc, DOMEvalException::htmlEscaping));
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Deprecated, std::make_shared<bool>(true),
+      make_shared<fmatvec::PrePostfixedStream>("<span class=\"MBSIMGUI_DEPRECATED\">", "</span>", outputFunc, DOMEvalException::htmlEscaping));
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Status    , std::make_shared<bool>(true),
+      make_shared<fmatvec::PrePostfixedStream>("", "\n", [this](const string &s){
+        // this usually gets never called -> no need to ensure that it is only called every 250ms
+        updateStatusMessage(s);
+      }));
+
     impl=DOMImplementation::getImplementation();
     serializer=impl->createLSSerializer();
     // use html output of MBXMLUtils
@@ -418,29 +441,8 @@ namespace MBSimGUI {
     dockEchoArea->setFeatures(dockEchoArea->features() | QDockWidget::DockWidgetVerticalTitleBar);
     dockEchoArea->setObjectName("dockWidget/echoArea");
     addDockWidget(Qt::BottomDockWidgetArea, dockEchoArea);
-    echoView = new EchoView(dockEchoArea);
+    echoView->setParent(dockEchoArea);
     dockEchoArea->setWidget(echoView);
-
-    // initialize streams
-    auto outputFunc=[this](const string &s){
-      updateEchoView(s.c_str());
-    };
-    debugStreamFlag=std::make_shared<bool>(false);
-    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Info      , std::make_shared<bool>(true),
-      make_shared<fmatvec::PrePostfixedStream>("<span class=\"MBSIMGUI_INFO\">", "</span>", outputFunc, DOMEvalException::htmlEscaping));
-    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Warn      , std::make_shared<bool>(true),
-      make_shared<fmatvec::PrePostfixedStream>("<span class=\"MBSIMGUI_WARN\">", "</span>", outputFunc, DOMEvalException::htmlEscaping));
-    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Debug     , debugStreamFlag             ,
-      make_shared<fmatvec::PrePostfixedStream>("<span class=\"MBSIMGUI_DEBUG\">", "</span>", outputFunc, DOMEvalException::htmlEscaping));
-    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Error     , std::make_shared<bool>(true),
-      make_shared<fmatvec::PrePostfixedStream>("<span class=\"MBSIMGUI_ERROR\">", "</span>", outputFunc, DOMEvalException::htmlEscaping));
-    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Deprecated, std::make_shared<bool>(true),
-      make_shared<fmatvec::PrePostfixedStream>("<span class=\"MBSIMGUI_DEPRECATED\">", "</span>", outputFunc, DOMEvalException::htmlEscaping));
-    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Status    , std::make_shared<bool>(true),
-      make_shared<fmatvec::PrePostfixedStream>("", "\n", [this](const string &s){
-        // this usually gets never called -> no need to ensure that it is only called every 250ms
-        updateStatusMessage(s);
-      }));
 
     startProcessRefresh();
 

@@ -30,7 +30,7 @@ namespace MBSimGUI {
 
   class EchoView : public QMainWindow {
     public:
-      EchoView(QWidget *parent);
+      EchoView();
       void clearOutput();
       QSize sizeHint() const override;
       void addOutputText(const QString &outText_);
