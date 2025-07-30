@@ -3002,20 +3002,23 @@ namespace MBSimGUI {
 
     static qint64 last=0;
     static QTimer singleShot;
+    static int delta=100;
     if(last==0) {
       singleShot.setSingleShot(true);
       singleShot.callOnTimeout([this](){
+        auto cur=QDateTime::currentMSecsSinceEpoch();
         echoView->updateOutput(true);
         last=QDateTime::currentMSecsSinceEpoch();
+        delta = std::max(100ll, std::min(500ll, last-cur));
       });
     }
 
-    const int delta=100;
     auto cur=QDateTime::currentMSecsSinceEpoch();
     if(cur>last+delta) {
-      echoView->updateOutput(true);
-      last=cur;
       singleShot.stop();
+      echoView->updateOutput(true);
+      last=QDateTime::currentMSecsSinceEpoch();
+      delta = std::max(100ll, std::min(500ll, last-cur));
     }
     else if(!singleShot.isActive())
       singleShot.start(last+delta-cur);
@@ -3029,8 +3032,16 @@ namespace MBSimGUI {
   void MainWindow::updateStatusMessage(const string &s) {
     static string ss;
     ss+=s;
+
+    // remove multiple newline at and of ss
+    int i=ss.length()-1;
+    for(; i>=1; --i)
+      if(ss[i]!='\n' || ss[i-1]!='\n')
+        break;
+    ss=ss.substr(0,i+1);
+
     auto out=[this](){
-      // show only last line
+      // show only last line one empty line
       if(ss.empty())
         return;
       auto end = ss[ss.length()-1]=='\n' ? ss.length()-1 : ss.rfind('\n');
@@ -3056,9 +3067,9 @@ namespace MBSimGUI {
     const int delta=250;
     auto cur=QDateTime::currentMSecsSinceEpoch();
     if(cur>last+delta) {
-      out();
-      last=cur;
       singleShot.stop();
+      out();
+      last=QDateTime::currentMSecsSinceEpoch();
     }
     else if(!singleShot.isActive())
       singleShot.start(last+delta-cur);
