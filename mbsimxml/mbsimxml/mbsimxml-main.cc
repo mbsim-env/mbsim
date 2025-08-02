@@ -342,6 +342,8 @@ int main(int argc, char *argv[]) {
           }
           MBSIMPRJstream.str(std::move(str)); // this warning will be gone with c++20
         }
+        else
+          sigHandler=make_unique<DynamicSystemSolver::SignalHandler>();
 
         Preprocess preprocess = MBSIMPRJ=="-" ?
           Preprocess(MBSIMPRJstream, parser, AUTORELOADTIME>0) : // ctor for input by stdin
