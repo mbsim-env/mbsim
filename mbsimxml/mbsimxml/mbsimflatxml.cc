@@ -290,7 +290,7 @@ void MBSimXML::plotInitialState(const unique_ptr<Solver>& solver, const unique_p
 
 void MBSimXML::main(const unique_ptr<Solver>& solver, const unique_ptr<DynamicSystemSolver>& dss, bool doNotIntegrate, bool stopAfterFirstStep, bool savestatevector, bool savestatetable) {
   if(MBXMLUtils::DOMEvalException::isHTMLOutputEnabled())
-    fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<flush<<skipws<<"<a name=\"MBSIM_SOLVER_START\"/>"<<flush<<noskipws;
+    fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<flush<<skipws<<"<a name=\"MBSIM_SOLVER_START\"></a>"<<flush<<noskipws;
   if(savestatetable)
     dss->writeStateTable("statetable.asc");
   if(doNotIntegrate==false) {
@@ -333,7 +333,7 @@ void MBSimXML::main(const unique_ptr<Solver>& solver, const unique_ptr<DynamicSy
   if(savestatevector)
     dss->writez("statevector.asc", false);
   if(MBXMLUtils::DOMEvalException::isHTMLOutputEnabled())
-    fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<flush<<skipws<<"<a name=\"MBSIM_SOLVER_END\"/>"<<flush<<noskipws;
+    fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<flush<<skipws<<"<a name=\"MBSIM_SOLVER_END\"></a>"<<flush<<noskipws;
 }
 
 }

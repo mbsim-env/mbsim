@@ -467,7 +467,7 @@ namespace MBSim {
       H5::File::setDefaultChunkSize(chunkSize);
       H5::File::setDefaultCacheSize(cacheSize);
       if(plotFeature[plotRecursive])
-        hdf5File = std::make_shared<H5::File>(fileName, H5::File::write);
+        hdf5File = std::make_shared<H5::File>(fileName, H5::File::writeTempNoneSWMR);
 
       Group::init(stage, config);
 
@@ -1136,6 +1136,7 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::projectGeneralizedPositions(int mode, bool fullUpdate) {
+    DynamicSystemSolver::throwIfExitRequested();
     msg(Info) << "System projection of generalized position at t = " << getTime() << " (mode=" << mode << " fullUpdate=" << fullUpdate << ")." << endl;
 
     int gID = 0;
@@ -1170,10 +1171,12 @@ namespace MBSim {
     updateWRef(WParent[0]);
     updW[0] = true;
     SqrMat Gv = SqrMat(evalW().T() * slvLLFac(evalLLM(), evalW()));
+    DynamicSystemSolver::throwIfExitRequested();
     Mat T = evalT();
     int iter = 0;
     bool highIterMsgPrinted=false;
     while (nrmInf(evalg() - corr) >= tolProj) {
+      DynamicSystemSolver::throwIfExitRequested();
       if (++iter >= maxIter) {
         msg(Warn) << "Iterations: " << iter << endl;
         msg(Warn) << "Error: no convergence in projection of generalized positions (t=" << t << ")." << endl;
@@ -1200,6 +1203,7 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::projectGeneralizedVelocities(int mode) {
+    DynamicSystemSolver::throwIfExitRequested();
     msg(Info) << "System projection of generalized velocities at t = " << getTime() << " (mode=" << mode << ")." << endl;
 
     int gdID = 0; // IH
@@ -1233,6 +1237,7 @@ namespace MBSim {
       if (laSize) {
         SqrMat Gv = SqrMat(evalW().T() * slvLLFac(evalLLM(), evalW()));
         Vec mu = slvLS(Gv, -evalgd() + corr);
+        DynamicSystemSolver::throwIfExitRequested();
 
         // test for inconsistent links (in this case the above slvLS finds a solution mu for which the test shows a none zero residuum -> this is a modelling error of links)
         auto res = Gv * mu - (-evalgd() + corr);
@@ -1241,6 +1246,7 @@ namespace MBSim {
 
         u += slvLLFac(getLLM(), getW() * mu);
         resetUpToDate();
+        DynamicSystemSolver::throwIfExitRequested();
       }
     }
   }

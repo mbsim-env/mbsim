@@ -133,11 +133,31 @@ namespace MBSimGUI {
     }
 
     void removeSpan(const QString &span, QString &outText) {
+      static QRegularExpression spanStartRE(R"|(<\s*span\s)|");
+      static QRegularExpression spanEndRE  (R"|(<\s*/\s*span\s*>)|");
       int start;
       while((start=outText.indexOf(span))!=-1) {
-        auto end=outText.indexOf("</span>", start);
-        if(end==-1) break;
-        outText.replace(start, end-start+7, "");
+        int count=1;
+        int s=start;
+        while(true) {
+          auto spanStartM = spanStartRE.match(outText, s+1);
+          auto spanEndM   = spanEndRE  .match(outText, s+1);
+          auto spanStartM_capturedStart = spanStartM.capturedStart();
+          if(spanStartM_capturedStart==-1)
+            spanStartM_capturedStart=numeric_limits<int>::max();
+          if(spanEndM.capturedStart()==-1) {
+            cerr<<"Internal error: <span> elements do not match"<<endl;
+            break;
+          }
+          auto spanEndM_capturedStart = spanEndM.capturedStart();
+          auto spanEndM_capturedEnd = spanEndM.capturedEnd();
+          count += spanStartM_capturedStart<spanEndM_capturedStart ? 1 : -1;
+          if(count==0) {
+            outText.replace(start, spanEndM_capturedEnd-start, "");
+            break;
+          }
+          s=std::min(spanStartM_capturedStart, spanEndM.capturedStart());
+        }
       }
     }
   }
@@ -159,7 +179,8 @@ namespace MBSimGUI {
     {
       QMutexLocker lock(&outTextMutex);
 
-      // the CSS property display is not supported by QTextBrowser. Hence we remove it manually.
+      // the CSS property "display" is not supported by QTextBrowser. Hence, we cannot use "display:none" to remove the content
+      // and we need to remove it manually using the removeSpan helper function.
       auto outText2=outText;
       if(!showSSE->isChecked()) removeSpan("<span class=\"MBXMLUTILS_ERROROUTPUT MBXMLUTILS_SSE\">", outText2);
       if(!showWarn->isChecked()) removeSpan("<span class=\"MBSIMGUI_WARN\">", outText2);
@@ -174,9 +195,9 @@ namespace MBSimGUI {
       // add anchor at first error, if an error is present
       int firstErrorPos=outText.indexOf("<span class=\"MBSIMGUI_ERROR\">");
       if(firstErrorPos!=-1)
-        outText2.replace(firstErrorPos, 0, "<a name=\"MBSIMGUI_FIRSTERROROREND\"/>");
+        outText2.replace(firstErrorPos, 0, "<a name=\"MBSIMGUI_FIRSTERROROREND\"></a>");
       else
-        outText2.append("<a name=\"MBSIMGUI_FIRSTERROROREND\"/>");
+        outText2.append("<a name=\"MBSIMGUI_FIRSTERROROREND\"></a>");
 
       html=QString(R"+(
 <!DOCTYPE html>

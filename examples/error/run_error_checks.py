@@ -46,6 +46,11 @@ difftoolCmd.diffcmd=None
 octErrRE=re.compile("Caught octave exception .*\n")
 octErrREreplace="Caught octave exception **octave version dependent**\n"
 
+def errorOutputExt(errorFormat):
+  if errorFormat=="GCCNONE": return ".txt"
+  if errorFormat=="HTMLFILELINE": return ".xml"
+  if errorFormat=="HTMLXPATH": return ".xml"
+
 def checkErrorFormat(dir, errorFormat):
   ret=[0,""]
 
@@ -54,7 +59,10 @@ def checkErrorFormat(dir, errorFormat):
   env["MBXMLUTILS_ERROROUTPUT"]=errorFormat
   try:
     prefix=args.prefix+"/bin/" if args.prefix is not None else ""
-    cur=subprocess.check_output([prefix+"mbsimxml", "--stopafterfirststep", "--stdout", "error~~", "MBS.mbsx"],
+    stdout="error~~"
+    if errorFormat == "HTMLXPATH":
+      stdout="error~<span class=\"MBSIMGUI_ERROR\">~</span>"
+    cur=subprocess.check_output([prefix+"mbsimxml", "--stopafterfirststep", "--stdout", stdout, "MBS.mbsx"],
                                 env=env, stderr=subprocess.DEVNULL, cwd=dir)
     ret[1]+=dir+": "+errorFormat+": did not return with !=0 (ret=0)\n"; ret[0]+=1
   except subprocess.CalledProcessError as ex:
@@ -63,14 +71,30 @@ def checkErrorFormat(dir, errorFormat):
   cur=octErrRE.sub(octErrREreplace, cur) # replace octave error output which may be octave version dependent
   cur=cur.replace("\\", "/") # convert windows path \ to unix path / to allow the same reference for win/linux
 
+  if errorFormat == "HTMLXPATH":
+    # get all elements, including and  after the first <span class="MBSIMGUI_ERROR"> element as childs of curRoot
+    curRoot=ET.Element("root")
+    for child in ET.fromstring('<root>'+cur+'</root>'):
+      if (child.tag=="span" and child.attrib.get("class")=="MBSIMGUI_ERROR") or len(curRoot)>0:
+        curRoot.append(child);
+
+    adaptXML(curRoot, dir)
+    ET.indent(curRoot)
+    cur=ET.tostring(curRoot).decode("utf-8")+"\n"
+
+  r=checkUpdateDiff(dir, errorFormat, cur); appendRet(ret, r)
+  return ret
+
+def checkUpdateDiff(dir, errorFormat, cur):
+  ret=[0,""]
   if args.update:
     # update reference error output
-    with open(dir+"/error-"+errorFormat+".errorOutput", "wt") as f:
+    with open(dir+"/error-"+errorFormat+".errorOutput"+errorOutputExt(errorFormat), "wt") as f:
       f.write(cur)
   else:
     # check error output
-    if os.path.isfile(dir+"/error-"+errorFormat+".errorOutput"):
-      with open(dir+"/error-"+errorFormat+".errorOutput", "rt") as f:
+    if os.path.isfile(dir+"/error-"+errorFormat+".errorOutput"+errorOutputExt(errorFormat)):
+      with open(dir+"/error-"+errorFormat+".errorOutput"+errorOutputExt(errorFormat), "rt") as f:
         ref=f.read()
       if ref!=cur:
         if args.showdiff:
@@ -79,56 +103,15 @@ def checkErrorFormat(dir, errorFormat):
           try:
             with open(curFile, "wt") as f:
               f.write(cur)
-            subprocess.check_call(difftoolCmd(dir+"/error-"+errorFormat+".errorOutput", curFile), shell=True)
+            subprocess.check_call(difftoolCmd(dir+"/error-"+errorFormat+".errorOutput"+errorOutputExt(errorFormat), curFile), shell=True)
           finally:
             os.remove(curFile)
         else:
           ret[1]+=dir+": "+errorFormat+": error output does not match reference\n"; ret[0]+=1
           ret[1]+="".join(difflib.unified_diff(ref.splitlines(keepends=True), cur.splitlines(keepends=True),
-                                               fromfile=dir+"/error-"+errorFormat+".errorOutput", tofile="output"))
+                                               fromfile=dir+"/error-"+errorFormat+".errorOutput"+errorOutputExt(errorFormat), tofile="output"))
     else:
       ret[1]+=dir+": "+errorFormat+": no reference\n"; ret[0]+=1
-  return ret
-
-def compXML(dir, ref, cur):
-  ret=[0,""]
-
-  if ref.tag!=cur.tag:
-    ret[1]+=dir+f": GUI: tag does not match ref={ref.tag} cur={cur.tag}\n"; ret[0]+=1
-    return ret
-
-  for key in cur.attrib.keys()-ref.attrib.keys():
-    ret[1]+=dir+f": GUI: attribute key={key} not found in ref\n"; ret[0]+=1
-  for key in ref.attrib:
-    if key not in cur.attrib:
-      ret[1]+=dir+f": GUI: attribute key={key} not found in cur\n"; ret[0]+=1
-      continue
-    if ref.attrib[key]!=cur.attrib[key]:
-      if key=="href":
-        refPath=os.path.join(os.path.abspath(dir), urllib.parse.urlparse(ref.attrib[key]).path)
-        curPath=os.path.join(os.path.abspath(dir), urllib.parse.urlparse(cur.attrib[key]).path)
-        if refPath!=curPath:
-          ret[1]+=dir+f": GUI: href path does not match\n    ref={refPath}\n    cur={curPath}\n"; ret[0]+=1
-        refQS=urllib.parse.parse_qs(urllib.parse.urlparse(ref.attrib[key]).query)
-        curQS=urllib.parse.parse_qs(urllib.parse.urlparse(cur.attrib[key]).query)
-        for key2 in curQS.keys()-refQS.keys():
-          if not (key2=="ecount" and curQS[key2]==["1"]): # treat ecount=1 === ecount not present
-            ret[1]+=dir+f": GUI: href query key={key2} value={curQS[key2]} not found in ref\n"; ret[0]+=1
-        for key2 in refQS:
-          if key2 not in curQS:
-            if not (key2=="ecount" and refQS[key2]==["1"]): # treat ecount=1 === ecount not present
-              ret[1]+=dir+f": GUI: href query key={key2} value={refQS[key2]} not found in cur\n"; ret[0]+=1
-            continue
-          if refQS[key2]!=curQS[key2]:
-            ret[1]+=dir+f": GUI: query for key={key2} does not match\n    ref={refQS[key2]}\n    cur={curQS[key2]}\n"; ret[0]+=1
-        continue
-      ret[1]+=dir+f": GUI: attribute for key={key} does not match\n    ref={cur.attrib[key]}\n    cur={cur.attrib[key]}\n"; ret[0]+=1
-
-  if len(ref)!=len(cur):
-    ret[1]+=dir+f": GUI: child length does not match ref={len(ref)} cur={len(cur)}\n"; ret[0]+=1
-    return ret
-  for refChild,curChild in zip(ref, cur):
-    r=compXML(dir, refChild, curChild); appendRet(ret, r)
   return ret
 
 def checkGUIError(dir):
@@ -145,17 +128,41 @@ def checkGUIError(dir):
   cur=octErrRE.sub(octErrREreplace, cur) # replace octave error output which may be octave version dependent
   cur=cur.replace("\\", "/") # convert windows path \ to unix path / to allow the same reference for win/linux
 
-  with open(dir+"/error-HTMLXPATH.errorOutput", "rt") as f:
-    refRoot=ET.fromstring('<span class="MBSIMGUI_ERROR">'+f.read()+'</span>')
+  # get all elements, including and  after the first <span class="MBSIMGUI_ERROR"> element as childs of curRoot
+  curRoot=ET.Element("root")
+  for child in ET.fromstring('<root>'+cur+'</root>'):
+    if (child.tag=="span" and child.attrib.get("class")=="MBSIMGUI_ERROR") or len(curRoot)>0:
+      curRoot.append(child);
 
-  curAll=ET.fromstring('<span>'+cur+'</span>').findall("span[@class='MBSIMGUI_ERROR']")
-  if len(curAll)!=1:
-    ret[1]+=dir+f": GUI: not exactly one error output: cur={len(curAll)}\n"; ret[0]+=1
-    ret[1]+=cur+"\n"
-  else:
-    curRoot=curAll[0]
-    r=compXML(dir, refRoot, curRoot); appendRet(ret, r)
+  adaptXML(curRoot, dir)
+  ET.indent(curRoot)
+  cur=ET.tostring(curRoot).decode("utf-8")+"\n"
+
+  r=checkUpdateDiff(dir, "HTMLXPATH", cur); appendRet(ret, r)
   return ret
+
+def adaptXML(ele, dir):
+  dirPrefix=os.path.normpath(os.getcwd()+"/"+dir)+"/"
+  # href attribute
+  href=ele.attrib.get("href")
+  if href is not None:
+    # trunc directory names
+    if href.startswith(dirPrefix):
+      href=href[len(dirPrefix):]
+      ele.set("href", href)
+    # remove ecount=1
+    href=href.replace("&ecount=1&", "&")
+    href=href.replace("&ecount=1", "")
+    href=href.replace("?ecount=1&", "?")
+    href=href.replace("?ecount=1", "")
+    ele.set("href", href)
+
+  # text node
+  if ele.text is not None and ele.text.startswith(dirPrefix):
+    ele.text=ele.text[len(dirPrefix):]
+
+  for child in ele:
+    adaptXML(child, dir)
 
 def check(dir):
   ret=[0,""]
@@ -202,7 +209,7 @@ if (args.run is None or "gui" in args.run) and os.name!="nt" and not os.path.isf
 dirs=[]
 for d1 in args.directories:
   for d2, _, _ in os.walk(d1):
-    if not os.path.isfile(d2+"/error-GCCNONE.errorOutput"):
+    if not os.path.isfile(d2+"/error-GCCNONE.errorOutput"+errorOutputExt("GCCNONE")):
       continue
     dirs.append(d2)
 executor = concurrent.futures.ThreadPoolExecutor(max_workers=1 if args.showdiff else psutil.cpu_count(False))

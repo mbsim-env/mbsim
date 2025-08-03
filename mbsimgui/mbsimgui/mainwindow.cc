@@ -2993,7 +2993,7 @@ namespace MBSimGUI {
     else {
       // if no process (simulation) is running and MBXMLUTILS_PREPROCESS_CTOR was found -> skip the output before MBXMLUTILS_PREPROCESS_CTOR
       // (this is used to avoid the message about exiting the last existing mbsimxml run)
-      auto idx=data.lastIndexOf("<a name=\"MBXMLUTILS_PREPROCESS_CTOR\"/>");
+      auto idx=data.lastIndexOf("<a name=\"MBXMLUTILS_PREPROCESS_CTOR\"></a>");
       if(idx==-1)
         echoView->addOutputText(data.constData());
       else {

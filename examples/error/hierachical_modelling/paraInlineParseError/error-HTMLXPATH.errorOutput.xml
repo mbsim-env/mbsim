@@ -1,0 +1,26 @@
+<root>
+  <span class="MBSIMGUI_ERROR">
+    <span class="MBXMLUTILS_ERROROUTPUT">
+      <a href="submodel/Untergruppe.xml?xpath=/{http://www.mbsim-env.de/MBSim}Group[1]/{http://www.mbsim-env.de/MBSim}objects[1]/{http://www.mbsim-env.de/MBSim}RigidBody[1]/{http://www.mbsim-env.de/MBSim}frames[1]/{http://www.mbsim-env.de/MBXMLUtils}Embed[1]/{http://www.mbsim-env.de/MBXMLUtils}Parameter[1]/{http://www.mbsim-env.de/MBXMLUtils}scalarParameter[1]&amp;line=59">submodel/Untergruppe.xml:59:/Group[1]/objects[1]/RigidBody[1]/frames[1]/p:Embed[1]/p:Parameter[1]/p:scalarParameter[1]</a>:<br />
+      <span class="MBXMLUTILS_MSG">Error: no declaration found for element 'scalarParameterERROR'
+</span>
+      <span class="MBSIMGUI_ERROR" />
+    </span>
+    <span class="MBXMLUTILS_ERROROUTPUT MBXMLUTILS_SSE">
+      <a href="Hauptgruppe.xml?xpath=/{http://www.mbsim-env.de/MBSim}Group[1]/{http://www.mbsim-env.de/MBSim}groups[1]/{http://www.mbsim-env.de/MBXMLUtils}Embed[2]&amp;line=38">Hauptgruppe.xml:38:/Group[1]/groups[1]/p:Embed[2]</a>:<br />
+      <span class="MBXMLUTILS_MSG">included from here
+</span>
+      <span class="MBSIMGUI_ERROR" />
+    </span>
+    <span class="MBXMLUTILS_ERROROUTPUT MBXMLUTILS_SSE">
+      <a href="MBS.mbsim.xml?xpath=/{http://www.mbsim-env.de/MBSim}DynamicSystemSolver[1]/{http://www.mbsim-env.de/MBSim}groups[1]/{http://www.mbsim-env.de/MBXMLUtils}Embed[1]&amp;line=18">MBS.mbsim.xml:18:/DynamicSystemSolver[1]/groups[1]/p:Embed[1]</a>:<br />
+      <span class="MBXMLUTILS_MSG">included from here
+</span>
+      <span class="MBSIMGUI_ERROR" />
+    </span>
+    <span class="MBXMLUTILS_ERROROUTPUT MBXMLUTILS_SSE">
+      <a href="MBS.mbsx?xpath=/{http://www.mbsim-env.de/MBXMLUtils}Embed[1]/{http://www.mbsim-env.de/MBSimXML}MBSimProject[1]/{http://www.mbsim-env.de/MBXMLUtils}Embed[1]&amp;line=8">MBS.mbsx:8:/p:Embed[1]/mx:MBSimProject[1]/p:Embed[1]</a>:<br />
+      <span class="MBXMLUTILS_MSG">included from here</span>
+    </span>
+  </span>
+</root>
