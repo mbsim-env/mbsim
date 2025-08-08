@@ -3043,7 +3043,8 @@ namespace MBSimGUI {
 	  serializer->writeToURI(doc.get(), X()%projectFile.toStdString());
 	  QStringList arg;
 	  if(dialog.cosim()) arg.append("--cosim");
-	  if(dialog.nocompress()) arg.append("--nocompress");
+	  if(not dialog.compression()) arg.append("--nocompress");
+	  if(not dialog.parameters()) arg.append("--noparam");
 	  arg.append(projectFile);
 	  clearEchoView("Running 'createFMU':\n\n");
 	  echoView->showXMLCode(false);

@@ -1242,16 +1242,19 @@ namespace MBSimGUI {
     radio1->setChecked(true);
     opt->addButton(radio1);
     opt->addButton(radio2);
-    checkbox = new QCheckBox("Compression");
-    checkbox->setChecked(false);
+    compress = new QCheckBox("Compression");
+    compress->setChecked(true);
+    param = new QCheckBox("Parameters");
+    param->setChecked(true);
 
     Widget *widget = new Widget;
-    QHBoxLayout *hl = new QHBoxLayout;
+    QVBoxLayout *hl = new QVBoxLayout;
     hl->setMargin(0);
     widget->setLayout(hl);
     hl->addWidget(radio1);
     hl->addWidget(radio2);
-    hl->addWidget(checkbox);
+    hl->addWidget(compress);
+    hl->addWidget(param);
     ExtWidget *e = new ExtWidget("Options",widget,false,false,"");
     layout->addWidget(e);
 
@@ -1271,8 +1274,12 @@ namespace MBSimGUI {
     return opt->button(-3)->isChecked();
   }
 
-  bool CreateFMUDialog::nocompress() const {
-    return not checkbox->isChecked();
+  bool CreateFMUDialog::compression() const {
+    return compress->isChecked();
+  }
+
+  bool CreateFMUDialog::parameters() const {
+    return param->isChecked();
   }
 
   void CreateFMUDialog::showEvent(QShowEvent *event) {
