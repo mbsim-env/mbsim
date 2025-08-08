@@ -104,6 +104,7 @@ namespace MBSim {
       OpenMBVArrow(double sL_=1, double sS_=1, const OpenMBVArrow::Type &type_=OpenMBVArrow::toHead, const OpenMBVArrow::ReferencePoint &refPoint_=OpenMBVArrow::fromPoint, unsigned int cR=0, double minCol=0, double maxCol=1, const fmatvec::Vec3 &dc=fmatvec::Vec3(std::vector<double>{-1,1,1}), double tp=0, double ps=0, double lw=0);
       void initializeUsingXML(xercesc::DOMElement *element);
       std::shared_ptr<OpenMBV::Arrow> createOpenMBV();
+      double getsL() const { return sL; }
     protected:
       void initializeObject(const std::shared_ptr<OpenMBV::Arrow> &object);
   };
