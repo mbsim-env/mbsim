@@ -355,30 +355,38 @@ namespace MBSimGUI {
 
   RegularizedBilateralConstraintFunctionFactory::RegularizedBilateralConstraintFunctionFactory() {
     name.emplace_back("Linear regularized bilateral constraint");
+    name.emplace_back("Symbolic function");
     name.emplace_back("Unknown function");
     xmlName.push_back(MBSIM%"LinearRegularizedBilateralConstraint");
+    xmlName.push_back(MBSIM%"SymbolicFunction");
     xmlName.push_back(MBSIM%"UnknownFunction");
   }
 
   Widget* RegularizedBilateralConstraintFunctionFactory::createWidget(int i) {
     if(i==0)
       return new LinearRegularizedBilateralConstraintWidget;
-    else if(i==1)
+    if(i==1)
+      return new SymbolicFunctionWidget({"g","gd"},{1,1},{FunctionWidget::scalar,FunctionWidget::scalar},1,FunctionWidget::scalar);
+    if(i==2)
       return new UnknownWidget<FunctionWidget>;
     return nullptr;
   }
 
   RegularizedUnilateralConstraintFunctionFactory::RegularizedUnilateralConstraintFunctionFactory() {
     name.emplace_back("Linear regularized unilateral constraint");
+    name.emplace_back("Symbolic function");
     name.emplace_back("Unknown function");
     xmlName.push_back(MBSIM%"LinearRegularizedUnilateralConstraint");
+    xmlName.push_back(MBSIM%"SymbolicFunction");
     xmlName.push_back(MBSIM%"UnknownFunction");
   }
 
   Widget* RegularizedUnilateralConstraintFunctionFactory::createWidget(int i) {
     if(i==0)
       return new LinearRegularizedUnilateralConstraintWidget;
-    else if(i==1)
+    if(i==1)
+      return new SymbolicFunctionWidget({"g","gd"},{1,1},{FunctionWidget::scalar,FunctionWidget::scalar},1,FunctionWidget::scalar);
+    if(i==2)
       return new UnknownWidget<FunctionWidget>;
     return nullptr;
   }
@@ -399,10 +407,9 @@ namespace MBSimGUI {
       return new LinearRegularizedCoulombFrictionWidget;
     if(i==1)
       return new LinearRegularizedStribeckFrictionWidget(element,parent);
-    if(i==2) {
+    if(i==2)
       return new SymbolicFunctionWidget({"gd","laN"},{nd,1},{FunctionWidget::varVec,FunctionWidget::scalar},nd,FunctionWidget::varVec);
-    }
-    else if(i==3)
+    if(i==3)
       return new UnknownWidget<FunctionWidget>;
     return nullptr;
   }
