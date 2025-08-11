@@ -474,6 +474,7 @@ namespace MBSim {
        * \param h5, else ascii
        */
       void writez(std::string fileName, bool formatH5=true);
+      using DynamicSystem::writez;
 
       /**
        * \brief writes state table to a file
@@ -487,6 +488,7 @@ namespace MBSim {
        * \param name of the file
        */
       void readz0(std::string fileName);
+      using DynamicSystem::readz0;
 
       void initializeUsingXML(xercesc::DOMElement *element) override;
 
