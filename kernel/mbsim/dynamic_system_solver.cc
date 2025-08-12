@@ -467,7 +467,7 @@ namespace MBSim {
       H5::File::setDefaultChunkSize(chunkSize);
       H5::File::setDefaultCacheSize(cacheSize);
       if(plotFeature[plotRecursive])
-        hdf5File = std::make_shared<H5::File>(fileName, H5::File::writeTempNoneSWMR);
+        hdf5File = std::make_shared<H5::File>(fileName, H5::File::writeWithRename);
 
       Group::init(stage, config);
 
