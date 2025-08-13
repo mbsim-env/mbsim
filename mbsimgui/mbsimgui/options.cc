@@ -84,9 +84,6 @@ namespace MBSimGUI {
                                    "from appearing in the model/parameter tree. Settings this option will show even hidden elements.");
     layout->addWidget(showHiddenElements);
 
-    autoRefresh = new QCheckBox("Auto refresh");
-    layout->addWidget(autoRefresh);
-
     statusUpdate = new QCheckBox("Always update element status");
     layout->addWidget(statusUpdate);
 
@@ -195,14 +192,6 @@ namespace MBSimGUI {
 
   void OptionsDialog::setShowHiddenElements(bool flag) {
     showHiddenElements->setCheckState(flag?Qt::Checked:Qt::Unchecked);
-  }
-
-  bool OptionsDialog::getAutoRefresh() const {
-    return (autoRefresh->checkState()==Qt::Checked);
-  }
-
-  void OptionsDialog::setAutoRefresh(bool flag) {
-    autoRefresh->setCheckState(flag?Qt::Checked:Qt::Unchecked);
   }
 
   bool OptionsDialog::getStatusUpdate() const {

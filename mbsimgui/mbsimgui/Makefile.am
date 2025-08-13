@@ -307,6 +307,9 @@ dist_mbsimguiicon_DATA = icons/openmbv.svg \
   icons/any.svg \
   icons/import.svg \
   icons/string.svg \
+  icons/skip-initial-proj.svg \
+  icons/reload.svg \
+  icons/auto-reload.svg \
   icons/fbt.svg
 
 # plugins

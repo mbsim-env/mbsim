@@ -109,7 +109,7 @@ namespace MBSimGUI {
       QProcess processRefresh;
       OpenMBVGUI::MainWindow *inlineOpenMBVMW;
       boost::filesystem::path uniqueTempDir;
-      QAction *actionSave, *actionSaveProject, *actionSimulate, *actionInterrupt, *actionKill, *actionOpenMBV, *actionH5plotserie, *actionLinearSystemAnalysis, *actionStateTable, *actionSaveDataAs, *actionSaveMBSimH5DataAs, *actionSaveOpenMBVDataAs, *actionRefresh, *actionCreateFMU, *actionSaveStateVectorAs, *actionSaveStateTableAs, *actionSaveLinearSystemAnalysisAs, *actionUndo, *actionRedo;
+      QAction *actionSave, *actionSaveProject, *actionSimulate, *actionInterrupt, *actionKill, *actionOpenMBV, *actionH5plotserie, *actionLinearSystemAnalysis, *actionStateTable, *actionSaveDataAs, *actionSaveMBSimH5DataAs, *actionSaveOpenMBVDataAs, *actionRefresh, *actionCreateFMU, *actionSaveStateVectorAs, *actionSaveStateTableAs, *actionSaveLinearSystemAnalysisAs, *actionUndo, *actionRedo, *solverInitialProj;
       OpenMBVGUI::AbstractViewFilter *elementViewFilter, *parameterViewFilter;
       QTimer autoSaveTimer;
       int IDcounter{0};
@@ -118,7 +118,6 @@ namespace MBSimGUI {
       QAction *recentProjectFileActs[maxRecentFiles];
       bool allowUndo;
       int maxUndo;
-      bool autoRefresh;
       bool statusUpdate;
       bool callViewAllAfterFileReloaded { false };
       std::shared_ptr<xercesc::DOMDocument> doc;
@@ -184,6 +183,7 @@ namespace MBSimGUI {
       void saveReferencedFile(int i);
       void convertDocument();
       void createNewEvaluator();
+      void setSceneViewOutdated(bool outdated);
 
       int openedEditors { 0 };
       void startProcessRefresh();
@@ -193,11 +193,11 @@ namespace MBSimGUI {
       void selectElement(const std::string& ID, OpenMBVGUI::Object *obj);
       void fileReloadedSlot();
       void abstractViewFilterOptionsChanged();
-      void fileReloaded();
 
     public:
       MainWindow(QStringList &arg);
       ~MainWindow() override;
+      void setWindowModified(bool mod);
       std::shared_ptr<MBXMLUtils::DOMParser> mbxmlparser;
       std::shared_ptr<MBXMLUtils::DOMParser> mbxmlparserNoVal;
       std::shared_ptr<MBXMLUtils::Eval> eval;
@@ -250,7 +250,7 @@ namespace MBSimGUI {
       QString getProjectFilePath() const;
       QString getProjectPath() const { return QFileInfo(getProjectFilePath()).canonicalPath(); }
       QDir getProjectDir() const { return QFileInfo(getProjectFilePath()).dir(); }
-      bool getAutoRefresh() const { return autoRefresh; }
+      bool getAutoRefresh() const;
       bool getStatusUpdate() const { return statusUpdate; }
 
       bool editorIsOpen() const { return openedEditors > 0; }
@@ -340,7 +340,7 @@ namespace MBSimGUI {
 
       // Prepare the MainWindow for a "quasi" modal dialog open.
       // The MainWindow will still be active (the dialog to open is none modal) but many features of the MainWindow
-      // are disabled, e.g. only the 3D view and other basic stuff is still active.
+      // are disabled, e.g. only the Scene view and other basic stuff is still active.
       // prepareForPropertyDialogOpen/prepareForPropertyDialogClose must be called as a pair!
       void prepareForPropertyDialogOpen();
       // Prepare the MainWindow for a "quasi" modal dialog close.

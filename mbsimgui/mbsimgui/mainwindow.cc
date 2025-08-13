@@ -81,6 +81,7 @@
 #include <xercesc/dom/DOMLSSerializer.hpp>
 #include <xercesc/dom/DOMNodeList.hpp>
 #include <xercesc/dom/DOMComment.hpp>
+#include <Inventor/nodes/SoLabel.h>
 #include "dialogs.h"
 #include "wizards.h"
 #include <evaluator/evaluator.h>
@@ -100,7 +101,9 @@ namespace MBSimGUI {
 
   bool MainWindow::exitOK = true;
 
-  MainWindow::MainWindow(QStringList &arg) : project(nullptr), inlineOpenMBVMW(nullptr), allowUndo(true), maxUndo(10), autoRefresh(true), statusUpdate(true), doc(), elementBuffer(nullptr,false), parameterBuffer(nullptr,false) {
+  static int currentModelID = 0;
+
+  MainWindow::MainWindow(QStringList &arg) : project(nullptr), inlineOpenMBVMW(nullptr), allowUndo(true), maxUndo(10), statusUpdate(true), doc(), elementBuffer(nullptr,false), parameterBuffer(nullptr,false) {
     QSettings settings;
 
     echoView = new EchoView();
@@ -223,8 +226,8 @@ namespace MBSimGUI {
     action->setStatusTip("Show a list of all referenced files");
     action = fileMenu->addAction(QIcon::fromTheme("document-properties"), "Settings...", this, &MainWindow::openOptionsMenu);
     action->setStatusTip(tr("Show settings menu"));
-    action = fileMenu->addAction(QIcon::fromTheme("document-properties"), "3D view settings...", inlineOpenMBVMW, &OpenMBVGUI::MainWindow::showSettingsDialog);
-    action->setStatusTip(tr("Show settings menu of the 3D view (OpenMBV)"));
+    action = fileMenu->addAction(QIcon::fromTheme("document-properties"), "Scene view settings...", inlineOpenMBVMW, &OpenMBVGUI::MainWindow::showSettingsDialog);
+    action->setStatusTip(tr("Show settings menu of the scene view (OpenMBV)"));
 
     fileMenu->addSeparator();
     for (auto & recentProjectFileAct : recentProjectFileActs) {
@@ -316,6 +319,27 @@ namespace MBSimGUI {
     sceneViewMenu->removeAction(sceneViewMenu->findChild<QAction*>("MainWindow::sceneViewMenu::releaseCamera"));
     menuBar()->addMenu(sceneViewMenu);
 
+    auto autorefreshAction = new QAction(Utils::QIconCached(QString::fromStdString((iconPath/"auto-reload.svg").string())),
+                                                 "Auto refresh scene view", this);
+    connect(autorefreshAction, &QAction::triggered, [this](bool checked){
+      QSettings settings;
+      settings.setValue("mainwindow/options/autorefresh", checked);
+      if(checked)
+        refresh();
+    });
+    autorefreshAction->setCheckable(true);
+    autorefreshAction->setChecked(settings.value("mainwindow/options/autorefresh", true).toBool());
+
+    solverInitialProj=new QAction(Utils::QIconCached(QString::fromStdString((iconPath/"skip-initial-proj.svg").string())),
+                                                 "Skip initial projection for scene view", this);
+    connect(solverInitialProj, &QAction::triggered, [this](bool checked){
+      QSettings settings;
+      settings.setValue("mainwindow/options/solver/skipinitialproj", checked);
+      refresh();
+    });
+    solverInitialProj->setCheckable(true);
+    solverInitialProj->setChecked(settings.value("mainwindow/options/solver/skipinitialproj", false).toBool());
+
     auto miscMenu = new QMenu("Misc", menuBar());
     menuBar()->addMenu(miscMenu);
 
@@ -388,10 +412,14 @@ namespace MBSimGUI {
     sceneViewToolBar->setObjectName("toolbar/sceneview");
     toolMenu->addAction(sceneViewToolBar->toggleViewAction());
     sceneViewToolBar->insertSeparator(sceneViewToolBar->actions()[0]);
-    actionRefresh = new QAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_BrowserReload)),"Refresh scene view", this);
+    actionRefresh = new QAction(Utils::QIconCached(QString::fromStdString((iconPath/"reload.svg").string())),"Refresh scene view", this);
+    sceneViewToolBar->insertAction(sceneViewToolBar->actions()[0], solverInitialProj);
+    sceneViewToolBar->insertAction(sceneViewToolBar->actions()[0], autorefreshAction);
     sceneViewToolBar->insertAction(sceneViewToolBar->actions()[0], actionRefresh);
 
     sceneViewMenu->insertSeparator(sceneViewMenu->actions()[0]);
+    sceneViewMenu->insertAction(sceneViewMenu->actions()[0], solverInitialProj);
+    sceneViewMenu->insertAction(sceneViewMenu->actions()[0], autorefreshAction);
     sceneViewMenu->insertAction(sceneViewMenu->actions()[0], actionRefresh);
     connect(actionRefresh,&QAction::triggered,this,&MainWindow::refresh);
 
@@ -625,22 +653,26 @@ namespace MBSimGUI {
     inlineOpenMBVMW->openFile(uniqueTempDir.generic_string()+"/MBS_tmp.ombvx");
   }
 
-  void MainWindow::fileReloaded() {
+  void MainWindow::fileReloadedSlot() {
+    // call view all for the very first time
     if(callViewAllAfterFileReloaded)
       inlineOpenMBVMW->viewAllSlot();
     callViewAllAfterFileReloaded = false;
 
+    // re-highlight object
     QModelIndex index = elementView->selectionModel()->currentIndex();
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     auto *element=dynamic_cast<Element*>(model->getItem(index)->getItemData());
     if(element)
       highlightObject(element->getID());
-  }
 
-  void MainWindow::fileReloadedSlot() {
-    if(callViewAllAfterFileReloaded)
-      inlineOpenMBVMW->viewAllSlot();
-    callViewAllAfterFileReloaded = false;
+    // set to not-outdated if the modelID of the scene view matches the currentModelID
+    auto modelIDLabel = static_cast<SoLabel*>(SoNode::getByName("mbsimgui_modelID"));
+    if(modelIDLabel) {
+      int modelID = atoi(modelIDLabel->label.getValue().getString());
+      if(currentModelID == modelID)
+        setSceneViewOutdated(false);
+    }
   }
 
   MainWindow::~MainWindow() {
@@ -668,6 +700,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::updateUndos() {
+    setWindowModified(true);
     auto oldDoc = shared_ptr<DOMDocument>(static_cast<DOMDocument*>(doc->cloneNode(true)));
     oldDoc->setDocumentURI(X()%D(doc)->getDocumentFilename().string());
     auto u = vector<shared_ptr<DOMDocument>>(1+file.size());
@@ -729,7 +762,6 @@ namespace MBSimGUI {
     menu.setShowFilters(settings.value("mainwindow/options/showfilters", true).toBool());
     menu.setShowHiddenElements(settings.value("mainwindow/options/showhiddenelements", false).toBool());
     bool oldShowHiddenElement=menu.getShowHiddenElements();
-    menu.setAutoRefresh(settings.value("mainwindow/options/autorefresh", true).toBool());
     menu.setStatusUpdate(settings.value("mainwindow/options/statusupdate", true).toBool());
     menu.setPlugins(settings.value("mainwindow/options/plugins", QString()).toString());
     menu.setDefaultEvaluator(settings.value("mainwindow/options/defaultevaluator", 0).toInt());
@@ -753,7 +785,6 @@ namespace MBSimGUI {
       settings.setValue("mainwindow/options/maxundo"           , menu.getMaxUndo());
       settings.setValue("mainwindow/options/showfilters"       , menu.getShowFilters());
       settings.setValue("mainwindow/options/showhiddenelements", menu.getShowHiddenElements());
-      settings.setValue("mainwindow/options/autorefresh"       , menu.getAutoRefresh());
       settings.setValue("mainwindow/options/statusupdate"      , menu.getStatusUpdate());
       settings.setValue("mainwindow/options/plugins"           , menu.getPlugins());
       settings.setValue("mainwindow/options/defaultevaluator"  , menu.getDefaultEvaluator());
@@ -779,7 +810,6 @@ namespace MBSimGUI {
       if(menu.getShowHiddenElements()!=oldShowHiddenElement)
         elementChanged(elementView->currentIndex()); // this update the parameters (calls Parameter::updateValue())
 
-      autoRefresh = menu.getAutoRefresh();
       statusUpdate = menu.getStatusUpdate();
 
       if(oldPlugins!=menu.getPlugins())
@@ -1062,7 +1092,6 @@ namespace MBSimGUI {
 
   void MainWindow::selectSolver(Solver *solver) {
     updateUndos();
-    setWindowModified(true);
     DOMElement *ele = nullptr;
     auto *parameterFileItem = project->getSolver()->getParameterFileItem();
     DOMElement *embed = project->getSolver()->getEmbedXMLElement();
@@ -1502,6 +1531,10 @@ namespace MBSimGUI {
       return;
 
     statusBar()->showMessage(tr("Refresh"));
+    currentModelID++;
+    setSceneViewOutdated(true);
+
+    createNewEvaluator();
 
     shared_ptr<DOMDocument> doc=mbxmlparser->createDocument();
     doc->setDocumentURI(X()%D(this->doc)->getDocumentFilename().string());
@@ -1510,7 +1543,7 @@ namespace MBSimGUI {
 
     project->processIDAndHref(newDocElement);
 
-    // disable plotting in DSS
+    // get dss XML element
     auto dssEle=newDocElement;
     if(E(dssEle)->getTagName()!=MBSIMXML%"MBSimProject")
       dssEle=E(dssEle)->getFirstElementChildNamed(MBSIMXML%"MBSimProject");
@@ -1520,11 +1553,108 @@ namespace MBSimGUI {
     }
     else
       dssEle=x;
+
+    // set output filename (for openmbv)
     E(dssEle)->setAttribute("name","MBS_tmp");
-    DOMElement *ele1 = D(dssEle->getOwnerDocument())->createElement( MBSIM%"plotFeatureRecursive" );
+
+    // disable plotting in DSS
+    DOMElement *ele1 = D(doc)->createElement( MBSIM%"plotFeatureRecursive" );
     E(ele1)->setAttribute("value","plotRecursive");
-    ele1->insertBefore(dssEle->getOwnerDocument()->createTextNode(X()%project->getVarFalse().toStdString()), nullptr);
+    ele1->insertBefore(doc->createTextNode(X()%project->getVarFalse().toStdString()), nullptr);
     dssEle->insertBefore( ele1, dssEle->getFirstElementChild() );
+
+    // disable initial projection if requested
+    if(solverInitialProj->isChecked()) {
+      auto ip = E(dssEle)->getFirstElementChildNamed(MBSIM%"initialProjection");
+      if(ip)
+        ip->removeChild(E(ip)->getFirstTextChild())->release();
+      else {
+        // if no initialProjection element exists we need to add it at the right position which is a bit complicated
+        // due to many optional elements before initialProjection
+        // -> we search the first preceding element up to a element which must exist (here environments)
+        vector<FQN> preInitialProjectionElements {
+          MBSIM%"environments",
+          MBSIM%"smoothSolver",
+          MBSIM%"constraintSolver",
+          MBSIM%"impactSolver",
+          MBSIM%"maximumNumberOfIterations",
+          MBSIM%"highNumberOfIterations",
+          MBSIM%"numericalJacobian",
+          MBSIM%"stopIfNoConvergence",
+          MBSIM%"projectionTolerance",
+          MBSIM%"localSolverTolerance",
+          MBSIM%"dynamicSystemSolverTolerance",
+          MBSIM%"generalizedRelativePositionTolerance",
+          MBSIM%"generalizedRelativeVelocityTolerance",
+          MBSIM%"generalizedRelativeAccelerationTolerance",
+          MBSIM%"generalizedForceTolerance",
+          MBSIM%"generalizedImpulseTolerance",
+          MBSIM%"generalizedRelativePositionCorrectionValue",
+          MBSIM%"generalizedRelativeVelocityCorrectionValue",
+          MBSIM%"inverseKinetics",
+        };
+        DOMElement *preEle;
+        for(auto preEleNameIt=preInitialProjectionElements.rbegin(); preEleNameIt!= preInitialProjectionElements.rend(); ++preEleNameIt) {
+          preEle = E(dssEle)->getFirstElementChildNamed(*preEleNameIt);
+          if(preEle)
+            break;
+        }
+        ip = D(doc)->createElement( MBSIM%"initialProjection" );
+        dssEle->insertBefore(ip, preEle->getNextElementSibling());
+      }
+      ip->insertBefore(doc->createTextNode(X()%"0"), nullptr);
+    }
+
+    // add the "Outdated" IvScreenAnnotation openmbv element
+    auto envEle = E(dssEle)->getFirstElementChildNamed(MBSIM%"environments");
+    auto mbsimEnvEle = E(envEle)->getFirstElementChildNamed(MBSIM%"MBSimEnvironment");
+    if(!mbsimEnvEle) {
+      mbsimEnvEle = D(doc)->createElement(MBSIM%"MBSimEnvironment");
+      envEle->insertBefore(mbsimEnvEle, nullptr);
+      auto gravEle = D(doc)->createElement(MBSIM%"accelerationOfGravity");
+      mbsimEnvEle->insertBefore(gravEle, nullptr);
+      gravEle->insertBefore(doc->createTextNode(X()%eval->createSourceCode(vector<double>{0,0,0})), nullptr);
+    }
+    auto ombvObjEle = E(mbsimEnvEle)->getFirstElementChildNamed(MBSIM%"openMBVObject");
+    if(!ombvObjEle) {
+      ombvObjEle = D(doc)->createElement(MBSIM%"openMBVObject");
+      mbsimEnvEle->insertBefore(ombvObjEle, nullptr);
+    }
+    auto outdatedGrp = D(doc)->createElement(OPENMBV%"Group");
+    ombvObjEle->insertBefore(outdatedGrp, nullptr);
+    E(outdatedGrp)->setAttribute("environment", 1);
+    E(outdatedGrp)->setAttribute("name", "mbsimgui_outdated_group");
+    auto outdatedEle = D(doc)->createElement(OPENMBV%"IvScreenAnnotation");
+    outdatedGrp->insertBefore(outdatedEle, nullptr);
+    E(outdatedEle)->setAttribute("name", "mbsimgui_outdated_annotation");
+    auto scaleEle = D(doc)->createElement(OPENMBV%"scale1To1At");
+    outdatedEle->insertBefore(scaleEle, nullptr);
+    scaleEle->insertBefore(doc->createTextNode(X()%eval->createSourceCode(vector<double>{0,-1})), nullptr);
+    auto ivContEle = D(doc)->createElement(OPENMBV%"ivContent");
+    outdatedEle->insertBefore(ivContEle, nullptr);
+    string ivStr=R"(#Inventor V2.0 ascii
+DEF mbsimgui_outdated_switch Switch {
+  whichChild -3
+  Material {
+    diffuseColor 0.8 0 0
+  }
+  Translation {
+    translation 0 -0.99 0
+  }
+  Font {
+    name "SANS:bold"
+    size 20
+  }
+  Text2 {
+    string "Outdated"
+    justification CENTER
+  }
+  DEF mbsimgui_modelID Label {
+    label "@modelID@"
+  }
+})";
+    boost::replace_all(ivStr, "@modelID@", to_string(currentModelID));
+    ivContEle->insertBefore(doc->createTextNode(X()%eval->createSourceCode(ivStr)), nullptr);
 
     clearEchoView("");
     echoView->showXMLCode(false);
@@ -2148,8 +2278,6 @@ namespace MBSimGUI {
     auto *fileItem = element->getDedicatedFileItem();
     if(fileItem)
       fileItem->setModified(true);
-    else
-      setWindowModified(true);
     if(enable) {
       // - if "MBSimGUI_EnabledCount" ProcessingInstruction exists copy it to "count" Attribute
       string count;
@@ -3377,6 +3505,25 @@ namespace MBSimGUI {
     QModelIndex childIndex;
     for(int i=0; (childIndex=model->index(i,0,index)).isValid(); ++i)
       updateNameOfCorrespondingElementAndItsChilds(childIndex);
+  }
+
+  void MainWindow::setWindowModified(bool mod) {
+    QMainWindow::setWindowModified(mod);
+    currentModelID++;
+    setSceneViewOutdated(true);
+  }
+
+  void MainWindow::setSceneViewOutdated(bool outdated) {
+    auto switchNode = static_cast<SoSwitch*>(SoNode::getByName("mbsimgui_outdated_switch"));
+    if(switchNode) {
+      switchNode->whichChild.setValue(outdated ? -3 : -1);
+      inlineOpenMBVMW->updateScene();
+    }
+  }
+
+  bool MainWindow::getAutoRefresh() const {
+    QSettings settings;
+    return settings.value("mainwindow/options/autorefresh", true).toBool();
   }
 
 }
