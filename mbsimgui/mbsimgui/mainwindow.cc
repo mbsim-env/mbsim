@@ -3047,6 +3047,11 @@ namespace MBSimGUI {
 	  if(dialog.cosim()) arg.append("--cosim");
 	  if(not dialog.compression()) arg.append("--nocompress");
 	  if(not dialog.parameters()) arg.append("--noparam");
+	  auto modulePath = dialog.getModulePath();
+          if(not modulePath.isEmpty()) {
+            arg.append("--modulePath");
+            arg.append(modulePath);
+          }
 	  arg.append(projectFile);
 	  clearEchoView("Running 'createFMU':\n\n");
 	  echoView->showXMLCode(false);

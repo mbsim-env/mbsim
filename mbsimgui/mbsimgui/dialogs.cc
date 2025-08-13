@@ -1246,6 +1246,8 @@ namespace MBSimGUI {
     compress->setChecked(true);
     param = new QCheckBox("Parameters");
     param->setChecked(true);
+    modulePath = new QTextEdit;
+    modulePath->setLineWrapMode(QTextEdit::NoWrap);
 
     Widget *widget = new Widget;
     QVBoxLayout *hl = new QVBoxLayout;
@@ -1255,6 +1257,8 @@ namespace MBSimGUI {
     hl->addWidget(radio2);
     hl->addWidget(compress);
     hl->addWidget(param);
+    hl->addWidget(new QLabel("Module path"));
+    hl->addWidget(modulePath);
     ExtWidget *e = new ExtWidget("Options",widget,false,false,"");
     layout->addWidget(e);
 
@@ -1280,6 +1284,10 @@ namespace MBSimGUI {
 
   bool CreateFMUDialog::parameters() const {
     return param->isChecked();
+  }
+
+  QString CreateFMUDialog::getModulePath() const {
+    return modulePath->toPlainText();
   }
 
   void CreateFMUDialog::showEvent(QShowEvent *event) {
