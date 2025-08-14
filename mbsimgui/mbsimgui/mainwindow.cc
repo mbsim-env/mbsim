@@ -1593,7 +1593,7 @@ namespace MBSimGUI {
           MBSIM%"generalizedRelativeVelocityCorrectionValue",
           MBSIM%"inverseKinetics",
         };
-        DOMElement *preEle;
+        DOMElement *preEle = nullptr;
         for(auto preEleNameIt=preInitialProjectionElements.rbegin(); preEleNameIt!= preInitialProjectionElements.rend(); ++preEleNameIt) {
           preEle = E(dssEle)->getFirstElementChildNamed(*preEleNameIt);
           if(preEle)
