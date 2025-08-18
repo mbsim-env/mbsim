@@ -770,9 +770,11 @@ namespace MBSimGUI {
     menu.setDefaultEvaluator(settings.value("mainwindow/options/defaultevaluator", 0).toInt());
 
     QFile file(configPath+"mbsimxml.modulepath");
-    file.open(QIODevice::ReadOnly | QIODevice::Text);
-    menu.setModulePath(file.readAll());
-    file.close();
+    if(file.exists()) {
+      file.open(QIODevice::ReadOnly | QIODevice::Text);
+      menu.setModulePath(file.readAll());
+      file.close();
+    }
 
     auto oldPlugins=menu.getPlugins();
 
