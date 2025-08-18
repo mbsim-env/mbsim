@@ -45,6 +45,9 @@ using namespace MBSimGUI;
 
 namespace {
   int loadPlugins(const QStringList &arg);
+  #ifndef NDEBUG
+    void myQtMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg);
+  #endif
 }
 
 int main(int argc, char *argv[]) {
@@ -154,6 +157,9 @@ int main(int argc, char *argv[]) {
 
   auto argSaved=arg; // save arguments (QApplication removes all arguments known by Qt)
   QApplication app(argc, argv);
+#ifndef NDEBUG
+  qInstallMessageHandler(myQtMessageHandler);
+#endif
   arg=argSaved; // restore arguments
 #ifndef _WIN32
   UnixSignalWatcher sigwatch;
@@ -231,4 +237,31 @@ int loadPlugins(const QStringList &arg)
   return 0;
 }
 
+}
+
+namespace {
+#ifndef NDEBUG
+  void myQtMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg) {
+    static map<QtMsgType, string> typeStr {
+      {QtDebugMsg,    "Debug"},
+      {QtWarningMsg,  "Warning"},
+      {QtCriticalMsg, "Critical"},
+      {QtFatalMsg,    "Fatal"},
+      {QtInfoMsg,     "Info"},
+    };
+    cerr<<(context.file?context.file:"<nofile>")<<":"<<context.line<<": "<<(context.function?context.function:"<nofunc>")<<": "<<(context.category?context.category:"<nocategory>")
+        <<": "<<typeStr[type]<<": "<<msg.toStdString()<<endl;
+    cerr.flush();
+    switch(type) {
+      case QtDebugMsg:
+      case QtInfoMsg:
+        break;
+      case QtWarningMsg:
+      case QtCriticalMsg:
+      case QtFatalMsg:
+        std::abort();
+        break;
+    }
+  }
+#endif
 }
