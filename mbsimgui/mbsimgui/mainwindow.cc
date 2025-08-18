@@ -108,6 +108,9 @@ namespace MBSimGUI {
 
     echoView = new EchoView();
 
+    connect(this, &MainWindow::updateEchoView, this, &MainWindow::updateEchoViewSlot); // we always call the updateEchoView signal instead of the updateEchoViewSlot to handle threads
+    connect(this, &MainWindow::updateStatusMessage, this, &MainWindow::updateStatusMessageSlot); // we always call the updateStatusMessage signal instead of the updateStatusMessageSlot to handle threads
+
     // initialize streams
     auto outputFunc=[this](const string &s){
       updateEchoView(s.c_str());
@@ -126,7 +129,7 @@ namespace MBSimGUI {
     fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Status    , std::make_shared<bool>(true),
       make_shared<fmatvec::PrePostfixedStream>("", "\n", [this](const string &s){
         // this usually gets never called -> no need to ensure that it is only called every 250ms
-        updateStatusMessage(s);
+        updateStatusMessage(s.c_str());
       }));
 
     impl=DOMImplementation::getImplementation();
@@ -491,11 +494,11 @@ namespace MBSimGUI {
       if(process.isOpen()) {
         auto output=process.readAllStandardError();
         if(!output.isEmpty())
-          updateStatusMessage(output.constData());
+          updateStatusMessage(output);
       }
       auto output=processRefresh.readAllStandardError();
       if(!output.isEmpty())
-        updateStatusMessage(output.constData());
+        updateStatusMessage(output);
     };
     connect(&process,&QProcess::readyReadStandardError,readyReadStandardError);
     connect(&processRefresh,&QProcess::readyReadStandardError,readyReadStandardError);
@@ -3114,7 +3117,7 @@ DEF mbsimgui_outdated_switch Switch {
     }
   }
 
-  void MainWindow::updateEchoView(const QByteArray &data) {
+  void MainWindow::updateEchoViewSlot(const QByteArray &data) {
     if(process.isOpen())
       // if a process (simulation) is running just add the new output
       echoView->addOutputText(data.constData());
@@ -3159,9 +3162,9 @@ DEF mbsimgui_outdated_switch Switch {
     echoView->addOutputText(initialText);
   }
 
-  void MainWindow::updateStatusMessage(const string &s) {
+  void MainWindow::updateStatusMessageSlot(const QByteArray &data) {
     static string ss;
-    ss+=s;
+    ss+=data.constData();
 
     // remove multiple newline at and of ss
     int i=ss.length()-1;

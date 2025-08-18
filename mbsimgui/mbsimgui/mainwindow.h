@@ -189,6 +189,11 @@ namespace MBSimGUI {
       void startProcessRefresh();
       QMetaObject::Connection processRefreshFinishedConnection;
       std::unique_ptr<NewParamLevelHeap> evalNPL;
+      void updateEchoViewSlot(const QByteArray &data);
+      void updateStatusMessageSlot(const QByteArray &data);
+    Q_SIGNALS:
+      void updateEchoView(const QByteArray &data);
+      void updateStatusMessage(const QByteArray &data);
     private slots:
       void selectElement(const std::string& ID, OpenMBVGUI::Object *obj);
       void fileReloadedSlot();
@@ -218,8 +223,6 @@ namespace MBSimGUI {
       void removeParameter(EmbedItemData *parent);
       xercesc::DOMElement* pasteElement(Element *parent, Element *element);
       xercesc::DOMElement* loadEmbedItemData(EmbedItemData *parent, const QString &title);
-      void updateEchoView(const QByteArray &data);
-      void updateStatusMessage(const std::string &s);
       void clearEchoView(const QString &initialText="");
 
       template<class Container>
