@@ -249,9 +249,12 @@ namespace {
       {QtFatalMsg,    "Fatal"},
       {QtInfoMsg,     "Info"},
     };
-    cerr<<(context.file?context.file:"<nofile>")<<":"<<context.line<<": "<<(context.function?context.function:"<nofunc>")<<": "<<(context.category?context.category:"<nocategory>")
+    string category(context.category?context.category:"<nocategory>");
+    cerr<<(context.file?context.file:"<nofile>")<<":"<<context.line<<": "<<(context.function?context.function:"<nofunc>")<<": "<<category
         <<": "<<typeStr[type]<<": "<<msg.toStdString()<<endl;
     cerr.flush();
+    if(category=="qt.accessibility.atspi")
+      return;
     switch(type) {
       case QtDebugMsg:
       case QtInfoMsg:
