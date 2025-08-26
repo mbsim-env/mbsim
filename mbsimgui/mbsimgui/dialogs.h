@@ -238,13 +238,17 @@ namespace MBSimGUI {
       CreateFMUDialog(const QString &name);
       QString getFileName() const;
       bool cosim() const;
-      bool nocompress() const;
+      bool compression() const;
+      bool parameters() const;
+      QString getModulePath() const;
+
     private:
       void showEvent(QShowEvent *event) override;
       void hideEvent(QHideEvent *event) override;
       ExtWidget *file;
       QButtonGroup *opt;
-      QCheckBox *checkbox;
+      QCheckBox *compress, *param;
+      QTextEdit *modulePath;
   };
 
   class TextEditDialog : public QDialog {

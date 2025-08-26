@@ -410,7 +410,7 @@ namespace MBSimGUI {
 	for(size_t i=0; i<nmodes.size(); i++) {
 	  Un.set(iN,i,V.col(nmodes[i]-1));
 	  Un.set(iH,i,VecV(iH.size()));
-	  Ui.set(iX,i,VecV(iX.size()));
+	  Un.set(iX,i,VecV(iX.size()));
 	}
       }
       else if(normalModes==constrainedBoundaryNormalModes) {

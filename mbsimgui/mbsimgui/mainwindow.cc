@@ -3101,7 +3101,13 @@ DEF mbsimgui_outdated_switch Switch {
 	  serializer->writeToURI(doc.get(), X()%projectFile.toStdString());
 	  QStringList arg;
 	  if(dialog.cosim()) arg.append("--cosim");
-	  if(dialog.nocompress()) arg.append("--nocompress");
+	  if(not dialog.compression()) arg.append("--nocompress");
+	  if(not dialog.parameters()) arg.append("--noparam");
+	  auto modulePath = dialog.getModulePath();
+          if(not modulePath.isEmpty()) {
+            arg.append("--modulePath");
+            arg.append(modulePath);
+          }
 	  arg.append(projectFile);
 	  clearEchoView("Running 'createFMU' to create a FMU from the model:\n\n");
 	  echoView->showXMLCode(false);
