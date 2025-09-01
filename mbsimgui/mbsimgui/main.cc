@@ -253,7 +253,7 @@ namespace {
     cerr<<(context.file?context.file:"<nofile>")<<":"<<context.line<<": "<<(context.function?context.function:"<nofunc>")<<": "<<category
         <<": "<<typeStr[type]<<": "<<msg.toStdString()<<endl;
     cerr.flush();
-    if(category=="qt.accessibility.atspi")
+    if(category=="qt.accessibility.atspi" || category=="qt.qpa.xcb")
       return;
     switch(type) {
       case QtDebugMsg:
