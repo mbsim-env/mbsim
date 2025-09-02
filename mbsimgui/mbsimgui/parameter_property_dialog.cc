@@ -59,12 +59,16 @@ namespace MBSimGUI {
                        "from appearing in the parameter tree. Hidden element will only appear if 'Show hidden element' "
                        "is enabled in the options.");
     addToTab("Misc",hidden);
+
+    mbsimguiContextAction = new MBSimGUIContextAction;
+    addToTab("Misc", mbsimguiContextAction);
   }
 
   DOMElement* ParameterPropertyDialog::initializeUsingXML(DOMElement *parent) {
     if(name) name->getWidget<TextWidget>()->setText(parameter->getName());
     comment->initializeUsingXML(parameter->getXMLElement());
     hidden->setChecked(E(parent)->getFirstProcessingInstructionChildNamed("MBSIMGUI_HIDDEN")!=nullptr);
+    mbsimguiContextAction->initializeUsingXML(parameter->getXMLElement());
     return parent;
   }
 
@@ -74,6 +78,7 @@ namespace MBSimGUI {
     comment->writeXMLFile(parameter->getXMLElement(),ref);
     if(hidden->isChecked())
       E(parameter->getXMLElement())->addProcessingInstructionChildNamed("MBSIMGUI_HIDDEN", "");
+    mbsimguiContextAction->writeXMLFile(parameter->getXMLElement(),ref);
     return nullptr;
   }
 

@@ -3565,21 +3565,38 @@ extern "C" {
     }
   }
 
-  void mbsimgui_Element_setParameterCode(MBSimGUI::Element *element, const char* parName, const char *code) noexcept {
+  void mbsimgui_Element_setParameterValue(MBSimGUI::Element *element, const char* parName, const char *code) noexcept {
     try {
       string parName_(parName);
       string code_(code);
       QTimer::singleShot(0, [element, parName_, code_](){
         try {
-          element->setParameterCode(parName_, code_);
+          element->setParameterValue(parName_, code_);
         }
         catch(...) {
-          cerr<<"Internal error: this should never happen: setParameterCode failed!"<<endl;
+          cerr<<"Internal error: this should never happen: Element::setParameterValue failed!"<<endl;
         }
       });
     }
     catch(...) {
-      cerr<<"Internal error: this should never happen: setParameterCode failed!"<<endl;
+      cerr<<"Internal error: this should never happen: Element::setParameterValue failed!"<<endl;
+    }
+  }
+
+  void mbsimgui_Parameter_setValue(MBSimGUI::Parameter *parameter, const char *code) noexcept {
+    try {
+      string code_(code);
+      QTimer::singleShot(0, [parameter, code_](){
+        try {
+          parameter->setValue(code_.c_str());
+        }
+        catch(...) {
+          cerr<<"Internal error: this should never happen: Parameter::setValue failed!"<<endl;
+        }
+      });
+    }
+    catch(...) {
+      cerr<<"Internal error: this should never happen: Parameter::setValue failed!"<<endl;
     }
   }
 
@@ -3587,15 +3604,17 @@ extern "C" {
     try {
       QTimer::singleShot(0, [](){
         try {
+          // instantiate a new evaluator on mw->eval and restore the old one at scope end
+          MBSimGUI::MainWindow::CreateTemporaryNewEvaluator tempEval;
           MBSimGUI::mw->refresh();
         }
         catch(...) {
-          cerr<<"Internal error: this should never happen: setParameterCode failed!"<<endl;
+          cerr<<"Internal error: this should never happen: MainWindow::refresh() failed!"<<endl;
         }
       });
     }
     catch(...) {
-      cerr<<"Internal error: this should never happen: MainWindows::refresh() failed!"<<endl;
+      cerr<<"Internal error: this should never happen: MainWindow::refresh() failed!"<<endl;
     }
   }
 

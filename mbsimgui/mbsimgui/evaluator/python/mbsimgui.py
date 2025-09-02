@@ -11,8 +11,10 @@ else:
   _libmbsimgui=ctypes.cdll.LoadLibrary("libmbsimgui-0")
 _libmbsimgui.mbsimgui_MainWindow_prepareForPropertyDialogOpen.restype=None
 _libmbsimgui.mbsimgui_MainWindow_prepareForPropertyDialogClose.restype=None
-_libmbsimgui.mbsimgui_Element_setParameterCode.restype=None
-_libmbsimgui.mbsimgui_Element_setParameterCode.argtypes=[ctypes.c_void_p, ctypes.c_char_p, ctypes.c_char_p]
+_libmbsimgui.mbsimgui_Element_setParameterValue.restype=None
+_libmbsimgui.mbsimgui_Element_setParameterValue.argtypes=[ctypes.c_void_p, ctypes.c_char_p, ctypes.c_char_p]
+_libmbsimgui.mbsimgui_Parameter_setValue.restype=None
+_libmbsimgui.mbsimgui_Parameter_setValue.argtypes=[ctypes.c_void_p, ctypes.c_char_p]
 _libmbsimgui.mbsimgui_MainWindow_refresh.restype=None
 _libmbsimgui.mbsimgui_MainWindow_refresh.argtypes=[]
 
@@ -60,4 +62,14 @@ class _Element(object):
   def __init__(self, nativePtr):
     self.nativePtr=nativePtr
   def setParameterCode(self, parName, code):
-    _libmbsimgui.mbsimgui_Element_setParameterCode(self.nativePtr, parName.encode("utf8"), code.encode("utf8"))
+    import warnings
+    warnings.warn("mbsimgui_element.setParameterCode is deprecated, please use mbsimgui_element.setParameterValue")
+    self.setParameterValue(parName, code)
+  def setParameterValue(self, parName, code):
+    _libmbsimgui.mbsimgui_Element_setParameterValue(self.nativePtr, parName.encode("utf8"), code.encode("utf8"))
+
+class _Parameter(object):
+  def __init__(self, nativePtr):
+    self.nativePtr=nativePtr
+  def setValue(self, code):
+    _libmbsimgui.mbsimgui_Parameter_setValue(self.nativePtr, code.encode("utf8"))

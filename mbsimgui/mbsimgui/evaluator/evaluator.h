@@ -31,6 +31,7 @@ class QPlainTextEdit;
 namespace MBSimGUI {
 
 class Element;
+class Parameter;
 
 // Everything in mbsimgui which depends on the current evaluator should be added to this class.
 // This ensure that only a simple place needs to be adapted if new evaluators are added or something is changed.
@@ -50,6 +51,7 @@ class Evaluator {
 
     static std::pair<std::string, std::string> getInitCode();
     static std::string getElementObjCode(Element *);
+    static std::string getParameterObjCode(Parameter *);
 };
 
 extern template void Evaluator::installSyntaxHighlighter<QTextEdit, QTextEdit>(QTextEdit *t1, QTextEdit *t2);

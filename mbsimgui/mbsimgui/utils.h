@@ -497,6 +497,8 @@ namespace MBSimGUI {
   template<class Container>
   void createContextMenuFor(QMenu *self, TreeItemData *item, const QString &prefix="");
 
+  std::vector<std::pair<std::string, std::string>> getMBSimGUIContextActions(xercesc::DOMElement *parent);
+
 }
 
 #endif

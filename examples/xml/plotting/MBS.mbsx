@@ -8,9 +8,24 @@
     <pv:Embed>
       <pv:Parameter>
         <pv:vectorParameter name="x">
+          <!-- a multi line
+               comment -->
+          <?MBSIMGUI_CONTEXT_ACTION name="Some output and refresh"
+            import mbsimgui
+            print("The value of this parameter is currently: "+str(x))
+            newValue="[0,1,2,3,4,4+1]"
+            print("Setting the value now to "+newValue+" and update the GUI")
+            mbsimgui_parameter.setValue(newValue)
+            mbsimgui.mw.refresh()
+          ?>
           [0,1,2,3,4,5]
         </pv:vectorParameter>
         <pv:matrixParameter name="y">
+          <?MBSIMGUI_CONTEXT_ACTION name="Show XML documentation ..."
+            import webbrowser
+            import mbxmlutils
+            webbrowser.open(mbxmlutils.installPrefix()+"/share/mbxmlutils/doc/http___www_mbsim-env_de_MBSimXML/mbsimxml.html")
+          ?>
           [[2,2,0],[5,5,0],[8,8,0],[6,6,0],[3,3,0],[2,2,0]]
         </pv:matrixParameter>
         <pv:scalarParameter name="s">0.06</pv:scalarParameter>
@@ -37,6 +52,8 @@
         </pv:anyParameter>
       </pv:Parameter>
       <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
+        <!-- a multi line
+             comment -->
         <plotFeatureRecursive value="position">True</plotFeatureRecursive>
         <plotFeatureRecursive value="velocity">True</plotFeatureRecursive>
         <plotFeatureRecursive value="acceleration">True</plotFeatureRecursive>
@@ -113,7 +130,7 @@
                                 ok = PySide2.QtWidgets.QPushButton("Write Parameter (s)")
                                 def writeParameter():
                                   s=self.inputSB.value()
-                                  mbsimgui_element.setParameterCode("s", str(s))
+                                  mbsimgui_element.setParameterValue("s", str(s))
                                   mbsimgui.mw.refresh()
                                 ok.clicked.connect(writeParameter)
                                 layout.addWidget(ok)

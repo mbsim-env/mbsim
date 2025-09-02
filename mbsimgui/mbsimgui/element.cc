@@ -181,7 +181,7 @@ namespace MBSimGUI {
     }
   }
 
-  void Element::setParameterCode(const std::string &parName, const std::string &code) {
+  void Element::setParameterValue(const std::string &parName, const std::string &code) {
     vector<EmbedItemData*> parents = getEmbedItemParents();
     parents.emplace_back(this);
     for(auto & parent : boost::adaptors::reverse(parents))

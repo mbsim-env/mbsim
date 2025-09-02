@@ -28,6 +28,7 @@ namespace MBSimGUI {
   class Parameter;
   class ExtWidget;
   class CommentWidget;
+  class MBSimGUIContextAction;
 
   class ParameterPropertyDialog : public PropertyDialog {
 
@@ -35,12 +36,14 @@ namespace MBSimGUI {
       ParameterPropertyDialog(Parameter *parameter_);
       virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr);
+      static std::vector<std::pair<std::string, std::string>> getMBSimGUIContextActions(xercesc::DOMElement *parent);
       void toWidget() override;
       void fromWidget() override;
     protected:
       Parameter *parameter;
       ExtWidget *name;
       CommentWidget *comment;
+      MBSimGUIContextAction *mbsimguiContextAction;
       QCheckBox *hidden;
   };
 

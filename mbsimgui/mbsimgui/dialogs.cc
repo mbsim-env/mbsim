@@ -56,6 +56,7 @@
 #include "hdf5serie/file.h"
 #include "hdf5serie/simpledataset.h"
 #include "evaluator/evaluator.h"
+#include "single_line_delegate.h"
 
 using namespace std;
 using namespace boost::math::constants;
@@ -253,6 +254,8 @@ namespace MBSimGUI {
     eleList->setColumnWidth(0,250);
     eleList->setColumnWidth(1,200);
     eleList->hideColumn(1);
+    auto commentDelegate=new SingleLineDelegate(eleList);
+    eleList->setItemDelegateForColumn(2, commentDelegate);
     auto *eleFilter = new OpenMBVGUI::AbstractViewFilter(eleList, 0, 3);
     layout->addWidget(eleFilter);
     layout->addWidget(eleList);

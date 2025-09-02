@@ -124,4 +124,13 @@ ret=mbsimgui._Element(%1$x)
   return {};
 }
 
+string Evaluator::getParameterObjCode(Parameter *p) {
+  if(mw->eval->getName()=="python")
+    return (boost::format(R"(
+import mbsimgui
+ret=mbsimgui._Parameter(%1$x)
+)")%p).str();
+  return {};
+}
+
 }

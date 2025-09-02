@@ -138,7 +138,7 @@ namespace MBSimGUI {
 
     // add the context actions
     if(element->getXMLElement()) {
-      auto contextAction=ElementPropertyDialog::getMBSimGUIContextActions(element->getXMLElement()); // read from XML
+      auto contextAction=getMBSimGUIContextActions(element->getXMLElement()); // read from XML
       if(!contextAction.empty()) {
         addSeparator();
         for(auto &ca : contextAction) {
