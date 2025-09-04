@@ -253,7 +253,9 @@ namespace {
     cerr<<(context.file?context.file:"<nofile>")<<":"<<context.line<<": "<<(context.function?context.function:"<nofunc>")<<": "<<category
         <<": "<<typeStr[type]<<": "<<msg.toStdString()<<endl;
     cerr.flush();
-    if(category=="qt.accessibility.atspi" || category=="qt.qpa.xcb")
+    if(category=="qt.accessibility.atspi" || // do not stop on accessibility messages
+       category=="qt.qpa.xcb" || // do not stop on QPA messages
+       (category=="default" && type==QtWarningMsg && msg.startsWith("setGeometry:"))) // do not stop for an old Qt bug about setGeometry (QTBUG-73258)
       return;
     switch(type) {
       case QtDebugMsg:
