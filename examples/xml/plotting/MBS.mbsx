@@ -92,9 +92,9 @@
                             
                                 layout = PySide2.QtWidgets.QVBoxLayout()
                                 self.setLayout(layout)
-                                self.plotWidget=self.createPlotWidget("splinePlot", layout="tight")
+                                plotWidget=self.createPlotWidget("splinePlot", layout="tight")
                                 layout.addWidget(self.getPlotWidgetToolbar("splinePlot"))
-                                layout.addWidget(self.plotWidget)
+                                layout.addWidget(plotWidget)
                                 hlayout = PySide2.QtWidgets.QHBoxLayout()
                                 layout.addLayout(hlayout)
                                 hlayout.setStretch(0, 0)
@@ -118,14 +118,21 @@
                                 self.inputSL.setPageStep(self.inputSLFac/100)
                                 self.inputSL.valueChanged.connect(self.sliderChanged)
                             
-                                self.axes = self.plotWidget.figure.subplots()
+                                axes = plotWidget.figure.subplots()
                             
-                                self.data=self.axes.plot(self.X,numpy.zeros(self.X.shape))[0]
-                                self.axes.plot(splineIn["xx"],splineIn["yy"][1]["data"],marker="x",linestyle="")
-                                self.axes.set_title(f"Plot for g={g} o={o} firstCall={mbsimgui_firstCall} lastCall={mbsimgui_lastCall}\ncounterNames={mbsimgui_counterNames} counts={mbsimgui_counts}");
-                                self.plotWidget.figure.suptitle(f"suptitle\nsuptitle");
-                                self.axes.set_xlabel("x-axis\nrow2");
-                                self.axes.set_ylabel("x-axis\nrow2");
+                                self.data=axes.plot(self.X,numpy.zeros(self.X.shape))[0]
+                                axes.plot(splineIn["xx"],splineIn["yy"][1]["data"],marker="x",linestyle="")
+                                axes.set_title(f"Plot for g={g} o={o} firstCall={mbsimgui_firstCall} lastCall={mbsimgui_lastCall}\ncounterNames={mbsimgui_counterNames} counts={mbsimgui_counts}");
+                                plotWidget.figure.suptitle(f"suptitle line 1\nsuptitle line 2");
+                                axes.set_xlabel("x-axis\nrow2");
+                                axes.set_ylabel("x-axis\nrow2");
+                                self.bm = mbxmlutils.Qt.BitBlitManager(axes, [self.data])
+
+                                text=axes.text(0,0,"Open docu in browser on click",c="blue")
+                                def onClick():
+                                  import webbrowser
+                                  webbrowser.open(mbxmlutils.installPrefix()+"/share/mbxmlutils/doc/http___www_mbsim-env_de_MBSimXML/mbsimxml.html")
+                                mbxmlutils.Qt.onArtistClick(text, onClick)
 
                                 ok = PySide2.QtWidgets.QPushButton("Write Parameter (s)")
                                 def writeParameter():
@@ -150,7 +157,7 @@
                                 # create spline using scipy
                                 self.data.set_ydata(sp2(self.X))
 
-                                self.plotWidget.draw()
+                                self.bm.update()
                                 self.inputSL.blockSignals(True)
                                 self.inputSL.setValue(self.sToSliderValue(s))
                                 self.inputSL.blockSignals(False)
@@ -168,7 +175,7 @@
                             ax.plot([1,2,3,4],[5,4,7,2])
                             d.show()
 
-                            mbsimgui.mw.waitForPropertyDialogs(w, d)
+                            mbxmlutils.Qt.blockUntilDialoagsAreClosed(w, d)
 
                             if mbsimgui_firstCall:
                               mbxmlutils.staticData["myplotdata"]=[]
