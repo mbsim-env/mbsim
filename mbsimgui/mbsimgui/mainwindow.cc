@@ -364,10 +364,14 @@ namespace MBSimGUI {
     menuBar()->addMenu(toolMenu);
 
     QMenu *helpMenu = new QMenu("Help", menuBar());
-    helpMenu->addAction(QIcon::fromTheme("help-contents"), "Contents", this, &MainWindow::help);
-    helpMenu->addAction(QIcon::fromTheme("help-xml"), "XML Help", this, [=](){ this->xmlHelp(); });
-    helpMenu->addAction(QIcon::fromTheme("help-relnotes"), "Release notes", this, &MainWindow::relnotes);
-    helpMenu->addAction(QIcon::fromTheme("help-about"), "About", this, &MainWindow::about);
+    helpMenu->addAction(QIcon::fromTheme("help-www"), "MBSim-Environment WWW...", [](){
+      QDesktopServices::openUrl(QUrl("https://www.mbsim-env.de"));
+    });
+    helpMenu->addAction(QIcon::fromTheme("help-xml"), "XML Help...", [=](){
+      QDesktopServices::openUrl(QUrl::fromLocalFile(QString::fromStdString((getInstallPath()/"share"/"mbxmlutils"/"doc"/"http___www_mbsim-env_de_MBSimXML"/"mbsimxml.html").string())));
+    });
+    helpMenu->addAction(QIcon::fromTheme("help-relnotes"), "Release notes...", this, &MainWindow::relnotes);
+    helpMenu->addAction(QIcon::fromTheme("help-about"), "About...", this, &MainWindow::about);
     menuBar()->addMenu(helpMenu);
 
     QToolBar *runBar = addToolBar("Run Toolbar");
@@ -1778,14 +1782,6 @@ DEF mbsimgui_outdated_switch Switch {
     QSettings settings;
     settings.setValue("mainwindow/filter/type", static_cast<int>(OpenMBVGUI::AbstractViewFilter::getFilterType()));
     settings.setValue("mainwindow/filter/casesensitivity", OpenMBVGUI::AbstractViewFilter::getCaseSensitive());
-  }
-
-  void MainWindow::help() {
-    QMessageBox::information(this, tr("MBSimGUI - Help"), tr("<p>Please visit <a href=\"https://www.mbsim-env.de\">MBSim-Environment</a> for documentation.</p>"));
-  }
-
-  void MainWindow::xmlHelp(const QString &url) {
-    QDesktopServices::openUrl(QUrl::fromLocalFile(QString::fromStdString((getInstallPath()/"share"/"mbxmlutils"/"doc"/"http___www_mbsim-env_de_MBSimXML"/"mbsimxml.html").string())));
   }
 
   void MainWindow::relnotes() {
@@ -3261,17 +3257,16 @@ DEF mbsimgui_outdated_switch Switch {
           if(getAutoRefresh()) refresh();
           editor->setCancel(true);
         });
-//        connect(editor,&ElementPropertyDialog::showXMLHelp,this,[=](){
-//          // generate url for current element
-//          string url="file://"+(getInstallPath()/"share"/"mbxmlutils"/"doc").string();
-//          string ns=element->getXMLType().first;
-//          replace(ns.begin(), ns.end(), ':', '_');
-//          replace(ns.begin(), ns.end(), '.', '_');
-//          replace(ns.begin(), ns.end(), '/', '_');
-//          url+="/"+ns+"/index.html#"+element->getXMLType().second;
-//          // open in XML help dialog
-//          xmlHelp(QString::fromStdString(url));
-//        });
+        connect(editor,&ElementPropertyDialog::showXMLHelp,[element](){
+          // generate url for current element
+          string url="file://"+(getInstallPath()/"share"/"mbxmlutils"/"doc").string();
+          string ns=element->getXMLType().first;
+          replace(ns.begin(), ns.end(), ':', '_');
+          replace(ns.begin(), ns.end(), '.', '_');
+          replace(ns.begin(), ns.end(), '/', '_');
+          url+="/"+ns+"/index.html#"+element->getXMLType().second;
+          QDesktopServices::openUrl(QUrl(url.c_str()));
+        });
       }
     }
   }
@@ -3317,6 +3312,9 @@ DEF mbsimgui_outdated_switch Switch {
           if(getAutoRefresh()) refresh();
           editor->setCancel(true);
 	  if(getStatusUpdate()) parameter->getParent()->updateStatus();
+        });
+        connect(editor,&ElementPropertyDialog::showXMLHelp,[](){
+          QDesktopServices::openUrl(QUrl(("file://"+getInstallPath().string()+"/share/mbxmlutils/doc/http___www_mbsim-env_de_MBXMLUtils/index.html#parameters").c_str()));
         });
       }
     }

@@ -160,7 +160,6 @@ namespace MBSimGUI {
       void saveStateVectorAs();
       void saveStateTableAs();
       void saveLinearSystemAnalysisAs();
-      void help();
       void about();
       void relnotes();
       void simulate();
@@ -262,7 +261,6 @@ namespace MBSimGUI {
       bool saveProjectAs();
       void saveProjectAsTemplate();
       void refresh();
-      void xmlHelp(const QString &url="");
       void editElementSource();
       void editParametersSource();
       void exportElement(const QString &title);
