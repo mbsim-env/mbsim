@@ -35,6 +35,7 @@
 #include "mbsim/utils/nonlinear_algebra.h"
 #include "mbsim/links/initial_condition.h"
 
+#include <mbxmlutilshelper/thislinelocation.h>
 #include <hdf5serie/file.h>
 #include <hdf5serie/simpleattribute.h>
 #include <hdf5serie/simpledataset.h>
@@ -51,6 +52,13 @@ using namespace std;
 using namespace fmatvec;
 using namespace MBXMLUtils;
 using namespace xercesc;
+
+namespace {
+  ThisLineLocation loc;
+  boost::filesystem::path installPath() {
+    return boost::filesystem::canonical(loc()).parent_path().parent_path();
+  }
+}
 
 namespace MBSim {
   double tP = 20.0;
@@ -485,6 +493,16 @@ namespace MBSim {
         }
         // write openmbv files
         openMBVGrp->write(true, truncateSimulationFiles);
+      }
+
+      // copy the content of the .buildInfo.json file to the HDF5 file:
+      // This file contains the git commit IDs of the used mbsim-env build.
+      // Hence, the HDF5 file contains the full information about the source code (version) which was used to generate the HDF5 file.
+      if(boost::filesystem::exists(installPath()/".buildInfo.json")) {
+        H5::SimpleAttribute<string> *attr=plotGroup->createChildAttribute<H5::SimpleAttribute<string>>("mbsimenv_buildInfo")();
+        ifstream f(installPath()/".buildInfo.json");
+        string content((istreambuf_iterator<char>(f)), istreambuf_iterator<char>());
+        attr->write(content);
       }
     }
     else
