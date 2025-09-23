@@ -69,6 +69,7 @@ namespace MBSimGUI {
         delete ele;
         throw runtime_error(string("This XML element is not of type ")+boost::core::demangle(typeid(Container).name())+".");
       }
+      cont->saveIcon();
       return cont;
     }
     static_assert(boost::mpl::has_key<MapContainerToDefaultAndUnknown, Container>::value,

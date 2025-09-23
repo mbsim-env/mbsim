@@ -435,11 +435,18 @@ namespace MBSimGUI {
     fileView->setColumnWidth(1,50);
     fileView->hideColumn(3);
 
-    connect(elementView->selectionModel(), &QItemSelectionModel::currentRowChanged, this, &MainWindow::elementChanged);
-    connect(elementView, &ElementView::pressed, this, &MainWindow::elementViewClicked);
+    connect(elementView->selectionModel(), &QItemSelectionModel::currentRowChanged, this, &MainWindow::highlightElement);
+    connect(elementView->selectionModel(), &QItemSelectionModel::currentRowChanged, this, &MainWindow::updateParameterTreeOnlyForCurrentElement);
+    connect(elementView, &ElementView::pressed, this, &MainWindow::showElementContextMenu);
+
     connect(parameterView, &ParameterView::pressed, this, &MainWindow::parameterViewClicked);
 
-    QDockWidget *dockModelTree = new QDockWidget("Model Tree", this);
+    //mfmf use rowsAboutToBeInserted,... to save the expandState and then restore the expand state (this needs updateParameterTreeAll to be split into two functions)
+    connect(elementView->model(), &QAbstractItemModel::rowsInserted, this, &MainWindow::updateParameterTreeAll);
+    connect(elementView->model(), &QAbstractItemModel::rowsMoved   , this, &MainWindow::updateParameterTreeAll);
+    connect(elementView->model(), &QAbstractItemModel::rowsRemoved , this, &MainWindow::updateParameterTreeAll);
+
+    QDockWidget *dockModelTree = new QDockWidget("Element Tree", this);
     dockMenu->addAction(dockModelTree->toggleViewAction());
     dockModelTree->setFeatures(dockModelTree->features() | QDockWidget::DockWidgetVerticalTitleBar);
     dockModelTree->setObjectName("dockWidget/mbs");
@@ -458,7 +465,12 @@ namespace MBSimGUI {
         s->setEnabled(visible);
     });
 
-    QDockWidget *dockParameterTree = new QDockWidget("Parameter Tree (of selected object)", this);
+    auto parView = static_cast<OptionsDialog::ParameterView>(settings.value("mainwindow/options/parameterview", static_cast<int>(OptionsDialog::ParameterView::onlyForCurrentElement)).toInt());
+    dockParameterTree = new QDockWidget(
+      parView==OptionsDialog::ParameterView::onlyForCurrentElement ?
+        "Parameter Tree (for selected element)" :
+        "Parameter Tree (all parameters)",
+      this);
     dockMenu->addAction(dockParameterTree->toggleViewAction());
     dockParameterTree->setFeatures(dockParameterTree->features() | QDockWidget::DockWidgetVerticalTitleBar);
     dockParameterTree->setObjectName("dockWidget/parameters");
@@ -767,8 +779,12 @@ namespace MBSimGUI {
     menu.setSaveStateVector(settings.value("mainwindow/options/savestatevector", false).toBool());
     menu.setMaxUndo(settings.value("mainwindow/options/maxundo", 10).toInt());
     menu.setShowFilters(settings.value("mainwindow/options/showfilters", true).toBool());
-    menu.setShowHiddenElements(settings.value("mainwindow/options/showhiddenelements", false).toBool());
-    bool oldShowHiddenElement=menu.getShowHiddenElements();
+    menu.setShowHiddenItems(settings.value("mainwindow/options/showhiddenelements", false).toBool());
+    bool oldShowHiddenElement=menu.getShowHiddenItems();
+    menu.setShowEmptyParameters(settings.value("mainwindow/options/showemptyparameters", true).toBool());
+    bool oldShowEmptyParameters=menu.getShowEmptyParameters();
+    menu.setParameterView(static_cast<OptionsDialog::ParameterView>(settings.value("mainwindow/options/parameterview", static_cast<int>(OptionsDialog::ParameterView::onlyForCurrentElement)).toInt()));
+    auto oldParameterView=menu.getParameterView();
     menu.setStatusUpdate(settings.value("mainwindow/options/statusupdate", true).toBool());
     menu.setPlugins(settings.value("mainwindow/options/plugins", QString()).toString());
     menu.setDefaultEvaluator(settings.value("mainwindow/options/defaultevaluator", 0).toInt());
@@ -786,17 +802,19 @@ namespace MBSimGUI {
     if(!justSetOptions)
       res = menu.exec();
     if(res == 1) {
-      settings.setValue("mainwindow/options/autosave"          , menu.getAutoSave());
-      settings.setValue("mainwindow/options/autosaveinterval"  , menu.getAutoSaveInterval());
-      settings.setValue("mainwindow/options/autoexport"        , menu.getAutoExport());
-      settings.setValue("mainwindow/options/autoexportdir"     , menu.getAutoExportDir());
-      settings.setValue("mainwindow/options/savestatevector"   , menu.getSaveStateVector());
-      settings.setValue("mainwindow/options/maxundo"           , menu.getMaxUndo());
-      settings.setValue("mainwindow/options/showfilters"       , menu.getShowFilters());
-      settings.setValue("mainwindow/options/showhiddenelements", menu.getShowHiddenElements());
-      settings.setValue("mainwindow/options/statusupdate"      , menu.getStatusUpdate());
-      settings.setValue("mainwindow/options/plugins"           , menu.getPlugins());
-      settings.setValue("mainwindow/options/defaultevaluator"  , menu.getDefaultEvaluator());
+      settings.setValue("mainwindow/options/autosave"           , menu.getAutoSave());
+      settings.setValue("mainwindow/options/autosaveinterval"   , menu.getAutoSaveInterval());
+      settings.setValue("mainwindow/options/autoexport"         , menu.getAutoExport());
+      settings.setValue("mainwindow/options/autoexportdir"      , menu.getAutoExportDir());
+      settings.setValue("mainwindow/options/savestatevector"    , menu.getSaveStateVector());
+      settings.setValue("mainwindow/options/maxundo"            , menu.getMaxUndo());
+      settings.setValue("mainwindow/options/showfilters"        , menu.getShowFilters());
+      settings.setValue("mainwindow/options/showhiddenelements" , menu.getShowHiddenItems());
+      settings.setValue("mainwindow/options/showemptyparameters", menu.getShowEmptyParameters());
+      settings.setValue("mainwindow/options/parameterview"      , static_cast<int>(menu.getParameterView()));
+      settings.setValue("mainwindow/options/statusupdate"       , menu.getStatusUpdate());
+      settings.setValue("mainwindow/options/plugins"            , menu.getPlugins());
+      settings.setValue("mainwindow/options/defaultevaluator"   , menu.getDefaultEvaluator());
 
       file.open(QIODevice::WriteOnly | QIODevice::Text);
       file.write(menu.getModulePath().toUtf8());
@@ -816,8 +834,21 @@ namespace MBSimGUI {
       elementViewFilter->setVisible(showFilters);
       parameterViewFilter->setVisible(showFilters);
 
-      if(menu.getShowHiddenElements()!=oldShowHiddenElement)
-        elementChanged(elementView->currentIndex()); // this update the parameters (calls Parameter::updateValue())
+      if(menu.getShowHiddenItems()!=oldShowHiddenElement ||
+         menu.getShowEmptyParameters()!=oldShowEmptyParameters ||
+         menu.getParameterView()!=oldParameterView) {
+        // this update the parameters (calls Parameter::updateValue())
+        highlightElement(elementView->currentIndex());
+        if(menu.getParameterView()==OptionsDialog::ParameterView::onlyForCurrentElement) updateParameterTreeOnlyForCurrentElement(elementView->currentIndex());
+        if(menu.getParameterView()==OptionsDialog::ParameterView::all                  ) updateParameterTreeAll();
+      }
+      if(menu.getParameterView()!=oldParameterView) {
+        dockParameterTree->setWindowTitle(
+          menu.getParameterView()==OptionsDialog::ParameterView::onlyForCurrentElement ?
+            "Parameter Tree (for selected element)" :
+            "Parameter Tree (all parameters)"
+        );
+      }
 
       statusUpdate = menu.getStatusUpdate();
 
@@ -842,7 +873,7 @@ namespace MBSimGUI {
     inlineOpenMBVMW->highlightObject(ID);
   }
 
-  void MainWindow::elementChanged(const QModelIndex &current) {
+  void MainWindow::highlightElement(const QModelIndex &current) {
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     auto *item = model->getItem(current)->getItemData();
     auto *embeditem = dynamic_cast<EmbedItemData*>(item);
@@ -851,19 +882,7 @@ namespace MBSimGUI {
       if(container) embeditem = container->getElement();
     }
     if(embeditem) {
-      auto *pmodel = static_cast<ParameterTreeModel*>(parameterView->model());
-      vector<EmbedItemData*> parents = embeditem->getEmbedItemParents();
-      pmodel->removeRow(pmodel->index(0,0).row(), QModelIndex());
-      if(!parents.empty()) {
-        pmodel->createParameterItem(parents[0]->getParameters());
-        for(size_t i=0; i<parents.size()-1; i++)
-          pmodel->createParameterItem(parents[i+1]->getParameters(),parents[i]->getParameters()->getModelIndex());
-        pmodel->createParameterItem(embeditem->getParameters(),parents[parents.size()-1]->getParameters()->getModelIndex());
-      }
-      else
-        pmodel->createParameterItem(embeditem->getParameters());
-      parameterView->expandAll();
-      parameterView->scrollToBottom();
+      // highlight the current element in the 3D view
       auto *element = dynamic_cast<Element*>(item);
       if(element)
         highlightObject(element->getID());
@@ -872,7 +891,112 @@ namespace MBSimGUI {
     }
   }
 
-  void MainWindow::elementViewClicked(const QModelIndex &current) {
+  void MainWindow::updateParameterTreeOnlyForCurrentElement(QModelIndex current) {
+    QSettings settings;
+    auto parView = static_cast<OptionsDialog::ParameterView>(settings.value("mainwindow/options/parameterview", static_cast<int>(OptionsDialog::ParameterView::onlyForCurrentElement)).toInt());
+    if(parView!=OptionsDialog::ParameterView::onlyForCurrentElement)
+      return;
+    auto showEmptyPars = settings.value("mainwindow/options/showemptyparameters", true).toBool();
+    auto *emodel = static_cast<ElementTreeModel*>(elementView->model());
+
+    auto *eleItem = emodel->getItem(current)->getItemData();
+    auto *eleEmbedItem = dynamic_cast<EmbedItemData*>(eleItem);
+    if(not eleEmbedItem) {
+      auto *container = dynamic_cast<ContainerItemData*>(eleItem);
+      if(container) eleEmbedItem = container->getElement();
+    }
+    if(eleEmbedItem) {
+      // update parameter tree based on new current element
+      auto *pmodel = static_cast<ParameterTreeModel*>(parameterView->model());
+      pmodel->removeRow(pmodel->index(0,0).row(), QModelIndex());
+
+      vector<EmbedItemData*> parents = eleEmbedItem->getEmbedItemParents();
+      if(!parents.empty()) {
+        pmodel->createParameterItem(parents[0]->getParameters());
+        for(size_t i=0; i<parents.size()-1; i++)
+          pmodel->createParameterItem(parents[i+1]->getParameters(),parents[i]->getParameters()->getModelIndex());
+        pmodel->createParameterItem(eleEmbedItem->getParameters(),parents[parents.size()-1]->getParameters()->getModelIndex());
+      }
+      else
+        pmodel->createParameterItem(eleEmbedItem->getParameters());
+      
+      if(!showEmptyPars) {
+        auto parIndex = eleEmbedItem->getParameters()->getModelIndex();
+        do {
+          auto parItem = pmodel->getItem(parIndex);
+          if(parItem->childCount(getParameterView())==0)
+            getParameterView()->setRowHidden(parIndex.row(), parIndex.parent(), true);
+          parIndex = parIndex.parent();
+        }
+        while(parIndex.isValid());
+      }
+      parameterView->expandAll();
+      parameterView->scrollToBottom();
+    }
+  }
+
+  void MainWindow::updateParameterTreeAll() {
+    QSettings settings;
+    auto parView = static_cast<OptionsDialog::ParameterView>(settings.value("mainwindow/options/parameterview", static_cast<int>(OptionsDialog::ParameterView::onlyForCurrentElement)).toInt());
+    if(parView!=OptionsDialog::ParameterView::all)
+      return;
+    auto showEmptyPars = settings.value("mainwindow/options/showemptyparameters", true).toBool();
+    auto *emodel = static_cast<ElementTreeModel*>(elementView->model());
+
+    // update parameter tree (elements, and hence parameters, may have been added, removed or moved)
+    auto *pmodel = static_cast<ParameterTreeModel*>(parameterView->model());
+
+    // save the current expand state of parameters
+    map<vector<QString>, bool> expandState;
+    function<void(TreeItem *parItem, vector<QString> path)> walk1;
+    walk1 = [&walk1, &expandState, this](TreeItem *parItem, vector<QString> path) {
+      path.emplace_back(parItem->getItemData()->getName());
+      expandState.emplace(path, parameterView->isExpanded(parItem->getItemData()->getModelIndex()));
+      cout<<"mfmf1"; for(auto &x:path) cout<<","<<x.toStdString(); cout<<" "<<parameterView->isExpanded(parItem->getItemData()->getModelIndex())<<endl;
+
+      for(int cNr=0; cNr<parItem->childCount(); ++cNr)
+        walk1(parItem->child(cNr), path);
+    };
+    if(auto i = pmodel->getItem(QModelIndex())->child(0); i)
+      walk1(i, {});
+    // remove all parameters
+    pmodel->removeRow(pmodel->index(0,0).row(), QModelIndex());
+
+    // build new parameters using all elements
+    function<void(TreeItem *eleItem, QModelIndex parParentIndex, vector<QString> path)> walk2;
+    walk2 = [&walk2,pmodel,showEmptyPars,&expandState,this](TreeItem *eleItem, QModelIndex parParentIndex, vector<QString> path) {
+      auto *localembeditem = dynamic_cast<EmbedItemData*>(eleItem->getItemData());
+      QModelIndex parIndex;
+      TreeItem* parItem { nullptr };
+      if(localembeditem) {
+        pmodel->createParameterItem(localembeditem->getParameters(), parParentIndex);
+        parIndex = localembeditem->getParameters()->getModelIndex();
+        parItem = pmodel->getItem(parIndex);
+        path.emplace_back(parItem->getItemData()->getName());
+      }
+      else
+        parIndex = parParentIndex;
+
+      for(int cNr=0; cNr<eleItem->childCount(); ++cNr)
+        walk2(eleItem->child(cNr), parIndex, path);
+
+      if(localembeditem) {
+        // set the expand state of a created parameter to the value of the old parameter or to true
+        cout<<"mfmf2"; for(auto &x:path) cout<<","<<x.toStdString(); cout<<" "<<(expandState.find(path)!=expandState.end())<<" "<<(expandState.find(path)!=expandState.end()?expandState.find(path)->second:true)<<endl;
+        if(auto it=expandState.find(path); it!=expandState.end())
+          parameterView->setExpanded(parItem->getItemData()->getModelIndex(), it->second);
+        else
+          parameterView->setExpanded(parItem->getItemData()->getModelIndex(), true);
+
+        // hide empty parameters if requested by the user
+        if(!showEmptyPars && parItem->childCount(getParameterView())==0)
+          getParameterView()->setRowHidden(parIndex.row(), parIndex.parent(), true);
+      }
+    };
+    walk2(emodel->getItem(QModelIndex()), QModelIndex(), {});
+  }
+
+  void MainWindow::showElementContextMenu(const QModelIndex &current) {
     if(QApplication::mouseButtons()==Qt::RightButton) {
       TreeItemData *itemData = static_cast<ElementTreeModel*>(elementView->model())->getItem(current)->getItemData();
       QMenu *menu = itemData->createContextMenu();
@@ -1186,7 +1310,7 @@ namespace MBSimGUI {
   // - the counterName which is none empty if this parameter has a Array/Pattern with a counterName, else couterName is empty
   // - the unevaluated count string of the Array/Pattern
   // - the unevaluated onlyif string of the Array/Pattern
-  vector<MainWindow::ParameterLevel> MainWindow::updateParameters(EmbedItemData *item, bool exceptLatestParameter,
+  vector<MainWindow::ParameterLevel> MainWindow::updateParameters(EmbedItemData *item, Parameter *lastParToUse,
                                                                   const std::vector<int>& count) {
     createNewEvaluator();
 
@@ -1201,13 +1325,15 @@ namespace MBSimGUI {
         doc->setDocumentURI(X()%D(this->doc)->getDocumentFilename().string());
         DOMElement *eleP = D(doc)->createElement(PV%"Parameter");
         doc->insertBefore(eleP,nullptr);
-        int skipLast = (parent==item && exceptLatestParameter) ? 1 : 0;
-        for(size_t j=0; j<parent->getNumberOfParameters() - skipLast; j++) {
-          DOMNode *node = doc->importNode(parent->getParameter(j)->getXMLElement(),true);
+        for(size_t j=0; j<parent->getNumberOfParameters(); j++) {
+          auto par=parent->getParameter(j);
+          DOMNode *node = doc->importNode(par->getXMLElement(),true);
           eleP->insertBefore(node,nullptr);
-          boost::filesystem::path orgFileName=E(parent->getParameter(j)->getXMLElement())->getOriginalFilename();
+          boost::filesystem::path orgFileName=E(par->getXMLElement())->getOriginalFilename();
           E(static_cast<DOMElement*>(node))->addEmbedData("MBXMLUtils_OriginalFilename", orgFileName.string());
           E(static_cast<DOMElement*>(node))->setOriginalElementLineNumber(E(eleP)->getLineNumber());
+          if(par==lastParToUse)
+            break;
         }
         try {
           D(doc)->validate();
@@ -1372,7 +1498,7 @@ namespace MBSimGUI {
     };
 
     if(!trackFirstLastCall)
-      // track the first and last call was not requested -> just all the worker (once)
+      // track the first and last call was not requested -> just call the worker (once)
       return worker(parameterLevels, code, e, fullEval, catchErrors, nullptr);
     else {
       // track the first and last call was requested
@@ -3276,7 +3402,7 @@ DEF mbsimgui_outdated_switch Switch {
       QModelIndex index = parameterView->selectionModel()->currentIndex();
       auto *parameter = dynamic_cast<Parameter*>(static_cast<ParameterTreeModel*>(parameterView->model())->getItem(index)->getItemData());
       if(parameter) {
-        updateParameters(parameter->getParent(),true);
+        updateParameters(parameter->getParent(),parameter);
         auto editor = parameter->createPropertyDialog();
         editor->setAttribute(Qt::WA_DeleteOnClose);
         if(config)

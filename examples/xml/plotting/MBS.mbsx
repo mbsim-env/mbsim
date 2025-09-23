@@ -328,12 +328,25 @@
             </openMBVRigidBody>
             <enableOpenMBVFrameC/>
           </RigidBody>
-          <pv:Embed>
+          <pv:Embed counterName="icoeffs" count="2" onlyif="icoeffs==1">
             <pv:Parameter>
               <pv:anyParameter name="spline">
                 import scipy
                 ret=scipy.interpolate.CubicSpline(x, y, bc_type="natural")
               </pv:anyParameter>
+              <pv:scalarParameter name="context1">
+                1
+                <?MBSIMGUI_CONTEXT_ACTION name="Print own value"
+                  print("The value of this parameter is currently: "+str(context1))
+                ?>
+              </pv:scalarParameter>
+              <pv:scalarParameter name="context2">
+                2
+                <?MBSIMGUI_CONTEXT_ACTION name="Print own value"
+                  context1
+                  print("The value of this parameter is currently: "+str(context2))
+                ?>
+              </pv:scalarParameter>
             </pv:Parameter>
             <RigidBody name="coeffs">
               <mass unit="kg">1</mass>

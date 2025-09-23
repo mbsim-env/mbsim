@@ -28,6 +28,8 @@
 #include <QIcon>
 #include <QApplication>
 
+class QTreeView;
+
 namespace MBSimGUI {
 
   class TreeItem {
@@ -37,7 +39,10 @@ namespace MBSimGUI {
       ~TreeItem();
 
       TreeItem *child(int number) { return childItems.value(number); }
-      int childCount() const { return childItems.count(); }
+
+      // if model==nullptr hidden and none-hidden childs are counted
+      // if model is given only none-hidden childs of the specified model are counted
+      int childCount(QTreeView *model=nullptr) const;
 
       TreeItem *parent() { return parentItem; }
       bool insertChildren(TreeItem *item, int count);

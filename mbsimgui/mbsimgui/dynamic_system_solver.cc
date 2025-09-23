@@ -90,7 +90,7 @@ namespace MBSimGUI {
     ele1 = ele1->getFirstElementChild();
     while(ele1) {
       if(embed && MBXMLUtils::E(ele1)->hasAttribute("href")) {
-        mw->updateParameters(this,false);
+        mw->updateParameters(this);
         std::string evaltmp;
         try{
           evaltmp = mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(MBXMLUtils::E(ele1)->getAttribute("href"),ele1,false));

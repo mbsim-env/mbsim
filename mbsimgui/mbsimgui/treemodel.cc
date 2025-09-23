@@ -47,6 +47,7 @@ namespace MBSimGUI {
     if(role==Qt::ForegroundRole) {
       TreeItem *item = getItem(index);
       item->setForeground(value.value<QBrush>());
+      emit dataChanged(index, index, {Qt::ForegroundRole});
       return true;
     }
     return QAbstractItemModel::setData(index, value, role);

@@ -20,6 +20,7 @@
 #ifndef __DIALOG_H_
 #define __DIALOG_H_
 
+#include "qradiobutton.h"
 #include <QDialog>
 
 class QCheckBox;
@@ -49,8 +50,16 @@ namespace MBSimGUI {
       int getMaxUndo() const;
       bool getShowFilters() const;
       void setShowFilters(bool flag);
-      bool getShowHiddenElements() const;
-      void setShowHiddenElements(bool flag);
+      bool getShowHiddenItems() const;
+      void setShowHiddenItems(bool flag);
+      bool getShowEmptyParameters() const;
+      void setShowEmptyParameters(bool flag);
+      enum class ParameterView {
+        onlyForCurrentElement,
+        all,
+      };
+      ParameterView getParameterView() const;
+      void setParameterView(ParameterView parView);
       bool getStatusUpdate() const;
       void setStatusUpdate(bool flag);
       QString getPlugins() const;
@@ -65,7 +74,8 @@ namespace MBSimGUI {
       void autoSaveChanged(int state);
       void autoExportChanged(int state);
       void openFileBrowser();
-      QCheckBox *autoSave, *autoExport, *saveStateVector, *showFilters, *showHiddenElements, *statusUpdate;
+      QCheckBox *autoSave, *autoExport, *saveStateVector, *showFilters, *showHiddenItems, *showEmptyParameters, *statusUpdate;
+      QRadioButton *parameterViewOnlyForCurrentElement, *parameterViewAll;
       QComboBox *defaultEvaluator;
       QSpinBox *autoSaveInterval, *maxUndo;
       QLineEdit *autoExportDir;

@@ -66,7 +66,7 @@ namespace MBSimGUI {
 
             std::vector<MainWindow::ParameterLevel> parameterLevels;
             if(MBXMLUtils::E(ele1)->hasAttribute("parameterHref")) {
-              parameterLevels = mw->updateParameters(parent,false);
+              parameterLevels = mw->updateParameters(parent);
               auto fileInfo = getQFileInfoForEmbed(ele1, "parameterHref", parameterLevels);
               if(!fileInfo) {
                 // a empty QFileInfo means that this Embed cannot be handled by the mbsimgui -> use a Unknown element
@@ -85,7 +85,7 @@ namespace MBSimGUI {
             FileItemData *fileItem = nullptr;
             if(MBXMLUtils::E(ele1)->hasAttribute("href")) {
               if(not parameterFileItem)
-                parameterLevels = mw->updateParameters(parent,false);
+                parameterLevels = mw->updateParameters(parent);
               auto fileInfo = getQFileInfoForEmbed(ele1, "href", parameterLevels);
               if(!fileInfo) {
                 // a empty QFileInfo means that this Embed cannot be handled by the mbsimgui -> use a Unknown element

@@ -19,6 +19,7 @@
 
 #include <config.h>
 #include "options.h"
+#include "qbuttongroup.h"
 #include <QVBoxLayout>
 #include <QDialogButtonBox>
 #include <QLabel>
@@ -79,10 +80,27 @@ namespace MBSimGUI {
     showFilters = new QCheckBox("Show list filters");
     layout->addWidget(showFilters);
 
-    showHiddenElements = new QCheckBox("Show hidden elements");
-    showHiddenElements->setToolTip("For several elements a 'hidden' flag can be set which prevents these elements "
-                                   "from appearing in the model/parameter tree. Settings this option will show even hidden elements.");
-    layout->addWidget(showHiddenElements);
+    showHiddenItems = new QCheckBox("Show hidden elements/parameters");
+    showHiddenItems->setToolTip("For several elements/parameters a 'hidden' flag can be set which prevents these items "
+                                   "from appearing in the model/parameter tree. Settings this option will show even hidden items.");
+    layout->addWidget(showHiddenItems);
+
+    showEmptyParameters = new QCheckBox("Show parameter groups which are empty");
+    showEmptyParameters->setToolTip("If disabled a parameter group which does not contain any parameter or sub group is not displayed.\n"
+                                    "- positive effect: many empty groups will just not be shown at all\n"
+                                    "- negative effect: a parameter can only be added if already another exists");
+    layout->addWidget(showEmptyParameters);
+
+    auto parameterViewGroup = new QGroupBox("'Parameter Tree' shows", this);
+    layout->addWidget(parameterViewGroup);
+    auto parameterViewLO = new QVBoxLayout(parameterViewGroup);
+    parameterViewGroup->setLayout(parameterViewLO);
+    parameterViewOnlyForCurrentElement = new QRadioButton("only the parameters which influence the current element of the model");
+    parameterViewOnlyForCurrentElement->setToolTip("The currently selected element of the model influences which parameters are shown");
+    parameterViewAll = new QRadioButton("all parameters of the model");
+    parameterViewAll->setToolTip("The 'Parameter Tree' always shows all available parameters of the model");
+    parameterViewLO->addWidget(parameterViewOnlyForCurrentElement);
+    parameterViewLO->addWidget(parameterViewAll);
 
     statusUpdate = new QCheckBox("Always update element status");
     layout->addWidget(statusUpdate);
@@ -186,12 +204,31 @@ namespace MBSimGUI {
     showFilters->setCheckState(flag?Qt::Checked:Qt::Unchecked);
   }
 
-  bool OptionsDialog::getShowHiddenElements() const {
-    return (showHiddenElements->checkState()==Qt::Checked);
+  bool OptionsDialog::getShowHiddenItems() const {
+    return (showHiddenItems->checkState()==Qt::Checked);
   }
 
-  void OptionsDialog::setShowHiddenElements(bool flag) {
-    showHiddenElements->setCheckState(flag?Qt::Checked:Qt::Unchecked);
+  void OptionsDialog::setShowHiddenItems(bool flag) {
+    showHiddenItems->setCheckState(flag?Qt::Checked:Qt::Unchecked);
+  }
+
+  bool OptionsDialog::getShowEmptyParameters() const {
+    return (showEmptyParameters->checkState()==Qt::Checked);
+  }
+
+  void OptionsDialog::setShowEmptyParameters(bool flag) {
+    showEmptyParameters->setCheckState(flag?Qt::Checked:Qt::Unchecked);
+  }
+
+  OptionsDialog::ParameterView OptionsDialog::getParameterView() const {
+    if(parameterViewOnlyForCurrentElement->isChecked()) return ParameterView::onlyForCurrentElement;
+    if(parameterViewAll                  ->isChecked()) return ParameterView::all;
+    assert(0);
+  }
+
+  void OptionsDialog::setParameterView(ParameterView flag) {
+    if(flag == ParameterView::onlyForCurrentElement) parameterViewOnlyForCurrentElement->setChecked(true);
+    if(flag == ParameterView::all                  ) parameterViewAll                  ->setChecked(true);
   }
 
   bool OptionsDialog::getStatusUpdate() const {

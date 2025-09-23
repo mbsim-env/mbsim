@@ -22,6 +22,7 @@
 #include "parameter.h"
 #include "fileitemdata.h"
 #include "mainwindow.h"
+#include "utils.h"
 #include <mbxmlutils/eval.h>
 #include <xercesc/dom/DOMDocument.hpp>
 #include <xercesc/dom/DOMNamedNodeMap.hpp>
@@ -210,7 +211,7 @@ namespace MBSimGUI {
         // instantiate a new evaluator on mw->eval and restore the old one at scope end
         MainWindow::CreateTemporaryNewEvaluator tempEval;
 
-        auto parameterLevels = mw->updateParameters(this,false);
+        auto parameterLevels = mw->updateParameters(this);
         auto values = MainWindow::evaluateForAllArrayPattern(parameterLevels, name.toStdString(), getXMLElement(), false, false, true).second;
         // build the evaluated display name
         name.clear();
@@ -242,6 +243,11 @@ namespace MBSimGUI {
       comment = QString::fromStdString(X()%cele->getNodeValue());
     else
       comment.clear();
+    if(E(element)->getFirstProcessingInstructionChildNamed("MBSIMGUI_CONTEXT_ACTION")!=nullptr)
+      icon = QIcon(new OverlayIconEngine(orgIcon,
+        Utils::QIconCached((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"contextactionoverlay.svg").string().c_str())));
+    else
+      icon = orgIcon;
   }
 
   void EmbedItemData::updateValues() {

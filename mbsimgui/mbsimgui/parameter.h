@@ -131,7 +131,7 @@ namespace MBSimGUI {
     MBSIMGUI_OBJECTFACTORY_CLASS(Parameters, ParameterItem, MBXMLUtils::PV%"dummy", "");
     public:
       Parameters(EmbedItemData *parent);
-      QString getName() const override { return parent->getName() + " parameters"; }
+      QString getName() const override;
       QString getValue() const override { return ""; }
       QMenu* createContextMenu() override;
       QString getReference() const override;

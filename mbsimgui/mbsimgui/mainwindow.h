@@ -111,6 +111,7 @@ namespace MBSimGUI {
       boost::filesystem::path uniqueTempDir;
       QAction *actionSave, *actionSaveProject, *actionSimulate, *actionInterrupt, *actionKill, *actionOpenMBV, *actionH5plotserie, *actionLinearSystemAnalysis, *actionStateTable, *actionSaveDataAs, *actionSaveMBSimH5DataAs, *actionSaveOpenMBVDataAs, *actionRefresh, *actionCreateFMU, *actionSaveStateVectorAs, *actionSaveStateTableAs, *actionSaveLinearSystemAnalysisAs, *actionUndo, *actionRedo, *solverInitialProj;
       OpenMBVGUI::AbstractViewFilter *elementViewFilter, *parameterViewFilter;
+      QDockWidget *dockParameterTree;
       QTimer autoSaveTimer;
       int IDcounter{0};
       std::string currentID;
@@ -170,8 +171,8 @@ namespace MBSimGUI {
       void showStateTable();
       void kill();
       void createFMU();
-      void elementChanged(const QModelIndex &current);
-      void elementViewClicked(const QModelIndex &current);
+      void highlightElement(const QModelIndex &current);
+      void showElementContextMenu(const QModelIndex &current);
       void parameterViewClicked(const QModelIndex &current);
       void processFinished(int exitCode, QProcess::ExitStatus exitStatus);
       void autoSaveProject();
@@ -179,6 +180,8 @@ namespace MBSimGUI {
       void updateValues(EmbedItemData *element);
       void updateReferences(EmbedItemData *element);
       void updateParameterReferences(EmbedItemData *parent);
+      void updateParameterTreeOnlyForCurrentElement(QModelIndex current);
+      void updateParameterTreeAll();
       void saveReferencedFile(int i);
       void convertDocument();
       void createNewEvaluator();
@@ -305,7 +308,7 @@ namespace MBSimGUI {
       // count is used as the count for the embeds, if not given 0 (0-based count) is used.
       // In rare cases it is possible that count changes the result of vector<ParameterLevel>. In this case
       // you need to call updateParameter again to get the proper result.
-      std::vector<ParameterLevel> updateParameters(EmbedItemData *item, bool exceptLatestParameter=false,
+      std::vector<ParameterLevel> updateParameters(EmbedItemData *item, Parameter *lastParToUse=nullptr,
                                                    const std::vector<int>& count={});
 
       // Evaluates the string code as full eval if set to true or as partial eval if it is false.
