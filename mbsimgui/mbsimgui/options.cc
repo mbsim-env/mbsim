@@ -223,7 +223,7 @@ namespace MBSimGUI {
   OptionsDialog::ParameterView OptionsDialog::getParameterView() const {
     if(parameterViewOnlyForCurrentElement->isChecked()) return ParameterView::onlyForCurrentElement;
     if(parameterViewAll                  ->isChecked()) return ParameterView::all;
-    assert(0);
+    throw std::runtime_error("Internal error: 'ParameterView' is not handled.");
   }
 
   void OptionsDialog::setParameterView(ParameterView flag) {
