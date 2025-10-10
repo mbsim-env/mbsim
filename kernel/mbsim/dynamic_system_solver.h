@@ -135,6 +135,9 @@ namespace MBSim {
        */
       void setTruncateSimulationFiles(bool trunc) { truncateSimulationFiles=trunc; }
 
+      //! If true the ombvx XML file in embedded in the ombvh5 file
+      void setEmbedOmbvxInH5(bool flag) { embedOmbvxInH5=flag; }
+
       /* INHERITED INTERFACE OF GROUP */
       void init(InitStage stage, const InitConfigSet &config) override;
       using Group::plot;
@@ -950,6 +953,7 @@ namespace MBSim {
       void addToGraph(Graph* graph, fmatvec::SqrMat &A, int i, std::vector<Element*> &objList);
 
       bool truncateSimulationFiles;
+      bool embedOmbvxInH5 { false };
 
       // Holds the dynamic systems before the "reorganize hierarchy" takes place.
       // This is required since all elements of all other containers from DynamicSystem are readded to DynamicSystemSolver,

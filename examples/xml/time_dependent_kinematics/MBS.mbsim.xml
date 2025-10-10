@@ -210,4 +210,5 @@
             <accelerationOfGravity>[0;-9.81;0]</accelerationOfGravity>
         </MBSimEnvironment>
     </environments>
+    <embedOmbvxInH5>true</embedOmbvxInH5>
 </DynamicSystemSolver>

@@ -892,6 +892,11 @@
               Definiert die Anzahl der Zeilen der nativen cache Größe. HDF5 schreibaktionen werden nur ausgeführt wenn der cache voll ist. (Default: 100)
             </xs:documentation></xs:annotation>
           </xs:element>
+          <xs:element name="embedOmbvxInH5" minOccurs="0" type="pv:booleanFullEval">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              If true, the ombvx XML file is embeded in the ombvh5 HDF5 file.
+            </xs:documentation></xs:annotation>
+          </xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>

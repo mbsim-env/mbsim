@@ -326,8 +326,10 @@ void MBSimXML::main(const unique_ptr<Solver>& solver, const unique_ptr<DynamicSy
     // after the first step has been written since this is not possible by the file locking mechanism in OpenMBVCppInterface.
     if(stopAfterFirstStep && dss->getPlotFeature(openMBV)) {
       // touch the OpenMBV files
-      boost::myfilesystem::last_write_time((dss->getName()+".ombvx").c_str(), boost::posix_time::microsec_clock::universal_time());
-      boost::myfilesystem::last_write_time((dss->getName()+".ombvh5" ).c_str(), boost::posix_time::microsec_clock::universal_time());
+      auto time=boost::posix_time::microsec_clock::universal_time();
+      if(auto fn=dss->getName()+".ombvx"; boost::filesystem::exists(fn))
+        boost::myfilesystem::last_write_time(fn.c_str(), time);
+      boost::myfilesystem::last_write_time((dss->getName()+".ombvh5" ).c_str(), time);
     }
   }
   if(savestatevector)

@@ -669,7 +669,7 @@ namespace MBSimGUI {
     };
     bfs__copy_file(getInstallPath()/"share"/"mbsimgui"/"MBS_tmp.ombvx",  uniqueTempDir/"MBS_tmp.ombvx",  overwrite_existing);
     bfs__copy_file(getInstallPath()/"share"/"mbsimgui"/"MBS_tmp.ombvh5", uniqueTempDir/"MBS_tmp.ombvh5", overwrite_existing);
-    inlineOpenMBVMW->openFile(uniqueTempDir.generic_string()+"/MBS_tmp.ombvx");
+    inlineOpenMBVMW->openFile(uniqueTempDir.generic_string()+"/MBS_tmp.ombvh5");
   }
 
   void MainWindow::fileReloadedSlot() {
@@ -952,7 +952,6 @@ namespace MBSimGUI {
     walk1 = [&walk1, &expandState, this](TreeItem *parItem, vector<QString> path) {
       path.emplace_back(parItem->getItemData()->getName());
       expandState.emplace(path, parameterView->isExpanded(parItem->getItemData()->getModelIndex()));
-      cout<<"mfmf1"; for(auto &x:path) cout<<","<<x.toStdString(); cout<<" "<<parameterView->isExpanded(parItem->getItemData()->getModelIndex())<<endl;
 
       for(int cNr=0; cNr<parItem->childCount(); ++cNr)
         walk1(parItem->child(cNr), path);
@@ -982,7 +981,6 @@ namespace MBSimGUI {
 
       if(localembeditem) {
         // set the expand state of a created parameter to the value of the old parameter or to true
-        cout<<"mfmf2"; for(auto &x:path) cout<<","<<x.toStdString(); cout<<" "<<(expandState.find(path)!=expandState.end())<<" "<<(expandState.find(path)!=expandState.end()?expandState.find(path)->second:true)<<endl;
         if(auto it=expandState.find(path); it!=expandState.end())
           parameterView->setExpanded(parItem->getItemData()->getModelIndex(), it->second);
         else
@@ -1564,13 +1562,15 @@ namespace MBSimGUI {
   void MainWindow::saveOpenMBVXMLData(const QString &file) {
     if(QFile::exists(file))
       QFile::remove(file);
-    QFile::copy(QString::fromStdString(uniqueTempDir.generic_string())+"/"+project->getDynamicSystemSolver()->getName()+".ombvx",file);
+    if(auto fn=QString::fromStdString(uniqueTempDir.generic_string())+"/"+project->getDynamicSystemSolver()->getName()+".ombvx"; QFile::exists(fn))
+      QFile::copy(fn,file);
   }
 
   void MainWindow::saveOpenMBVH5Data(const QString &file) {
     if(QFile::exists(file))
       QFile::remove(file);
-    QFile::copy(QString::fromStdString(uniqueTempDir.generic_string())+"/"+project->getDynamicSystemSolver()->getName()+".ombvh5",file);
+    if(auto fn=QString::fromStdString(uniqueTempDir.generic_string())+"/"+project->getDynamicSystemSolver()->getName()+".ombvh5"; QFile::exists(fn))
+      QFile::copy(fn,file);
   }
 
   void MainWindow::saveStateVectorAs() {
@@ -1849,7 +1849,7 @@ DEF mbsimgui_outdated_switch Switch {
   }
 
   void MainWindow::openmbv() {
-    QString name = QString::fromStdString(uniqueTempDir.generic_string())+"/"+project->getDynamicSystemSolver()->getName()+".ombvx";
+    QString name = QString::fromStdString(uniqueTempDir.generic_string())+"/"+project->getDynamicSystemSolver()->getName()+".ombvh5";
     if(QFile::exists(name))
       QProcess::startDetached(QString::fromStdString((getInstallPath()/"bin"/"openmbv").string()), QStringList(name));
   }

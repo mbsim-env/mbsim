@@ -492,7 +492,7 @@ namespace MBSim {
           }
         }
         // write openmbv files
-        openMBVGrp->write(true, truncateSimulationFiles);
+        openMBVGrp->write(true, truncateSimulationFiles, embedOmbvxInH5);
       }
 
       // copy the content of the .buildInfo.json file to the HDF5 file:
@@ -1577,6 +1577,8 @@ namespace MBSim {
     if(e) setChunkSize(E(e)->getText<int>());
     e = E(element)->getFirstElementChildNamed(MBSIM%"cacheSize");
     if(e) setCacheSize(E(e)->getText<int>());
+    e = E(element)->getFirstElementChildNamed(MBSIM%"embedOmbvxInH5");
+    if(e) setEmbedOmbvxInH5(E(e)->getText<bool>());
   }
 
   void DynamicSystemSolver::addToGraph(Graph* graph, SqrMat &A, int i, vector<Element*>& eleList) {
