@@ -13,6 +13,8 @@ MBSimXML
 - Added the possibility to set a scalar tolerance for position,velocity,1st-order and force status separately to
   improve integrator performance, specially for DAE integrators.
 - Add extern signal source and sink to mbsim to SWIG.
+- Added more user interruption points to kill a simulation without corrupting the output file, even during preprocessing.
+- Added buildInfo.json content to hdf5 output file. This way one can see the details software version which was used to create the file.
 
 MBSimFMI
 --------
@@ -22,10 +24,29 @@ MBSimGUI
 --------
 - Improved the initialization of the python interpreter to allow more interaction with python in mbsimgui
 - Added more helper function to the python evaluator to improve model specific plots in mbsimgui.
+- Improved the responsibility of mbsimgui by using the new write mode in H5::File and moving more of the mbsimxml 
+  initilaization code to a separate process during "update simulation". Moreover, this process is kept open to avoid relaunching
+  it including to avoid reinitializing it (e.g. reinit python and its modules each time).
+- Mark the 3D scene as "Outdated" if it is not yet updated with the newest model changes.
+- Added plotting: model defined element context menu actions can now be added even to parameters.
+  When clicked the deposited evaluator code is executed. The output is displayed in the Echo Area. The evaluator code can even
+  create dialogs e.g. using PySide2 and create plots using e.g. matplotlib. Setting parameters from the evaluator code is also possible.
+- Added a option to show all parameters not only the parameters of the current element. This is especially useful for users
+  which should only parametrize models but not doing modelling in mbsimgui.
 
 H5Plotserie
 -----------
 - A mouse alt-left-click now replaces the x-axis of all curves of the current windows with the selection one.
+
+hdf5serie
+---------
+- Added a new write mode to H5::File which does not lock the file during none SWMR mode. This shortens the time the file
+  is locked in none SWMR mode which improved the interactivity when a file is used in a GUI. This is done by first writing,
+  in none SWMR mode, to another file then rename the file to the original filename and open it in SWMR mode.
+
+OpenMBV
+-------
+- Allow to embed the ombvx file in the ombvh5 file. This way OpenMBV only need one input file and the ombvx file is even compressed.
 
 
 Release 10.4
