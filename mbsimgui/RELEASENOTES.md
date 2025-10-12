@@ -4,6 +4,28 @@ Release NEXT
 MBSimXML
 --------
 - Added a new class MBSimProject and SWIG Python directors in order to have access to mbsim xml models from Python.
+- MBSim can now handle boolean expressions in Python symbolic functions using sympy.Piecewise. This allows e.g. to use
+  sympy.functions.special.bsplines.bspline_basis_set as symbolic functions.
+- Added the class MassValues to the mbxmlutils Python preprocessor to enable easy calculations with mass values (mass,
+  center of mass and inertia tensor).
+- Improved the stability of the RADAU5 integreator if system shift's are executed.
+- Added a multivariate linear function and multivariate quadratic function element.
+- Added the possibility to set a scalar tolerance for position,velocity,1st-order and force status separately to
+  improve integrator performance, specially for DAE integrators.
+- Add extern signal source and sink to mbsim to SWIG.
+
+MBSimFMI
+--------
+- Enable module path in mbsimCreateFMU to allow user defined modules in FMUs.
+
+MBSimGUI
+--------
+- Improved the initialization of the python interpreter to allow more interaction with python in mbsimgui
+- Added more helper function to the python evaluator to improve model specific plots in mbsimgui.
+
+H5Plotserie
+-----------
+- A mouse alt-left-click now replaces the x-axis of all curves of the current windows with the selection one.
 
 
 Release 10.4
