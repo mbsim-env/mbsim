@@ -308,7 +308,9 @@ namespace MBSimGUI {
       // count is used as the count for the embeds, if not given 0 (0-based count) is used.
       // In rare cases it is possible that count changes the result of vector<ParameterLevel>. In this case
       // you need to call updateParameter again to get the proper result.
-      std::vector<ParameterLevel> updateParameters(EmbedItemData *item, Parameter *lastParToUse=nullptr,
+      // If lastParToUse is set then lastParToUse is the last parameter which is added.
+      // If skipEvenLastParToUse is set to true then even lastParToUse is not added.
+      std::vector<ParameterLevel> updateParameters(EmbedItemData *item, Parameter *lastParToUse=nullptr, bool skipEvenLastParToUse=false,
                                                    const std::vector<int>& count={});
 
       // Evaluates the string code as full eval if set to true or as partial eval if it is false.

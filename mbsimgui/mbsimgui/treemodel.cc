@@ -396,7 +396,7 @@ namespace MBSimGUI {
     TreeItem *parentItem = getItem(parent);
 
     int i = rowCount(parent);
-    if(dynamic_cast<Parameters*>(getItem(parent.model()->index(i-1,0,parent))->getItemData())) i--;
+    while(dynamic_cast<Parameters*>(getItem(parent.model()->index(i-1,0,parent))->getItemData())) i--;
     beginInsertRows(parent, i, i);
     TreeItem *item = new TreeItem(parameter,parentItem);
     parentItem->insertChildren(item,i,1);

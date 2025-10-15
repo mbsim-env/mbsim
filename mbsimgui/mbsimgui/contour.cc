@@ -21,6 +21,7 @@
 #include "contour.h"
 #include "utils.h"
 #include "mainwindow.h"
+#include "parameter.h"
 #include <xercesc/dom/DOMDocument.hpp>
 
 using namespace std;
@@ -62,6 +63,7 @@ namespace MBSimGUI {
 
   Contour::Contour() {
     icon = Utils::QIconCached(QString::fromStdString((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"contour.svg").string()));
+    parameters->setIcon(icon);
   }
 
   DOMElement* Contour::processIDAndHref(DOMElement *element) {

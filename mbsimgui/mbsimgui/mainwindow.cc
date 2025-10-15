@@ -1308,7 +1308,7 @@ namespace MBSimGUI {
   // - the counterName which is none empty if this parameter has a Array/Pattern with a counterName, else couterName is empty
   // - the unevaluated count string of the Array/Pattern
   // - the unevaluated onlyif string of the Array/Pattern
-  vector<MainWindow::ParameterLevel> MainWindow::updateParameters(EmbedItemData *item, Parameter *lastParToUse,
+  vector<MainWindow::ParameterLevel> MainWindow::updateParameters(EmbedItemData *item, Parameter *lastParToUse, bool skipEvenLastParToUse,
                                                                   const std::vector<int>& count) {
     createNewEvaluator();
 
@@ -1325,6 +1325,8 @@ namespace MBSimGUI {
         doc->insertBefore(eleP,nullptr);
         for(size_t j=0; j<parent->getNumberOfParameters(); j++) {
           auto par=parent->getParameter(j);
+          if(skipEvenLastParToUse && par==lastParToUse)
+            break;
           DOMNode *node = doc->importNode(par->getXMLElement(),true);
           eleP->insertBefore(node,nullptr);
           boost::filesystem::path orgFileName=E(par->getXMLElement())->getOriginalFilename();
@@ -2194,6 +2196,7 @@ DEF mbsimgui_outdated_switch Switch {
       model->createParameterItem(parameter->getParent()->getParameter(i),parentIndex);
     parameterView->setCurrentIndex(parameter->getParent()->getParameter(j)->getModelIndex());
     updateParameterReferences(parameter->getParent());
+    refresh();
   }
 
   void MainWindow::moveFrame(bool up) {
@@ -2218,6 +2221,7 @@ DEF mbsimgui_outdated_switch Switch {
       model->createFrameItem(frame->getParent()->getFrame(i),parentIndex);
     elementView->setCurrentIndex(frame->getParent()->getFrame(j)->getModelIndex());
     updateReferences(frame->getParent());
+    refresh();
   }
 
   void MainWindow::moveContour(bool up) {
@@ -2242,6 +2246,7 @@ DEF mbsimgui_outdated_switch Switch {
       model->createContourItem(contour->getParent()->getContour(i),parentIndex);
     elementView->setCurrentIndex(contour->getParent()->getContour(j)->getModelIndex());
     updateReferences(contour->getParent());
+    refresh();
   }
 
   void MainWindow::moveGroup(bool up) {
@@ -2266,6 +2271,7 @@ DEF mbsimgui_outdated_switch Switch {
       model->createGroupItem(group->getParent()->getGroup(i),parentIndex);
     elementView->setCurrentIndex(group->getParent()->getGroup(j)->getModelIndex());
     updateReferences(group->getParent());
+    refresh();
   }
 
   void MainWindow::moveObject(bool up) {
@@ -2290,6 +2296,7 @@ DEF mbsimgui_outdated_switch Switch {
       model->createObjectItem(object->getParent()->getObject(i),parentIndex);
     elementView->setCurrentIndex(object->getParent()->getObject(j)->getModelIndex());
     updateReferences(object->getParent());
+    refresh();
   }
 
   void MainWindow::moveLink(bool up) {
@@ -2314,6 +2321,7 @@ DEF mbsimgui_outdated_switch Switch {
       model->createLinkItem(link->getParent()->getLink(i),parentIndex);
     elementView->setCurrentIndex(link->getParent()->getLink(j)->getModelIndex());
     updateReferences(link->getParent());
+    refresh();
   }
 
   void MainWindow::moveConstraint(bool up) {
@@ -2338,6 +2346,7 @@ DEF mbsimgui_outdated_switch Switch {
       model->createConstraintItem(constraint->getParent()->getConstraint(i),parentIndex);
     elementView->setCurrentIndex(constraint->getParent()->getConstraint(j)->getModelIndex());
     updateReferences(constraint->getParent());
+    refresh();
   }
 
   void MainWindow::moveObserver(bool up) {
@@ -2362,6 +2371,7 @@ DEF mbsimgui_outdated_switch Switch {
       model->createObserverItem(observer->getParent()->getObserver(i),parentIndex);
     elementView->setCurrentIndex(observer->getParent()->getObserver(j)->getModelIndex());
     updateReferences(observer->getParent());
+    refresh();
   }
 
   void MainWindow::exportElement(const QString &title) {
@@ -3402,7 +3412,7 @@ DEF mbsimgui_outdated_switch Switch {
       QModelIndex index = parameterView->selectionModel()->currentIndex();
       auto *parameter = dynamic_cast<Parameter*>(static_cast<ParameterTreeModel*>(parameterView->model())->getItem(index)->getItemData());
       if(parameter) {
-        updateParameters(parameter->getParent(),parameter);
+        updateParameters(parameter->getParent(),parameter,true);
         auto editor = parameter->createPropertyDialog();
         editor->setAttribute(Qt::WA_DeleteOnClose);
         if(config)
@@ -3645,7 +3655,8 @@ DEF mbsimgui_outdated_switch Switch {
   void MainWindow::setWindowModified(bool mod) {
     QMainWindow::setWindowModified(mod);
     currentModelID++;
-    setSceneViewOutdated(true);
+    if(mod)
+      setSceneViewOutdated(true);
   }
 
   void MainWindow::setSceneViewOutdated(bool outdated) {

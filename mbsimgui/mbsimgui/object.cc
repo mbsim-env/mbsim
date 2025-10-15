@@ -22,12 +22,18 @@
 #include "objectfactory.h"
 #include "utils.h"
 #include "mainwindow.h"
+#include "parameter.h"
 
 using namespace std;
 
 namespace MBSimGUI {
 
   MBSIMGUI_REGOBJECTFACTORY(UnknownObject);
+
+  Object::Object() {
+    icon = Utils::QIconCached(QString::fromStdString((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"body.svg").string()));
+    parameters->setIcon(icon);
+  }
 
   UnknownObject::UnknownObject() {
     icon = QIcon(new OverlayIconEngine((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"body.svg").string(),

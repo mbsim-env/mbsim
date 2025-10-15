@@ -33,6 +33,10 @@ MBSimGUI
   create dialogs e.g. using PySide2 and create plots using e.g. matplotlib. Setting parameters from the evaluator code is also possible.
 - Added a option to show all parameters not only the parameters of the current element. This is especially useful for users
   which should only parametrize models but not doing modelling in mbsimgui.
+- Added a button to skip the mbsim initial projection when just the 3D scene is updated. This may improve the 3D scene view update
+  speed a lot when the initial projection is expensive (but you will see the none projection model in the 3D scene).
+- Added a button to disable the auto update of the 3D scene. This can be used if you do not need the visual feedback temporarily.
+- Add a label to import parameters (similar to the name of "normal" parameters) just to give a import parameter a name=label
 
 H5Plotserie
 -----------

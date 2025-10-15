@@ -119,7 +119,7 @@ namespace MBSimGUI {
     MBSIMGUI_OBJECTFACTORY_CLASS(ImportParameter, Parameter, MBXMLUtils::PV%"import", "Import");
     public:
       ImportParameter();
-      QString getName() const override { return "<import>"; }
+      QString getName() const override { return name.isEmpty()?"<import without label>":"<"+name+">"; }
       xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent) override;
       PropertyDialog* createPropertyDialog() override;
       void updateValue() override;
@@ -136,6 +136,7 @@ namespace MBSimGUI {
       QMenu* createContextMenu() override;
       QString getReference() const override;
       bool hasReference() const override { return parent->hasParameterReference(); }
+      void setIcon(const QIcon &icon_) { icon = icon_; }
   };
 
 }

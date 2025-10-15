@@ -183,6 +183,10 @@ namespace MBSimGUI {
   }
 
   ImportParameterPropertyDialog::ImportParameterPropertyDialog(Parameter *parameter) : ParameterPropertyDialog(parameter) {
+    auto pname=parameter->getName();
+    label=new ExtWidget("Label",new TextWidget(pname=="<import without label>"?"":pname.mid(1, pname.length()-2)));
+    addToTab("General",label);
+
     bool hidden = false;
     for(auto &x : Evaluator::getImportActions())
       actionList.emplace_back(pair<QString,QString>{get<0>(x).c_str(), get<2>(x).c_str()});
@@ -203,6 +207,9 @@ namespace MBSimGUI {
 
   DOMElement* ImportParameterPropertyDialog::initializeUsingXML(DOMElement *parent) {
     ParameterPropertyDialog::initializeUsingXML(parameter->getXMLElement());
+
+    auto pname=parameter->getName();
+    label->getWidget<TextWidget>()->setText(pname=="<import without label>"?"":pname.mid(1, pname.length()-2));
 
     bool hidden = false;
     auto xmlAction = E(parameter->getXMLElement())->getAttribute("action");
@@ -226,6 +233,9 @@ namespace MBSimGUI {
 
   DOMElement* ImportParameterPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     ParameterPropertyDialog::writeXMLFile(parameter->getXMLElement(),ref);
+
+    if(auto l=label->getWidget<TextWidget>()->getText(); !l.isEmpty())
+      E(parameter->getXMLElement())->setAttribute("label",l.toStdString());
 
     value->writeXMLFile(parameter->getXMLElement(),ref);
 

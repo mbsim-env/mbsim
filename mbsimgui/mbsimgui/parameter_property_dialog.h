@@ -104,8 +104,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *value;
-      ExtWidget *action;
+      ExtWidget *label, *action, *value;
       std::vector<std::pair<QString, QString>> actionList;
   };
 

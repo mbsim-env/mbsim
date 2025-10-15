@@ -243,6 +243,8 @@ namespace MBSimGUI {
       comment = QString::fromStdString(X()%cele->getNodeValue());
     else
       comment.clear();
+    if(orgIcon.isNull())
+      orgIcon=icon;
     if(E(element)->getFirstProcessingInstructionChildNamed("MBSIMGUI_CONTEXT_ACTION")!=nullptr)
       icon = QIcon(new OverlayIconEngine(orgIcon,
         Utils::QIconCached((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"contextactionoverlay.svg").string().c_str())));

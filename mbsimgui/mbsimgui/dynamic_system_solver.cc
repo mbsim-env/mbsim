@@ -23,6 +23,7 @@
 #include "objectfactory.h"
 #include "utils.h"
 #include "mainwindow.h"
+#include "parameter.h"
 #include <xercesc/dom/DOMDocument.hpp>
 #include <mbxmlutils/eval.h>
 
@@ -36,6 +37,7 @@ namespace MBSimGUI {
 
   DynamicSystemSolver::DynamicSystemSolver() {
     icon = Utils::QIconCached(QString::fromStdString((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"dss.svg").string()));
+    parameters->setIcon(icon);
   }
 
   void DynamicSystemSolver::removeXMLElements() {

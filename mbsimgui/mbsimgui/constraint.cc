@@ -21,6 +21,7 @@
 #include "constraint.h"
 #include "utils.h"
 #include "mainwindow.h"
+#include "parameter.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -39,6 +40,7 @@ namespace MBSimGUI {
 
   Constraint::Constraint() {
     icon = Utils::QIconCached(QString::fromStdString((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"constraint.svg").string()));
+    parameters->setIcon(icon);
   }
 
   UnknownConstraint::UnknownConstraint() {

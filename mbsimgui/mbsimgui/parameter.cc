@@ -88,6 +88,8 @@ namespace MBSimGUI {
       comment = QString::fromStdString(X()%cele->getNodeValue());
     else
       comment.clear();
+    if(orgIcon.isNull())
+      orgIcon=icon;
     if(E(element)->getFirstProcessingInstructionChildNamed("MBSIMGUI_CONTEXT_ACTION")!=nullptr)
       icon = QIcon(new OverlayIconEngine(orgIcon,
         Utils::QIconCached((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"contextactionoverlay.svg").string().c_str())));
@@ -208,13 +210,13 @@ namespace MBSimGUI {
 
   void ImportParameter::updateValue() {
     Parameter::updateValue();
+    name = QString::fromStdString(MBXMLUtils::E(element)->getAttribute("label"));
     value = MBXMLUtils::E(element)->getFirstTextChild()?QString::fromStdString(MBXMLUtils::X()%MBXMLUtils::E(element)->getFirstTextChild()->getData()):"";
     action = E(element)->getAttribute("action");
   }
 
   Parameters::Parameters(EmbedItemData *parent) : ParameterItem(parent) {
-    icon = QIcon(new OverlayIconEngine((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"container.svg").string(),
-                                       (MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"matrix.svg").string()));
+    // icon is set by the element which has created the parameter during it ctor
   }
 
   QString Parameters::getReference() const {
@@ -222,27 +224,16 @@ namespace MBSimGUI {
   }
 
   QMenu* Parameters::createContextMenu() {
-    if(E(parent->getXMLElement())->getTagName()==PV%"Embed") // unhandled Embed in mbsimgui
+    auto *e=parent->getXMLElement();
+    if(!e)
+      return nullptr;
+    if(E(e)->getTagName()==PV%"Embed") // unhandled Embed in mbsimgui
       return nullptr;
     return new ParametersContextMenu(parent);
   }
 
   QString Parameters::getName() const {
-    // return parent->getName() and postfix with the container name if the Embed element is inside a MBSim container element
-    auto ret = parent->getName();
-    auto ele = parent->getXMLElement();
-    if(!ele) return ret;
-    if(ele->getNodeType()!=DOMNode::ELEMENT_NODE) return ret;
-    ele=static_cast<DOMElement*>(ele->getParentNode());
-    if(!ele) return ret;
-    if(ele->getNodeType()!=DOMNode::ELEMENT_NODE) return ret;
-    ele=static_cast<DOMElement*>(ele->getParentNode());
-    if(!ele) return ret;
-    if(ele->getNodeType()!=DOMNode::ELEMENT_NODE) return ret;
-    if(E(ele)->getTagName()==MBSIMXML%"MBSimProject") return ret;
-    if(E(ele)->getTagName()==MBSIM%"DynamicSystemSolver") return ret;
-    if(E(ele)->getTagName()==PV%"Embed") return ret;
-    return ret+" ("+E(ele)->getTagName().second.c_str()+")";
+    return parent->getName();
   }
 
 }
