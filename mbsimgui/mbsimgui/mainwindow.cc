@@ -440,14 +440,6 @@ namespace MBSimGUI {
     connect(elementView, &ElementView::pressed, this, &MainWindow::showElementContextMenu);
 
     connect(parameterView, &ParameterView::pressed, this, &MainWindow::parameterViewClicked);
-    connect(parameterView, &ParameterView::activated, [this](const QModelIndex &current){
-      // when a parameter is selected -> select also the corresponding element
-      auto *model = static_cast<ParameterTreeModel*>(parameterView->model());
-      auto *item = model->getItem(current)->getItemData();
-      auto *par = static_cast<ParameterItem*>(item);
-      if(par->getParent())
-        elementView->setCurrentIndex(par->getParent()->getModelIndex());
-    });
 
     //mfmf use rowsAboutToBeInserted,... to save the expandState and then restore the expand state (this needs updateParameterTreeAll to be split into two functions)
     connect(elementView->model(), &QAbstractItemModel::rowsInserted, this, &MainWindow::updateParameterTreeAll);
@@ -1038,6 +1030,13 @@ namespace MBSimGUI {
       menu->exec(QCursor::pos());
       delete menu;
     }
+
+    // when a parameter is selected -> select also the corresponding element
+    auto *model = static_cast<ParameterTreeModel*>(parameterView->model());
+    auto *item = model->getItem(current)->getItemData();
+    auto *par = static_cast<ParameterItem*>(item);
+    if(par->getParent())
+      elementView->setCurrentIndex(par->getParent()->getModelIndex());
   }
 
   void MainWindow::newProject() {
