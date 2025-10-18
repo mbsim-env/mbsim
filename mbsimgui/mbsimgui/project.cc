@@ -81,6 +81,8 @@ namespace MBSimGUI {
       setEvaluator(X()%E(ele)->getFirstTextChild()->getData());
       ele = ele->getNextElementSibling();
     }
+    else
+      setEvaluator(Evaluator::defaultEvaluator);
     setDynamicSystemSolver(Embed<DynamicSystemSolver>::create(ele,this));
     dss->create();
     ele = ele->getNextElementSibling();
@@ -120,6 +122,14 @@ namespace MBSimGUI {
       getEmbedXMLElement()->insertBefore(getXMLElement(),nullptr);
     }
     return getEmbedXMLElement();
+  }
+
+  void Project::setEvaluator(const std::string &evaluator_) {
+    evaluator = evaluator_;
+    mw->eval = MBXMLUtils::Eval::createEvaluator(evaluator);
+    auto code=Evaluator::getInitCode(evaluator);
+    if(!code.second.empty())
+      mw->eval->addImport(code.second, nullptr, code.first);
   }
 
   void Project::maybeRemoveEmbedXMLElement() {

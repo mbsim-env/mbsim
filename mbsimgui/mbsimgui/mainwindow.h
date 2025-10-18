@@ -87,7 +87,6 @@ namespace MBSimGUI {
   class LinearSystemAnalysisDialog;
   class FlexibleBodyTool;
   class StateTableDialog;
-  class NewParamLevelHeap;
 
   class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -184,13 +183,11 @@ namespace MBSimGUI {
       void updateParameterTreeAll();
       void saveReferencedFile(int i);
       void convertDocument();
-      void createNewEvaluator();
       void setSceneViewOutdated(bool outdated);
 
       int openedEditors { 0 };
       void startProcessRefresh();
       QMetaObject::Connection processRefreshFinishedConnection;
-      std::unique_ptr<NewParamLevelHeap> evalNPL;
       void updateEchoViewSlot(const QByteArray &data);
       void updateStatusMessageSlot(const QByteArray &data);
     Q_SIGNALS:
@@ -357,18 +354,6 @@ namespace MBSimGUI {
       // Creates a variable on the stack which's ctor saves the current mw->eval and instantiates a new
       // evaluator on mw->eval. The dtor restores the saved evaluator on mw->eval.
       // This must be used if for a short time, the lifetime of the stack variable, a new evaluator is needed while
-      // another evaluator is already in use by the callers code.
-      class CreateTemporaryNewEvaluator {
-        public:
-          CreateTemporaryNewEvaluator();
-          ~CreateTemporaryNewEvaluator();
-          CreateTemporaryNewEvaluator(const CreateTemporaryNewEvaluator &) = delete;
-          CreateTemporaryNewEvaluator(CreateTemporaryNewEvaluator &&) = delete;
-          CreateTemporaryNewEvaluator& operator=(const CreateTemporaryNewEvaluator &) = delete;
-          CreateTemporaryNewEvaluator& operator=(CreateTemporaryNewEvaluator &&) = delete;
-        private:
-          std::shared_ptr<MBXMLUtils::Eval> oldEval;
-      };
     public slots:
       void openElementEditor(bool config=true);
 

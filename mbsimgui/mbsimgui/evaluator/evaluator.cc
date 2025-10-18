@@ -19,6 +19,7 @@
 
 #include <config.h>
 #include "evaluator.h"
+#include "project.h"
 #include "mainwindow.h"
 #include "octave_highlighter.h"
 #include "python_highlighter.h"
@@ -52,10 +53,10 @@ pair<string, string> Evaluator::getFalseTrueStr(const std::string &evaluator) {
 }
 
 vector<tuple<string, bool, string>> Evaluator::getImportActions() {
-  if(mw->eval->getName()=="octave") {
+  if(mw->getProject()->getEvaluator()=="octave") {
     return {{"", false, ""}};
   }
-  if(mw->eval->getName()=="python") {
+  if(mw->getProject()->getEvaluator()=="python") {
     return {
       {"addNewVarsToInstance", true, "add new variables globally (deprecated)"},
       {"addAllVarsAsParams"  , false, "add all variables locally"},
@@ -65,7 +66,7 @@ vector<tuple<string, bool, string>> Evaluator::getImportActions() {
 }
 
 int Evaluator::getImportActionDefaultIdx() {
-  if(mw->eval->getName()=="python")
+  if(mw->getProject()->getEvaluator()=="python")
     return 1;
   return 0;
 }
@@ -89,12 +90,12 @@ int Evaluator::getImportActionOnlyOneNoneDepr() {
 
 template<class T1, class T2>
 void Evaluator::installSyntaxHighlighter(T1 *t1, T2 *t2) {
-  if(mw->eval->getName()=="octave")
+  if(mw->getProject()->getEvaluator()=="octave")
     new OctaveHighlighter(t1);
-  else if(mw->eval->getName()=="python")
+  else if(mw->getProject()->getEvaluator()=="python")
     new PythonHighlighter(t1);
   else
-    cerr<<"No syntax hightlighter for current evaluator "+mw->eval->getName()+" available."<<endl;
+    cerr<<"No syntax hightlighter for current evaluator "+mw->getProject()->getEvaluator()+" available."<<endl;
   static const QFont fixedFont=QFontDatabase::systemFont(QFontDatabase::FixedFont);
   t2->setFont(fixedFont);
   t2->setLineWrapMode(T2::NoWrap);
@@ -103,8 +104,8 @@ void Evaluator::installSyntaxHighlighter(T1 *t1, T2 *t2) {
 template void Evaluator::installSyntaxHighlighter<QTextEdit, QTextEdit>(QTextEdit *t1, QTextEdit *t2);
 template void Evaluator::installSyntaxHighlighter<QTextDocument, QPlainTextEdit>(QTextDocument *t1, QPlainTextEdit *t2);
 
-pair<string, string> Evaluator::getInitCode() {
-  if(mw->eval->getName()=="python")
+pair<string, string> Evaluator::getInitCode(const std::string &evaluator) {
+  if(evaluator=="python")
     return {"addAllVarsAsParams", (boost::format(R"(
 def _local():
   import sys
@@ -116,7 +117,7 @@ del _local
 }
 
 string Evaluator::getElementObjCode(Element *e) {
-  if(mw->eval->getName()=="python")
+  if(mw->getProject()->getEvaluator()=="python")
     return (boost::format(R"(
 import mbsimgui
 ret=mbsimgui._Element(%1$x)
@@ -125,7 +126,7 @@ ret=mbsimgui._Element(%1$x)
 }
 
 string Evaluator::getParameterObjCode(Parameter *p) {
-  if(mw->eval->getName()=="python")
+  if(mw->getProject()->getEvaluator()=="python")
     return (boost::format(R"(
 import mbsimgui
 ret=mbsimgui._Parameter(%1$x)

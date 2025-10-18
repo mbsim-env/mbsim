@@ -124,7 +124,8 @@ namespace MBSimGUI {
       event->ignore();
   }
 
-  EmbedItemPropertyDialog::EmbedItemPropertyDialog(const QString &title, EmbedItemData *item_) : PropertyDialog(title), item(item_) {
+  EmbedItemPropertyDialog::EmbedItemPropertyDialog(const QString &title, EmbedItemData *item_) : PropertyDialog(title), item(item_), npl(mw->eval) {
+    mw->updateParameters(item);
   }
 
   void EmbedItemPropertyDialog::toWidget() {

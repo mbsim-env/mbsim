@@ -44,7 +44,9 @@ namespace MBSimGUI {
       ExtWidget *name;
       CommentWidget *comment;
       MBSimGUIContextAction *mbsimguiContextAction;
-      QCheckBox *hidden;
+      ExtWidget *hidden;
+    private:
+      MBXMLUtils::NewParamLevel npl;
   };
 
   class StringParameterPropertyDialog : public ParameterPropertyDialog {

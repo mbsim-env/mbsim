@@ -19,6 +19,7 @@
 
 #include <config.h>
 #include "treemodel.h"
+#include "embed.h"
 #include "treeitem.h"
 #include "basicitemdata.h"
 #include "project.h"
@@ -146,7 +147,7 @@ namespace MBSimGUI {
     TreeItem *childItem = getItem(index);
     TreeItem *parentItem = childItem->parent();
 
-    if(parentItem == rootItem)
+    if(!parentItem || parentItem == rootItem)
       return QModelIndex();
 
     return createIndex(parentItem->childNumber(), 0, parentItem);
@@ -403,7 +404,7 @@ namespace MBSimGUI {
     endInsertRows();
 
     parameter->setModelIndex(parent.model()->index(i,0,parent));
-    parameter->updateValue();
+    parameter->updateValue(true);
   }
 
   FileTreeModel::FileTreeModel(QObject *parent) : TreeModel(parent) {

@@ -28,4 +28,10 @@
   <stringParameter name="grav">'gravity.txt'</stringParameter>
   <stringParameter name="pathPrefix">'py'</stringParameter>
   <stringParameter name="ivdir">'iv'</stringParameter>
+  <scalarParameter name="hide">1</scalarParameter>
+  <scalarParameter name="hidden"><?MBSIMGUI_HIDDEN?>0</scalarParameter>
+  <scalarParameter name="hidden_by_hide"><?MBSIMGUI_HIDDEN pass
+ret=hide?>
+    0
+  </scalarParameter>
 </Parameter>

@@ -440,6 +440,14 @@ namespace MBSimGUI {
     connect(elementView, &ElementView::pressed, this, &MainWindow::showElementContextMenu);
 
     connect(parameterView, &ParameterView::pressed, this, &MainWindow::parameterViewClicked);
+    connect(parameterView, &ParameterView::activated, [this](const QModelIndex &current){
+      // when a parameter is selected -> select also the corresponding element
+      auto *model = static_cast<ParameterTreeModel*>(parameterView->model());
+      auto *item = model->getItem(current)->getItemData();
+      auto *par = static_cast<ParameterItem*>(item);
+      if(par->getParent())
+        elementView->setCurrentIndex(par->getParent()->getModelIndex());
+    });
 
     //mfmf use rowsAboutToBeInserted,... to save the expandState and then restore the expand state (this needs updateParameterTreeAll to be split into two functions)
     connect(elementView->model(), &QAbstractItemModel::rowsInserted, this, &MainWindow::updateParameterTreeAll);
@@ -908,6 +916,19 @@ namespace MBSimGUI {
     if(eleEmbedItem) {
       // update parameter tree based on new current element
       auto *pmodel = static_cast<ParameterTreeModel*>(parameterView->model());
+
+      // walk the tree before removal
+      function<void(TreeItem *parItem)> walk1;
+      walk1 = [&walk1](TreeItem *parItem) {
+        // reset the modelindex stored in the model to invalid since we now change the modelindex
+        parItem->getItemData()->setModelIndex(QModelIndex());
+
+        for(int cNr=0; cNr<parItem->childCount(); ++cNr)
+          walk1(parItem->child(cNr));
+      };
+      if(auto i = pmodel->getItem(QModelIndex())->child(0); i)
+        walk1(i);
+
       pmodel->removeRow(pmodel->index(0,0).row(), QModelIndex());
 
       vector<EmbedItemData*> parents = eleEmbedItem->getEmbedItemParents();
@@ -946,12 +967,15 @@ namespace MBSimGUI {
     // update parameter tree (elements, and hence parameters, may have been added, removed or moved)
     auto *pmodel = static_cast<ParameterTreeModel*>(parameterView->model());
 
-    // save the current expand state of parameters
+    // walk the tree before removal
     map<vector<QString>, bool> expandState;
     function<void(TreeItem *parItem, vector<QString> path)> walk1;
     walk1 = [&walk1, &expandState, this](TreeItem *parItem, vector<QString> path) {
+      // save the current expand state of parameters
       path.emplace_back(parItem->getItemData()->getName());
       expandState.emplace(path, parameterView->isExpanded(parItem->getItemData()->getModelIndex()));
+      // reset the modelindex stored in the model to invalid since we now change the modelindex
+      parItem->getItemData()->setModelIndex(QModelIndex());
 
       for(int cNr=0; cNr<parItem->childCount(); ++cNr)
         walk1(parItem->child(cNr), path);
@@ -1051,6 +1075,8 @@ namespace MBSimGUI {
       doc->setDocumentURI(X()%QDir::current().absoluteFilePath("Project.mbsx").toStdString());
 
       project = new Project;
+      QSettings settings;
+      project->setEvaluator(Evaluator::evaluators[settings.value("mainwindow/options/defaultevaluator", 0).toInt()]);
       project->createXMLElement(doc.get());
 
       model->createProjectItem(project);
@@ -1250,57 +1276,6 @@ namespace MBSimGUI {
     openElementEditor(false);
   }
 
-  class NewParamLevelHeap {
-    public:
-      NewParamLevelHeap(std::shared_ptr<Eval> oe) : npl(std::move(oe)) {}
-    private:
-      NewParamLevel npl;
-  };
-
-  void MainWindow::createNewEvaluator() {
-    // get evaluator (octave, python, ...)
-    string evalName=Evaluator::defaultEvaluator;
-    if(project)
-      evalName = project->getEvaluator();
-    else {
-      DOMElement *root = doc->getDocumentElement();
-      DOMElement *evaluator;
-      if(E(root)->getTagName()==PV%"Embed") {
-        auto r=root->getFirstElementChild();
-        if(E(r)->getTagName()==PV%"Parameter")
-          r=r->getNextElementSibling();
-        evaluator=E(r)->getFirstElementChildNamed(PV%"evaluator");
-      }
-      else
-        evaluator=E(root)->getFirstElementChildNamed(PV%"evaluator");
-      if(evaluator)
-        evalName=X()%E(evaluator)->getFirstTextChild()->getData();
-    }
-
-    // if this is this the first call (no eval exists yet) or the evaluator type has changed -> create a new one and init it
-    if(!eval || eval->getName()!=evalName) {
-      eval = Eval::createEvaluator(evalName);
-
-      auto code=Evaluator::getInitCode();
-      if(!code.second.empty())
-        eval->addImport(code.second, nullptr, code.first);
-    }
-
-    // restore the original state of the evaluator (we no longer create a new one every time, see above)
-    evalNPL.reset(); // calls Eval::popContext() (but not at the first call where evelNPL==nullptr)
-    assert(eval->getStackSize()==0);
-    evalNPL = make_unique<NewParamLevelHeap>(eval); // calls Eval::pushContext()
-  }
-
-  MainWindow::CreateTemporaryNewEvaluator::CreateTemporaryNewEvaluator() {
-    oldEval.swap(mw->eval); // save the old evaluator
-    mw->createNewEvaluator(); // create a completely new evaluator with a new stack
-  }
-
-  MainWindow::CreateTemporaryNewEvaluator::~CreateTemporaryNewEvaluator() {
-    mw->eval = oldEval; // restore the old evaluator
-  }
-
   // Create an new eval and fills its context with all parameters/imports which may influence item.
   // The context contains also all counterName variables where the count is set to 0 or 1 for 0-based or 1-based evaluators, respectively
   // Also a list of all parameter levels which may influence item is returned. This list contains for each parameter level:
@@ -1310,8 +1285,6 @@ namespace MBSimGUI {
   // - the unevaluated onlyif string of the Array/Pattern
   vector<MainWindow::ParameterLevel> MainWindow::updateParameters(EmbedItemData *item, Parameter *lastParToUse, bool skipEvenLastParToUse,
                                                                   const std::vector<int>& count) {
-    createNewEvaluator();
-
     vector<ParameterLevel> parameterLevels;
     if(item) {
       vector<EmbedItemData*> parents = item->getEmbedItemParents();
@@ -1410,8 +1383,6 @@ namespace MBSimGUI {
       // if lastCall is not nullptr and is negative this is the first call to worker which
       // just track how many time code will be evaluated without evaluating it
       bool trackLastCall = lastCall && *lastCall<0;
-
-      mw->createNewEvaluator();
 
       vector<string> counterNames;
       for(auto &x : parameterLevels)
@@ -1670,8 +1641,6 @@ namespace MBSimGUI {
     statusBar()->showMessage(tr("Refresh"));
     currentModelID++;
     setSceneViewOutdated(true);
-
-    createNewEvaluator();
 
     shared_ptr<DOMDocument> doc=mbxmlparser->createDocument();
     doc->setDocumentURI(X()%D(this->doc)->getDocumentFilename().string());
@@ -2667,7 +2636,7 @@ DEF mbsimgui_outdated_switch Switch {
     Parameter *parameter=ObjectFactory::getInstance().create<Parameter>(pele);
     parentele->insertBefore(pele,nullptr);
     parameter->setXMLElement(pele);
-    parameter->updateValue();
+    parameter->updateValue(true);
     parent->addParameter(parameter);
     parent->updateName();
     static_cast<ParameterTreeModel*>(parameterView->model())->createParameterItem(parameter,parent->getParameters()->getModelIndex());
@@ -3199,10 +3168,8 @@ DEF mbsimgui_outdated_switch Switch {
   }
 
   void MainWindow::flexibleBodyTool() {
-    if(not fbt) {
+    if(not fbt)
       fbt = new FlexibleBodyTool(this);
-      updateParameters(project);
-    }
     fbt->show();
   }
 
@@ -3358,7 +3325,6 @@ DEF mbsimgui_outdated_switch Switch {
       QModelIndex index = elementView->selectionModel()->currentIndex();
       auto *element = dynamic_cast<EmbedItemData*>(static_cast<ElementTreeModel*>(elementView->model())->getItem(index)->getItemData());
       if(element) {
-        updateParameters(element);
         auto editor = element->createPropertyDialog();
         editor->setAttribute(Qt::WA_DeleteOnClose);
         if(config)
@@ -3412,7 +3378,6 @@ DEF mbsimgui_outdated_switch Switch {
       QModelIndex index = parameterView->selectionModel()->currentIndex();
       auto *parameter = dynamic_cast<Parameter*>(static_cast<ParameterTreeModel*>(parameterView->model())->getItem(index)->getItemData());
       if(parameter) {
-        updateParameters(parameter->getParent(),parameter,true);
         auto editor = parameter->createPropertyDialog();
         editor->setAttribute(Qt::WA_DeleteOnClose);
         if(config)
@@ -3431,6 +3396,7 @@ DEF mbsimgui_outdated_switch Switch {
               updateUndos();
             editor->fromWidget();
 	    updateValues(parameter->getParent());
+            MainWindow::updateNameOfCorrespondingElementAndItsChilds(parameter->getParent()->getModelIndex());
             if(getAutoRefresh()) refresh();
             if(getStatusUpdate()) parameter->getParent()->updateStatus();
           }
@@ -3445,6 +3411,7 @@ DEF mbsimgui_outdated_switch Switch {
             updateUndos();
           editor->fromWidget();
 	  updateValues(parameter->getParent());
+          MainWindow::updateNameOfCorrespondingElementAndItsChilds(parameter->getParent()->getModelIndex());
           if(getAutoRefresh()) refresh();
           editor->setCancel(true);
 	  if(getStatusUpdate()) parameter->getParent()->updateStatus();
@@ -3461,7 +3428,6 @@ DEF mbsimgui_outdated_switch Switch {
       QModelIndex index = elementView->selectionModel()->currentIndex();
       auto *element = dynamic_cast<Element*>(static_cast<ElementTreeModel*>(elementView->model())->getItem(index)->getItemData());
       if(element) {
-        updateParameters(element);
         auto editor = new ClonePropertyDialog(element);
         editor->setAttribute(Qt::WA_DeleteOnClose);
         editor->toWidget();
@@ -3645,8 +3611,11 @@ DEF mbsimgui_outdated_switch Switch {
   void MainWindow::updateNameOfCorrespondingElementAndItsChilds(const QModelIndex &index) {
     auto model=static_cast<const ElementTreeModel*>(index.model());
     auto *item = model->getItem(index)->getItemData();
-    if(auto *embedItemData = dynamic_cast<EmbedItemData*>(item); embedItemData && embedItemData->getXMLElement())
-        embedItemData->updateName();
+    if(auto *embedItemData = dynamic_cast<EmbedItemData*>(item); embedItemData && embedItemData->getXMLElement()) {
+      embedItemData->updateName();
+      for(int i=0; i<embedItemData->getNumberOfParameters(); ++i)
+        embedItemData->getParameter(i)->updateValue(true);
+    }
     QModelIndex childIndex;
     for(int i=0; (childIndex=model->index(i,0,index)).isValid(); ++i)
       updateNameOfCorrespondingElementAndItsChilds(childIndex);
@@ -3739,8 +3708,6 @@ extern "C" {
     try {
       QTimer::singleShot(0, [](){
         try {
-          // instantiate a new evaluator on mw->eval and restore the old one at scope end
-          MBSimGUI::MainWindow::CreateTemporaryNewEvaluator tempEval;
           MBSimGUI::mw->refresh();
         }
         catch(...) {

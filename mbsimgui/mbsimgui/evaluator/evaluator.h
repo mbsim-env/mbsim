@@ -49,7 +49,7 @@ class Evaluator {
 
     template<class T1, class T2> static void installSyntaxHighlighter(T1 *t1, T2 *t2);
 
-    static std::pair<std::string, std::string> getInitCode();
+    static std::pair<std::string, std::string> getInitCode(const std::string &evaluator);
     static std::string getElementObjCode(Element *);
     static std::string getParameterObjCode(Parameter *);
 };

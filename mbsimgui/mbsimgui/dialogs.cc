@@ -124,6 +124,7 @@ namespace MBSimGUI {
       mw->eval->convertIndex(value, true);
       count[idx]=mw->eval->cast<int>(value)-1;
     }
+    MBXMLUtils::NewParamLevel npl(mw->eval);
     auto levels = mw->updateParameters(embeditem, nullptr, false, count);
     count.resize(levels.size(), 0);
 

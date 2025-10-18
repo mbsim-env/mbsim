@@ -28,6 +28,7 @@
 #include "utils.h"
 #include "fileitemdata.h"
 #include "mainwindow.h"
+#include "xercesc/dom/DOMProcessingInstruction.hpp"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -76,12 +77,29 @@ namespace MBSimGUI {
     return element;
   }
 
-  void Parameter::updateValue() {
-    hidden = E(element)->getFirstProcessingInstructionChildNamed("MBSIMGUI_HIDDEN")!=nullptr;
-    QSettings settings;
-    bool showHiddenElements=settings.value("mainwindow/options/showhiddenelements", false).toBool();
-    if(getModelIndex().isValid())
-      mw->getParameterView()->setRowHidden(getModelIndex().row(), getModelIndex().parent(), hidden && !showHiddenElements);
+  void Parameter::updateValue(bool evaluate) {
+    if(evaluate && getParent()) {
+      hidden=false;
+      if(auto pi = E(element)->getFirstProcessingInstructionChildNamed("MBSIMGUI_HIDDEN"); pi) {
+        if(X()%pi->getData()=="")
+          hidden=true;
+        else {
+          // update also values which need a evaluation using the current evaluator
+          NewParamLevel npl(mw->eval);
+          mw->updateParameters(this->getParent(), this, true);
+          try {
+            hidden=mw->eval->cast<int>(mw->eval->eval(X()%pi->getData()));
+          }
+          catch(DOMEvalException &ex) {
+            fmatvec::Atom::msgStatic(fmatvec::Atom::Error)<<ex.what()<<endl;
+            cerr<<ex.what()<<endl;
+          }
+        }
+      }
+      auto index = getModelIndex();
+      mw->getParameterView()->setRowHidden(index.row(), index.parent(), hidden);
+    }
+
     name = QString::fromStdString(MBXMLUtils::E(element)->getAttribute("name"));
     auto *cele = E(element)->getFirstCommentChild();
     if(cele)
@@ -105,8 +123,8 @@ namespace MBSimGUI {
     icon = Utils::QIconCached(QString::fromStdString((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"string.svg").string()));
   }
 
-  void StringParameter::updateValue() {
-    Parameter::updateValue();
+  void StringParameter::updateValue(bool evaluate) {
+    Parameter::updateValue(evaluate);
     value = MBXMLUtils::E(element)->getFirstTextChild()?QString::fromStdString(MBXMLUtils::X()%MBXMLUtils::E(element)->getFirstTextChild()->getData()):"";
   }
 
@@ -118,8 +136,8 @@ namespace MBSimGUI {
     icon = Utils::QIconCached(QString::fromStdString((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"scalar.svg").string()));
   }
 
-  void ScalarParameter::updateValue() {
-    Parameter::updateValue();
+  void ScalarParameter::updateValue(bool evaluate) {
+    Parameter::updateValue(evaluate);
     value = MBXMLUtils::E(element)->getFirstTextChild()?QString::fromStdString(MBXMLUtils::X()%MBXMLUtils::E(element)->getFirstTextChild()->getData()):"";
   }
 
@@ -131,8 +149,8 @@ namespace MBSimGUI {
     icon = Utils::QIconCached(QString::fromStdString((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"vector.svg").string()));
   }
 
-  void VectorParameter::updateValue() {
-    Parameter::updateValue();
+  void VectorParameter::updateValue(bool evaluate) {
+    Parameter::updateValue(evaluate);
     DOMElement *ele=element->getFirstElementChild();
     if(ele and E(ele)->getTagName() == PV%"xmlVector") {
       vector<QString> v;
@@ -157,8 +175,8 @@ namespace MBSimGUI {
     icon = Utils::QIconCached(QString::fromStdString((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"matrix.svg").string()));
   }
 
-  void MatrixParameter::updateValue() {
-    Parameter::updateValue();
+  void MatrixParameter::updateValue(bool evaluate) {
+    Parameter::updateValue(evaluate);
     DOMElement *ele=element->getFirstElementChild();
     if(ele and E(ele)->getTagName() == PV%"xmlMatrix") {
       vector<vector<QString>> m;
@@ -188,8 +206,8 @@ namespace MBSimGUI {
     icon = Utils::QIconCached(QString::fromStdString((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"any.svg").string()));
   }
 
-  void AnyParameter::updateValue() {
-    Parameter::updateValue();
+  void AnyParameter::updateValue(bool evaluate) {
+    Parameter::updateValue(evaluate);
     value = MBXMLUtils::E(element)->getFirstTextChild()?QString::fromStdString(MBXMLUtils::X()%MBXMLUtils::E(element)->getFirstTextChild()->getData()):"";
   }
 
@@ -208,8 +226,8 @@ namespace MBSimGUI {
     return element;
   }
 
-  void ImportParameter::updateValue() {
-    Parameter::updateValue();
+  void ImportParameter::updateValue(bool evaluate) {
+    Parameter::updateValue(evaluate);
     name = QString::fromStdString(MBXMLUtils::E(element)->getAttribute("label"));
     value = MBXMLUtils::E(element)->getFirstTextChild()?QString::fromStdString(MBXMLUtils::X()%MBXMLUtils::E(element)->getFirstTextChild()->getData()):"";
     action = E(element)->getAttribute("action");

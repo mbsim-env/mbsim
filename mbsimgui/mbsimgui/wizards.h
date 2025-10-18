@@ -22,6 +22,7 @@
 
 #include <QWizard>
 #include "fmatvec/fmatvec.h"
+#include "mbxmlutils/eval.h"
 #include <xercesc/util/XercesDefs.hpp>
 #include <mbxmlutilshelper/dom.h>
 
@@ -284,6 +285,7 @@ namespace MBSimGUI {
       std::vector<fmatvec::Vec3> rif;
       std::vector<fmatvec::Mat3xV> Phiif, Psiif;
       std::vector<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double>> sigmahelif;
+      MBXMLUtils::NewParamLevel npl;
   };
 
 }

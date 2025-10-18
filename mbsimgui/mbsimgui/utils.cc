@@ -333,6 +333,7 @@ namespace MBSimGUI {
             // this code is run when the action is triggered
             mw->clearEchoView();
             try {
+              MBXMLUtils::NewParamLevel npl(mw->eval);
               std::vector<MainWindow::ParameterLevel> parameterLevels;
               if constexpr(std::is_same_v<EleOrPar, Parameter>)
                 parameterLevels = mw->updateParameters(eleOrPar->getParent(), eleOrPar);
@@ -347,7 +348,7 @@ namespace MBSimGUI {
                   mw->updateEchoView("");
                   std::string code;
                   std::string codeVar;
-                  if constexpr(std::is_same_v<EleOrPar, Parameter>) {
+                  if constexpr(std::is_base_of_v<Parameter,EleOrPar>) {
                     code=Evaluator::getParameterObjCode(eleOrPar);
                     codeVar="mbsimgui_parameter";
                   }
