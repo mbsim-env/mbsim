@@ -1019,9 +1019,33 @@ namespace MBSimGUI {
       menu->exec(QCursor::pos());
       delete menu;
     }
+
+    // when a element is selected -> select also the corresponding parameter (if all parameters are shown)
+    QSettings settings;
+    auto parView = static_cast<OptionsDialog::ParameterView>(settings.value("mainwindow/options/parameterview", static_cast<int>(OptionsDialog::ParameterView::onlyForCurrentElement)).toInt());
+    if(parView==OptionsDialog::ParameterView::all) {
+      auto *model = static_cast<ElementTreeModel*>(elementView->model());
+      auto *itemData = model->getItem(current)->getItemData();
+      if(auto *cont = dynamic_cast<ContainerItemData*>(itemData); cont)
+        itemData = model->getItem(current.parent())->getItemData();
+      if(auto *ele = dynamic_cast<EmbedItemData*>(itemData); ele)
+        if(auto *par = ele->getParameters(); par)
+          parameterView->setCurrentIndex(par->getModelIndex());
+    }
   }
 
   void MainWindow::parameterViewClicked(const QModelIndex &current) {
+    // when a parameter is selected -> select also the corresponding element (if all parameters are shown)
+    QSettings settings;
+    auto parView = static_cast<OptionsDialog::ParameterView>(settings.value("mainwindow/options/parameterview", static_cast<int>(OptionsDialog::ParameterView::onlyForCurrentElement)).toInt());
+    if(parView==OptionsDialog::ParameterView::all) {
+      auto *model = static_cast<ParameterTreeModel*>(parameterView->model());
+      auto *item = model->getItem(current)->getItemData();
+      auto *par = static_cast<ParameterItem*>(item);
+      if(par->getParent())
+        elementView->setCurrentIndex(par->getParent()->getModelIndex());
+    }
+
     if(QApplication::mouseButtons()==Qt::RightButton) {
       auto *item = dynamic_cast<ParameterItem*>(static_cast<ParameterTreeModel*>(parameterView->model())->getItem(current)->getItemData());
       QMenu *menu = item->createContextMenu();
@@ -1030,13 +1054,6 @@ namespace MBSimGUI {
       menu->exec(QCursor::pos());
       delete menu;
     }
-
-    // when a parameter is selected -> select also the corresponding element
-    auto *model = static_cast<ParameterTreeModel*>(parameterView->model());
-    auto *item = model->getItem(current)->getItemData();
-    auto *par = static_cast<ParameterItem*>(item);
-    if(par->getParent())
-      elementView->setCurrentIndex(par->getParent()->getModelIndex());
   }
 
   void MainWindow::newProject() {

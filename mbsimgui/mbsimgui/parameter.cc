@@ -97,7 +97,9 @@ namespace MBSimGUI {
         }
       }
       auto index = getModelIndex();
-      mw->getParameterView()->setRowHidden(index.row(), index.parent(), hidden);
+      QSettings settings;
+      auto showHiddenElements = settings.value("mainwindow/options/showhiddenelements", true).toBool();
+      mw->getParameterView()->setRowHidden(index.row(), index.parent(), hidden && !showHiddenElements);
     }
 
     name = QString::fromStdString(MBXMLUtils::E(element)->getAttribute("name"));
