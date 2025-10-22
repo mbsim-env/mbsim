@@ -360,80 +360,94 @@
   <xs:element name="plotAttribute">  
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
         Definiert ein Plot-Attribute ohne Wert.
-        (Plot attribute sind statische Daten welche als key/value Paar an plot datasets/groups angehängt werden.)
+
+        Plot attribute sind statische Daten welche in das HDF5 output file an die HDF5 Gruppe des entsprechenden MBSim Elements angehängt werden.
+        Die Daten können entweder als HDF5 Attribut mit dem Namen 'name' angehängt werden (default, oder wenn 'storage'=='attribute') oder
+        als HDF5 Dataset mit dem Namen 'name' wenn 'storage'=='dataset' ist.
+        'dataset' hat den Vorteil das die Daten von HDF5 comprimiert werden können und ist deshalb für größere statische Datenmengen empfohlen.
     </xs:documentation></xs:annotation>
     <xs:complexType>
       <xs:attribute name="name" type="pv:stringPartialEval" use="required"/>
+      <xs:attribute name="storage" type="pv:stringPartialEval"/>
     </xs:complexType> 
   </xs:element>  
   <xs:element name="plotAttributeInt">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-        Definiert ein Plot-Attribute mit integer Wert.
+        Definiert ein Plot-Attribute mit integer Wert (siehe auch 'plotAttribute')
     </xs:documentation></xs:annotation>
     <xs:complexType>
       <xs:simpleContent>
         <xs:extension base="pv:integerFullEval">
           <xs:attribute name="name" type="pv:stringPartialEval" use="required"/>
+          <xs:attribute name="storage" type="pv:stringPartialEval"/>
         </xs:extension>
       </xs:simpleContent>
     </xs:complexType> 
   </xs:element>  
   <xs:element name="plotAttributeFloat">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-        Definiert ein Plot-Attribute mit floating-point Wert.
+        Definiert ein Plot-Attribute mit floating-point Wert (siehe auch 'plotAttribute')
     </xs:documentation></xs:annotation>
     <xs:complexType>
       <xs:simpleContent>
         <xs:extension base="pv:floatFullEval">
           <xs:attribute name="name" type="pv:stringPartialEval" use="required"/>
+          <xs:attribute name="storage" type="pv:stringPartialEval"/>
         </xs:extension>
       </xs:simpleContent>
     </xs:complexType> 
   </xs:element>  
   <xs:element name="plotAttributeString">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-        Definiert ein Plot-Attribute mit string Wert.
+        Definiert ein Plot-Attribute mit string Wert (siehe auch 'plotAttribute')
+        
+        If Fall 'storage'=='dataset' (siehe 'plotAttribute') wird der scalare string in HDF5 nicht als scalares dataset sondern als 1D array der länge 1 gespeichert.
+        Dies und der umstand das der string als fixed length gespeichert wird ermöglicht compression in HDF5.
     </xs:documentation></xs:annotation>
     <xs:complexType>
       <xs:simpleContent>
         <xs:extension base="pv:stringFullEval">
           <xs:attribute name="name" type="pv:stringPartialEval" use="required"/>
+          <xs:attribute name="storage" type="pv:stringPartialEval"/>
         </xs:extension>
       </xs:simpleContent>
     </xs:complexType> 
   </xs:element>  
   <xs:element name="plotAttributeIntVector">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-        Definiert ein Plot-Attribute mit integer Vector-Wert.
+        Definiert ein Plot-Attribute mit integer Vector-Wert (siehe auch 'plotAttribute')
     </xs:documentation></xs:annotation>
     <xs:complexType>
       <xs:complexContent>
         <xs:extension base="pv:integerVector">
           <xs:attribute name="name" type="pv:stringPartialEval" use="required"/>
+          <xs:attribute name="storage" type="pv:stringPartialEval"/>
         </xs:extension>
       </xs:complexContent>
     </xs:complexType> 
   </xs:element>  
   <xs:element name="plotAttributeFloatVector">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-        Definiert ein Plot-Attribute mit floating-point Vector-Wert.
+        Definiert ein Plot-Attribute mit floating-point Vector-Wert (siehe auch 'plotAttribute')
     </xs:documentation></xs:annotation>
     <xs:complexType>
       <xs:complexContent>
         <xs:extension base="pv:unknownVector">
           <xs:attribute name="name" type="pv:stringPartialEval" use="required"/>
+          <xs:attribute name="storage" type="pv:stringPartialEval"/>
         </xs:extension>
       </xs:complexContent>
     </xs:complexType> 
   </xs:element>  
   <xs:element name="plotAttributeFloatMatrix">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-        Definiert ein Plot-Attribute mit floating-point Vector-Wert.
+        Definiert ein Plot-Attribute mit floating-point Vector-Wert (siehe auch 'plotAttribute')
     </xs:documentation></xs:annotation>
     <xs:complexType>
       <xs:complexContent>
         <xs:extension base="pv:unknownMatrix">
           <xs:attribute name="name" type="pv:stringPartialEval" use="required"/>
+          <xs:attribute name="storage" type="pv:stringPartialEval"/>
         </xs:extension>
       </xs:complexContent>
     </xs:complexType> 

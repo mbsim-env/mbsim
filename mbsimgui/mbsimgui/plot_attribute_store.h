@@ -23,6 +23,7 @@ namespace MBSimGUI {
       struct PA {
 	std::string type; // = XML local element name
 	std::string name;
+	std::string storage;
 	std::string code;
       };
       std::vector<PA> pas;

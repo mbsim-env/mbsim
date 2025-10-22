@@ -19,8 +19,9 @@ namespace MBSimGUI {
                 E(e)->getTagName()==MBSIM%"plotAttributeFloatMatrix")) {
       string type = E(e)->getTagName().second;
       string name = E(e)->getAttribute("name");
+      string storage = E(e)->getAttribute("storage");
       string code = E(e)->getTagName()==MBSIM%"plotAttribute" ? "" : E(e)->getText<string>();
-      pas.emplace_back(PA{type, name, code});
+      pas.emplace_back(PA{type, name, storage, code});
       e=e->getNextElementSibling();
     }
     return e;
@@ -31,6 +32,8 @@ namespace MBSimGUI {
     for(auto pa : pas) {
       DOMElement *ele = D(doc)->createElement(MBSIM%pa.type);
       E(ele)->setAttribute("name", pa.name);
+      if(!pa.storage.empty())
+        E(ele)->setAttribute("storage", pa.storage);
       if(pa.type != "plotAttribute")
         ele->insertBefore(doc->createTextNode(X()%pa.code), nullptr);
       parent->insertBefore(ele, ref);

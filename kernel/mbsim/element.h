@@ -176,15 +176,17 @@ namespace MBSim {
        */
       void setPlotFeatureRecursive(const PlotFeatureEnum &pf, bool value) { setPlotFeature(pf,value); setPlotFeatureForChildren(pf,value); }
 
+      enum class PlotAttributeStorage { attribute, dataset };
+
       /**
        * \brief Set a plot attribute: static data attached as key/value pairs to the plot datasets/groups.
        */
       template<class T>
-      void setPlotAttribute(const std::string &name, const T &value) {
-        plotAttribute[name] = value;
+      void setPlotAttribute(const std::string &name, const T &value, PlotAttributeStorage storage=PlotAttributeStorage::attribute) {
+        plotAttribute.emplace(name, decltype(plotAttribute)::mapped_type{storage, value});
       }
-      void setPlotAttribute(const std::string &name) {
-        plotAttribute[name] = std::monostate();
+      void setPlotAttribute(const std::string &name, PlotAttributeStorage storage=PlotAttributeStorage::attribute) {
+        plotAttribute.emplace(name, decltype(plotAttribute)::mapped_type{storage, std::monostate()});
       }
 
       virtual void initializeUsingXML(xercesc::DOMElement *element);
@@ -309,7 +311,7 @@ namespace MBSim {
        */
       PlotFeatureMap plotFeature, plotFeatureForChildren;
 
-      std::map<std::string, std::variant<
+      std::map<std::string, std::pair<PlotAttributeStorage, std::variant<
         std::monostate,
         int,
         double,
@@ -317,7 +319,7 @@ namespace MBSim {
         std::vector<int>,
         std::vector<double>,
         std::vector<std::vector<double>>
-      >> plotAttribute;
+      >>> plotAttribute;
 
     public: // addToPlot / plot is public to allow helper classes/functions to handle plots in a element
       void addToPlot(const std::string &name);
