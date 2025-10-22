@@ -1,4 +1,5 @@
 #include "plot_attribute_store.h"
+#include "mainwindow.h"
 #include "namespace.h"
 #include <mbxmlutilshelper/dom.h>
 
@@ -7,6 +8,8 @@ using namespace xercesc;
 using namespace MBXMLUtils;
 
 namespace MBSimGUI {
+
+  extern MainWindow *mw;
 
   DOMElement* PlotAttributeStore::initializeUsingXML(DOMElement *parent) {
     DOMElement *e=parent->getFirstElementChild();
@@ -17,11 +20,10 @@ namespace MBSimGUI {
                 E(e)->getTagName()==MBSIM%"plotAttributeIntVector" ||
                 E(e)->getTagName()==MBSIM%"plotAttributeFloatVector" ||
                 E(e)->getTagName()==MBSIM%"plotAttributeFloatMatrix")) {
-      string type = E(e)->getTagName().second;
-      string name = E(e)->getAttribute("name");
-      string storage = E(e)->getAttribute("storage");
-      string code = E(e)->getTagName()==MBSIM%"plotAttribute" ? "" : E(e)->getText<string>();
-      pas.emplace_back(PA{type, name, storage, code});
+      auto doc = mw->mbxmlparserNoVal->createDocument();
+      pas.emplace_back(doc);
+      auto root = doc->importNode(e, true);
+      doc->insertBefore(root, nullptr);
       e=e->getNextElementSibling();
     }
     return e;
@@ -30,13 +32,8 @@ namespace MBSimGUI {
   DOMElement* PlotAttributeStore::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     DOMDocument *doc=parent->getOwnerDocument();
     for(auto pa : pas) {
-      DOMElement *ele = D(doc)->createElement(MBSIM%pa.type);
-      E(ele)->setAttribute("name", pa.name);
-      if(!pa.storage.empty())
-        E(ele)->setAttribute("storage", pa.storage);
-      if(pa.type != "plotAttribute")
-        ele->insertBefore(doc->createTextNode(X()%pa.code), nullptr);
-      parent->insertBefore(ele, ref);
+      auto root = doc->importNode(pa->getDocumentElement(), true);
+      parent->insertBefore(root, ref);
     }
     return nullptr;
   }

@@ -1688,8 +1688,15 @@ namespace MBSimGUI {
     // disable initial projection if requested
     if(solverInitialProj->isChecked()) {
       auto ip = E(dssEle)->getFirstElementChildNamed(MBSIM%"initialProjection");
-      if(ip)
-        ip->removeChild(E(ip)->getFirstTextChild())->release();
+      if(ip) {
+        // remove all child text nodes (since we add "0" as data = text node)
+        DOMNode *nNext;
+        for(auto *n=ip->getFirstChild(); n; n=nNext) {
+          nNext = n->getNextSibling();
+          if(n->getNodeType()==DOMNode::TEXT_NODE || n->getNodeType()==DOMNode::CDATA_SECTION_NODE)
+            ip->removeChild(n)->release();
+        }
+      }
       else {
         // if no initialProjection element exists we need to add it at the right position which is a bit complicated
         // due to many optional elements before initialProjection

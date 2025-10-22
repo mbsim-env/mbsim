@@ -1,6 +1,7 @@
 #ifndef _PLOT_ATTRIBUTE_STORE_
 #define _PLOT_ATTRIBUTE_STORE_
 
+#include <memory>
 #include <string>
 #include <vector>
 #include <xercesc/util/XercesDefs.hpp>
@@ -8,6 +9,7 @@
 namespace XERCES_CPP_NAMESPACE {
   class DOMElement;
   class DOMNode;
+  class DOMDocument;
 }
 
 namespace MBSimGUI {
@@ -20,13 +22,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref);
     private:
-      struct PA {
-	std::string type; // = XML local element name
-	std::string name;
-	std::string storage;
-	std::string code;
-      };
-      std::vector<PA> pas;
+      std::vector<std::shared_ptr<xercesc::DOMDocument>> pas;
   };
 
 }
