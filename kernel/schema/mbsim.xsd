@@ -5287,7 +5287,7 @@
   <xs:element name="LinearTranslation" substitutionGroup="Function" type="LinearTranslationType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
-      tbd
+        <object class="eqn">y(x) = \boldsymbol{A} \boldsymbol{x} + \boldsymbol{b}</object>
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -5478,7 +5478,7 @@
   <xs:element name="IdentityFunction" substitutionGroup="Function" type="IdentityFunctionType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
-        Identische Abbildung: <object class="inlineeqn">\boldsymbol{y}=\boldsymbol{y}</object>.
+        Identische Abbildung: <object class="inlineeqn">\boldsymbol{y}=\boldsymbol{x}</object>.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -5516,7 +5516,7 @@
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
         Skalare lineare Funktion.
-        <object class="eqn">y=a_1*x+a_0</object>
+        <object class="eqn">y=a_1 x + a_0</object>
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -5708,7 +5708,7 @@
   <xs:element name="AbsoluteValueFunction" substitutionGroup="Function" type="AbsoluteValueFunctionType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
-      tbd
+        <object class="eqn">y(x)=\left|x\right|</object>
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -5721,7 +5721,7 @@
   <xs:element name="ModuloFunction" substitutionGroup="Function" type="ModuloFunctionType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
-      tbd
+        <object class="eqn">y(x) = x-\text{denominator}\cdot\text{floor}\left(\frac{x}{\text{denominator}}\right)</object>
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -5744,7 +5744,7 @@
   <xs:element name="SignumFunction" substitutionGroup="Function" type="SignumFunctionType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
-      tbd
+        <object class="eqn">y(x) = \text{sign}(x)</object>
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -5757,7 +5757,11 @@
   <xs:element name="BoundedFunction" substitutionGroup="Function" type="BoundedFunctionType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
-      tbd
+        <object class="eqn">y(x)=\begin{cases}
+        \text{lowerBound} &amp; \text{if } x &lt; \text{lowerBound} \\
+        \text{upperBound} &amp; \text{if } x &gt; \text{upperBound} \\
+        0 &amp; \text{else } x
+        \end{cases}</object>
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -5813,7 +5817,16 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="CompositeFunction" substitutionGroup="Function" type="CompositeFunctionType"/>
+  <xs:element name="CompositeFunction" substitutionGroup="Function" type="CompositeFunctionType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        Wenn 'innerFunction' definiert ist gilt:
+        <object class="eqn">y(x) = \text{outerFunction}(\text{innerFunction}(x))</object>
+        Wenn 'innerFunctions' definiert ist gilt:
+        <object class="eqn">y(x) = \text{outerFunction}(\text{innerFunctions}_1(x), \text{innerFunctions}_2(x))</object>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
   <xs:complexType name="CompositeFunctionType">
     <xs:complexContent>
       <xs:extension base="FunctionType">
@@ -5960,7 +5973,7 @@
   <xs:element name="TwoDimensionalTabularFunction" substitutionGroup="Function" type="TwoDimensionalTabularFunctionType">
     <xs:annotation>
       <xs:documentation  xml:lang="de" xmlns="">
-        Lineare Interpolation einer Funktion <object class="inlineeqn">z=f(x, y)</object>, die als Kennfeld hinterlegt ist.
+        Lineare Interpolation einer Funktion <object class="inlineeqn">z=f(x, y)</object>, die als Kennfeld in Form eines regulären Gitters hinterlegt ist.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -5995,6 +6008,10 @@
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 Die Stützstellen und die Stützwerte sind in einer Matrix zusammengefasst.
+                Die erste Zeile, exklusiv des ersten Werts, entspricht dabei 'x'.
+                Die erste Spalte, exklusiv des ersten Werts, entspricht dabei 'y'.
+                Die Matrix, exklusiv der ersten Zeile und Spalte, entspricht dabei 'z'.
+                Der Eintrag ganz oben links wird damit nicht verwendet.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
@@ -6128,7 +6145,13 @@
   <xs:element name="TwoDimensionalPiecewisePolynomFunction" substitutionGroup="Function" type="TwoDimensionalPiecewisePolynomFunctionType">
     <xs:annotation>
       <xs:documentation  xml:lang="de" xmlns="">
-        Spline-Interpolation einer Funktion <object class="inlineeqn">z=f(x, y)</object>, die als Kennfeld hinterlegt ist.
+        Spline-Interpolation einer Funktion <object class="inlineeqn">z=f(x, y)</object>, die als Kennfeld in Form eines regulären Gitters hinterlegt ist.
+
+        Zur initialisierung wird für jede Zeile von 'z' eine 'PiecewisePolynomFunction' in Abhängigkeit von 'x' erzeugt.
+        Zu jeder Auswertung werden diese 'PiecewisePolynomFunction's für das aktuelle 'arg1' ausgewertet und mit dem Ergebniss wird eine weiter
+        'PiecewisePolynomFunction' in Abhängigkeit von 'y' erzeugt. Diese wird dann für das aktuelle 'args2' ausgewertet und als Ergebniss zurückgebeben.
+        Dies bedeutet dass zu jeder Auswertung eine Spline-Koeffizienten der zweiten 'PiecewisePolynomFunction' neu berechnet werden müssen.
+        Dies kann zu einem erheblichen Performance-Problem führen. Wenn lediglich eine lineare Interpolation notwendig ist, ist evlt. 'TwoDimensionalTabularFunction' die deshalb die bessere Wahl.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -6141,14 +6164,14 @@
               <xs:element name="x" type="pv:unknownVector">
                 <xs:annotation>
                   <xs:documentation xml:lang="de" xmlns="">
-                    x-Werte.
+                    x-Werte. Die Werte müssen streng mononton steigend sein.
                   </xs:documentation>
                 </xs:annotation>
               </xs:element>
               <xs:element name="y" type="pv:unknownVector">
                 <xs:annotation>
                   <xs:documentation xml:lang="de" xmlns="">
-                    y-Werte.
+                    y-Werte. Die Werte müssen streng mononton steigend sein.
                   </xs:documentation>
                 </xs:annotation>
               </xs:element>
@@ -6164,6 +6187,10 @@
               <xs:annotation>
                 <xs:documentation xml:lang="de" xmlns="">
                   Die Stützstellen und die Stützwerte sind in einer Matrix zusammengefasst.
+                  Die erste Zeile, exklusiv des ersten Werts, entspricht dabei 'x'.
+                  Die erste Spalte, exklusiv des ersten Werts, entspricht dabei 'y'.
+                  Die Matrix, exklusiv der ersten Zeile und Spalte, entspricht dabei 'z'.
+                  Der Eintrag ganz oben links wird damit nicht verwendet.
                 </xs:documentation>
               </xs:annotation>
             </xs:element>
@@ -6259,6 +6286,10 @@
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
         Bidirektionale Funktion.
+        <object class="eqn">y=\begin{cases}
+          \text{negativeDirectionalFunction}(-x) &amp; \text{if } x &lt; 0 \\
+          \text{positiveDirectionalFunction}(x) &amp; \text{if } x \ge 0
+        \end{cases}</object>
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -6408,7 +6439,7 @@
   <xs:element name="LinearElasticFunction" substitutionGroup="Function" type="LinearElasticFunctionType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
-      tbd
+        <object class="eqn">y(x) = \boldsymbol{K} \boldsymbol{arg}_1 + \boldsymbol{D} \boldsymbol{arg}_2</object>
       </xs:documentation>
     </xs:annotation>
   </xs:element>
