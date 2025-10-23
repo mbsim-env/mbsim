@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MBSimProject name="MBSPRJ" xmlns="http://www.mbsim-env.de/MBSimXML"
+  xmlns:pv="http://www.mbsim-env.de/MBXMLUtils">
+  <pv:evaluator>python</pv:evaluator>
+  <pv:Embed href="MBS.mbsim.xml" parameterHref="parameter.mbsim.xml"/>
+  <pv:Embed href="Integrator.mbsimint.xml"/>
+</MBSimProject>

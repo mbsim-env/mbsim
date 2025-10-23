@@ -84,9 +84,21 @@ void DOMEvalExceptionStack::generateWhat(std::stringstream &str, const std::stri
       normalErrorFound=true;
     }
   }
-  nr=1;
   bool MBSIM_PRINT_NOT_CASTABLE=getenv("MBSIM_PRINT_NOT_CASTABLE")!=nullptr;
   bool printNotCastableObjects=(MBSIM_PRINT_NOT_CASTABLE || !normalErrorFound)?true:false;
+  // 1st pass over exVec: just check if not castable errors are found
+  for(auto it=exVec.begin(); it!=exVec.end(); ++it) {
+    std::shared_ptr<DOMEvalExceptionStack> stack=std::dynamic_pointer_cast<DOMEvalExceptionStack>(it->second);
+    if(!stack) {
+      std::shared_ptr<DOMEvalExceptionWrongType> wrongType=std::dynamic_pointer_cast<DOMEvalExceptionWrongType>(it->second);
+      if(!wrongType) {
+        normalErrorFound=true;
+        printNotCastableObjects=MBSIM_PRINT_NOT_CASTABLE?true:false;
+      }
+    }
+  }
+  // 2st pass over exVec: process error messages (and take care of the processing of not castable errors which were detected in the 1st pass
+  nr=1;
   int notPrintedWrongTypeErrors=0;
   for(auto it=exVec.begin(); it!=exVec.end(); ++it, ++nr) {
     std::shared_ptr<DOMEvalExceptionStack> stack=std::dynamic_pointer_cast<DOMEvalExceptionStack>(it->second);
@@ -99,11 +111,8 @@ void DOMEvalExceptionStack::generateWhat(std::stringstream &str, const std::stri
         else
           notPrintedWrongTypeErrors++;
       }
-      else {
+      else
         errorMsg=it->second->getMessage();
-        normalErrorFound=true;
-        printNotCastableObjects=MBSIM_PRINT_NOT_CASTABLE?true:false;
-      }
       if(!wrongType || printNotCastableObjects) {
         it->second->setMessage(errorMsg+"\n"+
                                indent+possibleType(nr, exVec.size(), it->first));
