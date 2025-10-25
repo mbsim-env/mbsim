@@ -143,6 +143,7 @@ namespace MBSimGUI {
       void setIcon(const QIcon &icon_) { icon = icon_; }
       void setParameters(Parameters *parameters_);
       Parameters* getParameters() { return parameters; }
+      QMenu* createContextMenu() override;
     private:
       Parameters *parameters { nullptr };
   };

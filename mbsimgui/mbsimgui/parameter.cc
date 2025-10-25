@@ -24,6 +24,7 @@
 #include "parameter.h"
 #include "objectfactory.h"
 #include "parameter_property_dialog.h"
+#include "parameter_embed_item_context_menu.h"
 #include "parameter_view.h"
 #include "utils.h"
 #include "fileitemdata.h"
@@ -254,6 +255,15 @@ namespace MBSimGUI {
 
   QString ParameterEmbedItem::getName() const {
     return parent->getName();
+  }
+
+  QMenu* ParameterEmbedItem::createContextMenu() {
+    auto *e=parent->getXMLElement();
+    if(!e)
+      return nullptr;
+    if(E(e)->getTagName()==PV%"Embed") // unhandled Embed in mbsimgui
+      return nullptr;
+    return new ParameterEmbedItemContextMenu(parent);
   }
 
   Parameters::Parameters(EmbedItemData *parent): ParameterItem(parent) {

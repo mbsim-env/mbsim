@@ -2112,7 +2112,7 @@ DEF mbsimgui_outdated_switch Switch {
     else if(parameterView->hasFocus()) {
       auto *model = static_cast<ParameterTreeModel*>(parameterView->model());
       QModelIndex index = parameterView->selectionModel()->currentIndex();
-      auto *item = dynamic_cast<ParameterEmbedItem*>(model->getItem(index)->getItemData());
+      auto *item = dynamic_cast<Parameters*>(model->getItem(index)->getItemData());
       if(item and dynamic_cast<Parameter*>(getParameterBuffer().first) and not dynamic_cast<InternalFrame*>(item->getParent()))
         pasteParameter(item->getParent(),getParameterBuffer().first);
     }
@@ -2463,7 +2463,7 @@ DEF mbsimgui_outdated_switch Switch {
   void MainWindow::exportParameters() {
     auto *model = static_cast<ParameterTreeModel*>(parameterView->model());
     auto index = parameterView->selectionModel()->currentIndex();
-    auto *parameterEmbedItem = static_cast<ParameterEmbedItem*>(model->getItem(index)->getItemData());
+    auto *parameterEmbedItem = static_cast<Parameters*>(model->getItem(index)->getItemData());
     SaveParameterDialog dialog(getProjectDir().absoluteFilePath(parameterEmbedItem->getParent()->getName()+".mbspx"));
     int result = dialog.exec();
     if(result and not dialog.getParameterFileName().isEmpty()) {
@@ -3070,7 +3070,7 @@ DEF mbsimgui_outdated_switch Switch {
   void MainWindow::editParametersSource() {
     if(not editorIsOpen()) {
       QModelIndex index = parameterView->selectionModel()->currentIndex();
-      auto *item = static_cast<ParameterEmbedItem*>(static_cast<ParameterTreeModel*>(parameterView->model())->getItem(index)->getItemData());
+      auto *item = static_cast<Parameters*>(static_cast<ParameterTreeModel*>(parameterView->model())->getItem(index)->getItemData());
       EmbedItemData *parent = item->getParent();
       auto editor = new ParameterXMLPropertyDialog(parent);
       editor->setAttribute(Qt::WA_DeleteOnClose);
@@ -3081,7 +3081,7 @@ DEF mbsimgui_outdated_switch Switch {
           editor->fromWidget();
           int n = parent->getNumberOfParameters();
           for(int i=n-1; i>=0; i--) parent->removeParameter(parent->getParameter(i));
-          QModelIndex index = parent->getParameterEmbedItem()->getModelIndex();
+          QModelIndex index = parent->getParameterEmbedItem()->getParameters()->getModelIndex();
           auto *model = static_cast<ParameterTreeModel*>(parameterView->model());
           model->removeRows(0,n,index);
           parent->createParameters();
@@ -3094,7 +3094,7 @@ DEF mbsimgui_outdated_switch Switch {
         editor->fromWidget();
         int n = parent->getNumberOfParameters();
         for(int i=n-1; i>=0; i--) parent->removeParameter(parent->getParameter(i));
-        QModelIndex index = parent->getParameterEmbedItem()->getModelIndex();
+        QModelIndex index = parent->getParameterEmbedItem()->getParameters()->getModelIndex();
         auto *model = static_cast<ParameterTreeModel*>(parameterView->model());
         model->removeRows(0,n,index);
         parent->createParameters();
