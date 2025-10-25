@@ -235,12 +235,30 @@ namespace MBSimGUI {
     action = E(element)->getAttribute("action");
   }
 
-  Parameters::Parameters(EmbedItemData *parent) : ParameterItem(parent) {
+  ParameterEmbedItem::ParameterEmbedItem(EmbedItemData *parent) : ParameterItem(parent) {
     // icon is set by the element which has created the parameter during it ctor
   }
 
-  QString Parameters::getReference() const {
+  ParameterEmbedItem::~ParameterEmbedItem() {
+    delete parameters;
+  }
+
+  void ParameterEmbedItem::setParameters(Parameters *parameters_) {
+    delete parameters;
+    parameters = parameters_;
+  }
+
+  QString ParameterEmbedItem::getReference() const {
     return parent->getDedicatedParameterFileItem()?parent->getDedicatedParameterFileItem()->getName():"";
+  }
+
+  QString ParameterEmbedItem::getName() const {
+    return parent->getName();
+  }
+
+  Parameters::Parameters(EmbedItemData *parent): ParameterItem(parent) {
+    icon = QIcon(new OverlayIconEngine((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"container.svg").string(),
+                                       (MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"matrix.svg").string()));
   }
 
   QMenu* Parameters::createContextMenu() {
@@ -250,10 +268,6 @@ namespace MBSimGUI {
     if(E(e)->getTagName()==PV%"Embed") // unhandled Embed in mbsimgui
       return nullptr;
     return new ParametersContextMenu(parent);
-  }
-
-  QString Parameters::getName() const {
-    return parent->getName();
   }
 
 }

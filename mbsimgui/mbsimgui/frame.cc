@@ -39,7 +39,7 @@ namespace MBSimGUI {
 
   Frame::Frame() {
     icon = Utils::QIconCached(QString::fromStdString((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"frame.svg").string()));
-    parameters->setIcon(icon);
+    parameterEmbedItem->setIcon(icon);
   }
 
   DOMElement* Frame::processIDAndHref(DOMElement *element) {

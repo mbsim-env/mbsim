@@ -255,7 +255,7 @@ R"+(</pre>
       // loop over all elements in the current level
       while(index.isValid()) {
         // get the item of the current element (index)
-        Parameters *item = dynamic_cast<Parameters*>(model->getItem(index)->getItemData());
+        ParameterEmbedItem *item = dynamic_cast<ParameterEmbedItem*>(model->getItem(index)->getItemData());
         // handle only embed elements but not parameters
         if(item) {
           // get the root element of this embed

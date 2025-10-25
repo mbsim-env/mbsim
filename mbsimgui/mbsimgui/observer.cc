@@ -45,7 +45,7 @@ namespace MBSimGUI {
 
   Observer::Observer() {
     icon = Utils::QIconCached(QString::fromStdString((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"observer.svg").string()));
-    parameters->setIcon(icon);
+    parameterEmbedItem->setIcon(icon);
   }
 
   DOMElement* MechanicalLinkObserver::processIDAndHref(DOMElement *element) {

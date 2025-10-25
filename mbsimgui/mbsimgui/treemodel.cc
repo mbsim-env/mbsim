@@ -364,32 +364,44 @@ namespace MBSimGUI {
     rootItem = new TreeItem(new TreeItemData);
   }
 
-  void ParameterTreeModel::createParameterItem(Parameters *parameters, const QModelIndex &parent) {
-
-    TreeItem *parentItem = getItem(parent);
-
-    int i = rowCount(parent);
-    beginInsertRows(parent, i, i);
-    TreeItem *item = new TreeItem(parameters,parentItem);
-    parentItem->insertChildren(item,1);
+  void ParameterTreeModel::createParameterItem(ParameterEmbedItem *parameterEmbedItem, const QModelIndex &parentEmbedIndex) {
+    // create the parameter view item corresponding to the Embed element
+    TreeItem *embedParentItem = getItem(parentEmbedIndex);
+    int embedRow = rowCount(parentEmbedIndex);
+    beginInsertRows(parentEmbedIndex, embedRow, embedRow);
+    TreeItem *embedItem = new TreeItem(parameterEmbedItem,embedParentItem);
+    embedParentItem->insertChildren(embedItem,1);
     endInsertRows();
-
-    QModelIndex index;
-    if(parent.row()==-1)
-      index = this->index(0,0,parent);
+    QModelIndex embedIndex;
+    if(parentEmbedIndex.row()==-1)
+      embedIndex = this->index(0,0,parentEmbedIndex);
     else
-      index = parent.model()->index(i,0,parent);
+      embedIndex = parentEmbedIndex.model()->index(embedRow,0,parentEmbedIndex);
+    parameterEmbedItem->setModelIndex(embedIndex);
 
-    parameters->setModelIndex(index);
-    updateParameterItem(parameters);
+    // create the parameter view group item which contains all parameters
+    int parametersRow = rowCount(embedIndex);
+    beginInsertRows(embedIndex, parametersRow, parametersRow);
+    Parameters *parameters = new Parameters(parameterEmbedItem->getParent());//mfmf memory leak?
+    parameterEmbedItem->setParameters(parameters);
+    TreeItem *parametersItem = new TreeItem(parameters,embedItem);
+    embedItem->insertChildren(parametersItem,1);
+    endInsertRows();
+    QModelIndex parametersIndex;
+    if(embedIndex.row()==-1)
+      parametersIndex = this->index(0,0,embedIndex);
+    else
+      parametersIndex = embedIndex.model()->index(parametersRow,0,embedIndex);
+    parameters->setModelIndex(parametersIndex);
+
+    updateParameterItem(parameterEmbedItem);
   }
 
-  void ParameterTreeModel::updateParameterItem(Parameters *parameters) {
+  void ParameterTreeModel::updateParameterItem(ParameterEmbedItem *parameterEmbedItem) {
+    QModelIndex parametersIndex = parameterEmbedItem->getParameters()->getModelIndex();
 
-    QModelIndex index = parameters->getModelIndex();
-
-    for(int i=0; i<parameters->getParent()->getNumberOfParameters(); i++)
-      createParameterItem(parameters->getParent()->getParameter(i),index);
+    for(int i=0; i<parameterEmbedItem->getParent()->getNumberOfParameters(); i++)
+      createParameterItem(parameterEmbedItem->getParent()->getParameter(i),parametersIndex);
   }
 
   void ParameterTreeModel::createParameterItem(Parameter *parameter, const QModelIndex &parent) {
@@ -397,7 +409,7 @@ namespace MBSimGUI {
     TreeItem *parentItem = getItem(parent);
 
     int i = rowCount(parent);
-    while(dynamic_cast<Parameters*>(getItem(parent.model()->index(i-1,0,parent))->getItemData())) i--;
+    while(dynamic_cast<ParameterEmbedItem*>(getItem(parent.model()->index(i-1,0,parent))->getItemData())) i--;
     beginInsertRows(parent, i, i);
     TreeItem *item = new TreeItem(parameter,parentItem);
     parentItem->insertChildren(item,i,1);

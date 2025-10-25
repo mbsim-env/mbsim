@@ -40,7 +40,7 @@ namespace MBSimGUI {
 
   Constraint::Constraint() {
     icon = Utils::QIconCached(QString::fromStdString((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"constraint.svg").string()));
-    parameters->setIcon(icon);
+    parameterEmbedItem->setIcon(icon);
   }
 
   UnknownConstraint::UnknownConstraint() {

@@ -63,7 +63,7 @@ namespace MBSimGUI {
 
   Contour::Contour() {
     icon = Utils::QIconCached(QString::fromStdString((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"contour.svg").string()));
-    parameters->setIcon(icon);
+    parameterEmbedItem->setIcon(icon);
   }
 
   DOMElement* Contour::processIDAndHref(DOMElement *element) {

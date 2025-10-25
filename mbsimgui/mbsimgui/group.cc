@@ -42,7 +42,7 @@ namespace MBSimGUI {
 
   Group::Group() : constraints(nullptr), observers(nullptr) {
     icon = Utils::QIconCached(QString::fromStdString((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"group.svg").string()));
-    parameters->setIcon(icon);
+    parameterEmbedItem->setIcon(icon);
     InternalFrame *I = new InternalFrame("I",MBSIM%"enableOpenMBVFrameI",MBSIM%"plotFeatureFrameI");
     addFrame(I);
   }

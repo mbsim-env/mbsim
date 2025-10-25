@@ -32,7 +32,7 @@ namespace MBSimGUI {
 
   Object::Object() {
     icon = Utils::QIconCached(QString::fromStdString((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"body.svg").string()));
-    parameters->setIcon(icon);
+    parameterEmbedItem->setIcon(icon);
   }
 
   UnknownObject::UnknownObject() {

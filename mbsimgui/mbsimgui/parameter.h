@@ -127,18 +127,37 @@ namespace MBSimGUI {
       std::string action;
   };
 
-  class Parameters : public ParameterItem {
+  class Parameters;
+
+  class ParameterEmbedItem : public ParameterItem {
     public:
       // this class is special -> do not use the define MBSIMGUI_OBJECTFACTORY_CLASS
       QString getType() const override { return getParent() ? getParent()->getType() : ""; }
 
-      Parameters(EmbedItemData *parent);
+      ParameterEmbedItem(EmbedItemData *parent);
+      ~ParameterEmbedItem();
       QString getName() const override;
       QString getValue() const override { return ""; }
-      QMenu* createContextMenu() override;
       QString getReference() const override;
       bool hasReference() const override { return parent->hasParameterReference(); }
       void setIcon(const QIcon &icon_) { icon = icon_; }
+      void setParameters(Parameters *parameters_);
+      Parameters* getParameters() { return parameters; }
+    private:
+      Parameters *parameters { nullptr };
+  };
+
+  class Parameters : public ParameterItem {
+    public:
+      // this class is special -> do not use the define MBSIMGUI_OBJECTFACTORY_CLASS
+      QString getType() const override { return "Parameters"; }
+
+      Parameters(EmbedItemData *parent);
+      QString getName() const override { return "Parameters"; }
+      QString getValue() const override { return ""; }
+      QString getReference() const override { return ""; }
+      bool hasReference() const override { return false; }
+      QMenu* createContextMenu() override;
   };
 
 }

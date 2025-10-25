@@ -925,18 +925,21 @@ namespace MBSimGUI {
 
       vector<EmbedItemData*> parents = eleEmbedItem->getEmbedItemParents();
       if(!parents.empty()) {
-        pmodel->createParameterItem(parents[0]->getParameters());
+        pmodel->createParameterItem(parents[0]->getParameterEmbedItem());
         for(size_t i=0; i<parents.size()-1; i++)
-          pmodel->createParameterItem(parents[i+1]->getParameters(),parents[i]->getParameters()->getModelIndex());
-        pmodel->createParameterItem(eleEmbedItem->getParameters(),parents[parents.size()-1]->getParameters()->getModelIndex());
+          pmodel->createParameterItem(parents[i+1]->getParameterEmbedItem(),parents[i]->getParameterEmbedItem()->getModelIndex());
+        pmodel->createParameterItem(eleEmbedItem->getParameterEmbedItem(),parents[parents.size()-1]->getParameterEmbedItem()->getModelIndex());
       }
       else
-        pmodel->createParameterItem(eleEmbedItem->getParameters());
+        pmodel->createParameterItem(eleEmbedItem->getParameterEmbedItem());
       
       if(!showEmptyPars) {
-        auto parIndex = eleEmbedItem->getParameters()->getModelIndex();
+        auto parIndex = eleEmbedItem->getParameterEmbedItem()->getModelIndex();
         do {
           auto parItem = pmodel->getItem(parIndex);
+          auto parametersIndex=static_cast<ParameterEmbedItem*>(parItem->getItemData())->getParameters()->getModelIndex();
+          if(parItem->child(0)->childCount(getParameterView())==0)
+            getParameterView()->setRowHidden(parametersIndex.row(), parametersIndex.parent(), true);
           if(parItem->childCount(getParameterView())==0)
             getParameterView()->setRowHidden(parIndex.row(), parIndex.parent(), true);
           parIndex = parIndex.parent();
@@ -984,8 +987,8 @@ namespace MBSimGUI {
       QModelIndex parIndex;
       TreeItem* parItem { nullptr };
       if(localembeditem) {
-        pmodel->createParameterItem(localembeditem->getParameters(), parParentIndex);
-        parIndex = localembeditem->getParameters()->getModelIndex();
+        pmodel->createParameterItem(localembeditem->getParameterEmbedItem(), parParentIndex);
+        parIndex = localembeditem->getParameterEmbedItem()->getModelIndex();
         parItem = pmodel->getItem(parIndex);
         path.emplace_back(parItem->getItemData()->getName());
       }
@@ -997,14 +1000,27 @@ namespace MBSimGUI {
 
       if(localembeditem) {
         // set the expand state of a created parameter to the value of the old parameter or to true
+        auto parEmbedIndex = parItem->getItemData()->getModelIndex();
         if(auto it=expandState.find(path); it!=expandState.end())
-          parameterView->setExpanded(parItem->getItemData()->getModelIndex(), it->second);
+          parameterView->setExpanded(parEmbedIndex, it->second);
         else
-          parameterView->setExpanded(parItem->getItemData()->getModelIndex(), true);
+          parameterView->setExpanded(parEmbedIndex, true);
+
+        auto parametersIndex=static_cast<ParameterEmbedItem*>(parItem->getItemData())->getParameters()->getModelIndex();
+        auto path2(path);
+        path2.emplace_back("Parameters");
+        if(auto it=expandState.find(path2); it!=expandState.end())
+          parameterView->setExpanded(parametersIndex, it->second);
+        else
+          parameterView->setExpanded(parametersIndex, true);
 
         // hide empty parameters if requested by the user
-        if(!showEmptyPars && parItem->childCount(getParameterView())==0)
-          getParameterView()->setRowHidden(parIndex.row(), parIndex.parent(), true);
+        if(!showEmptyPars) {
+          if(parItem->child(0)->childCount(getParameterView())==0)
+            getParameterView()->setRowHidden(parametersIndex.row(), parametersIndex.parent(), true);
+          if(parItem->childCount(getParameterView())==0)
+            getParameterView()->setRowHidden(parIndex.row(), parIndex.parent(), true);
+        }
       }
     };
     walk2(emodel->getItem(QModelIndex()), QModelIndex(), {});
@@ -1029,7 +1045,7 @@ namespace MBSimGUI {
       if(auto *cont = dynamic_cast<ContainerItemData*>(itemData); cont)
         itemData = model->getItem(current.parent())->getItemData();
       if(auto *ele = dynamic_cast<EmbedItemData*>(itemData); ele)
-        if(auto *par = ele->getParameters(); par)
+        if(auto *par = ele->getParameterEmbedItem(); par)
           parameterView->setCurrentIndex(par->getModelIndex());
     }
   }
@@ -1272,7 +1288,7 @@ namespace MBSimGUI {
       ele = parameterFileItem->getXMLElement();
     else if(embed)
       ele = MBXMLUtils::E(embed)->getFirstElementChildNamed(MBXMLUtils::PV%"Parameter");
-    QModelIndex pindex = project->getSolver()->getParameters()->getModelIndex();
+    QModelIndex pindex = project->getSolver()->getParameterEmbedItem()->getModelIndex();
     static_cast<ParameterTreeModel*>(parameterView->model())->removeRow(pindex.row(), pindex.parent());
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     model->removeRow(project->getSolver()->getModelIndex().row(), project->getModelIndex());
@@ -2008,7 +2024,7 @@ DEF mbsimgui_outdated_switch Switch {
     if(element and (not dynamic_cast<DynamicSystemSolver*>(element)) and (not dynamic_cast<InternalFrame*>(element))) {
       if(element == elementBuffer.first)
         elementBuffer.first = nullptr;
-      QModelIndex pindex = element->getParameters()->getModelIndex();
+      QModelIndex pindex = element->getParameterEmbedItem()->getModelIndex();
       static_cast<ParameterTreeModel*>(parameterView->model())->removeRow(pindex.row(), pindex.parent());
       model->removeRow(index.row(), index.parent());
       element->removeXMLElement();
@@ -2096,7 +2112,7 @@ DEF mbsimgui_outdated_switch Switch {
     else if(parameterView->hasFocus()) {
       auto *model = static_cast<ParameterTreeModel*>(parameterView->model());
       QModelIndex index = parameterView->selectionModel()->currentIndex();
-      auto *item = dynamic_cast<Parameters*>(model->getItem(index)->getItemData());
+      auto *item = dynamic_cast<ParameterEmbedItem*>(model->getItem(index)->getItemData());
       if(item and dynamic_cast<Parameter*>(getParameterBuffer().first) and not dynamic_cast<InternalFrame*>(item->getParent()))
         pasteParameter(item->getParent(),getParameterBuffer().first);
     }
@@ -2447,8 +2463,8 @@ DEF mbsimgui_outdated_switch Switch {
   void MainWindow::exportParameters() {
     auto *model = static_cast<ParameterTreeModel*>(parameterView->model());
     auto index = parameterView->selectionModel()->currentIndex();
-    auto *parameters = static_cast<Parameters*>(model->getItem(index)->getItemData());
-    SaveParameterDialog dialog(getProjectDir().absoluteFilePath(parameters->getParent()->getName()+".mbspx"));
+    auto *parameterEmbedItem = static_cast<ParameterEmbedItem*>(model->getItem(index)->getItemData());
+    SaveParameterDialog dialog(getProjectDir().absoluteFilePath(parameterEmbedItem->getParent()->getName()+".mbspx"));
     int result = dialog.exec();
     if(result and not dialog.getParameterFileName().isEmpty()) {
       QMessageBox::StandardButton ret = QMessageBox::Yes;
@@ -2456,7 +2472,7 @@ DEF mbsimgui_outdated_switch Switch {
 	ret = QMessageBox::question(this, "Replace file", "A file named " + dialog.getParameterFileName() + " already exists. Do you want to replace it?", QMessageBox::Yes | QMessageBox::No);
       if(ret == QMessageBox::Yes) {
 	auto doc = mbxmlparserNoVal->createDocument();
-	DOMNode *node = doc->importNode(parameters->getParent()->getEmbedXMLElement()->getFirstElementChild(),true);
+	DOMNode *node = doc->importNode(parameterEmbedItem->getParent()->getEmbedXMLElement()->getFirstElementChild(),true);
 	doc->insertBefore(node,nullptr);
 	serializer->writeToURI(doc.get(), X()%dialog.getParameterFileName().toStdString());
       }
@@ -2651,7 +2667,7 @@ DEF mbsimgui_outdated_switch Switch {
         param->getXMLElement()->getParentNode()->removeChild(ps);
       param->getXMLElement()->getParentNode()->removeChild(param->getXMLElement());
       auto *model = static_cast<ParameterTreeModel*>(parameterView->model());
-      QModelIndex index = model->findItem(param,project->getParameters()->getModelIndex());
+      QModelIndex index = model->findItem(param,project->getParameterEmbedItem()->getModelIndex());
       if(index.isValid()) model->removeRow(index.row(), index.parent());
       parent->removeParameter(param);
       parent->maybeRemoveEmbedXMLElement();
@@ -2662,9 +2678,9 @@ DEF mbsimgui_outdated_switch Switch {
     parameter->updateValue(true);
     parent->addParameter(parameter);
     parent->updateName();
-    static_cast<ParameterTreeModel*>(parameterView->model())->createParameterItem(parameter,parent->getParameters()->getModelIndex());
+    static_cast<ParameterTreeModel*>(parameterView->model())->createParameterItem(parameter,parent->getParameterEmbedItem()->getModelIndex());
     updateParameterReferences(parent);
-    parameterView->selectionModel()->setCurrentIndex(parent->getParameters()->getModelIndex(), QItemSelectionModel::ClearAndSelect);
+    parameterView->selectionModel()->setCurrentIndex(parent->getParameterEmbedItem()->getModelIndex(), QItemSelectionModel::ClearAndSelect);
     if(getAutoRefresh()) refresh();
   }
 
@@ -2705,10 +2721,10 @@ DEF mbsimgui_outdated_switch Switch {
       parent->createParameters();
       parent->updateName();
       for(int i=0; i<parent->getNumberOfParameters(); i++)
-	static_cast<ParameterTreeModel*>(parameterView->model())->createParameterItem(parent->getParameter(i),parent->getParameters()->getModelIndex());
+	static_cast<ParameterTreeModel*>(parameterView->model())->createParameterItem(parent->getParameter(i),parent->getParameterEmbedItem()->getModelIndex());
       parameterView->scrollToBottom();
       updateParameterReferences(parent);
-      parameterView->selectionModel()->setCurrentIndex(parent->getParameters()->getModelIndex(), QItemSelectionModel::ClearAndSelect);
+      parameterView->selectionModel()->setCurrentIndex(parent->getParameterEmbedItem()->getModelIndex(), QItemSelectionModel::ClearAndSelect);
       if(getAutoRefresh()) refresh();
     }
   }
@@ -2974,7 +2990,7 @@ DEF mbsimgui_outdated_switch Switch {
 
   void MainWindow::createDynamicSystemSolver(DOMElement *ele) {
     if(not ele) return;
-    auto pindex = project->getDynamicSystemSolver()->getParameters()->getModelIndex();
+    auto pindex = project->getDynamicSystemSolver()->getParameterEmbedItem()->getModelIndex();
     static_cast<ParameterTreeModel*>(parameterView->model())->removeRow(pindex.row(), pindex.parent());
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     model->removeRows(0,model->rowCount(project->getModelIndex()),project->getModelIndex());
@@ -2996,7 +3012,7 @@ DEF mbsimgui_outdated_switch Switch {
 
   void MainWindow::createSolver(DOMElement *ele) {
     if(not ele) return;
-    QModelIndex pindex = project->getSolver()->getParameters()->getModelIndex();
+    QModelIndex pindex = project->getSolver()->getParameterEmbedItem()->getModelIndex();
     static_cast<ParameterTreeModel*>(parameterView->model())->removeRow(pindex.row(), pindex.parent());
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     model->removeRow(project->getSolver()->getModelIndex().row(), project->getModelIndex());
@@ -3054,7 +3070,7 @@ DEF mbsimgui_outdated_switch Switch {
   void MainWindow::editParametersSource() {
     if(not editorIsOpen()) {
       QModelIndex index = parameterView->selectionModel()->currentIndex();
-      auto *item = static_cast<Parameters*>(static_cast<ParameterTreeModel*>(parameterView->model())->getItem(index)->getItemData());
+      auto *item = static_cast<ParameterEmbedItem*>(static_cast<ParameterTreeModel*>(parameterView->model())->getItem(index)->getItemData());
       EmbedItemData *parent = item->getParent();
       auto editor = new ParameterXMLPropertyDialog(parent);
       editor->setAttribute(Qt::WA_DeleteOnClose);
@@ -3065,11 +3081,11 @@ DEF mbsimgui_outdated_switch Switch {
           editor->fromWidget();
           int n = parent->getNumberOfParameters();
           for(int i=n-1; i>=0; i--) parent->removeParameter(parent->getParameter(i));
-          QModelIndex index = parent->getParameters()->getModelIndex();
+          QModelIndex index = parent->getParameterEmbedItem()->getModelIndex();
           auto *model = static_cast<ParameterTreeModel*>(parameterView->model());
           model->removeRows(0,n,index);
           parent->createParameters();
-          model->updateParameterItem(parent->getParameters());
+          model->updateParameterItem(parent->getParameterEmbedItem());
           updateParameterReferences(parent);
           if(getAutoRefresh()) refresh();
         }
@@ -3078,11 +3094,11 @@ DEF mbsimgui_outdated_switch Switch {
         editor->fromWidget();
         int n = parent->getNumberOfParameters();
         for(int i=n-1; i>=0; i--) parent->removeParameter(parent->getParameter(i));
-        QModelIndex index = parent->getParameters()->getModelIndex();
+        QModelIndex index = parent->getParameterEmbedItem()->getModelIndex();
         auto *model = static_cast<ParameterTreeModel*>(parameterView->model());
         model->removeRows(0,n,index);
         parent->createParameters();
-        model->updateParameterItem(parent->getParameters());
+        model->updateParameterItem(parent->getParameterEmbedItem());
         updateParameterReferences(parent);
         if(getAutoRefresh()) refresh();
       });

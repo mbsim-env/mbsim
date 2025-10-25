@@ -37,7 +37,7 @@ namespace MBSimGUI {
 
   Solver::Solver() {
     icon = Utils::QIconCached(QString::fromStdString((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"solver.svg").string()));
-    parameters->setIcon(icon);
+    parameterEmbedItem->setIcon(icon);
   }
 
   void Solver::removeXMLElements() {

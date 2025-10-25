@@ -37,7 +37,7 @@ namespace MBSimGUI {
 
   DynamicSystemSolver::DynamicSystemSolver() {
     icon = Utils::QIconCached(QString::fromStdString((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"dss.svg").string()));
-    parameters->setIcon(icon);
+    parameterEmbedItem->setIcon(icon);
   }
 
   void DynamicSystemSolver::removeXMLElements() {

@@ -36,7 +36,7 @@ namespace MBSimGUI {
 
   Project::Project() {
     icon = Utils::QIconCached(QString::fromStdString((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"project.svg").string()));
-    parameters->setIcon(icon);
+    parameterEmbedItem->setIcon(icon);
   }
 
   Project::~Project() {
