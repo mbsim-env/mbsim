@@ -89,11 +89,13 @@ namespace MBSimGUI {
           NewParamLevel npl(mw->eval);
           mw->updateParameters(this->getParent(), this, true);
           try {
-            hidden=mw->eval->cast<int>(mw->eval->eval(X()%pi->getData()));
+            hidden=mw->eval->cast<int>(mw->eval->eval(X()%pi->getData(), getXMLElement()));
           }
           catch(DOMEvalException &ex) {
-            fmatvec::Atom::msgStatic(fmatvec::Atom::Error)<<ex.what()<<endl;
-            cerr<<ex.what()<<endl;
+            mw->setExitBad();
+            fmatvec::Atom::msgStatic(fmatvec::Atom::Error)<<std::flush<<std::skipws<<ex.what()<<std::flush<<std::noskipws<<endl;
+            mw->statusBar()->showMessage(("Enable to evaluate hidden flag: " + ex.getMessage()).c_str());
+            cerr << "Enable to evaluate hidden flag: " << ex.what() << endl;
           }
         }
       }

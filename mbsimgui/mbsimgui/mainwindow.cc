@@ -861,11 +861,10 @@ namespace MBSimGUI {
   }
 
   void MainWindow::manageTemplates() {
-    QString templatesPath = configPath+"templates";
-    if(QFileInfo(templatesPath).exists())
-      QDesktopServices::openUrl(QUrl::fromLocalFile(templatesPath));
-    else
-      QMessageBox::information(this, "Manage project templates", "A project template does not exist yet.");
+    QDir configDir(configPath);
+    if(not configDir.exists("templates"))
+      configDir.mkdir("templates");
+    QDesktopServices::openUrl(QUrl::fromLocalFile(configPath+"templates"));
   }
 
   void MainWindow::highlightObject(const string &ID) {
@@ -1538,7 +1537,8 @@ namespace MBSimGUI {
   void MainWindow::saveMBSimH5DataAs() {
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = model->index(0,0);
-    QString file=QFileDialog::getSaveFileName(this, "Export MBSim H5 file", getProjectDir().absoluteFilePath(model->getItem(index)->getItemData()->getName()+".mbsh5"), "H5 files (*.mbsh5)");
+    QString fileBasename = static_cast<Project*>(model->getItem(index)->getItemData())->getDynamicSystemSolver()->getName();
+    QString file=QFileDialog::getSaveFileName(this, "Export MBSim H5 file", getProjectDir().absoluteFilePath(fileBasename+".mbsh5"), "H5 files (*.mbsh5)");
     if(file!="") {
       saveMBSimH5Data(file);
     }
@@ -2678,9 +2678,9 @@ DEF mbsimgui_outdated_switch Switch {
     parameter->updateValue(true);
     parent->addParameter(parameter);
     parent->updateName();
-    static_cast<ParameterTreeModel*>(parameterView->model())->createParameterItem(parameter,parent->getParameterEmbedItem()->getModelIndex());
+    static_cast<ParameterTreeModel*>(parameterView->model())->createParameterItem(parameter,parent->getParameterEmbedItem()->getParameters()->getModelIndex());
     updateParameterReferences(parent);
-    parameterView->selectionModel()->setCurrentIndex(parent->getParameterEmbedItem()->getModelIndex(), QItemSelectionModel::ClearAndSelect);
+    parameterView->selectionModel()->setCurrentIndex(parameter->getModelIndex(), QItemSelectionModel::ClearAndSelect);
     if(getAutoRefresh()) refresh();
   }
 
@@ -2721,10 +2721,10 @@ DEF mbsimgui_outdated_switch Switch {
       parent->createParameters();
       parent->updateName();
       for(int i=0; i<parent->getNumberOfParameters(); i++)
-	static_cast<ParameterTreeModel*>(parameterView->model())->createParameterItem(parent->getParameter(i),parent->getParameterEmbedItem()->getModelIndex());
+	static_cast<ParameterTreeModel*>(parameterView->model())->createParameterItem(parent->getParameter(i),parent->getParameterEmbedItem()->getParameters()->getModelIndex());
       parameterView->scrollToBottom();
       updateParameterReferences(parent);
-      parameterView->selectionModel()->setCurrentIndex(parent->getParameterEmbedItem()->getModelIndex(), QItemSelectionModel::ClearAndSelect);
+      parameterView->selectionModel()->setCurrentIndex(parent->getParameterEmbedItem()->getParameters()->getModelIndex(), QItemSelectionModel::ClearAndSelect);
       if(getAutoRefresh()) refresh();
     }
   }

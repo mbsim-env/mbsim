@@ -15,6 +15,8 @@ MBSimXML
 - Add extern signal source and sink to mbsim to SWIG.
 - Added more user interruption points to kill a simulation without corrupting the output file, even during preprocessing.
 - Added buildInfo.json content to hdf5 output file. This way one can see the details software version which was used to create the file.
+- Added a "storage" attribute to plot attributes which allows to save plotAttributes as datasets in instead of attributes.
+  This allows e.g. to use compression for plotAttributes (HDF5 uses compression only on datasets but not on attributes)
 
 MBSimFMI
 --------
@@ -37,6 +39,9 @@ MBSimGUI
   speed a lot when the initial projection is expensive (but you will see the none projection model in the 3D scene).
 - Added a button to disable the auto update of the 3D scene. This can be used if you do not need the visual feedback temporarily.
 - Add a label to import parameters (similar to the name of "normal" parameters) just to give a import parameter a name=label
+- The hidden flag for parameters can now use evaluator code which results in true or false. This allows to hide parameters
+  dependent on the value of other parameters.
+- The parameter view now shows the parameters inside a "Parameters" group. This allows all parameters of a element to be collapsed.
 
 H5Plotserie
 -----------
@@ -47,6 +52,7 @@ hdf5serie
 - Added a new write mode to H5::File which does not lock the file during none SWMR mode. This shortens the time the file
   is locked in none SWMR mode which improved the interactivity when a file is used in a GUI. This is done by first writing,
   in none SWMR mode, to another file then rename the file to the original filename and open it in SWMR mode.
+- Allow datasets of type fixed length string. This enables compression on strings.
 
 OpenMBV
 -------
