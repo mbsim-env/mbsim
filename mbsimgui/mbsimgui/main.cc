@@ -52,6 +52,18 @@ namespace {
 
 int main(int argc, char *argv[]) {
 #ifdef _WIN32
+  {
+    ofstream f("c:/temp/mfmf", ios::app);
+    f<<"mfmfxxxxxxxxxxxxxxxxxxx1 "<<GetStdHandle(STD_INPUT_HANDLE)<<endl;
+    f<<"mfmfxxxxxxxxxxxxxxxxxxx1 "<<GetStdHandle(STD_OUTPUT_HANDLE)<<endl;
+    f<<"mfmfxxxxxxxxxxxxxxxxxxx1 "<<GetStdHandle(STD_ERROR_HANDLE)<<endl;
+    SetStdHandle(STD_INPUT_HANDLE, nullptr);
+    SetStdHandle(STD_OUTPUT_HANDLE, nullptr);
+    SetStdHandle(STD_ERROR_HANDLE, nullptr);
+    f<<"mfmfxxxxxxxxxxxxxxxxxxx1 "<<GetStdHandle(STD_INPUT_HANDLE)<<endl;
+    f<<"mfmfxxxxxxxxxxxxxxxxxxx1 "<<GetStdHandle(STD_OUTPUT_HANDLE)<<endl;
+    f<<"mfmfxxxxxxxxxxxxxxxxxxx1 "<<GetStdHandle(STD_ERROR_HANDLE)<<endl;
+  }
   SetConsoleCP(CP_UTF8);
   SetConsoleOutputCP(CP_UTF8);
 #endif
