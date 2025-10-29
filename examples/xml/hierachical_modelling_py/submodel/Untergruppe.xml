@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Group name="Untergruppe" xmlns="http://www.mbsim-env.de/MBSim"
+<Group name="Untergruppe{''}" xmlns="http://www.mbsim-env.de/MBSim"
     xmlns:pv="http://www.mbsim-env.de/MBXMLUtils"
     xmlns:ombv="http://www.mbsim-env.de/OpenMBV">
+    <!-- the above {''} is needed to enforce a parameter evaluation in mbsimgui, just for testing the mbsimgui -->
   <frameOfReference ref="../Frame[Q]"/>
   <frames/>
   <contours/>

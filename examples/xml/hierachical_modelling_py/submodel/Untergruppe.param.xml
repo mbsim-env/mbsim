@@ -1,4 +1,25 @@
 <Parameter xmlns="http://www.mbsim-env.de/MBXMLUtils">
+  <scalarParameter name="checkGUIAndSubprocessCheckOutput">
+    # print if we run in a gui or not
+    import mbxmlutils.Qt
+    if mbxmlutils.Qt.isGUI():
+      print("Called from GUI")
+    else:
+      print("Called from none GUI")
+
+    # check if subprocess.check_output is working, if not do a hard exit to ensure that this test fails
+    # note that subprocess.check_output is quite tricky with regard to windows GUI application where the stdout/stderr handels may be "strange"
+    import subprocess
+    try:
+      out=subprocess.check_output([mbxmlutils.installPrefix()+"/bin/mbsimxml", "-h"]).decode("UTF-8")
+    except:
+      import traceback
+      import sys
+      print(traceback.format_exc())
+      sys.exit(9)
+    print("First line of mbsimxml -h output: "+str(out.splitlines()[0]))
+    ret=0
+  </scalarParameter>
   <scalarParameter name="h1">0.5</scalarParameter>
   <scalarParameter name="h2">h1</scalarParameter>
   <import action="addAllVarsAsParams">import sys; sys.path.append('../'+pathPrefix+'modules'); import mymodule</import>
