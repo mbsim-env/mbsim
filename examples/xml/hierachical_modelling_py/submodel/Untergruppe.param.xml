@@ -1,4 +1,63 @@
 <Parameter xmlns="http://www.mbsim-env.de/MBXMLUtils">
+  <stringParameter name="standardFileHandles">
+    # print the file number and file type of stdin, stdout and stderr
+    import os
+    import sys
+    ret = ""
+    for n in [(sys.__stdin__, "stdin "),(sys.__stdout__, "stdout"),(sys.__stderr__, "stderr")]:
+      try:
+        fileno = n[0].fileno()
+      except:
+        fileno = None
+      try:
+        mode = os.fstat(fileno).st_mode
+      except:
+        mode = None
+      try:
+        isatty = os.isatty(fileno)
+      except:
+        isatty = None
+      ret += f"{n[1]}: fd={fileno}, isatty={isatty}, type="
+      if   mode is not None and mode &amp; 0o0040000 != 0: ret+="Directory\n"
+      elif mode is not None and mode &amp; 0o0020000 != 0: ret+="Character device\n"
+      elif mode is not None and mode &amp; 0o0060000 != 0: ret+="Block device\n"
+      elif mode is not None and mode &amp; 0o0100000 != 0: ret+="Regular file\n"
+      elif mode is not None and mode &amp; 0o0010000 != 0: ret+="FIFO\n"
+      elif mode is not None and mode &amp; 0o0120000 != 0: ret+="Symbolic link\n"
+      elif mode is not None and mode &amp; 0o0140000 != 0: ret+="Socket\n"
+      else:                                                ret+=f"undefined({mode})\n"
+
+    import platform
+    if platform.system()=="Windows":
+      import ctypes
+      import ctypes.wintypes
+      for n in [(-10,"stdin "),(-11,"stdout"),(-12,"stderr")]:
+        h = ctypes.windll.kernel32.GetStdHandle(n[0])
+        ctypes.windll.kernel32.GetHandleInformation.argtypes=[ctypes.wintypes.HANDLE, ctypes.POINTER(ctypes.wintypes.DWORD)]
+        ctypes.windll.kernel32.GetHandleInformation.restype=ctypes.wintypes.BOOL
+        flags = ctypes.wintypes.DWORD()
+        hvalid = ctypes.windll.kernel32.GetHandleInformation(n[0], ctypes.byref(flags))
+        ctypes.windll.kernel32.SetLastError(0)
+        ft = ctypes.windll.kernel32.GetFileType(h)
+        err = ctypes.windll.kernel32.GetLastError()
+        ret += f"Windows {n[1]}: handle={h}, filetype="
+        if   ft == 0x0002: ret+="Console"
+        elif ft == 0x0001: ret+="Regular file"
+        elif ft == 0x0003: ret+="PIPE"
+        elif ft == 0x0000: ret+="Unknown"
+        else:              ret+=f"undefined({ft})"
+        ret+=f", lastError={err}, handleValid={hvalid}\n"
+    print(ret)
+  </stringParameter>
+  <stringParameter name="checkGUI">
+    # print if we run in a gui or not
+    import mbxmlutils.Qt
+    if mbxmlutils.Qt.isGUI():
+      ret="Called from GUI"
+    else:
+      ret="Called from none GUI"
+    print(ret)
+  </stringParameter>
   <stringParameter name="checkSubprocessCheckOutput">
     # check if subprocess.check_output is working, if not do a hard exit to ensure that this test fails
     # note that subprocess.check_output is quite tricky with regard to windows GUI application where the stdout/stderr handels may be "strange"
@@ -13,15 +72,6 @@
       sys.exit(9)
     ret=out.splitlines()[0]
     print("First line of mbsimxml -h output: "+str(ret))
-  </stringParameter>
-  <stringParameter name="checkGUI">
-    # print if we run in a gui or not
-    import mbxmlutils.Qt
-    if mbxmlutils.Qt.isGUI():
-      ret="Called from GUI"
-    else:
-      ret="Called from none GUI"
-    print(ret)
   </stringParameter>
   <scalarParameter name="h1">0.5</scalarParameter>
   <scalarParameter name="h2">h1</scalarParameter>
