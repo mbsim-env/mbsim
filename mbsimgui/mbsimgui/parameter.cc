@@ -30,6 +30,7 @@
 #include "fileitemdata.h"
 #include "mainwindow.h"
 #include "xercesc/dom/DOMProcessingInstruction.hpp"
+#include "dialogs.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -94,8 +95,12 @@ namespace MBSimGUI {
           catch(DOMEvalException &ex) {
             mw->setExitBad();
             fmatvec::Atom::msgStatic(fmatvec::Atom::Error)<<std::flush<<std::skipws<<ex.what()<<std::flush<<std::noskipws<<endl;
-            mw->statusBar()->showMessage(("Enable to evaluate hidden flag: " + ex.getMessage()).c_str());
+            mw->statusBar()->showMessage(("Unable to evaluate hidden flag: " + ex.getMessage()).c_str());
             cerr << "Enable to evaluate hidden flag: " << ex.what() << endl;
+            if(HiddenParErrorDialog::show) {
+              auto diag = new HiddenParErrorDialog(mw, E(getXMLElement())->getRootXPathExpression().c_str(), ex.what());
+              diag->exec();
+            }
           }
         }
       }

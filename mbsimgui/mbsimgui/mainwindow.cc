@@ -554,6 +554,8 @@ namespace MBSimGUI {
         cout<<allOutput.toStdString();
         close();
       });
+      // do how show the error dialog if a hidden parameter cannot be evaluated
+      HiddenParErrorDialog::show = false;
     }
 
     setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
