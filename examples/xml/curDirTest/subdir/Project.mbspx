@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<Parameter xmlns="http://www.mbsim-env.de/MBXMLUtils">
+  <stringParameter name="stringParameter">
+    ret="dummy"
+    import os
+    if not os.path.exists("./Project.mbspx"):
+      raise RuntimeError(f"File './Project.mbspx' not found; cwd={os.getcwd()} should be '.../subdir'")
+  </stringParameter>
+</Parameter>
