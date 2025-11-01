@@ -222,10 +222,11 @@ namespace MBSimGUI {
             if(uniqueNames.insert(curName).second) // only add unique names
               name += QString(" ❙ ") + QString::fromStdString(curName);
           }
-          catch(DOMEvalException &e) {
+          catch(exception &ex) {
             mw->setExitBad();
-            mw->statusBar()->showMessage(("Cannot evaluate element name to string: " + e.getMessage()).c_str());
-            std::cerr << "Cannot evaluate element name to string: " << e.getMessage() << std::endl;
+            auto msg = dynamic_cast<DOMEvalException*>(&ex) ? static_cast<DOMEvalException&>(ex).getMessage() : ex.what();
+            mw->statusBar()->showMessage(("Cannot evaluate element name to string: " + msg).c_str());
+            std::cerr << "Cannot evaluate element name to string: " << msg << std::endl;
           }
           catch(...) {
             mw->setExitBad();

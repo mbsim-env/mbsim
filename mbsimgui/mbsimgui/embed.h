@@ -98,7 +98,7 @@ namespace MBSimGUI {
 	    try {
 	      object=create(ele2);
 	    }
-	    catch(std::exception &ex) {
+	    catch(...) {
 	      return nullptr;
 	    }
 	    object->setXMLElement(ele2);
@@ -107,7 +107,7 @@ namespace MBSimGUI {
             try {
 	      object->createParameters();
             }
-	    catch(std::exception &ex) {
+	    catch(...) {
 	      return nullptr;
 	    }
 	    object->setFileItem(fileItem);
@@ -116,7 +116,7 @@ namespace MBSimGUI {
 	    try {
 	      object=create(ele1);
 	    }
-	    catch(std::exception &ex) {
+	    catch(...) {
 	      return nullptr;
 	    }
             object->setXMLElement(ele1);

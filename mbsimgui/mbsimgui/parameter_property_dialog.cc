@@ -112,6 +112,14 @@ namespace MBSimGUI {
     parameter->updateValue();
   }
 
+  void ParameterPropertyDialog::showEvent(QShowEvent *ev) {
+    mw->setCurrentlyEditedItem(parameter);
+  }
+
+  void ParameterPropertyDialog::hideEvent(QHideEvent *ev) {
+    mw->setCurrentlyEditedItem(nullptr);
+  }
+
   StringParameterPropertyDialog::StringParameterPropertyDialog(Parameter *parameter) : ParameterPropertyDialog(parameter) {
     value = new ExtWidget("Value",new ExtStringWidget(dynamic_cast<Element*>(parameter->getParent())),false,false,"");
     addToTab("General", value);

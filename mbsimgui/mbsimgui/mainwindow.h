@@ -190,6 +190,8 @@ namespace MBSimGUI {
       QMetaObject::Connection processRefreshFinishedConnection;
       void updateEchoViewSlot(const QByteArray &data);
       void updateStatusMessageSlot(const QByteArray &data);
+
+      TreeItemData* currentlyEditedItem { nullptr };
     Q_SIGNALS:
       void updateEchoView(const QByteArray &data);
       void updateStatusMessage(const QByteArray &data);
@@ -350,6 +352,9 @@ namespace MBSimGUI {
       // This just reverts the actions on the MainWindow taken by prepareForPropertyDialogOpen().
       void prepareForPropertyDialogClose();
       static void updateNameOfCorrespondingElementAndItsChilds(const QModelIndex &index);
+
+      void setCurrentlyEditedItem(TreeItemData *item) { currentlyEditedItem = item; }
+      TreeItemData* getCurrentlyEditedItem() { return currentlyEditedItem; }
 
       // Creates a variable on the stack which's ctor saves the current mw->eval and instantiates a new
       // evaluator on mw->eval. The dtor restores the saved evaluator on mw->eval.

@@ -46,7 +46,7 @@ namespace MBSimGUI {
       void setParent(EmbedItemData* parent_) { parent = parent_; }
       EmbedItemData *getParent() const { return parent; }
       QString getReference() const override { return ""; }
-      xercesc::DOMElement* getXMLElement() { return element; }
+      xercesc::DOMElement* getXMLElement() override { return element; }
       void setXMLElement(xercesc::DOMElement *element_) { element = element_; }
       void removeXMLElements();
       static std::vector<Parameter*> createParameters(xercesc::DOMElement *element);

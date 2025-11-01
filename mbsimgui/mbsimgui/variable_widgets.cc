@@ -47,7 +47,7 @@ namespace MBSimGUI {
   vector<vector<QString>> VariableWidget::getEvalMat() const {
     if(getValue().isEmpty())
       return vector<vector<QString>>();
-    QString str = QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(getValue().toStdString(),mw->getProject()->getXMLElement())));
+    QString str = QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(getValue().toStdString(),mw->getCurrentlyEditedItem()->getXMLElement())));
     if(getVarType()==0) {
       str = removeWhiteSpace(str);
       return strToMat(str);
@@ -75,7 +75,7 @@ namespace MBSimGUI {
   }
 
   vector<vector<QString>> StringWidget::getEvalMat() const {
-    return vector<vector<QString>>(1,vector<QString>(1,QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(getValue().toStdString(),mw->getProject()->getXMLElement())))));
+    return vector<vector<QString>>(1,vector<QString>(1,QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(getValue().toStdString(),mw->getCurrentlyEditedItem()->getXMLElement())))));
   }
 
   DOMElement* StringWidget::initializeUsingXML(DOMElement *element) {
@@ -124,7 +124,7 @@ namespace MBSimGUI {
   }
 
   vector<vector<QString>> BoolWidget::getEvalMat() const {
-    return vector<vector<QString>>(1,vector<QString>(1,QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(getValue().toStdString(),mw->getProject()->getXMLElement())))));
+    return vector<vector<QString>>(1,vector<QString>(1,QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(getValue().toStdString(),mw->getCurrentlyEditedItem()->getXMLElement())))));
   }
 
   DOMElement* BoolWidget::initializeUsingXML(DOMElement *element) {
@@ -191,7 +191,7 @@ namespace MBSimGUI {
   }
 
   vector<vector<QString>> ScalarWidget::getEvalMat() const {
-    return vector<vector<QString>>(1,vector<QString>(1,QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(getValue().toStdString(),mw->getProject()->getXMLElement())))));
+    return vector<vector<QString>>(1,vector<QString>(1,QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(getValue().toStdString(),mw->getCurrentlyEditedItem()->getXMLElement())))));
   }
 
   DOMElement* ScalarWidget::initializeUsingXML(DOMElement *element) {
@@ -216,8 +216,9 @@ namespace MBSimGUI {
   vector<vector<QString>> BasicVecWidget::getEvalMat() const {
     vector<QString> x = getVec();
     vector<vector<QString>> A(x.size(),vector<QString>(1));
-    for(size_t i=0; i<x.size(); i++)
-      A[i][0] = QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(x[i].toStdString(),mw->getProject()->getXMLElement())));
+    for(size_t i=0; i<x.size(); i++) {
+      A[i][0] = QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(x[i].toStdString(),mw->getCurrentlyEditedItem()->getXMLElement())));
+                                                                                                                                                              }
     return A;
   }
 
@@ -431,8 +432,9 @@ namespace MBSimGUI {
   vector<vector<QString>> BasicMatWidget::getEvalMat() const {
     vector<vector<QString>> A = getMat();
     for(auto & i : A)
-      for(size_t j=0; j<i.size(); j++)
-        i[j] = QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(i[j].toStdString(),mw->getProject()->getXMLElement())));
+      for(size_t j=0; j<i.size(); j++) {
+        i[j] = QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(i[j].toStdString(),mw->getCurrentlyEditedItem()->getXMLElement())));
+                                                                                                                                                             }
     return A;
   }
 
@@ -1021,8 +1023,9 @@ namespace MBSimGUI {
   vector<vector<QString>> CardanWidget::getEvalMat() const {
     vector<QString> x = getAngles();
     vector<vector<QString>> A(x.size(),vector<QString>(1));
-    for(size_t i=0; i<x.size(); i++)
-      A[i][0] = QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(x[i].toStdString(),mw->getProject()->getXMLElement())));
+    for(size_t i=0; i<x.size(); i++) {
+      A[i][0] = QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(x[i].toStdString(),mw->getCurrentlyEditedItem()->getXMLElement())));
+    }
     return A;
   }
 
@@ -1090,7 +1093,7 @@ namespace MBSimGUI {
   }
 
   vector<vector<QString>> AboutXWidget::getEvalMat() const {
-    return vector<vector<QString>>(1,vector<QString>(1,QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(getValue().toStdString(),mw->getProject()->getXMLElement())))));
+    return vector<vector<QString>>(1,vector<QString>(1,QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(getValue().toStdString(),mw->getCurrentlyEditedItem()->getXMLElement())))));
   }
 
   DOMElement* AboutXWidget::initializeUsingXML(DOMElement *parent) {
@@ -1142,7 +1145,7 @@ namespace MBSimGUI {
   }
 
   vector<vector<QString>> AboutYWidget::getEvalMat() const {
-    return vector<vector<QString>>(1,vector<QString>(1,QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(getValue().toStdString(),mw->getProject()->getXMLElement())))));
+    return vector<vector<QString>>(1,vector<QString>(1,QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(getValue().toStdString(),mw->getCurrentlyEditedItem()->getXMLElement())))));
   }
 
   DOMElement* AboutYWidget::initializeUsingXML(DOMElement *parent) {
@@ -1194,7 +1197,7 @@ namespace MBSimGUI {
   }
 
   vector<vector<QString>> AboutZWidget::getEvalMat() const {
-    return vector<vector<QString>>(1,vector<QString>(1,QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(getValue().toStdString(),mw->getProject()->getXMLElement())))));
+    return vector<vector<QString>>(1,vector<QString>(1,QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(getValue().toStdString(),mw->getCurrentlyEditedItem()->getXMLElement())))));
   }
 
   DOMElement* AboutZWidget::initializeUsingXML(DOMElement *parent) {
@@ -1246,10 +1249,11 @@ namespace MBSimGUI {
       EvalDialog evalDialog(widget);
       evalDialog.exec();
     }
-    catch(MBXMLUtils::DOMEvalException &e) {
+    catch(exception &ex) {
       mw->setExitBad();
-      QMessageBox::warning(this, "Expression evaluation", QString::fromStdString(e.getMessage()));
-      cerr<<"Error: Expression evaluation "<<e.getMessage()<<endl;
+      auto msg = dynamic_cast<DOMEvalException*>(&ex) ? static_cast<DOMEvalException&>(ex).getMessage() : ex.what();
+      QMessageBox::warning(this, "Expression evaluation", QString::fromStdString(msg));
+      cerr<<"Error: Expression evaluation "<<msg<<endl;
     }
     catch(...) {
       mw->setExitBad();
@@ -1315,7 +1319,7 @@ namespace MBSimGUI {
 
   vector<vector<QString>> FromFileWidget::getEvalMat() const {
     vector<MBXMLUtils::Eval::Value> args(1);
-    args[0] = mw->eval->stringToValue((path->isChecked()?getFile():mw->getProjectDir().absoluteFilePath(getFile())).toStdString(),mw->getProject()->getXMLElement(),false);
+    args[0] = mw->eval->stringToValue((path->isChecked()?getFile():mw->getProjectDir().absoluteFilePath(getFile())).toStdString(),mw->getCurrentlyEditedItem()->getXMLElement(),false);
     auto ret = mw->eval->callFunction("load",args);
     auto str = QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(ret));
     str = removeWhiteSpace(str);

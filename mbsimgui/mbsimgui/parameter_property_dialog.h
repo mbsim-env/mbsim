@@ -39,6 +39,8 @@ namespace MBSimGUI {
       static std::vector<std::pair<std::string, std::string>> getMBSimGUIContextActions(xercesc::DOMElement *parent);
       void toWidget() override;
       void fromWidget() override;
+      void showEvent(QShowEvent *ev) override;
+      void hideEvent(QHideEvent *ev) override;
     protected:
       Parameter *parameter;
       ExtWidget *name;

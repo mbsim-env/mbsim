@@ -109,6 +109,8 @@ namespace MBSimGUI {
       EmbedItemData* getItem() const { return item; }
       void toWidget() override;
       void fromWidget() override;
+      void showEvent(QShowEvent *ev) override;
+      void hideEvent(QHideEvent *ev) override;
     protected:
       EmbedItemData *item;
     private:

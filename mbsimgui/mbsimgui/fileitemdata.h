@@ -40,7 +40,7 @@ namespace MBSimGUI {
 
       const QFileInfo& getFileInfo() const { return fileInfo; }
       std::shared_ptr<xercesc::DOMDocument> getXMLDocument() { return doc; }
-      xercesc::DOMElement *getXMLElement() { return doc->getDocumentElement(); }
+      xercesc::DOMElement *getXMLElement() override { return doc->getDocumentElement(); }
 
       void addReference(EmbedItemData *item) { ref.push_back(item); }
       void removeReference(EmbedItemData *item);

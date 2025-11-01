@@ -92,13 +92,24 @@ namespace MBSimGUI {
           try {
             hidden=mw->eval->cast<int>(mw->eval->eval(X()%pi->getData(), getXMLElement()));
           }
-          catch(DOMEvalException &ex) {
+          catch(std::exception &ex) {
             mw->setExitBad();
             fmatvec::Atom::msgStatic(fmatvec::Atom::Error)<<std::flush<<std::skipws<<ex.what()<<std::flush<<std::noskipws<<endl;
-            mw->statusBar()->showMessage(("Unable to evaluate hidden flag: " + ex.getMessage()).c_str());
+            auto msg = dynamic_cast<DOMEvalException*>(&ex) ? static_cast<DOMEvalException&>(ex).getMessage() : ex.what();
+            mw->statusBar()->showMessage(("Unable to evaluate hidden flag: " + msg).c_str());
             cerr << "Enable to evaluate hidden flag: " << ex.what() << endl;
             if(HiddenParErrorDialog::show) {
               auto diag = new HiddenParErrorDialog(mw, E(getXMLElement())->getRootXPathExpression().c_str(), ex.what());
+              diag->exec();
+            }
+          }
+          catch(...) {
+            mw->setExitBad();
+            fmatvec::Atom::msgStatic(fmatvec::Atom::Error)<<"Unknown exception"<<endl;
+            mw->statusBar()->showMessage("Unknown exception");
+            cerr << "Unknown exception" << endl;
+            if(HiddenParErrorDialog::show) {
+              auto diag = new HiddenParErrorDialog(mw, E(getXMLElement())->getRootXPathExpression().c_str(), "Unknown exception");
               diag->exec();
             }
           }

@@ -1242,15 +1242,15 @@ namespace MBSimGUI {
       if(modifyStatus) setWindowModified(false);
       return true;
     }
-    catch(const std::exception &ex) {
-      mw->setExitBad();
-      mw->statusBar()->showMessage(ex.what());
-      cerr << ex.what() << endl;
-    }
     catch(const DOMException &ex) {
       mw->setExitBad();
       mw->statusBar()->showMessage((X()%ex.getMessage()).c_str());
       cerr << X()%ex.getMessage() << endl;
+    }
+    catch(const std::exception &ex) {
+      mw->setExitBad();
+      mw->statusBar()->showMessage(ex.what());
+      cerr << ex.what() << endl;
     }
     catch(...) {
       mw->setExitBad();
@@ -1390,11 +1390,12 @@ namespace MBSimGUI {
     // helper to catch errors, print it to the statusBar and continue if catchErrors is true.
     // if catchErrors is false the exception is rethrown.
     #define CATCH(msg) \
-      catch(DOMEvalException &e) { \
+      catch(exception &ex) { \
         if(catchErrors) { \
+          auto exmsg = dynamic_cast<DOMEvalException*>(&ex) ? static_cast<DOMEvalException&>(ex).getMessage() : ex.what(); \
           mw->setExitBad(); \
-          mw->statusBar()->showMessage(e.getMessage().c_str()); \
-          std::cerr << msg << ": " << e.getMessage() << std::endl; \
+          mw->statusBar()->showMessage(exmsg.c_str()); \
+          std::cerr << msg << ": " << exmsg << std::endl; \
         } \
         else \
           throw e; \
@@ -3533,15 +3534,15 @@ DEF mbsimgui_outdated_switch Switch {
       serializer->writeToURI(file[i]->getXMLDocument().get(), X()%file[i]->getFileInfo().absoluteFilePath().toStdString());
       file[i]->setModified(false);
     }
-    catch(const std::exception &ex) {
-      mw->setExitBad();
-      mw->statusBar()->showMessage(ex.what());
-      cerr << ex.what() << endl;
-    }
     catch(const DOMException &ex) {
       mw->setExitBad();
       mw->statusBar()->showMessage((X()%ex.getMessage()).c_str());
       cerr << X()%ex.getMessage() << endl;
+    }
+    catch(const std::exception &ex) {
+      mw->setExitBad();
+      mw->statusBar()->showMessage(ex.what());
+      cerr << ex.what() << endl;
     }
     catch(...) {
       mw->setExitBad();

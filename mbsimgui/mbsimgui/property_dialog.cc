@@ -136,6 +136,14 @@ namespace MBSimGUI {
     writeXMLFile(item->getXMLElement());
   }
 
+  void EmbedItemPropertyDialog::showEvent(QShowEvent *ev) {
+    mw->setCurrentlyEditedItem(item);
+  }
+
+  void EmbedItemPropertyDialog::hideEvent(QHideEvent *ev) {
+    mw->setCurrentlyEditedItem(nullptr);
+  }
+
   UnknownItemPropertyDialog::UnknownItemPropertyDialog(EmbedItemData *item) : EmbedItemPropertyDialog("Element Properties", item) {
     addTab("General");
     editor = new ExtWidget("XML Editor",new XMLEditorWidget);
