@@ -354,25 +354,22 @@ int main(int argc, char *argv[]) {
 
         // check Embed elements
         {
-          auto checkEmbed = [](xercesc::DOMElement *e, const FQN &eleName, bool allowHref) {
+          auto checkEmbed = [](xercesc::DOMElement *e, const FQN &eleName) {
             if(E(e)->getTagName()==PV%"Embed") {
               if(E(e)->hasAttribute("counterName") || E(e)->hasAttribute("count") ||
                  (E(e)->hasAttribute("onlyif") && E(e)->getAttribute("onlyif")!="1"))
                 throw runtime_error("A Embed element on "+eleName.second+" level is not allowed to have a counterName, count or onlyif attribute.");
-              if(!allowHref && E(e)->hasAttribute("href"))
-                throw runtime_error("A Embed element on "+eleName.second+" level is not allowed to have a href attribute.");
             }
           };
 
           auto root = preprocess.getDOMDocument()->getDocumentElement();
           xercesc::DOMElement *mbsimProject;
-          checkEmbed(root, PV%"MBSimProject", false);
           if(E(root)->getTagName()==PV%"Embed")
             mbsimProject = root->getLastElementChild();
           else
             mbsimProject = root;
-          checkEmbed(mbsimProject->getFirstElementChild(), MBSIM%"DynamicSystemSolver", true);
-          checkEmbed(mbsimProject->getLastElementChild(), MBSIM%"Solver", true);
+          checkEmbed(mbsimProject->getFirstElementChild(), MBSIM%"DynamicSystemSolver");
+          checkEmbed(mbsimProject->getLastElementChild(), MBSIM%"Solver");
         }
 
         // create parameter override ParamSet
