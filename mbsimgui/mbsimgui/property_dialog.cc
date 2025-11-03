@@ -145,7 +145,6 @@ namespace MBSimGUI {
     mw->setCurrentlyEditedItem(nullptr);
     PropertyDialog::hideEvent(ev);
   }
-  }
 
   UnknownItemPropertyDialog::UnknownItemPropertyDialog(EmbedItemData *item) : EmbedItemPropertyDialog("Element Properties", item) {
     addTab("General");
