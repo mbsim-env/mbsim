@@ -123,25 +123,39 @@ namespace MBSim {
     else if(stage==plotting) {
       if(plotFeature[openMBV] && openMBVRigidBody) {
 	vector<vector<double>> vp;
-        vp.resize(51*51);
-        for (int i=0; i<51; i++) {
-          double eta = etaNodes[0] + (etaNodes[etaNodes.size()-1]-etaNodes[0])*i/50.;
-          for (int j=0; j<51; j++) {
-            double xi = xiNodes[0] + (xiNodes[xiNodes.size()-1]-xiNodes[0])*j/50.;
+        vector<double> ombvEtaNodes = ombv->getEtaNodes();
+        vector<double> ombvXiNodes = ombv->getXiNodes();
+        if(not(ombvEtaNodes.size())) {
+          ombvEtaNodes.resize(51);
+          for(unsigned int i=0; i<ombvEtaNodes.size(); i++)
+            ombvEtaNodes[i] = etaNodes[0] + (etaNodes[etaNodes.size()-1]-etaNodes[0])*i/50.;
+        }
+        if(not(ombvXiNodes.size())) {
+          ombvXiNodes.resize(51);
+          for(unsigned int i=0; i<ombvXiNodes.size(); i++)
+            ombvXiNodes[i] = xiNodes[0] + (xiNodes[xiNodes.size()-1]-xiNodes[0])*i/50.;
+        }
+        int m = ombvEtaNodes.size();
+        int n = ombvXiNodes.size();
+        vp.resize(m*n);
+        for (int i=0; i<m; i++) {
+          double eta = ombvEtaNodes[i];
+          for (int j=0; j<n; j++) {
+            double xi = ombvXiNodes[j];
             auto yzi = r0+(*fyz)(xi);
-            vp[i*51+j].push_back(yzi(1)*sin(eta));
-            vp[i*51+j].push_back(yzi(0));
-            vp[i*51+j].push_back(yzi(1)*cos(eta));
+            vp[i*n+j].push_back(yzi(1)*sin(eta));
+            vp[i*n+j].push_back(yzi(0));
+            vp[i*n+j].push_back(yzi(1)*cos(eta));
           }
         }
-	vector<int> indices(5*50*50);
+	vector<int> indices(5*(m-1)*(n-1));
 	int k=0;
-	for(int i=0; i<50; i++) {
-	  for(int j=0; j<50; j++) {
-	    indices[k+2] = i*51+j;
-	    indices[k+1] = i*51+j+1;
-	    indices[k+3] = (i+1)*51+j;
-	    indices[k] = (i+1)*51+j+1;
+	for(int i=0; i<m-1; i++) {
+	  for(int j=0; j<n-1; j++) {
+	    indices[k+2] = i*n+j;
+	    indices[k+1] = i*n+j+1;
+	    indices[k+3] = (i+1)*n+j;
+	    indices[k] = (i+1)*n+j+1;
 	    indices[k+4] = -1;
 	    k+=5;
 	  }
@@ -171,7 +185,7 @@ namespace MBSim {
     if(e) setOpenXi(E(e)->getText<bool>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
-      auto ombv = shared_ptr<OpenMBVSpatialContour>(new OpenMBVSpatialContour);
+      ombv = shared_ptr<OpenMBVSpatialContour>(new OpenMBVSpatialContour);
       ombv->initializeUsingXML(e);
       openMBVRigidBody=ombv->createOpenMBV();
     }

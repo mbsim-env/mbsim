@@ -62,6 +62,7 @@ namespace MBSim {
       Function<fmatvec::Vec2(double)> *fyz{nullptr};
       bool openEta{false};
       bool openXi{true};
+      std::shared_ptr<OpenMBVSpatialContour> ombv;
   };
 
 }

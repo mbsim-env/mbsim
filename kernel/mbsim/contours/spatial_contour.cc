@@ -89,12 +89,13 @@ namespace MBSim {
           for(unsigned int i=0; i<ombvXiNodes.size(); i++)
             ombvXiNodes[i] = xiNodes[0] + (xiNodes[xiNodes.size()-1]-xiNodes[0])*i/50.;
         }
-        vector<vector<double>> vp(ombvEtaNodes.size()*ombvXiNodes.size());
-        Vec2 zeta(NONINIT);
+        int m = ombvEtaNodes.size();
         int n = ombvXiNodes.size();
-        for (unsigned int i=0; i<ombvEtaNodes.size(); i++) {
+        vector<vector<double>> vp(m*n);
+        Vec2 zeta(NONINIT);
+        for (int i=0; i<m; i++) {
           zeta(0) = ombvEtaNodes[i];
-          for (unsigned int j=0; j<ombvXiNodes.size(); j++) {
+          for (int j=0; j<n; j++) {
             zeta(1) = ombvXiNodes[j];
             const Vec3 CrPC=(*funcCrPC)(zeta);
             vp[i*n+j].push_back(CrPC(0));
@@ -102,14 +103,14 @@ namespace MBSim {
             vp[i*n+j].push_back(CrPC(2));
           }
         }
-        vector<int> indices(5*(ombvEtaNodes.size()-1)*(ombvXiNodes.size()-1));
+        vector<int> indices(5*(m-1)*(n-1));
         int k=0;
-        for(unsigned int i=0; i<ombvEtaNodes.size()-1; i++) {
-          for(unsigned int j=0; j<ombvXiNodes.size()-1; j++) {
-            indices[k+2] = i*ombvXiNodes.size()+j;
-            indices[k+1] = i*ombvXiNodes.size()+j+1;
-            indices[k+3] = (i+1)*ombvXiNodes.size()+j;
-            indices[k] = (i+1)*ombvXiNodes.size()+j+1;
+        for(int i=0; i<m-1; i++) {
+          for(int j=0; j<n-1; j++) {
+            indices[k+2] = i*n+j;
+            indices[k+1] = i*n+j+1;
+            indices[k+3] = (i+1)*n+j;
+            indices[k] = (i+1)*n+j+1;
             indices[k+4] = -1;
             k+=5;
           }

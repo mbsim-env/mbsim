@@ -4141,7 +4141,7 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:group ref="OpenMBVColoredBodyParameters"/>
+              <xs:group ref="OpenMBVSpatialContourParameters"/>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
@@ -4230,7 +4230,7 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:group ref="OpenMBVColoredBodyParameters"/>
+              <xs:group ref="OpenMBVSpatialContourParameters"/>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
