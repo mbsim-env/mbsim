@@ -138,10 +138,13 @@ namespace MBSimGUI {
 
   void EmbedItemPropertyDialog::showEvent(QShowEvent *ev) {
     mw->setCurrentlyEditedItem(item);
+    PropertyDialog::showEvent(ev);
   }
 
   void EmbedItemPropertyDialog::hideEvent(QHideEvent *ev) {
     mw->setCurrentlyEditedItem(nullptr);
+    PropertyDialog::hideEvent(ev);
+  }
   }
 
   UnknownItemPropertyDialog::UnknownItemPropertyDialog(EmbedItemData *item) : EmbedItemPropertyDialog("Element Properties", item) {

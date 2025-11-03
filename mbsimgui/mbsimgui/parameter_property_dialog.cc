@@ -114,10 +114,12 @@ namespace MBSimGUI {
 
   void ParameterPropertyDialog::showEvent(QShowEvent *ev) {
     mw->setCurrentlyEditedItem(parameter);
+    PropertyDialog::showEvent(event);
   }
 
   void ParameterPropertyDialog::hideEvent(QHideEvent *ev) {
     mw->setCurrentlyEditedItem(nullptr);
+    PropertyDialog::hideEvent(event);
   }
 
   StringParameterPropertyDialog::StringParameterPropertyDialog(Parameter *parameter) : ParameterPropertyDialog(parameter) {
