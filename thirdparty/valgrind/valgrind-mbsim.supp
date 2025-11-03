@@ -707,3 +707,45 @@
    ...
    fun:PyInit_QtWidgets
 }
+{
+   python module loading
+   Memcheck:Leak
+   match-leak-kinds: definite
+   ...
+   fun:PyImport_Import
+   fun:PyImport_ImportModule
+   fun:_ZN9PythonCpp6callPyIP7_objectJPKcEJRNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEEENS_10MapRetTypeIT_E4typeES4_iPFSD_DpT0_EDpOT1_
+   fun:_ZN5MBSim18getMBSimXMLCatalogERKSt3setIN5boost10filesystem4pathESt4lessIS3_ESaIS3_EE
+}
+{
+   Qt init
+   Memcheck:Leak
+   match-leak-kinds: possible
+   ...
+   fun:tls_get_addr_tail
+   fun:__tls_get_addr
+   obj:/usr/lib/x86_64-linux-gnu/libQt5Core.so.5.15.8
+}
+{
+   PySide2
+   Memcheck:Leak
+   match-leak-kinds: possible
+   ...
+   fun:_ZN19QApplicationPrivate4initEv
+   obj:/usr/lib/python3/dist-packages/PySide2/QtWidgets.cpython-311-x86_64-linux-gnu.so
+}
+{
+   xercesc
+   Memcheck:Leak
+   match-leak-kinds: possible
+   ...
+   fun:_ZN11xercesc_3_215DOMLSParserImplC1EPNS_12XMLValidatorEPNS_13MemoryManagerEPNS_14XMLGrammarPoolE
+   fun:_ZN11xercesc_3_221DOMImplementationImpl14createLSParserENS_19DOMImplementationLS23DOMImplementationLSModeEPKDsPNS_13MemoryManagerEPNS_14XMLGrammarPoolE
+}
+{
+   Qt
+   Memcheck:Leak
+   match-leak-kinds: definite
+   ...
+   fun:_ZN5QIconC1ERK7QString
+}
