@@ -20,6 +20,7 @@
 #include <config.h>
 #include "treeitem.h"
 #include "parameter.h"
+#include "qtreeview.h"
 
 namespace MBSimGUI {
 
@@ -71,6 +72,20 @@ namespace MBSimGUI {
       delete childItems.takeAt(position);
 
     return true;
+  }
+
+  int TreeItem::childCount(QTreeView *model) const {
+    if(model==nullptr)
+      return childItems.count();
+
+    int count=0;
+    for(auto &ci : childItems) {
+      auto index = ci->getItemData()->getModelIndex();
+      if(model->isRowHidden(index.row(), index.parent()))
+        continue;
+      count++;
+    }
+    return count;
   }
 
 }

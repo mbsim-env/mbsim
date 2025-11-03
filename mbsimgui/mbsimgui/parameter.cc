@@ -24,10 +24,13 @@
 #include "parameter.h"
 #include "objectfactory.h"
 #include "parameter_property_dialog.h"
+#include "parameter_embed_item_context_menu.h"
 #include "parameter_view.h"
 #include "utils.h"
 #include "fileitemdata.h"
 #include "mainwindow.h"
+#include "xercesc/dom/DOMProcessingInstruction.hpp"
+#include "dialogs.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -76,18 +79,61 @@ namespace MBSimGUI {
     return element;
   }
 
-  void Parameter::updateValue() {
-    hidden = E(element)->getFirstProcessingInstructionChildNamed("MBSIMGUI_HIDDEN")!=nullptr;
-    QSettings settings;
-    bool showHiddenElements=settings.value("mainwindow/options/showhiddenelements", false).toBool();
-    if(getModelIndex().isValid())
-      mw->getParameterView()->setRowHidden(getModelIndex().row(), getModelIndex().parent(), hidden && !showHiddenElements);
+  void Parameter::updateValue(bool evaluate) {
+    if(evaluate && getParent()) {
+      hidden=false;
+      if(auto pi = E(element)->getFirstProcessingInstructionChildNamed("MBSIMGUI_HIDDEN"); pi) {
+        if(X()%pi->getData()=="")
+          hidden=true;
+        else {
+          // update also values which need a evaluation using the current evaluator
+          NewParamLevel npl(mw->eval);
+          mw->updateParameters(this->getParent(), this, true);
+          try {
+            hidden=mw->eval->cast<int>(mw->eval->eval(X()%pi->getData(), getXMLElement()));
+          }
+          catch(std::exception &ex) {
+            mw->setExitBad();
+            fmatvec::Atom::msgStatic(fmatvec::Atom::Error)<<std::flush<<std::skipws<<ex.what()<<std::flush<<std::noskipws<<endl;
+            auto msg = dynamic_cast<DOMEvalException*>(&ex) ? static_cast<DOMEvalException&>(ex).getMessage() : ex.what();
+            mw->statusBar()->showMessage(("Unable to evaluate hidden flag: " + msg).c_str());
+            cerr << "Enable to evaluate hidden flag: " << ex.what() << endl;
+            if(HiddenParErrorDialog::show) {
+              auto diag = new HiddenParErrorDialog(mw, E(getXMLElement())->getRootXPathExpression().c_str(), ex.what());
+              diag->exec();
+            }
+          }
+          catch(...) {
+            mw->setExitBad();
+            fmatvec::Atom::msgStatic(fmatvec::Atom::Error)<<"Unknown exception"<<endl;
+            mw->statusBar()->showMessage("Unknown exception");
+            cerr << "Unknown exception" << endl;
+            if(HiddenParErrorDialog::show) {
+              auto diag = new HiddenParErrorDialog(mw, E(getXMLElement())->getRootXPathExpression().c_str(), "Unknown exception");
+              diag->exec();
+            }
+          }
+        }
+      }
+      auto index = getModelIndex();
+      QSettings settings;
+      auto showHiddenElements = settings.value("mainwindow/options/showhiddenelements", true).toBool();
+      mw->getParameterView()->setRowHidden(index.row(), index.parent(), hidden && !showHiddenElements);
+    }
+
     name = QString::fromStdString(MBXMLUtils::E(element)->getAttribute("name"));
     auto *cele = E(element)->getFirstCommentChild();
     if(cele)
       comment = QString::fromStdString(X()%cele->getNodeValue());
     else
       comment.clear();
+    if(orgIcon.isNull())
+      orgIcon=icon;
+    if(E(element)->getFirstProcessingInstructionChildNamed("MBSIMGUI_CONTEXT_ACTION")!=nullptr)
+      icon = QIcon(new OverlayIconEngine(orgIcon,
+        Utils::QIconCached((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"contextactionoverlay.svg").string().c_str())));
+    else
+      icon = orgIcon;
   }
 
   PropertyDialog* StringParameter::createPropertyDialog() {
@@ -98,8 +144,8 @@ namespace MBSimGUI {
     icon = Utils::QIconCached(QString::fromStdString((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"string.svg").string()));
   }
 
-  void StringParameter::updateValue() {
-    Parameter::updateValue();
+  void StringParameter::updateValue(bool evaluate) {
+    Parameter::updateValue(evaluate);
     value = MBXMLUtils::E(element)->getFirstTextChild()?QString::fromStdString(MBXMLUtils::X()%MBXMLUtils::E(element)->getFirstTextChild()->getData()):"";
   }
 
@@ -111,8 +157,8 @@ namespace MBSimGUI {
     icon = Utils::QIconCached(QString::fromStdString((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"scalar.svg").string()));
   }
 
-  void ScalarParameter::updateValue() {
-    Parameter::updateValue();
+  void ScalarParameter::updateValue(bool evaluate) {
+    Parameter::updateValue(evaluate);
     value = MBXMLUtils::E(element)->getFirstTextChild()?QString::fromStdString(MBXMLUtils::X()%MBXMLUtils::E(element)->getFirstTextChild()->getData()):"";
   }
 
@@ -124,8 +170,8 @@ namespace MBSimGUI {
     icon = Utils::QIconCached(QString::fromStdString((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"vector.svg").string()));
   }
 
-  void VectorParameter::updateValue() {
-    Parameter::updateValue();
+  void VectorParameter::updateValue(bool evaluate) {
+    Parameter::updateValue(evaluate);
     DOMElement *ele=element->getFirstElementChild();
     if(ele and E(ele)->getTagName() == PV%"xmlVector") {
       vector<QString> v;
@@ -150,8 +196,8 @@ namespace MBSimGUI {
     icon = Utils::QIconCached(QString::fromStdString((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"matrix.svg").string()));
   }
 
-  void MatrixParameter::updateValue() {
-    Parameter::updateValue();
+  void MatrixParameter::updateValue(bool evaluate) {
+    Parameter::updateValue(evaluate);
     DOMElement *ele=element->getFirstElementChild();
     if(ele and E(ele)->getTagName() == PV%"xmlMatrix") {
       vector<vector<QString>> m;
@@ -181,8 +227,8 @@ namespace MBSimGUI {
     icon = Utils::QIconCached(QString::fromStdString((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"any.svg").string()));
   }
 
-  void AnyParameter::updateValue() {
-    Parameter::updateValue();
+  void AnyParameter::updateValue(bool evaluate) {
+    Parameter::updateValue(evaluate);
     value = MBXMLUtils::E(element)->getFirstTextChild()?QString::fromStdString(MBXMLUtils::X()%MBXMLUtils::E(element)->getFirstTextChild()->getData()):"";
   }
 
@@ -201,23 +247,53 @@ namespace MBSimGUI {
     return element;
   }
 
-  void ImportParameter::updateValue() {
-    Parameter::updateValue();
+  void ImportParameter::updateValue(bool evaluate) {
+    Parameter::updateValue(evaluate);
+    name = QString::fromStdString(MBXMLUtils::E(element)->getAttribute("label"));
     value = MBXMLUtils::E(element)->getFirstTextChild()?QString::fromStdString(MBXMLUtils::X()%MBXMLUtils::E(element)->getFirstTextChild()->getData()):"";
     action = E(element)->getAttribute("action");
   }
 
-  Parameters::Parameters(EmbedItemData *parent) : ParameterItem(parent) {
+  ParameterEmbedItem::ParameterEmbedItem(EmbedItemData *parent) : ParameterItem(parent) {
+    // icon is set by the element which has created the parameter during it ctor
+  }
+
+  ParameterEmbedItem::~ParameterEmbedItem() {
+    delete parameters;
+  }
+
+  void ParameterEmbedItem::setParameters(Parameters *parameters_) {
+    delete parameters;
+    parameters = parameters_;
+  }
+
+  QString ParameterEmbedItem::getReference() const {
+    return parent->getDedicatedParameterFileItem()?parent->getDedicatedParameterFileItem()->getName():"";
+  }
+
+  QString ParameterEmbedItem::getName() const {
+    return parent->getName();
+  }
+
+  QMenu* ParameterEmbedItem::createContextMenu() {
+    auto *e=parent->getXMLElement();
+    if(!e)
+      return nullptr;
+    if(E(e)->getTagName()==PV%"Embed") // unhandled Embed in mbsimgui
+      return nullptr;
+    return new ParameterEmbedItemContextMenu(parent);
+  }
+
+  Parameters::Parameters(EmbedItemData *parent): ParameterItem(parent) {
     icon = QIcon(new OverlayIconEngine((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"container.svg").string(),
                                        (MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"matrix.svg").string()));
   }
 
-  QString Parameters::getReference() const {
-    return parent->getDedicatedParameterFileItem()?parent->getDedicatedParameterFileItem()->getName():"";
-  }
-
   QMenu* Parameters::createContextMenu() {
-    if(E(parent->getXMLElement())->getTagName()==PV%"Embed") // unhandled Embed in mbsimgui
+    auto *e=parent->getXMLElement();
+    if(!e)
+      return nullptr;
+    if(E(e)->getTagName()==PV%"Embed") // unhandled Embed in mbsimgui
       return nullptr;
     return new ParametersContextMenu(parent);
   }

@@ -21,7 +21,6 @@
 #include "element_property_dialog.h"
 #include "basic_widgets.h"
 #include "extended_widgets.h"
-#include <xercesc/dom/DOMProcessingInstruction.hpp>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -67,38 +66,6 @@ namespace MBSimGUI {
 
   Element* ElementPropertyDialog::getElement() const {
     return static_cast<Element*>(item);
-  }
-
-  vector<pair<string, string>> ElementPropertyDialog::getMBSimGUIContextActions(xercesc::DOMElement *parent) {
-    // Model specific context actions
-    vector<pair<string, string>> ret;
-
-    // read all MBSIMGUI_CONTEXT_ACTION processing element instructions
-    // (a mbsimgui context action is not part of the mbsimxml XML schema file -> that's why its a processing instructions)
-    for(xercesc::DOMNode *pi=E(parent)->getFirstProcessingInstructionChildNamed("MBSIMGUI_CONTEXT_ACTION");
-        pi!=nullptr; pi=pi->getNextSibling()) {
-      // skip all none PI elements and PI elements with the wrong target
-      if(pi->getNodeType()!=xercesc::DOMNode::PROCESSING_INSTRUCTION_NODE)
-        continue;
-      if(X()%static_cast<xercesc::DOMProcessingInstruction*>(pi)->getTarget()!="MBSIMGUI_CONTEXT_ACTION")
-        continue;
-      // get the name=... atttribute and skip this element if it does not exist
-      auto data=X()%static_cast<xercesc::DOMProcessingInstruction*>(pi)->getData();
-      std::string nameToken("name=\"");
-      if(data.substr(0, nameToken.length())!=nameToken)
-        continue;
-      auto end1=data.find("\" ", nameToken.length());
-      auto end2=data.find("\"\n", nameToken.length());
-      auto end=std::min(end1, end2);
-      if(end==std::string::npos)
-        continue;
-
-      // add the context action
-      std::string name=data.substr(nameToken.length(), end-nameToken.length());
-      std::string code=data.substr(end+2);
-      ret.emplace_back(std::move(name), std::move(code));
-    }
-    return ret;
   }
 
 }

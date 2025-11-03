@@ -130,6 +130,7 @@ set<boost::filesystem::path> MBSimXML::loadModules(const set<boost::filesystem::
         for(xercesc::DOMElement *e=E(doc->getDocumentElement())->getFirstElementChildNamed(MBSIMMODULE%"libraries")->
             getFirstElementChild();
             e!=nullptr; e=e->getNextElementSibling()) {
+          DynamicSystemSolver::throwIfExitRequested();
           if(stage==Loading && E(e)->getTagName()==MBSIMMODULE%"CppLibrary") {
             string location=E(e)->getAttribute("location");
             bool global=false;
@@ -164,8 +165,10 @@ set<boost::filesystem::path> MBSimXML::loadModules(const set<boost::filesystem::
     }
 
   // load MBSim modules which are not already loaded
-  for(const auto & it : moduleLibFile)
+  for(const auto & it : moduleLibFile) {
+    DynamicSystemSolver::throwIfExitRequested();
     SharedLibrary::load(it.string(), moduleLibFlag[it]);
+  }
 
   return moduleLibFile;
 }
@@ -236,12 +239,13 @@ int MBSimXML::preInit(list<string> args, unique_ptr<DynamicSystemSolver>& dss, u
     return x.size()>0 ? x[0]!='-' : false;
   });
   shared_ptr<DOMParser> parser=DOMParser::create();
+  fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<"Load and parse file "<<*fileIt<<": XML input file."<<endl;
   shared_ptr<DOMDocument> doc=parser->parse(*fileIt, nullptr, false);
   DOMElement *e=doc->getDocumentElement();
 
   // check root element
   if(E(e)->getTagName()!=MBSim::MBSIMXML%"MBSimProject")
-    throw runtime_error("The oot element of a MBSim file must be {"+MBSim::MBSIMXML.getNamespaceURI()+"}MBSimProject.");
+    throw runtime_error("The root element of a MBSim file must be {"+MBSim::MBSIMXML.getNamespaceURI()+"}MBSimProject.");
   // check evaluator
   DOMElement *evaluator=E(e)->getFirstElementChildNamed(PV%"evaluator");
   if(!evaluator)
@@ -251,9 +255,11 @@ int MBSimXML::preInit(list<string> args, unique_ptr<DynamicSystemSolver>& dss, u
 
   // create object for DynamicSystemSolver and check correct type
   e=E(e)->getFirstElementChildNamed(MBSIM%"DynamicSystemSolver");
+  fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<"Instantiate DynamicSystemSolver"<<endl;
   dss.reset(ObjectFactory::createAndInit<DynamicSystemSolver>(e));
 
   // create object for Solver and check correct type
+  fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<"Instantiate Solver"<<endl;
   solver.reset(ObjectFactory::createAndInit<Solver>(e->getNextElementSibling()));
 
   return 0;
@@ -283,6 +289,8 @@ void MBSimXML::plotInitialState(const unique_ptr<Solver>& solver, const unique_p
 }
 
 void MBSimXML::main(const unique_ptr<Solver>& solver, const unique_ptr<DynamicSystemSolver>& dss, bool doNotIntegrate, bool stopAfterFirstStep, bool savestatevector, bool savestatetable) {
+  if(MBXMLUtils::DOMEvalException::isHTMLOutputEnabled())
+    fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<flush<<skipws<<"<a name=\"MBSIM_SOLVER_START\"></a>"<<flush<<noskipws;
   if(savestatetable)
     dss->writeStateTable("statetable.asc");
   if(doNotIntegrate==false) {
@@ -292,7 +300,6 @@ void MBSimXML::main(const unique_ptr<Solver>& solver, const unique_ptr<DynamicSy
       auto start=std::chrono::high_resolution_clock::now();
       solver->setSystem(dss.get());
       {
-        DynamicSystemSolver::SignalHandler dummy; // install signal handler for next line (and deinstall on scope exit)
         // run solver->execute and then run solver-postprocessing even if execute failded
         bool executePassed=false;
         try {
@@ -319,12 +326,16 @@ void MBSimXML::main(const unique_ptr<Solver>& solver, const unique_ptr<DynamicSy
     // after the first step has been written since this is not possible by the file locking mechanism in OpenMBVCppInterface.
     if(stopAfterFirstStep && dss->getPlotFeature(openMBV)) {
       // touch the OpenMBV files
-      boost::myfilesystem::last_write_time((dss->getName()+".ombvx").c_str(), boost::posix_time::microsec_clock::universal_time());
-      boost::myfilesystem::last_write_time((dss->getName()+".ombvh5" ).c_str(), boost::posix_time::microsec_clock::universal_time());
+      auto time=boost::posix_time::microsec_clock::universal_time();
+      if(auto fn=dss->getName()+".ombvx"; boost::filesystem::exists(fn))
+        boost::myfilesystem::last_write_time(fn.c_str(), time);
+      boost::myfilesystem::last_write_time((dss->getName()+".ombvh5" ).c_str(), time);
     }
   }
   if(savestatevector)
     dss->writez("statevector.asc", false);
+  if(MBXMLUtils::DOMEvalException::isHTMLOutputEnabled())
+    fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<flush<<skipws<<"<a name=\"MBSIM_SOLVER_END\"></a>"<<flush<<noskipws;
 }
 
 }

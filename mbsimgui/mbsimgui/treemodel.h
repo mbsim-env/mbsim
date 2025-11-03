@@ -39,7 +39,7 @@ namespace MBSimGUI {
   class Observer;
   class Solver;
   class Parameter;
-  class Parameters;
+  class ParameterEmbedItem;
   class TreeItem;
   class TreeItemData;
   class FileItemData;
@@ -93,8 +93,8 @@ namespace MBSimGUI {
     public:
       ParameterTreeModel(QObject *parent = nullptr);
 
-      void createParameterItem(Parameters *parameters, const QModelIndex &parent = QModelIndex());
-      void updateParameterItem(Parameters *parameters);
+      void createParameterItem(ParameterEmbedItem *parameterEmbedItem, const QModelIndex &parent = QModelIndex());
+      void updateParameterItem(ParameterEmbedItem *parameterEmbedItem);
       void createParameterItem(Parameter *parameter, const QModelIndex &parent = QModelIndex());
   };
 

@@ -22,7 +22,7 @@
 
 namespace MBSimGUI {
 
-SingleLineDelegate::SingleLineDelegate(QTreeView *tv) : treeView(tv) {}
+SingleLineDelegate::SingleLineDelegate(QTreeView *tv) : QItemDelegate(tv), treeView(tv) {}
 
 void SingleLineDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const {
   painter->save();

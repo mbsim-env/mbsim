@@ -35,6 +35,8 @@
 #include "observer.h"
 #include "solver.h"
 #include "parameter.h"
+#include "evaluator/evaluator.h"
+#include <xercesc/dom/DOMProcessingInstruction.hpp>
 
 using namespace std;
 
@@ -287,5 +289,98 @@ namespace MBSimGUI {
     template void createContextMenuFor<Type>(QMenu *self, TreeItemData *item, const QString &prefix="");
   MBSIMGUI_TREE_CONTAINERS
   #undef X
+
+  vector<pair<string, string>> getMBSimGUIContextActions(xercesc::DOMElement *parent) {
+    // Model specific context actions
+    vector<pair<string, string>> ret;
+
+    // read all MBSIMGUI_CONTEXT_ACTION processing element instructions
+    // (a mbsimgui context action is not part of the mbsimxml XML schema file -> that's why its a processing instructions)
+    for(xercesc::DOMNode *pi=MBXMLUtils::E(parent)->getFirstProcessingInstructionChildNamed("MBSIMGUI_CONTEXT_ACTION");
+        pi!=nullptr; pi=pi->getNextSibling()) {
+      // skip all none PI elements and PI elements with the wrong target
+      if(pi->getNodeType()!=xercesc::DOMNode::PROCESSING_INSTRUCTION_NODE)
+        continue;
+      if(MBXMLUtils::X()%static_cast<xercesc::DOMProcessingInstruction*>(pi)->getTarget()!="MBSIMGUI_CONTEXT_ACTION")
+        continue;
+      // get the name=... atttribute and skip this element if it does not exist
+      auto data=MBXMLUtils::X()%static_cast<xercesc::DOMProcessingInstruction*>(pi)->getData();
+      std::string nameToken("name=\"");
+      if(data.substr(0, nameToken.length())!=nameToken)
+        continue;
+      auto end1=data.find("\" ", nameToken.length());
+      auto end2=data.find("\"\n", nameToken.length());
+      auto end=std::min(end1, end2);
+      if(end==std::string::npos)
+        continue;
+
+      // add the context action
+      std::string name=data.substr(nameToken.length(), end-nameToken.length());
+      std::string code=data.substr(end+2);
+      ret.emplace_back(std::move(name), std::move(code));
+    }
+    return ret;
+  }
+
+  template<class EleOrPar>
+  void addMBSimGUIContextAction(QMenu *menu, EleOrPar *eleOrPar) {
+    if(eleOrPar->getXMLElement()) {
+      auto contextAction=getMBSimGUIContextActions(eleOrPar->getXMLElement()); // read from XML
+      if(!contextAction.empty()) {
+        menu->addSeparator();
+        for(auto &ca : contextAction) {
+          menu->addAction(ca.first.c_str(), [ca, eleOrPar](){
+            // this code is run when the action is triggered
+            mw->clearEchoView();
+            try {
+              MBXMLUtils::NewParamLevel npl(mw->eval);
+              std::vector<MainWindow::ParameterLevel> parameterLevels;
+              if constexpr(std::is_same_v<EleOrPar, Parameter>)
+                parameterLevels = mw->updateParameters(eleOrPar->getParent(), eleOrPar);
+              else
+                parameterLevels = mw->updateParameters(eleOrPar);
+              auto [counterName, values]=MainWindow::evaluateForAllArrayPattern(parameterLevels, ca.second,
+                eleOrPar->getXMLElement(), true, true, false, true, [eleOrPar, ca](const std::vector<std::string>& counterNames, const std::vector<int> &counts) {
+                  fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<std::endl<<"Running context action '"<<ca.first<<"' with ";
+                  for(size_t i=0; i<counterNames.size(); ++i)
+                    fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<(i!=0?", ":"")<<counterNames[i]<<"="<<counts[i];
+                  fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<":"<<std::endl;
+                  mw->updateEchoView("");
+                  std::string code;
+                  std::string codeVar;
+                  if constexpr(std::is_base_of_v<Parameter,EleOrPar>) {
+                    code=Evaluator::getParameterObjCode(eleOrPar);
+                    codeVar="mbsimgui_parameter";
+                  }
+                  else {
+                    code=Evaluator::getElementObjCode(eleOrPar);
+                    codeVar="mbsimgui_element";
+                  }
+                  if(!code.empty())
+                    mw->eval->addParam(codeVar, mw->eval->stringToValue(code));
+                }
+              );
+              mw->updateEchoView("");
+            }
+            catch(const MBXMLUtils::DOMEvalException &ex) {
+              // DOMEvalException is already passed thought escapeFunc -> skip escapeFunc (if enabled on the fmatvec::Atom streams) from duing another escaping
+              fmatvec::Atom::msgStatic(fmatvec::Atom::Error)<<std::flush<<std::skipws<<ex.what()<<std::flush<<std::noskipws<<std::endl;
+              mw->updateEchoView("");
+            }
+            catch(const std::exception &ex) {
+              fmatvec::Atom::msgStatic(fmatvec::Atom::Error)<<ex.what()<<std::endl;
+              mw->updateEchoView("");
+            }
+            catch(...) {
+              fmatvec::Atom::msgStatic(fmatvec::Atom::Error)<<"Unknown exception"<<std::endl;
+              mw->updateEchoView("");
+            }
+          });
+        }
+      }
+    }
+  }
+  template void addMBSimGUIContextAction<Element>(QMenu *menu, Element *eleOrPar);
+  template void addMBSimGUIContextAction<Parameter>(QMenu *menu, Parameter *eleOrPar);
 
 }

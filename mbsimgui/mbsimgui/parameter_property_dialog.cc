@@ -27,6 +27,8 @@
 #include "extended_widgets.h"
 #include "parameter.h"
 #include "embeditemdata.h"
+#include "project.h"
+#include "xercesc/dom/DOMProcessingInstruction.hpp"
 #include <QDialogButtonBox>
 #include <QPushButton>
 #include <evaluator/evaluator.h>
@@ -39,7 +41,9 @@ namespace MBSimGUI {
 
   extern MainWindow *mw;
 
-  ParameterPropertyDialog::ParameterPropertyDialog(Parameter *parameter_) : PropertyDialog("Parameter Properties"), parameter(parameter_), name(nullptr) {
+  ParameterPropertyDialog::ParameterPropertyDialog(Parameter *parameter_) : PropertyDialog("Parameter Properties"), parameter(parameter_), name(nullptr), npl(mw->eval) {
+    mw->updateParameters(parameter->getParent(), parameter, false);
+
     addTab("General");
     if(not dynamic_cast<ImportParameter*>(parameter)) {
       name=new ExtWidget("Name",new TextWidget(parameter->getName()));
@@ -51,20 +55,32 @@ namespace MBSimGUI {
     addToTab("Comment", comment);
 
     addTab("Misc");
-    vector<QString> list;
-    list.emplace_back("normal");
-    list.emplace_back("hidden");
-    hidden=new QCheckBox("Hidden");
+    hidden = new ExtWidget("Hidden",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5));
     hidden->setToolTip("Set this parameter hidden which prevents it "
                        "from appearing in the parameter tree. Hidden element will only appear if 'Show hidden element' "
                        "is enabled in the options.");
     addToTab("Misc",hidden);
+
+    mbsimguiContextAction = new MBSimGUIContextAction;
+    addToTab("Misc", mbsimguiContextAction);
   }
 
   DOMElement* ParameterPropertyDialog::initializeUsingXML(DOMElement *parent) {
     if(name) name->getWidget<TextWidget>()->setText(parameter->getName());
     comment->initializeUsingXML(parameter->getXMLElement());
-    hidden->setChecked(E(parent)->getFirstProcessingInstructionChildNamed("MBSIMGUI_HIDDEN")!=nullptr);
+
+    auto *pi=E(parent)->getFirstProcessingInstructionChildNamed("MBSIMGUI_HIDDEN");
+    hidden->setActive(pi!=nullptr);
+    if(pi) {
+      auto value=X()%pi->getData();
+      hidden->getWidget<ChoiceWidget>()->setIndex(value.empty()?0:1);
+      if(value.empty())
+        hidden->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->setValue("1");
+      else
+        hidden->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->setValue(value.c_str());
+    }
+
+    mbsimguiContextAction->initializeUsingXML(parameter->getXMLElement());
     return parent;
   }
 
@@ -72,8 +88,18 @@ namespace MBSimGUI {
     parameter->removeXMLElements();
     if(name) E(parameter->getXMLElement())->setAttribute("name",name->getWidget<TextWidget>()->getText().toStdString());
     comment->writeXMLFile(parameter->getXMLElement(),ref);
-    if(hidden->isChecked())
-      E(parameter->getXMLElement())->addProcessingInstructionChildNamed("MBSIMGUI_HIDDEN", "");
+
+    if(hidden->isActive()) {
+      if(hidden->getWidget<ChoiceWidget>()->getIndex()==0) {
+        if(hidden->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getValue()!=mw->getProject()->getVarFalse())
+          E(parameter->getXMLElement())->addProcessingInstructionChildNamed("MBSIMGUI_HIDDEN", "");
+      }
+      else
+        E(parameter->getXMLElement())->addProcessingInstructionChildNamed("MBSIMGUI_HIDDEN",
+            hidden->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getValue().toStdString());
+    }
+
+    mbsimguiContextAction->writeXMLFile(parameter->getXMLElement(),ref);
     return nullptr;
   }
 
@@ -84,7 +110,16 @@ namespace MBSimGUI {
   void ParameterPropertyDialog::fromWidget() {
     writeXMLFile(parameter->getXMLElement());
     parameter->updateValue();
-    MainWindow::updateNameOfCorrespondingElementAndItsChilds(parameter->getParent()->getModelIndex());
+  }
+
+  void ParameterPropertyDialog::showEvent(QShowEvent *ev) {
+    mw->setCurrentlyEditedItem(parameter);
+    PropertyDialog::showEvent(ev);
+  }
+
+  void ParameterPropertyDialog::hideEvent(QHideEvent *ev) {
+    mw->setCurrentlyEditedItem(nullptr);
+    PropertyDialog::hideEvent(ev);
   }
 
   StringParameterPropertyDialog::StringParameterPropertyDialog(Parameter *parameter) : ParameterPropertyDialog(parameter) {
@@ -178,6 +213,10 @@ namespace MBSimGUI {
   }
 
   ImportParameterPropertyDialog::ImportParameterPropertyDialog(Parameter *parameter) : ParameterPropertyDialog(parameter) {
+    auto pname=parameter->getName();
+    label=new ExtWidget("Label",new TextWidget(pname=="<import without label>"?"":pname.mid(1, pname.length()-2)));
+    addToTab("General",label);
+
     bool hidden = false;
     for(auto &x : Evaluator::getImportActions())
       actionList.emplace_back(pair<QString,QString>{get<0>(x).c_str(), get<2>(x).c_str()});
@@ -198,6 +237,9 @@ namespace MBSimGUI {
 
   DOMElement* ImportParameterPropertyDialog::initializeUsingXML(DOMElement *parent) {
     ParameterPropertyDialog::initializeUsingXML(parameter->getXMLElement());
+
+    auto pname=parameter->getName();
+    label->getWidget<TextWidget>()->setText(pname=="<import without label>"?"":pname.mid(1, pname.length()-2));
 
     bool hidden = false;
     auto xmlAction = E(parameter->getXMLElement())->getAttribute("action");
@@ -221,6 +263,9 @@ namespace MBSimGUI {
 
   DOMElement* ImportParameterPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     ParameterPropertyDialog::writeXMLFile(parameter->getXMLElement(),ref);
+
+    if(auto l=label->getWidget<TextWidget>()->getText(); !l.isEmpty())
+      E(parameter->getXMLElement())->setAttribute("label",l.toStdString());
 
     value->writeXMLFile(parameter->getXMLElement(),ref);
 

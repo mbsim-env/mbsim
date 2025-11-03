@@ -35,6 +35,8 @@ int main(int argc, char *argv[]) {
   MBXMLUtils::convertWMCLOSEtoSIGTERM();
 
   try {
+    DynamicSystemSolver::SignalHandler dummy; // install signal handler for next line (and deinstall on scope exit)
+
     // check for errors during ObjectFactory
     string errorMsg(OpenMBV::ObjectFactory::getAndClearErrorMsg());
     if(!errorMsg.empty()) {

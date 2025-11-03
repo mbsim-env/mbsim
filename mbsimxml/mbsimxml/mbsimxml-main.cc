@@ -27,6 +27,9 @@
 #include "mbsimflatxml.h"
 #include <openmbvcppinterface/objectfactory.h>
 #include "set_current_path.h"
+#include <condition_variable>
+#include <boost/iostreams/filtering_stream.hpp>
+#include <boost/iostreams/device/file_descriptor.hpp>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -81,7 +84,7 @@ int main(int argc, char *argv[]) {
           <<"                [--modulePath <dir> [--modulePath <dir> ...]]"<<endl
           <<"                [--stdout <msg> [--stdout <msg> ...]] [--stderr <msg> [--stderr <msg> ...]]"<<endl
           <<"                [<paramname>=<value> [<paramname>=<value> ...]]"<<endl
-          <<"                [-C <dir/file>|--CC] <mbsimprjfile>|-"<<endl
+          <<"                [-C <dir/file>|--CC] [--onlyLatestStdin] <mbsimprjfile>|-"<<endl
           <<""<<endl
           <<"Copyright (C) 2004-2009 MBSim Development Team"<<endl
           <<"This is free software; see the source for copying conditions. There is NO"<<endl
@@ -102,7 +105,7 @@ int main(int argc, char *argv[]) {
           <<"--modulePath <dir>       Add <dir> to MBSim module serach path. The central MBSim installation"<<endl
           <<"                         module dir and the current dir is always included."<<endl
           <<"                         Also added are all directories listed in the file"<<endl
-          <<"                         Linux: $HOME/.config/mbsim-env/mbsimxml.modulepath"<<endl
+          <<"                         Linux: $XDG_CONFIG_HOME/mbsim-env/mbsimxml.modulepath"<<endl
           <<"                         Windows: %APPDATA%\\mbsim-env\\mbsimxml.modulepath"<<endl
           <<"                         This file contains one directory per line."<<endl
           <<"<paramname>=<value>      Override the MBSimProject parameter named <paramname> with <value>."<<endl
@@ -119,11 +122,14 @@ int main(int argc, char *argv[]) {
           <<"                         All arguments are still relative to the original current dir."<<endl
           <<"<mbsimprjfile>           Use <mbsimprjfile> as mbsim xml project file (write output to current working dir)"<<endl
           <<"                         Must be the last argument!"<<endl
-          <<"-                        Read project file from stdin. If it ends with a null-char instead of EOF the next"<<endl
-          <<"                         project file is read when the current has finished. If the input contains relative"<<endl
-          <<"                         reference to other files then the root element of the input must be tagged using"<<endl
-          <<"                         a 'MBXMLUtils_OriginalFilename' XML-Processing-Instruction element."<<endl
-          <<"                         Must be the last argument!"<<endl;
+          <<"-                        Read project file from stdin, which must end with a null-char, and process it."<<endl
+          <<"                         Then the next project file is read or the program ends if EOF is reached."<<endl
+          <<"                         If the input contains relative references to other files then the root element of the input"<<endl
+          <<"                         must be tagged using a 'MBXMLUtils_OriginalFilename' XML-Processing-Instruction element."<<endl
+          <<"                         Must be the last argument!"<<endl
+          <<"--onlyLatestStdin        If '-' and --onlyLatestStdin is used, inputs on stdin are skipped if already"<<endl
+          <<"                         a newer input is waiting on the input buffer and the currently running input"<<endl
+          <<"                         is interrupted silently before starting the new input."<<endl;
       return 0;
     }
 
@@ -135,7 +141,7 @@ int main(int argc, char *argv[]) {
     // current directory and MBSIMPRJ
     bfs::path MBSIMPRJ=*(--args.end());
     bfs::path newCurrentPath;
-    if((i=std::find(args.begin(), args.end(), "--CC"))!=args.end() && MBSIMPRJ!="-") {
+    if(MBSIMPRJ!="-" && (i=std::find(args.begin(), args.end(), "--CC"))!=args.end()) {
       newCurrentPath=MBSIMPRJ.parent_path();
       args.erase(i);
     }
@@ -213,7 +219,7 @@ int main(int argc, char *argv[]) {
     }
 
     int AUTORELOADTIME=0;
-    if((i=std::find(args.begin(), args.end(), "--autoreload"))!=args.end() && MBSIMPRJ!="-") {
+    if(MBSIMPRJ!="-" && (i=std::find(args.begin(), args.end(), "--autoreload"))!=args.end()) {
       i2=i; i2++;
       char *error;
       stopAfterFirstStep=true;
@@ -235,6 +241,12 @@ int main(int argc, char *argv[]) {
       args.erase(i);
     }
 
+    bool onlyLatestStdin=false;
+    if((i=std::find(args.begin(), args.end(), "--onlyLatestStdin"))!=args.end()) {
+      onlyLatestStdin=true;
+      args.erase(i);
+    }
+
     args.pop_back();
     if(MBSIMPRJ!="-")
       MBSIMPRJ=currentPath.adaptPath(MBSIMPRJ);
@@ -249,7 +261,45 @@ int main(int argc, char *argv[]) {
 
     // create parser from catalog file to avoid regenerating the parser if multiple inputs are handled
     auto parser = DOMParser::create(xmlCatalogDoc->getDocumentElement());
-  
+
+    thread stdinReadThread;
+    mutex mu;
+    condition_variable cv;
+    optional<string> lastStdinContent; // if set its the content to be processed
+    bool cinEOF=false; // if true stdin has reached EOF and the program should exit
+    int stdinFDDup = -1;
+    if(MBSIMPRJ=="-" && onlyLatestStdin) {
+      // Some evaluators (e.g. Python) use stdin e.g. during initialization (setting flags on stdin, ...).
+      // Hence, when we read on stdin (=cin) in a thread this may cause race-conditions with evaluator code.
+      // To avoid this we close stdin (=fd 0). This will cause at least Python not to to anything on stdin.
+      // Before closing stdin we duplicate it and use this duplicate fd instead of stdin.
+      // And use boost::iostreams to get a c++ stream which operators on the duplicated fd.
+      stdinFDDup=dup(fileno(stdin));
+      if(stdinFDDup==-1)
+        throw runtime_error("Failed to duplicate the stdin FD.");
+      close(fileno(stdin));
+      // cinDup is created in side the thread just for lifetime issues
+
+      stdinReadThread = thread([&mu, &cv, &cinEOF, &lastStdinContent, stdinFDDup](){
+        boost::iostreams::filtering_istream cinDup;
+        cinDup.push(boost::iostreams::file_descriptor_source(stdinFDDup, boost::iostreams::never_close_handle));
+
+        while(true) { // read from stdin in a endless loop
+          string str;
+          getline(cinDup, str, '\0'); // read content (blocking read but not locked by "mu"
+          // now lock "mu" ...
+          lock_guard l(mu);
+          cv.notify_all(); // ... notify about the new information which is ...
+          if(cinDup.eof()) { // ... EOF reached ...
+            cinEOF=true;
+            break;
+          }
+          lastStdinContent=str; // ... or set lastStdinContent to the read content
+          DynamicSystemSolver::interrupt(true); // silently interrupt a already running simulation (we want always to run the latest input only)
+        };
+      });
+    }
+
     // execute
     int ret; // command return value
     bool runAgain=true; // always run the first time
@@ -261,45 +311,72 @@ int main(int argc, char *argv[]) {
       try {
         // run preprocessor
 
+        unique_ptr<DynamicSystemSolver::SignalHandler> sigHandler; // install signal handler from now on (and deinstall on scope exit)
+
         stringstream MBSIMPRJstream;
-        if(MBSIMPRJ=="-") { // try to avoid to take a copy of the stream content: create from cin n streams which create EOF at each \0
+        if(MBSIMPRJ=="-") {
           string str;
-          getline(cin, str, '\0');
-          if(str.empty())
-            break;
-          MBSIMPRJstream.str(std::move(str)); // this error will be done with c++20
+          if(onlyLatestStdin) {
+            // lock "mu" and check in a endless loop for new information from the thread
+            unique_lock l(mu);
+            while(true) {
+              if(cinEOF) // if EOF has reached break this loop and the also the outer loop
+                break;
+              if(lastStdinContent) { // if lastStdinContent is set, use this content and reset lastStdinContent
+                str=lastStdinContent.value();
+                lastStdinContent.reset();
+                break;
+              }
+              // now wait for notification from the thread to avoid CPU load in this endless loop
+              cv.wait(l);
+            }
+            if(cinEOF) // if EOF has reached break this outer loop which exits this program
+              break;
+            sigHandler=make_unique<DynamicSystemSolver::SignalHandler>(); // this must be called inside of the lock of mu [unique_lock l(mu)]
+          }
+          else {
+            getline(cin, str, '\0'); // read the next file content (up to next null-char or EOF)
+            if(cin.eof())
+              break;
+            sigHandler=make_unique<DynamicSystemSolver::SignalHandler>();
+          }
+          MBSIMPRJstream.str(std::move(str)); // this warning will be gone with c++20
         }
+        else
+          sigHandler=make_unique<DynamicSystemSolver::SignalHandler>();
+
         Preprocess preprocess = MBSIMPRJ=="-" ?
           Preprocess(MBSIMPRJstream, parser, AUTORELOADTIME>0) : // ctor for input by stdin
           Preprocess(MBSIMPRJ, parser, AUTORELOADTIME>0);        // ctor for input by filename
+        preprocess.setCheckInterruptFunction([](){
+          DynamicSystemSolver::throwIfExitRequested();
+        });
 
         // check Embed elements
         {
-          auto checkEmbed = [](xercesc::DOMElement *e, const FQN &eleName, bool allowHref) {
+          auto checkEmbed = [](xercesc::DOMElement *e, const FQN &eleName) {
             if(E(e)->getTagName()==PV%"Embed") {
               if(E(e)->hasAttribute("counterName") || E(e)->hasAttribute("count") ||
                  (E(e)->hasAttribute("onlyif") && E(e)->getAttribute("onlyif")!="1"))
                 throw runtime_error("A Embed element on "+eleName.second+" level is not allowed to have a counterName, count or onlyif attribute.");
-              if(!allowHref && E(e)->hasAttribute("href"))
-                throw runtime_error("A Embed element on "+eleName.second+" level is not allowed to have a href attribute.");
             }
           };
 
           auto root = preprocess.getDOMDocument()->getDocumentElement();
           xercesc::DOMElement *mbsimProject;
-          checkEmbed(root, PV%"MBSimProject", false);
           if(E(root)->getTagName()==PV%"Embed")
             mbsimProject = root->getLastElementChild();
           else
             mbsimProject = root;
-          checkEmbed(mbsimProject->getFirstElementChild(), MBSIM%"DynamicSystemSolver", true);
-          checkEmbed(mbsimProject->getLastElementChild(), MBSIM%"Solver", true);
+          checkEmbed(mbsimProject->getFirstElementChild(), MBSIM%"DynamicSystemSolver");
+          checkEmbed(mbsimProject->getLastElementChild(), MBSIM%"Solver");
         }
 
         // create parameter override ParamSet
         auto eval=preprocess.getEvaluator();
         auto param = make_shared<Preprocess::ParamSet>();
         for(auto &pa : paramArg) {
+          DynamicSystemSolver::throwIfExitRequested();
           auto pos = pa.find('=');
           (*param)[pa.substr(0, pos)]=eval->eval(pa.substr(pos+1));
         }
@@ -341,6 +418,9 @@ int main(int argc, char *argv[]) {
 
         if(AUTORELOADTIME>0)
           dependencies = preprocess.getDependencies();
+      }
+      catch(const SilentError &) {
+        fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<flush<<skipws<<"Exception due to silent user requested exit."<<flush<<noskipws<<endl;
       }
       catch(const MBSimError &ex) {
         // DOMEvalException is already passed thought escapeFunc -> skip escapeFunc (if enabled on the fmatvec::Atom streams) from duing another escaping
@@ -386,6 +466,11 @@ int main(int argc, char *argv[]) {
       }
       else
         runAgain=true;
+    }
+    if(stdinReadThread.joinable()) {
+      if(dup2(stdinFDDup, 0)==-1) // revert the stdin FD duplicate (not needed by a nice cleanup)
+        throw runtime_error("Failed to re-duplicate the stdin FD.");
+      stdinReadThread.join();// wait until the thread has finished
     }
   
     return ret;

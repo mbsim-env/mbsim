@@ -27,6 +27,7 @@
 #include <xercesc/util/XercesDefs.hpp>
 #include <mbxmlutilshelper/dom.h>
 #include "extended_widgets.h"
+#include "mbxmlutils/eval.h"
 #include <boost/tti/has_member_function.hpp>
 
 namespace XERCES_CPP_NAMESPACE {
@@ -108,8 +109,12 @@ namespace MBSimGUI {
       EmbedItemData* getItem() const { return item; }
       void toWidget() override;
       void fromWidget() override;
+      void showEvent(QShowEvent *ev) override;
+      void hideEvent(QHideEvent *ev) override;
     protected:
       EmbedItemData *item;
+    private:
+      MBXMLUtils::NewParamLevel npl;
   };
 
   class UnknownItemPropertyDialog : public EmbedItemPropertyDialog {

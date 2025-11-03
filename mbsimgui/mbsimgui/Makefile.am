@@ -76,6 +76,7 @@ libmbsimgui_la_SOURCES = \
   element_context_menu.cc \
   parameter_context_menu.cc \
   parameters_context_menu.cc \
+  parameter_embed_item_context_menu.cc \
   dynamic_system_solver.cc \
   project.cc \
   treeitem.cc \
@@ -211,6 +212,7 @@ mbsimguiinclude_HEADERS = analyzer.h \
   parameter.h \
   parameter_property_dialog.h \
   parameters_context_menu.h \
+  parameter_embed_item_context_menu.h \
   single_line_delegate.h \
   parameter_view.h \
   physics.h \
@@ -307,6 +309,10 @@ dist_mbsimguiicon_DATA = icons/openmbv.svg \
   icons/any.svg \
   icons/import.svg \
   icons/string.svg \
+  icons/contextactionoverlay.svg \
+  icons/skip-initial-proj.svg \
+  icons/reload.svg \
+  icons/auto-reload.svg \
   icons/fbt.svg
 
 # plugins

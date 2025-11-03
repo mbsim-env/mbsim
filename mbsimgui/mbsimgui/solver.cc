@@ -22,6 +22,7 @@
 #include "project.h"
 #include "utils.h"
 #include "mainwindow.h"
+#include "parameter.h"
 #include <xercesc/dom/DOMDocument.hpp>
 #include <xercesc/dom/DOMImplementation.hpp>
 #include <xercesc/dom/DOMLSSerializer.hpp>
@@ -36,6 +37,7 @@ namespace MBSimGUI {
 
   Solver::Solver() {
     icon = Utils::QIconCached(QString::fromStdString((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"solver.svg").string()));
+    parameterEmbedItem->setIcon(icon);
   }
 
   void Solver::removeXMLElements() {

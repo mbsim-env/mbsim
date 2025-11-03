@@ -35,6 +35,7 @@
 #include "mbsim/utils/nonlinear_algebra.h"
 #include "mbsim/links/initial_condition.h"
 
+#include <mbxmlutilshelper/thislinelocation.h>
 #include <hdf5serie/file.h>
 #include <hdf5serie/simpleattribute.h>
 #include <hdf5serie/simpledataset.h>
@@ -52,11 +53,19 @@ using namespace fmatvec;
 using namespace MBXMLUtils;
 using namespace xercesc;
 
+namespace {
+  ThisLineLocation loc;
+  boost::filesystem::path installPath() {
+    return boost::filesystem::canonical(loc()).parent_path().parent_path();
+  }
+}
+
 namespace MBSim {
   double tP = 20.0;
   bool gflag = false;
 
   atomic<bool> DynamicSystemSolver::exitRequest = false;
+  atomic<bool> DynamicSystemSolver::silentExit = false;
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, DynamicSystemSolver)
 
@@ -111,6 +120,7 @@ namespace MBSim {
     };
 
     for (int stage = 0; stage < LASTINITSTAGE; stage++) {
+      DynamicSystemSolver::throwIfExitRequested();
       msg(Info) << "Initializing stage " << stage << "/" << LASTINITSTAGE - 1 << " \"" << InitStageStrings[stage] << "\" " << endl;
       init((InitStage) stage, InitConfigSet());
       msg(Info) << "Done initializing stage " << stage << "/" << LASTINITSTAGE - 1 << endl;
@@ -465,7 +475,7 @@ namespace MBSim {
       H5::File::setDefaultChunkSize(chunkSize);
       H5::File::setDefaultCacheSize(cacheSize);
       if(plotFeature[plotRecursive])
-        hdf5File = std::make_shared<H5::File>(fileName, H5::File::write);
+        hdf5File = std::make_shared<H5::File>(fileName, H5::File::writeWithRename);
 
       Group::init(stage, config);
 
@@ -482,7 +492,17 @@ namespace MBSim {
           }
         }
         // write openmbv files
-        openMBVGrp->write(true, truncateSimulationFiles);
+        openMBVGrp->write(true, truncateSimulationFiles, embedOmbvxInH5);
+      }
+
+      // copy the content of the .buildInfo.json file to the HDF5 file:
+      // This file contains the git commit IDs of the used mbsim-env build.
+      // Hence, the HDF5 file contains the full information about the source code (version) which was used to generate the HDF5 file.
+      if(boost::filesystem::exists(installPath()/".buildInfo.json") && plotGroup) {
+        H5::SimpleAttribute<string> *attr=plotGroup->createChildAttribute<H5::SimpleAttribute<string>>("mbsimenv_buildInfo")();
+        ifstream f(installPath()/".buildInfo.json");
+        string content((istreambuf_iterator<char>(f)), istreambuf_iterator<char>());
+        attr->write(content);
       }
     }
     else
@@ -1134,6 +1154,7 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::projectGeneralizedPositions(int mode, bool fullUpdate) {
+    DynamicSystemSolver::throwIfExitRequested();
     msg(Info) << "System projection of generalized position at t = " << getTime() << " (mode=" << mode << " fullUpdate=" << fullUpdate << ")." << endl;
 
     int gID = 0;
@@ -1168,10 +1189,12 @@ namespace MBSim {
     updateWRef(WParent[0]);
     updW[0] = true;
     SqrMat Gv = SqrMat(evalW().T() * slvLLFac(evalLLM(), evalW()));
+    DynamicSystemSolver::throwIfExitRequested();
     Mat T = evalT();
     int iter = 0;
     bool highIterMsgPrinted=false;
     while (nrmInf(evalg() - corr) >= tolProj) {
+      DynamicSystemSolver::throwIfExitRequested();
       if (++iter >= maxIter) {
         msg(Warn) << "Iterations: " << iter << endl;
         msg(Warn) << "Error: no convergence in projection of generalized positions (t=" << t << ")." << endl;
@@ -1198,6 +1221,7 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::projectGeneralizedVelocities(int mode) {
+    DynamicSystemSolver::throwIfExitRequested();
     msg(Info) << "System projection of generalized velocities at t = " << getTime() << " (mode=" << mode << ")." << endl;
 
     int gdID = 0; // IH
@@ -1231,6 +1255,7 @@ namespace MBSim {
       if (laSize) {
         SqrMat Gv = SqrMat(evalW().T() * slvLLFac(evalLLM(), evalW()));
         Vec mu = slvLS(Gv, -evalgd() + corr);
+        DynamicSystemSolver::throwIfExitRequested();
 
         // test for inconsistent links (in this case the above slvLS finds a solution mu for which the test shows a none zero residuum -> this is a modelling error of links)
         auto res = Gv * mu - (-evalgd() + corr);
@@ -1239,6 +1264,7 @@ namespace MBSim {
 
         u += slvLLFac(getLLM(), getW() * mu);
         resetUpToDate();
+        DynamicSystemSolver::throwIfExitRequested();
       }
     }
   }
@@ -1341,6 +1367,8 @@ namespace MBSim {
   }
 
   DynamicSystemSolver::SignalHandler::SignalHandler() {
+    exitRequest = false;
+    silentExit = false;
     #ifndef _WIN32
     oldSigHup=signal(SIGHUP, sigInterruptHandler);
     #endif
@@ -1358,6 +1386,11 @@ namespace MBSim {
 
   void DynamicSystemSolver::sigInterruptHandler(int) {
     exitRequest = true;
+  }
+
+  void DynamicSystemSolver::interrupt(bool silent) {
+    exitRequest = true;
+    silentExit = silent;
   }
 
   void DynamicSystemSolver::writez(string fileName, bool formatH5) {
@@ -1428,8 +1461,6 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::constructor() {
-    exitRequest = false;
-    exitRequestPrinted = false;
     plotFeature[plotRecursive] = true;
     plotFeatureForChildren[plotRecursive] = true;
     plotFeature[openMBV] = true;
@@ -1546,6 +1577,8 @@ namespace MBSim {
     if(e) setChunkSize(E(e)->getText<int>());
     e = E(element)->getFirstElementChildNamed(MBSIM%"cacheSize");
     if(e) setCacheSize(E(e)->getText<int>());
+    e = E(element)->getFirstElementChildNamed(MBSIM%"embedOmbvxInH5");
+    if(e) setEmbedOmbvxInH5(E(e)->getText<bool>());
   }
 
   void DynamicSystemSolver::addToGraph(Graph* graph, SqrMat &A, int i, vector<Element*>& eleList) {

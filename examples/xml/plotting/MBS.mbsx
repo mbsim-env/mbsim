@@ -8,9 +8,24 @@
     <pv:Embed>
       <pv:Parameter>
         <pv:vectorParameter name="x">
+          <!-- a multi line
+               comment -->
+          <?MBSIMGUI_CONTEXT_ACTION name="Some output and refresh"
+            import mbsimgui
+            print("The value of this parameter is currently: "+str(x))
+            newValue="[0,1,2,3,4,4+1]"
+            print("Setting the value now to "+newValue+" and update the GUI")
+            mbsimgui_parameter.setValue(newValue)
+            mbsimgui.mw.refresh()
+          ?>
           [0,1,2,3,4,5]
         </pv:vectorParameter>
         <pv:matrixParameter name="y">
+          <?MBSIMGUI_CONTEXT_ACTION name="Show XML documentation ..."
+            import webbrowser
+            import mbxmlutils
+            webbrowser.open(mbxmlutils.installPrefix()+"/share/mbxmlutils/doc/http___www_mbsim-env_de_MBSimXML/mbsimxml.html")
+          ?>
           [[2,2,0],[5,5,0],[8,8,0],[6,6,0],[3,3,0],[2,2,0]]
         </pv:matrixParameter>
         <pv:scalarParameter name="s">0.06</pv:scalarParameter>
@@ -37,6 +52,8 @@
         </pv:anyParameter>
       </pv:Parameter>
       <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
+        <!-- a multi line
+             comment -->
         <plotFeatureRecursive value="position">True</plotFeatureRecursive>
         <plotFeatureRecursive value="velocity">True</plotFeatureRecursive>
         <plotFeatureRecursive value="acceleration">True</plotFeatureRecursive>
@@ -75,9 +92,9 @@
                             
                                 layout = PySide2.QtWidgets.QVBoxLayout()
                                 self.setLayout(layout)
-                                self.plotWidget=self.createPlotWidget("splinePlot", layout="tight")
+                                plotWidget=self.createPlotWidget("splinePlot", layout="tight")
                                 layout.addWidget(self.getPlotWidgetToolbar("splinePlot"))
-                                layout.addWidget(self.plotWidget)
+                                layout.addWidget(plotWidget)
                                 hlayout = PySide2.QtWidgets.QHBoxLayout()
                                 layout.addLayout(hlayout)
                                 hlayout.setStretch(0, 0)
@@ -101,19 +118,26 @@
                                 self.inputSL.setPageStep(self.inputSLFac/100)
                                 self.inputSL.valueChanged.connect(self.sliderChanged)
                             
-                                self.axes = self.plotWidget.figure.subplots()
+                                axes = plotWidget.figure.subplots()
                             
-                                self.data=self.axes.plot(self.X,numpy.zeros(self.X.shape))[0]
-                                self.axes.plot(splineIn["xx"],splineIn["yy"][1]["data"],marker="x",linestyle="")
-                                self.axes.set_title(f"Plot for g={g} o={o} firstCall={mbsimgui_firstCall} lastCall={mbsimgui_lastCall}\ncounterNames={mbsimgui_counterNames} counts={mbsimgui_counts}");
-                                self.plotWidget.figure.suptitle(f"suptitle\nsuptitle");
-                                self.axes.set_xlabel("x-axis\nrow2");
-                                self.axes.set_ylabel("x-axis\nrow2");
+                                self.data=axes.plot(self.X,numpy.zeros(self.X.shape))[0]
+                                axes.plot(splineIn["xx"],splineIn["yy"][1]["data"],marker="x",linestyle="")
+                                axes.set_title(f"Plot for g={g} o={o} firstCall={mbsimgui_firstCall} lastCall={mbsimgui_lastCall}\ncounterNames={mbsimgui_counterNames} counts={mbsimgui_counts}");
+                                plotWidget.figure.suptitle(f"suptitle line 1\nsuptitle line 2");
+                                axes.set_xlabel("x-axis\nrow2");
+                                axes.set_ylabel("x-axis\nrow2");
+                                self.bm = mbxmlutils.Qt.BitBlitManager(axes, [self.data])
+
+                                text=axes.text(0,0,"Open docu in browser on click",c="blue")
+                                def onClick():
+                                  import webbrowser
+                                  webbrowser.open(mbxmlutils.installPrefix()+"/share/mbxmlutils/doc/http___www_mbsim-env_de_MBSimXML/mbsimxml.html")
+                                mbxmlutils.Qt.onArtistClick(text, onClick)
 
                                 ok = PySide2.QtWidgets.QPushButton("Write Parameter (s)")
                                 def writeParameter():
                                   s=self.inputSB.value()
-                                  mbsimgui_element.setParameterCode("s", str(s))
+                                  mbsimgui_element.setParameterValue("s", str(s))
                                   mbsimgui.mw.refresh()
                                 ok.clicked.connect(writeParameter)
                                 layout.addWidget(ok)
@@ -133,7 +157,7 @@
                                 # create spline using scipy
                                 self.data.set_ydata(sp2(self.X))
 
-                                self.plotWidget.draw()
+                                self.bm.update()
                                 self.inputSL.blockSignals(True)
                                 self.inputSL.setValue(self.sToSliderValue(s))
                                 self.inputSL.blockSignals(False)
@@ -151,7 +175,7 @@
                             ax.plot([1,2,3,4],[5,4,7,2])
                             d.show()
 
-                            mbsimgui.mw.waitForPropertyDialogs(w, d)
+                            mbxmlutils.Qt.blockUntilDialoagsAreClosed(w, d)
 
                             if mbsimgui_firstCall:
                               mbxmlutils.staticData["myplotdata"]=[]
@@ -304,12 +328,25 @@
             </openMBVRigidBody>
             <enableOpenMBVFrameC/>
           </RigidBody>
-          <pv:Embed>
+          <pv:Embed counterName="icoeffs" count="2" onlyif="icoeffs==1">
             <pv:Parameter>
               <pv:anyParameter name="spline">
                 import scipy
                 ret=scipy.interpolate.CubicSpline(x, y, bc_type="natural")
               </pv:anyParameter>
+              <pv:scalarParameter name="context1">
+                1
+                <?MBSIMGUI_CONTEXT_ACTION name="Print own value"
+                  print("The value of this parameter is currently: "+str(context1))
+                ?>
+              </pv:scalarParameter>
+              <pv:scalarParameter name="context2">
+                2
+                <?MBSIMGUI_CONTEXT_ACTION name="Print own value"
+                  context1
+                  print("The value of this parameter is currently: "+str(context2))
+                ?>
+              </pv:scalarParameter>
             </pv:Parameter>
             <RigidBody name="coeffs">
               <mass unit="kg">1</mass>

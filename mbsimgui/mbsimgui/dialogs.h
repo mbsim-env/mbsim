@@ -353,6 +353,12 @@ namespace MBSimGUI {
       QLineEdit *name;
   };
 
+  class HiddenParErrorDialog : public QDialog {
+    public:
+      HiddenParErrorDialog(QWidget *parent, const QString &xpath, const QString &msg);
+      static bool show;
+  };
+
 }
 
 #endif

@@ -37,7 +37,6 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
       Element* getElement() const;
-      static std::vector<std::pair<std::string, std::string>> getMBSimGUIContextActions(xercesc::DOMElement *parent);
     protected:
       ExtWidget *name, *plotFeature;
       CommentWidget *comment;

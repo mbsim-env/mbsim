@@ -51,10 +51,12 @@ namespace MBSimGUI {
       void addTreeItemData(TreeItemData *treeItemData_) { treeItemData.push_back(treeItemData_); }
       void setModelIndex(const QModelIndex &index_) { index = index_; }
       const QModelIndex& getModelIndex() const { return index; }
+      virtual xercesc::DOMElement* getXMLElement() { return nullptr; }
     protected:
       std::vector<TreeItemData*> treeItemData;
       QModelIndex index;
       QIcon icon;
+      QIcon orgIcon;
   };
 
 }

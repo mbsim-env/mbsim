@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" parameterHref="subdir/Project.mbspx">
+  <MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project" xmlns:p="http://www.mbsim-env.de/MBXMLUtils">
+    <p:evaluator>python</p:evaluator>
+  
+    <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
+      <frames/>
+      <contours/>
+      <groups/>
+      <objects>
+        <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" parameterHref="subdir/RB.mbspx">
+          <RigidBody xmlns="http://www.mbsim-env.de/MBSim" name="RB1{''}">
+            <mass unit="kg">1</mass>
+            <inertiaTensor unit="kg*m^2">
+              <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                <row>
+                  <ele>0.01</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                </row>
+                <row>
+                  <ele>0</ele>
+                  <ele>0.01</ele>
+                  <ele>0</ele>
+                </row>
+                <row>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>0.01</ele>
+                </row>
+              </xmlMatrix>
+            </inertiaTensor>
+            <stateDependentTranslation>
+              <TranslationAlongXAxis/>
+            </stateDependentTranslation>
+            <frames/>
+            <contours/>
+            <openMBVRigidBody>
+              <Cube xmlns="http://www.mbsim-env.de/OpenMBV" name="Cube2">
+                <transparency unit="-">0.3</transparency>
+                <length unit="m">1</length>
+              </Cube>
+            </openMBVRigidBody>
+            <enableOpenMBVFrameC/>
+          </RigidBody>
+        </Embed>
+        <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" href="subdir/RB2.mbsmx" parameterHref="subdir/RB.mbspx">
+        </Embed>
+        <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" href="subdir/RB3.mbsmx">
+          <Parameter xmlns="http://www.mbsim-env.de/MBXMLUtils">
+            <stringParameter name="stringParameter">
+              ret="dummy"
+              import os
+              if not os.path.exists("./subdir/RB.mbspx"):
+                raise RuntimeError(f"File './subdir/RB.mbspx' not found; cwd={os.getcwd()} should be 'dir of MBS.mbsx'")
+            </stringParameter>
+            <stringParameter name="hidden"><?MBSIMGUI_HIDDEN #
+              import os
+              if not os.path.exists("./MBS.mbsx"):
+                raise RuntimeError(f"File './MBS.mbsx' not found; cwd={os.getcwd()} should be 'dir of MBS.mbsx'")
+              ret=False
+              ?>
+              ret="dummyhidden"
+            </stringParameter>
+          </Parameter>
+        </Embed>
+      </objects>
+      <links/>
+      <constraints/>
+      <observers/>
+      <enableOpenMBVFrameI/>
+      <environments>
+        <MBSimEnvironment>
+          <accelerationOfGravity unit="m/s^2">
+            <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <ele>0</ele>
+              <ele>-9.81</ele>
+              <ele>0</ele>
+            </xmlVector>
+          </accelerationOfGravity>
+        </MBSimEnvironment>
+      </environments>
+    </DynamicSystemSolver>
+  
+    <DOPRI5Integrator xmlns="http://www.mbsim-env.de/MBSim">
+      <startTime unit="s">0</startTime>
+      <endTime unit="s">0.1</endTime>
+      <plotStepSize unit="s">1e-2</plotStepSize>
+    </DOPRI5Integrator>
+  
+  </MBSimProject>
+</Embed>

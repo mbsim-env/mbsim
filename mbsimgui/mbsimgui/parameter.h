@@ -46,12 +46,12 @@ namespace MBSimGUI {
       void setParent(EmbedItemData* parent_) { parent = parent_; }
       EmbedItemData *getParent() const { return parent; }
       QString getReference() const override { return ""; }
-      xercesc::DOMElement* getXMLElement() { return element; }
+      xercesc::DOMElement* getXMLElement() override { return element; }
       void setXMLElement(xercesc::DOMElement *element_) { element = element_; }
       void removeXMLElements();
       static std::vector<Parameter*> createParameters(xercesc::DOMElement *element);
     protected:
-      EmbedItemData *parent;
+      EmbedItemData *parent { nullptr };
       xercesc::DOMElement *element;
   };
 
@@ -69,10 +69,10 @@ namespace MBSimGUI {
       virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
       virtual PropertyDialog* createPropertyDialog()=0;
       QMenu* createContextMenu() override { return new ParameterContextMenu(this); }
-      virtual void updateValue();
+      virtual void updateValue(bool evaluate=false);
     protected:
       QString name, value, comment;
-      bool hidden;
+      bool hidden { false };
   };
 
   class StringParameter : public Parameter {
@@ -80,7 +80,7 @@ namespace MBSimGUI {
     public:
       StringParameter();
       PropertyDialog* createPropertyDialog() override;
-      void updateValue() override;
+      void updateValue(bool evaluate=false) override;
   };
 
   class ScalarParameter : public Parameter {
@@ -88,7 +88,7 @@ namespace MBSimGUI {
     public:
       ScalarParameter();
       PropertyDialog* createPropertyDialog() override;
-      void updateValue() override;
+      void updateValue(bool evaluate=false) override;
   };
 
   class VectorParameter : public Parameter {
@@ -96,7 +96,7 @@ namespace MBSimGUI {
     public:
       VectorParameter();
       PropertyDialog* createPropertyDialog() override;
-      void updateValue() override;
+      void updateValue(bool evaluate=false) override;
   };
 
   class MatrixParameter : public Parameter {
@@ -104,7 +104,7 @@ namespace MBSimGUI {
     public:
       MatrixParameter();
       PropertyDialog* createPropertyDialog() override;
-      void updateValue() override;
+      void updateValue(bool evaluate=false) override;
   };
 
   class AnyParameter : public Parameter {
@@ -112,30 +112,53 @@ namespace MBSimGUI {
     public:
       AnyParameter();
       PropertyDialog* createPropertyDialog() override;
-      void updateValue() override;
+      void updateValue(bool evaluate=false) override;
   };
 
   class ImportParameter : public Parameter {
     MBSIMGUI_OBJECTFACTORY_CLASS(ImportParameter, Parameter, MBXMLUtils::PV%"import", "Import");
     public:
       ImportParameter();
-      QString getName() const override { return "<import>"; }
+      QString getName() const override { return name.isEmpty()?"<import without label>":"<"+name+">"; }
       xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent) override;
       PropertyDialog* createPropertyDialog() override;
-      void updateValue() override;
+      void updateValue(bool evaluate=false) override;
     private:
       std::string action;
   };
 
-  class Parameters : public ParameterItem {
-    MBSIMGUI_OBJECTFACTORY_CLASS(Parameters, ParameterItem, MBXMLUtils::PV%"dummy", "");
+  class Parameters;
+
+  class ParameterEmbedItem : public ParameterItem {
     public:
-      Parameters(EmbedItemData *parent);
-      QString getName() const override { return parent->getName() + " parameters"; }
+      // this class is special -> do not use the define MBSIMGUI_OBJECTFACTORY_CLASS
+      QString getType() const override { return getParent() ? getParent()->getType() : ""; }
+
+      ParameterEmbedItem(EmbedItemData *parent);
+      ~ParameterEmbedItem();
+      QString getName() const override;
       QString getValue() const override { return ""; }
-      QMenu* createContextMenu() override;
       QString getReference() const override;
       bool hasReference() const override { return parent->hasParameterReference(); }
+      void setIcon(const QIcon &icon_) { icon = icon_; }
+      void setParameters(Parameters *parameters_);
+      Parameters* getParameters() { return parameters; }
+      QMenu* createContextMenu() override;
+    private:
+      Parameters *parameters { nullptr };
+  };
+
+  class Parameters : public ParameterItem {
+    public:
+      // this class is special -> do not use the define MBSIMGUI_OBJECTFACTORY_CLASS
+      QString getType() const override { return "Parameters"; }
+
+      Parameters(EmbedItemData *parent);
+      QString getName() const override { return "Parameters"; }
+      QString getValue() const override { return ""; }
+      QString getReference() const override { return ""; }
+      bool hasReference() const override { return false; }
+      QMenu* createContextMenu() override;
   };
 
 }

@@ -38,6 +38,7 @@
 #include <mbsim/utils/eps.h>
 #include "mbsim/utils/xmlutils.h"
 #include <hdf5serie/simpleattribute.h>
+#include <hdf5serie/simpledataset.h>
 
 using namespace std;
 using namespace fmatvec;
@@ -83,6 +84,7 @@ namespace MBSim {
   }
 
   void Element::init(InitStage stage, const InitConfigSet &config) {
+    DynamicSystemSolver::throwIfExitRequested();
     if(stage==preInit)
       updatePlotFeatures();
     else if(stage==plotting) {
@@ -114,25 +116,56 @@ namespace MBSim {
         }
 
         // plot attributes
-        for(auto &nameVariant : plotAttribute) {
-          visit([this, &nameVariant](const auto &v) {
+        for(auto &[name_, storageAndValue] : plotAttribute) {
+          auto &name = name_; // removing this requires a C++20 feature
+          auto &storage = storageAndValue.first;
+          auto &value = storageAndValue.second;
+          visit([this, &name, &storage](const auto &v) {
             using PlainType = decay_t<decltype(v)>;
             if constexpr (is_same_v<PlainType, monostate>) {
-              plotGroup->createChildAttribute<H5::SimpleAttribute<int>>(nameVariant.first)();
+              switch(storage) {
+                case PlotAttributeStorage::attribute:
+                  plotGroup->createChildAttribute<H5::SimpleAttribute<int>>(name)();
+                  break;
+                case PlotAttributeStorage::dataset:
+                  plotGroup->createChildObject<H5::SimpleDataset<int>>(name)();
+                  break;
+              }
             }
             else if constexpr (is_same_v<PlainType, int> || is_same_v<PlainType, double> || is_same_v<PlainType, string> ) {
-              H5::SimpleAttribute<PlainType> *attr=plotGroup->createChildAttribute<H5::SimpleAttribute<PlainType>>(nameVariant.first)();
-              attr->write(v);
+              switch(storage) {
+                case PlotAttributeStorage::attribute:
+                  plotGroup->createChildAttribute<H5::SimpleAttribute<PlainType>>(name)()->write(v);
+                  break;
+                case PlotAttributeStorage::dataset:
+                  if constexpr (is_same_v<PlainType, string> )
+                    plotGroup->createChildObject<H5::SimpleDataset<vector<string>>>(name)(1, v.size())->write({v}); // we add a scalar string as a 1D dataset of fixed string length to enable compression
+                  else
+                    plotGroup->createChildObject<H5::SimpleDataset<PlainType>>(name)()->write(v);
+                  break;
+              }
             }
             else if constexpr (is_same_v<PlainType, vector<int>> || is_same_v<PlainType, vector<double>>) {
-              H5::SimpleAttribute<PlainType> *attr=plotGroup->createChildAttribute<H5::SimpleAttribute<PlainType>>(nameVariant.first)(v.size());
-              attr->write(v);
+              switch(storage) {
+                case PlotAttributeStorage::attribute:
+                  plotGroup->createChildAttribute<H5::SimpleAttribute<PlainType>>(name)(v.size())->write(v);
+                  break;
+                case PlotAttributeStorage::dataset:
+                  plotGroup->createChildObject<H5::SimpleDataset<PlainType>>(name)(v.size())->write(v);
+                  break;
+              }
             }
             else if constexpr (is_same_v<PlainType, vector<vector<double>>>) {
-              H5::SimpleAttribute<PlainType> *attr=plotGroup->createChildAttribute<H5::SimpleAttribute<PlainType>>(nameVariant.first)(v.size(), v.size() > 0 ? v[0].size() : 0);
-              attr->write(v);
+              switch(storage) {
+                case PlotAttributeStorage::attribute:
+                  plotGroup->createChildAttribute<H5::SimpleAttribute<PlainType>>(name)(v.size(), v.size() > 0 ? v[0].size() : 0)->write(v);
+                  break;
+                case PlotAttributeStorage::dataset:
+                  plotGroup->createChildObject<H5::SimpleDataset<PlainType>>(name)(v.size(), v.size() > 0 ? v[0].size() : 0)->write(v);
+                  break;
+              }
             }
-          }, nameVariant.second);
+          }, value);
         }
       }
     }
@@ -245,6 +278,7 @@ namespace MBSim {
   }
 
   void Element::initializeUsingXML(DOMElement *element) {
+    DynamicSystemSolver::throwIfExitRequested();
     // set the XML location of this element which can be used, later, by exceptions.
     domEvalError=DOMEvalException("", element);
 
@@ -277,13 +311,17 @@ namespace MBSim {
                 E(e)->getTagName()==MBSIM%"plotAttributeFloatVector" ||
                 E(e)->getTagName()==MBSIM%"plotAttributeFloatMatrix")) {
       auto name=E(e)->getAttribute("name");
-      if     (E(e)->getTagName()==MBSIM%"plotAttribute")             setPlotAttribute(name);
-      else if(E(e)->getTagName()==MBSIM%"plotAttributeInt")          setPlotAttribute(name, E(e)->getText<int>());
-      else if(E(e)->getTagName()==MBSIM%"plotAttributeFloat")        setPlotAttribute(name, E(e)->getText<double>());
-      else if(E(e)->getTagName()==MBSIM%"plotAttributeString")       { auto s=E(e)->getText<string>(); setPlotAttribute(name, s.substr(1, s.length()-2)); }
-      else if(E(e)->getTagName()==MBSIM%"plotAttributeIntVector")    setPlotAttribute(name, E(e)->getText<vector<int>>());
-      else if(E(e)->getTagName()==MBSIM%"plotAttributeFloatVector")  setPlotAttribute(name, E(e)->getText<vector<double>>());
-      else if(E(e)->getTagName()==MBSIM%"plotAttributeFloatMatrix")  setPlotAttribute(name, E(e)->getText<vector<vector<double>>>());
+      PlotAttributeStorage storage { PlotAttributeStorage::attribute };
+      auto storageStr=E(e)->getAttribute("storage");
+      if     (storageStr=="attribute") storage = PlotAttributeStorage::attribute;
+      else if(storageStr=="dataset")   storage = PlotAttributeStorage::dataset;
+      if     (E(e)->getTagName()==MBSIM%"plotAttribute")             setPlotAttribute(name, storage);
+      else if(E(e)->getTagName()==MBSIM%"plotAttributeInt")          setPlotAttribute(name, E(e)->getText<int>(), storage);
+      else if(E(e)->getTagName()==MBSIM%"plotAttributeFloat")        setPlotAttribute(name, E(e)->getText<double>(), storage);
+      else if(E(e)->getTagName()==MBSIM%"plotAttributeString")       { auto s=E(e)->getText<string>(); setPlotAttribute(name, s.substr(1, s.length()-2), storage); }
+      else if(E(e)->getTagName()==MBSIM%"plotAttributeIntVector")    setPlotAttribute(name, E(e)->getText<vector<int>>(), storage);
+      else if(E(e)->getTagName()==MBSIM%"plotAttributeFloatVector")  setPlotAttribute(name, E(e)->getText<vector<double>>(), storage);
+      else if(E(e)->getTagName()==MBSIM%"plotAttributeFloatMatrix")  setPlotAttribute(name, E(e)->getText<vector<vector<double>>>(), storage);
 
       e=e->getNextElementSibling();
     }

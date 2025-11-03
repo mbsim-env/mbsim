@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?><DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="TS" xmlns:ombv="http://www.mbsim-env.de/OpenMBV" xmlns:pv="http://www.mbsim-env.de/MBXMLUtils" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <plotFeatureRecursive value="generalizedRelativePosition">True</plotFeatureRecursive>
+    <plotFeatureRecursive value="generalizedRelativeVelocity">True</plotFeatureRecursive>
+    <plotFeatureRecursive value="generalizedForce">True</plotFeatureRecursive>
+    <plotFeatureRecursive value="generalizedPosition">True</plotFeatureRecursive>
+    <plotFeatureRecursive value="generalizedVelocity">True</plotFeatureRecursive>
+    <frames/>
+    <contours/>
+    <groups/>
+    <objects>
+        <RigidBody name="Box1a">
+            <frameOfReference ref="../Frame[I]"/>
+            <frameForKinematics ref="Frame[C]"/>
+            <mass>3</mass>
+            <inertiaTensor>[[1,0,0],[0,1,0],[0,0,1]]</inertiaTensor>
+            <timeDependentTranslation>
+              <BidirectionalFunction>
+                <negativeDirectionalFunction>
+                  <SymbolicFunction name="error"><definition arg1="t">
+                    import numpy
+                    ret=numpy.zeros((3,1),dtype=object); ret[0]=sympy.sin(freq1*t + pi/2); ret[1]=v0y*t; ret[2]=0
+                  </definition></SymbolicFunction>
+                </negativeDirectionalFunction>
+                <positiveDirectionalFunction>
+                  <SymbolicFunction><definition arg1="t">
+                    import numpy
+                    ret=numpy.zeros((3,1),dtype=object); ret[0]=sympy.sin(freq1*t + pi/2); ret[1]=v0y*t; ret[2]=0
+                  </definition></SymbolicFunction>
+                </positiveDirectionalFunction>
+              </BidirectionalFunction>
+            </timeDependentTranslation>
+            <timeDependentRotation>
+              <CompositeFunction>
+                <outerFunction>
+                  <RotationAboutAxesXY/>
+                </outerFunction>
+                <innerFunction>
+                  <SymbolicFunction><definition arg1="t">
+                    [t,2*t]
+                  </definition></SymbolicFunction>
+                </innerFunction>
+              </CompositeFunction>
+            </timeDependentRotation>
+            <frames/>
+            <contours/>
+            <openMBVRigidBody>
+                <ombv:Cube name="Box1a">
+                    <ombv:initialTranslation>[0,0,0]</ombv:initialTranslation>
+                    <ombv:initialRotation>[0,0,0]</ombv:initialRotation>
+                    <ombv:scaleFactor>1</ombv:scaleFactor>
+                    <ombv:length>2</ombv:length>
+                </ombv:Cube>
+            </openMBVRigidBody>
+        </RigidBody>
+        <RigidBody name="Box2">
+            <frameOfReference ref="../Frame[I]"/>
+            <frameForKinematics ref="Frame[C]"/>
+            <mass>3</mass>
+            <inertiaTensor>[[1,0,0],[0,1,0],[0,0,1]]</inertiaTensor>
+            <stateDependentTranslation>
+              <SymbolicFunction><definition arg1="q" arg1Dim="1">
+                [[5+sympy.cos(freq1*q[0])], [sympy.sin(freq1*q[0])], [0]]
+              </definition></SymbolicFunction>
+            </stateDependentTranslation>
+            <frames/>
+            <contours/>
+            <openMBVRigidBody>
+                <ombv:Cube name="Box2">
+                    <ombv:initialTranslation>[0,0,0]</ombv:initialTranslation>
+                    <ombv:initialRotation>[0,0,0]</ombv:initialRotation>
+                    <ombv:scaleFactor>1</ombv:scaleFactor>
+                    <ombv:length>1</ombv:length>
+                </ombv:Cube>
+            </openMBVRigidBody>
+        </RigidBody>
+    </objects>
+    <links/>
+    <constraints/>
+    <observers/>
+    <environments>
+        <MBSimEnvironment>
+            <accelerationOfGravity>[0,-9.81,0]</accelerationOfGravity>
+        </MBSimEnvironment>
+    </environments>
+</DynamicSystemSolver>

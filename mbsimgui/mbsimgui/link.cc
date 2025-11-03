@@ -21,6 +21,7 @@
 #include "link_.h"
 #include "utils.h"
 #include "mainwindow.h"
+#include "parameter.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -32,6 +33,7 @@ namespace MBSimGUI {
 
   Link::Link() {
     icon = Utils::QIconCached(QString::fromStdString((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"link.svg").string()));
+    parameterEmbedItem->setIcon(icon);
   }
 
   UnknownLink::UnknownLink() {

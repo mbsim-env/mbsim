@@ -23,6 +23,7 @@
 #include "objectfactory.h"
 #include "utils.h"
 #include "mainwindow.h"
+#include "parameter.h"
 #include <xercesc/dom/DOMDocument.hpp>
 #include <mbxmlutils/eval.h>
 
@@ -32,11 +33,11 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  extern bool currentTask;
   extern MainWindow *mw;
 
   DynamicSystemSolver::DynamicSystemSolver() {
     icon = Utils::QIconCached(QString::fromStdString((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"dss.svg").string()));
+    parameterEmbedItem->setIcon(icon);
   }
 
   void DynamicSystemSolver::removeXMLElements() {
@@ -80,61 +81,6 @@ namespace MBSimGUI {
   void DynamicSystemSolver::create() {
     Group::create();
     environments = E(element)->getFirstElementChildNamed(MBSIM%"environments");
-  }
-
-  DOMElement* DynamicSystemSolver::processIDAndHref(DOMElement *element) {
-    element = Group::processIDAndHref(element);
-    if(currentTask==1) {
-      E(element)->setAttribute("name","MBS_tmp");
-      DOMElement *ele1 = D(element->getOwnerDocument())->createElement( MBSIM%"plotFeatureRecursive" );
-      E(ele1)->setAttribute("value","plotRecursive");
-      ele1->insertBefore(element->getOwnerDocument()->createTextNode(X()%project->getVarFalse().toStdString()), nullptr);
-      element->insertBefore( ele1, element->getFirstElementChild() );
-    }
-    DOMElement *ele1=E(E(element)->getFirstElementChildNamed(MBSIM%"environments"))->getFirstElementChildNamed(MBSIM%"MBSimEnvironment");
-    if(not ele1) return element;
-    ele1=E(ele1)->getFirstElementChildNamed(MBSIM%"openMBVObject");
-    if(not ele1) return element;
-    ele1 = ele1->getFirstElementChild();
-    while(ele1) {
-      if(embed && MBXMLUtils::E(ele1)->hasAttribute("href")) {
-        mw->updateParameters(this,false);
-        std::string evaltmp;
-        try{
-          evaltmp = mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(MBXMLUtils::E(ele1)->getAttribute("href"),ele1,false));
-        }
-        catch(MBXMLUtils::DOMEvalException &e) {
-          mw->setExitBad();
-          mw->statusBar()->showMessage(e.getMessage().c_str());
-          std::cerr << e.getMessage() << std::endl;
-        }
-        catch(...) {
-          mw->setExitBad();
-          mw->statusBar()->showMessage("Unknown exception");
-          std::cerr << "Unknwon exception" << std::endl;
-        }
-        auto docFilename = MBXMLUtils::D(element->getOwnerDocument())->getDocumentFilename();
-        boost::filesystem::canonical(docFilename);
-        auto doc = mw->mbxmlparserNoVal->parse(QDir(docFilename.parent_path().string().c_str()).absoluteFilePath(QString::fromStdString(evaltmp.substr(1,evaltmp.size()-2))).toStdString());
-        if(!doc) {
-          ele1 = ele1->getNextElementSibling();
-          continue;
-        }
-        DOMElement *ele2 = static_cast<xercesc::DOMElement*>(element->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
-        ele1->insertBefore(ele2,nullptr);
-        boost::filesystem::path orgFileName=E(doc->getDocumentElement())->getOriginalFilename();
-        E(ele2)->addEmbedData("MBXMLUtils_OriginalFilename", orgFileName.string());
-        E(ele2)->setOriginalElementLineNumber(E(ele1)->getLineNumber());
-        MBXMLUtils::E(ele1)->removeAttribute("href");
-      }
-      if(E(ele1)->getTagName()==PV%"Embed")
-        E(ele1->getFirstElementChild())->addProcessingInstructionChildNamed("OPENMBV_ID", getID());
-      else
-        E(ele1)->addProcessingInstructionChildNamed("OPENMBV_ID", getID());
-
-      ele1 = ele1->getNextElementSibling();
-    }
-    return element;
   }
 
   EmbedItemData* DynamicSystemSolver::getEmbedItemParent() {

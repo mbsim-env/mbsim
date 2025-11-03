@@ -1684,7 +1684,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* MBSimGUIContextAction::initializeUsingXML(DOMElement *element) {
-    auto contextAction = ElementPropertyDialog::getMBSimGUIContextActions(element);
+    auto contextAction = getMBSimGUIContextActions(element);
     count->blockSignals(true);
     count->setValue(contextAction.size());
     count->blockSignals(false);

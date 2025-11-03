@@ -135,6 +135,9 @@ namespace MBSim {
        */
       void setTruncateSimulationFiles(bool trunc) { truncateSimulationFiles=trunc; }
 
+      //! If true the ombvx XML file in embedded in the ombvh5 file
+      void setEmbedOmbvxInH5(bool flag) { embedOmbvxInH5=flag; }
+
       /* INHERITED INTERFACE OF GROUP */
       void init(InitStage stage, const InitConfigSet &config) override;
       using Group::plot;
@@ -438,6 +441,7 @@ namespace MBSim {
 #ifndef SWIG
       class SignalHandler {
         public:
+          // This resets the DSS flags exitRequest and silentExit to false
           SignalHandler();
           ~SignalHandler();
         private:
@@ -450,23 +454,18 @@ namespace MBSim {
       };
 #endif
 
-      void throwIfExitRequested() {
+      // This function should be called repeatetly in mbsim, at least in heavy work parts of the code.
+      // If the DSS exitRequest flag is set a error message is printed and a std::runtime_error exception is thrown to interrupt.
+      // If silent is true or the DSS silentExit flag is set then not message is printed and a SilentError is thrown.
+      static void throwIfExitRequested(bool silent=false) {
         if(exitRequest) {
-          if(!exitRequestPrinted) {
-            exitRequestPrinted = true;
-            msg(fmatvec::Atom::Error)<<"User requested a exit (throw exception now)."<<std::endl;
+          if(!silent && !silentExit) {
+            msgStatic(fmatvec::Atom::Error)<<"User requested a exit (throw exception now)."<<std::endl;
+            throw std::runtime_error("Exception due to user requested exit.");
           }
-          throw std::runtime_error("Exception due to user requested exit.");
+          msgStatic(fmatvec::Atom::Info)<<"User requested a silent exit (throw exception now)."<<std::endl;
+          throw SilentError();
         }
-      }
-
-      bool exitRequested() {
-        if(exitRequest)
-          if(!exitRequestPrinted) {
-            exitRequestPrinted = true;
-            msg(fmatvec::Atom::Error)<<"User requested a exit (caller will handle this request now)."<<std::endl;
-          }
-        return exitRequest;
       }
 
       // TODO just for testing
@@ -478,6 +477,7 @@ namespace MBSim {
        * \param h5, else ascii
        */
       void writez(std::string fileName, bool formatH5=true);
+      using DynamicSystem::writez;
 
       /**
        * \brief writes state table to a file
@@ -491,6 +491,7 @@ namespace MBSim {
        * \param name of the file
        */
       void readz0(std::string fileName);
+      using DynamicSystem::readz0;
 
       void initializeUsingXML(xercesc::DOMElement *element) override;
 
@@ -644,6 +645,9 @@ namespace MBSim {
 
       void setqdequ(bool qdequ_) { qdequ = qdequ_; }
       bool getqdequ() { return qdequ; }
+
+      /** interrupt at the next interruption point */
+      static void interrupt(bool silent=false);
 
     protected:
       /**
@@ -916,6 +920,7 @@ namespace MBSim {
     private:
       /**
        * \brief handler for user interrupt signal
+       * Set the DSS flag exitRequest to true.
        */
       static void sigInterruptHandler(int);
 
@@ -925,11 +930,12 @@ namespace MBSim {
       void constructor();
 
       /**
-       * \brief boolean signal evaluation for end integration set by user
+       * \brief boolean flags to store a user requested interruption
        */
       static std::atomic<bool> exitRequest;
       static_assert(decltype(exitRequest)::is_always_lock_free);
-      bool exitRequestPrinted;
+      // flag to indicate if a user requested interruption should be silent.
+      static std::atomic<bool> silentExit;
 
       /**
        * \brief is a state read from a file
@@ -947,6 +953,7 @@ namespace MBSim {
       void addToGraph(Graph* graph, fmatvec::SqrMat &A, int i, std::vector<Element*> &objList);
 
       bool truncateSimulationFiles;
+      bool embedOmbvxInH5 { false };
 
       // Holds the dynamic systems before the "reorganize hierarchy" takes place.
       // This is required since all elements of all other containers from DynamicSystem are readded to DynamicSystemSolver,

@@ -22,6 +22,7 @@
 #include "element_property_dialog.h"
 #include "utils.h"
 #include "mainwindow.h"
+#include "parameter.h"
 #include <xercesc/dom/DOMDocument.hpp>
 
 using namespace std;
@@ -44,6 +45,7 @@ namespace MBSimGUI {
 
   Observer::Observer() {
     icon = Utils::QIconCached(QString::fromStdString((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"observer.svg").string()));
+    parameterEmbedItem->setIcon(icon);
   }
 
   DOMElement* MechanicalLinkObserver::processIDAndHref(DOMElement *element) {

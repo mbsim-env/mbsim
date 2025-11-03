@@ -22,6 +22,7 @@
 #include "parameter.h"
 #include "fileitemdata.h"
 #include "mainwindow.h"
+#include "utils.h"
 #include <mbxmlutils/eval.h>
 #include <xercesc/dom/DOMDocument.hpp>
 #include <xercesc/dom/DOMNamedNodeMap.hpp>
@@ -35,13 +36,13 @@ namespace MBSimGUI {
 
   extern MainWindow *mw;
 
-  EmbedItemData::EmbedItemData() : name("Unnamed"), parameters(new Parameters(this)) {
+  EmbedItemData::EmbedItemData() : name("Unnamed"), parameterEmbedItem(new ParameterEmbedItem(this)) {
   }
 
   EmbedItemData::~EmbedItemData() {
     for (auto & it : parameter)
       delete it;
-    delete parameters;
+    delete parameterEmbedItem;
     if(parameterFileItem) parameterFileItem->removeReference(this);
     if(fileItem) fileItem->removeReference(this);
   }
@@ -208,9 +209,9 @@ namespace MBSimGUI {
       name = QString::fromStdString(E(element)->getAttribute("name"));
       if(name.contains('{')) {
         // instantiate a new evaluator on mw->eval and restore the old one at scope end
-        MainWindow::CreateTemporaryNewEvaluator tempEval;
+        NewParamLevel npl(mw->eval);
 
-        auto parameterLevels = mw->updateParameters(this,false);
+        auto parameterLevels = mw->updateParameters(this);
         auto values = MainWindow::evaluateForAllArrayPattern(parameterLevels, name.toStdString(), getXMLElement(), false, false, true).second;
         // build the evaluated display name
         name.clear();
@@ -221,10 +222,11 @@ namespace MBSimGUI {
             if(uniqueNames.insert(curName).second) // only add unique names
               name += QString(" ❙ ") + QString::fromStdString(curName);
           }
-          catch(DOMEvalException &e) {
+          catch(exception &ex) {
             mw->setExitBad();
-            mw->statusBar()->showMessage(("Cannot evaluate element name to string: " + e.getMessage()).c_str());
-            std::cerr << "Cannot evaluate element name to string: " << e.getMessage() << std::endl;
+            auto msg = dynamic_cast<DOMEvalException*>(&ex) ? static_cast<DOMEvalException&>(ex).getMessage() : ex.what();
+            mw->statusBar()->showMessage(("Cannot evaluate element name to string: " + msg).c_str());
+            std::cerr << "Cannot evaluate element name to string: " << msg << std::endl;
           }
           catch(...) {
             mw->setExitBad();
@@ -242,6 +244,13 @@ namespace MBSimGUI {
       comment = QString::fromStdString(X()%cele->getNodeValue());
     else
       comment.clear();
+    if(orgIcon.isNull())
+      orgIcon=icon;
+    if(E(element)->getFirstProcessingInstructionChildNamed("MBSIMGUI_CONTEXT_ACTION")!=nullptr)
+      icon = QIcon(new OverlayIconEngine(orgIcon,
+        Utils::QIconCached((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"contextactionoverlay.svg").string().c_str())));
+    else
+      icon = orgIcon;
   }
 
   void EmbedItemData::updateValues() {

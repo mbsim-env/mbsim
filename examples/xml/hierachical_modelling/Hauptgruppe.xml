@@ -9,6 +9,20 @@
   <plotFeatureRecursive value="generalizedForce">1</plotFeatureRecursive>
   <plotFeatureRecursive value="mbsimns:generalizedPosition">1</plotFeatureRecursive>
   <plotFeatureRecursive value="mbsimns:generalizedVelocity">1</plotFeatureRecursive>
+  <plotAttribute name="empty"></plotAttribute>
+  <plotAttributeInt name="int">9</plotAttributeInt>
+  <plotAttributeFloat name="float">3.4</plotAttributeFloat>
+  <plotAttributeString name="string">'test'</plotAttributeString>
+  <plotAttributeIntVector name="intVec">[3;54;2]</plotAttributeIntVector>
+  <plotAttributeFloatVector name="floatVec">[3.4;54.3;2.1]</plotAttributeFloatVector>
+  <plotAttributeFloatMatrix name="floatMat">[3.4,54.3;3.5,2.1]</plotAttributeFloatMatrix>
+  <plotAttribute name="emptyDS" storage="dataset"></plotAttribute>
+  <plotAttributeInt name="intDS" storage="dataset">9</plotAttributeInt>
+  <plotAttributeFloat name="floatDS" storage="dataset">3.4</plotAttributeFloat>
+  <plotAttributeString name="stringDS" storage="dataset">'test'</plotAttributeString>
+  <plotAttributeIntVector name="intVecDS" storage="dataset">[3;54;2]</plotAttributeIntVector>
+  <plotAttributeFloatVector name="floatVecDS" storage="dataset">[3.4;54.3;2.1]</plotAttributeFloatVector>
+  <plotAttributeFloatMatrix name="floatMatDS" storage="dataset">[3.4,54.3;3.5,2.1]</plotAttributeFloatMatrix>
   <frameOfReference ref="../Frame[Q{numHG}]"/>
   <frames>
     <FixedRelativeFrame name="Q">
@@ -29,6 +43,20 @@
   <objects>
     <RigidBody name="Box1">
       <plotFeature value="generalizedAcceleration">1</plotFeature>
+      <plotAttribute name="empty"></plotAttribute>
+      <plotAttributeInt name="int">9</plotAttributeInt>
+      <plotAttributeFloat name="float">3.4</plotAttributeFloat>
+      <plotAttributeString name="string">'test'</plotAttributeString>
+      <plotAttributeIntVector name="intVec">[3;54;2]</plotAttributeIntVector>
+      <plotAttributeFloatVector name="floatVec">[3.4;54.3;2.1]</plotAttributeFloatVector>
+      <plotAttributeFloatMatrix name="floatMat">[3.4,54.3;3.5,2.1]</plotAttributeFloatMatrix>
+      <plotAttribute name="emptyDS" storage="dataset"></plotAttribute>
+      <plotAttributeInt name="intDS" storage="dataset">9</plotAttributeInt>
+      <plotAttributeFloat name="floatDS" storage="dataset">3.4</plotAttributeFloat>
+      <plotAttributeString name="stringDS" storage="dataset">'test'</plotAttributeString>
+      <plotAttributeIntVector name="intVecDS" storage="dataset">[3;54;2]</plotAttributeIntVector>
+      <plotAttributeFloatVector name="floatVecDS" storage="dataset">[3.4;54.3;2.1]</plotAttributeFloatVector>
+      <plotAttributeFloatMatrix name="floatMatDS" storage="dataset">[3.4,54.3;3.5,2.1]</plotAttributeFloatMatrix>
       <generalizedInitialPosition>[0]</generalizedInitialPosition>
       <generalizedInitialVelocity>[0.1]</generalizedInitialVelocity>
       <frameOfReference ref="../Frame[I]"/>

@@ -22,6 +22,7 @@
 #include "utils.h"
 #include <xercesc/dom/DOMDocument.hpp>
 #include "mainwindow.h"
+#include "parameter.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -38,6 +39,7 @@ namespace MBSimGUI {
 
   Frame::Frame() {
     icon = Utils::QIconCached(QString::fromStdString((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"frame.svg").string()));
+    parameterEmbedItem->setIcon(icon);
   }
 
   DOMElement* Frame::processIDAndHref(DOMElement *element) {

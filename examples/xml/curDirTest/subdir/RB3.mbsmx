@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<RigidBody xmlns="http://www.mbsim-env.de/MBSim" name="RB3{''}">
+  <mass unit="kg">
+    ret=1
+    import os
+    if not os.path.exists("./RB3.mbsmx"):
+      raise RuntimeError(f"File './RB3.mbsmx' not found; cwd={os.getcwd()} should be '.../subdir'")
+  </mass>
+  <inertiaTensor unit="kg*m^2">
+    <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+      <row>
+        <ele>0.01</ele>
+        <ele>0</ele>
+        <ele>0</ele>
+      </row>
+      <row>
+        <ele>0</ele>
+        <ele>0.01</ele>
+        <ele>0</ele>
+      </row>
+      <row>
+        <ele>0</ele>
+        <ele>0</ele>
+        <ele>0.01</ele>
+      </row>
+    </xmlMatrix>
+  </inertiaTensor>
+  <stateDependentTranslation>
+    <TranslationAlongXAxis/>
+  </stateDependentTranslation>
+  <frames/>
+  <contours/>
+  <openMBVRigidBody>
+    <Cube xmlns="http://www.mbsim-env.de/OpenMBV" name="Cube2">
+      <transparency unit="-">0.3</transparency>
+      <length unit="m">1</length>
+    </Cube>
+  </openMBVRigidBody>
+  <enableOpenMBVFrameC/>
+</RigidBody>

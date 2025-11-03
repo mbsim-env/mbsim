@@ -27,15 +27,10 @@ namespace MBSimGUI {
   extern MainWindow *mw;
 
   ParameterView::ParameterView(QWidget *parent) : QTreeView(parent) {
-    valueDelegate=new SingleLineDelegate(this);
+    auto valueDelegate=new SingleLineDelegate(this);
     setItemDelegateForColumn(1, valueDelegate);
-    commentDelegate=new SingleLineDelegate(this);
+    auto commentDelegate=new SingleLineDelegate(this);
     setItemDelegateForColumn(2, commentDelegate);
-  }
-
-  ParameterView::~ParameterView() {
-    delete valueDelegate;
-    delete commentDelegate;
   }
 
   void ParameterView::mouseDoubleClickEvent(QMouseEvent *event) {

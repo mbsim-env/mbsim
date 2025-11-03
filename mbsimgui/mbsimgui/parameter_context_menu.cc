@@ -23,6 +23,9 @@
 #include "parameter.h"
 #include "embeditemdata.h"
 #include "mainwindow.h"
+#include "utils.h"
+
+using namespace MBXMLUtils;
 
 namespace MBSimGUI {
 
@@ -58,6 +61,9 @@ namespace MBSimGUI {
     action->setShortcut(QKeySequence::Delete);
     connect(action,&QAction::triggered,mw,QOverload<>::of(&MainWindow::removeParameter));
     addAction(action);
+
+    // add the context actions
+    addMBSimGUIContextAction(this, parameter);
   }
 
 }

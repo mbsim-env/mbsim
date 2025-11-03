@@ -32,7 +32,7 @@ mbsimflatxml_SOURCES = mbsimflatxml-main.cc
 
 mbsimxml_CPPFLAGS = $(DEPS_CFLAGS) $(MBXMLUTILS_CFLAGS)
 mbsimxml_LDFLAGS = $(PYCPPWRAPPER_LIBS_MAIN)
-mbsimxml_LDADD = ./libmbsimflatxml.la ./libmbsimxml.la $(DEPS_LIBS) $(PYCPPWRAPPER_LIBS) $(MBXMLUTILS_LIBS) -l@BOOST_FILESYSTEM_LIB@ -l@BOOST_SYSTEM_LIB@ $(MAYBE_WIN32_mbsimxml_OBJ)
+mbsimxml_LDADD = ./libmbsimflatxml.la ./libmbsimxml.la $(DEPS_LIBS) $(PYCPPWRAPPER_LIBS) $(MBXMLUTILS_LIBS) -l@BOOST_FILESYSTEM_LIB@ -l@BOOST_IOSTREAMS_LIB@ -l@BOOST_SYSTEM_LIB@ $(MAYBE_WIN32_mbsimxml_OBJ)
 mbsimxml_SOURCES = mbsimxml-main.cc
 
 schemadir = @MBXMLUTILSSCHEMA@/http___www_mbsim-env_de_MBSimXML

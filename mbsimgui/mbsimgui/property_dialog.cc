@@ -124,7 +124,8 @@ namespace MBSimGUI {
       event->ignore();
   }
 
-  EmbedItemPropertyDialog::EmbedItemPropertyDialog(const QString &title, EmbedItemData *item_) : PropertyDialog(title), item(item_) {
+  EmbedItemPropertyDialog::EmbedItemPropertyDialog(const QString &title, EmbedItemData *item_) : PropertyDialog(title), item(item_), npl(mw->eval) {
+    mw->updateParameters(item);
   }
 
   void EmbedItemPropertyDialog::toWidget() {
@@ -133,6 +134,16 @@ namespace MBSimGUI {
 
   void EmbedItemPropertyDialog::fromWidget() {
     writeXMLFile(item->getXMLElement());
+  }
+
+  void EmbedItemPropertyDialog::showEvent(QShowEvent *ev) {
+    mw->setCurrentlyEditedItem(item);
+    PropertyDialog::showEvent(ev);
+  }
+
+  void EmbedItemPropertyDialog::hideEvent(QHideEvent *ev) {
+    mw->setCurrentlyEditedItem(nullptr);
+    PropertyDialog::hideEvent(ev);
   }
 
   UnknownItemPropertyDialog::UnknownItemPropertyDialog(EmbedItemData *item) : EmbedItemPropertyDialog("Element Properties", item) {

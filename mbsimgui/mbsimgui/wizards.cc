@@ -25,6 +25,7 @@
 #include "special_widgets.h"
 #include "mainwindow.h"
 #include "fe_type.h"
+#include "project.h"
 #include <QRadioButton>
 #include <QMessageBox>
 #include <xercesc/dom/DOMImplementation.hpp>
@@ -673,7 +674,8 @@ namespace MBSimGUI {
     QWizard::hideEvent(event);
   }
 
-  FlexibleBodyTool::FlexibleBodyTool(QWidget *parent) : Wizard(parent) {
+  FlexibleBodyTool::FlexibleBodyTool(QWidget *parent) : Wizard(parent), npl(mw->eval)  {
+    mw->updateParameters(mw->getProject());
     setPage(PageFirst, new FirstPage(this));
     setPage(PageExtFE, new ExternalFiniteElementsPage(this));
     setPage(PageCalculix, new CalculixPage(this));

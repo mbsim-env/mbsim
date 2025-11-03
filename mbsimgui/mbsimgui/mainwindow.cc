@@ -81,6 +81,7 @@
 #include <xercesc/dom/DOMLSSerializer.hpp>
 #include <xercesc/dom/DOMNodeList.hpp>
 #include <xercesc/dom/DOMComment.hpp>
+#include <Inventor/nodes/SoLabel.h>
 #include "dialogs.h"
 #include "wizards.h"
 #include <evaluator/evaluator.h>
@@ -96,14 +97,40 @@ namespace bfs=boost::filesystem;
 
 namespace MBSimGUI {
 
-  bool currentTask;
-
   MainWindow *mw;
 
   bool MainWindow::exitOK = true;
 
-  MainWindow::MainWindow(QStringList &arg) : project(nullptr), inlineOpenMBVMW(nullptr), allowUndo(true), maxUndo(10), autoRefresh(true), statusUpdate(true), doc(), elementBuffer(nullptr,false), parameterBuffer(nullptr,false) {
+  static int currentModelID = 0;
+
+  MainWindow::MainWindow(QStringList &arg) : project(nullptr), inlineOpenMBVMW(nullptr), allowUndo(true), maxUndo(10), statusUpdate(true), doc(), elementBuffer(nullptr,false), parameterBuffer(nullptr,false) {
     QSettings settings;
+
+    echoView = new EchoView();
+
+    connect(this, &MainWindow::updateEchoView, this, &MainWindow::updateEchoViewSlot); // we always call the updateEchoView signal instead of the updateEchoViewSlot to handle threads
+    connect(this, &MainWindow::updateStatusMessage, this, &MainWindow::updateStatusMessageSlot); // we always call the updateStatusMessage signal instead of the updateStatusMessageSlot to handle threads
+
+    // initialize streams
+    auto outputFunc=[this](const string &s){
+      updateEchoView(s.c_str());
+    };
+    debugStreamFlag=std::make_shared<bool>(false);
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Info      , std::make_shared<bool>(true),
+      make_shared<fmatvec::PrePostfixedStream>("<span class=\"MBSIMGUI_INFO\">", "</span>", outputFunc, DOMEvalException::htmlEscaping));
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Warn      , std::make_shared<bool>(true),
+      make_shared<fmatvec::PrePostfixedStream>("<span class=\"MBSIMGUI_WARN\">", "</span>", outputFunc, DOMEvalException::htmlEscaping));
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Debug     , debugStreamFlag             ,
+      make_shared<fmatvec::PrePostfixedStream>("<span class=\"MBSIMGUI_DEBUG\">", "</span>", outputFunc, DOMEvalException::htmlEscaping));
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Error     , std::make_shared<bool>(true),
+      make_shared<fmatvec::PrePostfixedStream>("<span class=\"MBSIMGUI_ERROR\">", "</span>", outputFunc, DOMEvalException::htmlEscaping));
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Deprecated, std::make_shared<bool>(true),
+      make_shared<fmatvec::PrePostfixedStream>("<span class=\"MBSIMGUI_DEPRECATED\">", "</span>", outputFunc, DOMEvalException::htmlEscaping));
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Status    , std::make_shared<bool>(true),
+      make_shared<fmatvec::PrePostfixedStream>("", "\n", [this](const string &s){
+        // this usually gets never called -> no need to ensure that it is only called every 250ms
+        updateStatusMessage(s.c_str());
+      }));
 
     impl=DOMImplementation::getImplementation();
     serializer=impl->createLSSerializer();
@@ -202,8 +229,8 @@ namespace MBSimGUI {
     action->setStatusTip("Show a list of all referenced files");
     action = fileMenu->addAction(QIcon::fromTheme("document-properties"), "Settings...", this, &MainWindow::openOptionsMenu);
     action->setStatusTip(tr("Show settings menu"));
-    action = fileMenu->addAction(QIcon::fromTheme("document-properties"), "3D view settings...", inlineOpenMBVMW, &OpenMBVGUI::MainWindow::showSettingsDialog);
-    action->setStatusTip(tr("Show settings menu of the 3D view (OpenMBV)"));
+    action = fileMenu->addAction(QIcon::fromTheme("document-properties"), "Scene view settings...", inlineOpenMBVMW, &OpenMBVGUI::MainWindow::showSettingsDialog);
+    action->setStatusTip(tr("Show settings menu of the scene view (OpenMBV)"));
 
     fileMenu->addSeparator();
     for (auto & recentProjectFileAct : recentProjectFileActs) {
@@ -295,16 +322,39 @@ namespace MBSimGUI {
     sceneViewMenu->removeAction(sceneViewMenu->findChild<QAction*>("MainWindow::sceneViewMenu::releaseCamera"));
     menuBar()->addMenu(sceneViewMenu);
 
+    auto autorefreshAction = new QAction(Utils::QIconCached(QString::fromStdString((iconPath/"auto-reload.svg").string())),
+                                                 "Auto refresh scene view", this);
+    connect(autorefreshAction, &QAction::triggered, [this](bool checked){
+      QSettings settings;
+      settings.setValue("mainwindow/options/autorefresh", checked);
+      if(checked)
+        refresh();
+    });
+    autorefreshAction->setCheckable(true);
+    autorefreshAction->setChecked(settings.value("mainwindow/options/autorefresh", true).toBool());
+
+    solverInitialProj=new QAction(Utils::QIconCached(QString::fromStdString((iconPath/"skip-initial-proj.svg").string())),
+                                                 "Skip initial projection for scene view", this);
+    connect(solverInitialProj, &QAction::triggered, [this](bool checked){
+      QSettings settings;
+      settings.setValue("mainwindow/options/solver/skipinitialproj", checked);
+      refresh();
+    });
+    solverInitialProj->setCheckable(true);
+    solverInitialProj->setChecked(settings.value("mainwindow/options/solver/skipinitialproj", false).toBool());
+
     auto miscMenu = new QMenu("Misc", menuBar());
     menuBar()->addMenu(miscMenu);
 
     auto exportMenu = new QMenu("Data Export", menuBar());
+
     actionSaveDataAs = exportMenu->addAction("Export all data", this, &MainWindow::saveDataAs);
     actionSaveMBSimH5DataAs = exportMenu->addAction("Export MBSim data file", this, &MainWindow::saveMBSimH5DataAs);
     actionSaveOpenMBVDataAs = exportMenu->addAction("Export OpenMBV data", this, &MainWindow::saveOpenMBVDataAs);
     actionSaveStateVectorAs = exportMenu->addAction("Export state vector", this, &MainWindow::saveStateVectorAs);
     actionSaveStateTableAs = exportMenu->addAction("Export state table", this, &MainWindow::saveStateTableAs);
     actionSaveLinearSystemAnalysisAs = exportMenu->addAction("Export linear system analysis", this, &MainWindow::saveLinearSystemAnalysisAs);
+
     menuBar()->addMenu(exportMenu);
 
     auto *dockMenu=new QMenu("Docks", menuBar());
@@ -314,10 +364,14 @@ namespace MBSimGUI {
     menuBar()->addMenu(toolMenu);
 
     QMenu *helpMenu = new QMenu("Help", menuBar());
-    helpMenu->addAction(QIcon::fromTheme("help-contents"), "Contents", this, &MainWindow::help);
-    helpMenu->addAction(QIcon::fromTheme("help-xml"), "XML Help", this, [=](){ this->xmlHelp(); });
-    helpMenu->addAction(QIcon::fromTheme("help-relnotes"), "Release notes", this, &MainWindow::relnotes);
-    helpMenu->addAction(QIcon::fromTheme("help-about"), "About", this, &MainWindow::about);
+    helpMenu->addAction(QIcon::fromTheme("help-www"), "MBSim-Environment WWW...", [](){
+      QDesktopServices::openUrl(QUrl("https://www.mbsim-env.de"));
+    });
+    helpMenu->addAction(QIcon::fromTheme("help-xml"), "XML Help...", [=](){
+      QDesktopServices::openUrl(QUrl::fromLocalFile(QString::fromStdString((getInstallPath()/"share"/"mbxmlutils"/"doc"/"http___www_mbsim-env_de_MBSimXML"/"mbsimxml.html").string())));
+    });
+    helpMenu->addAction(QIcon::fromTheme("help-relnotes"), "Release notes...", this, &MainWindow::relnotes);
+    helpMenu->addAction(QIcon::fromTheme("help-about"), "About...", this, &MainWindow::about);
     menuBar()->addMenu(helpMenu);
 
     QToolBar *runBar = addToolBar("Run Toolbar");
@@ -327,10 +381,10 @@ namespace MBSimGUI {
     runMenu->addAction(actionSimulate);
     actionSimulate->setStatusTip(tr("Simulate the multibody system"));
     connect(actionSimulate,&QAction::triggered,this,&MainWindow::simulate);
-    actionInterrupt = runBar->addAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_MediaStop)),"Interrupt simulation");
+    actionInterrupt = runBar->addAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_MediaStop)),"Interrupt background tasks");
     runMenu->addAction(actionInterrupt);
     connect(actionInterrupt,&QAction::triggered,this,&MainWindow::interrupt);
-    actionKill = runBar->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"kill.svg").string())),"Kill simulation");
+    actionKill = runBar->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"kill.svg").string())),"Kill background tasks");
     runMenu->addAction(actionKill);
     connect(actionKill,&QAction::triggered,this,&MainWindow::kill);
     actionOpenMBV = runBar->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"openmbv.svg").string())),"OpenMBV");
@@ -349,15 +403,12 @@ namespace MBSimGUI {
     QToolBar *miscBar = addToolBar("Misc Toolbar");
     miscBar->setObjectName("toolbar/misc");
     toolMenu->addAction(miscBar->toggleViewAction());
-    QAction *actionCreateFMU = miscBar->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"FMI_bare.svg").string())),"Create FMU");
+    actionCreateFMU = miscBar->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"FMI_bare.svg").string())),"Create FMU");
     miscMenu->addAction(actionCreateFMU);
     connect(actionCreateFMU,&QAction::triggered,this,&MainWindow::createFMU);
     QAction *actionFem = miscBar->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"fbt.svg").string())),"Flexible body tool");
     miscMenu->addAction(actionFem);
     connect(actionFem,&QAction::triggered,this,&MainWindow::flexibleBodyTool);
-    actionDebug = miscBar->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"debug.svg").string())),"Debug model");
-    miscMenu->addAction(actionDebug);
-    connect(actionDebug,&QAction::triggered,this,&MainWindow::debug);
     QAction *actionConvert = miscBar->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"convert.svg").string())),"Convert file");
     miscMenu->addAction(actionConvert);
     connect(actionConvert,&QAction::triggered,this,&MainWindow::convertDocument);
@@ -368,10 +419,14 @@ namespace MBSimGUI {
     sceneViewToolBar->setObjectName("toolbar/sceneview");
     toolMenu->addAction(sceneViewToolBar->toggleViewAction());
     sceneViewToolBar->insertSeparator(sceneViewToolBar->actions()[0]);
-    actionRefresh = new QAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_BrowserReload)),"Refresh scene view", this);
+    actionRefresh = new QAction(Utils::QIconCached(QString::fromStdString((iconPath/"reload.svg").string())),"Refresh scene view", this);
+    sceneViewToolBar->insertAction(sceneViewToolBar->actions()[0], solverInitialProj);
+    sceneViewToolBar->insertAction(sceneViewToolBar->actions()[0], autorefreshAction);
     sceneViewToolBar->insertAction(sceneViewToolBar->actions()[0], actionRefresh);
 
     sceneViewMenu->insertSeparator(sceneViewMenu->actions()[0]);
+    sceneViewMenu->insertAction(sceneViewMenu->actions()[0], solverInitialProj);
+    sceneViewMenu->insertAction(sceneViewMenu->actions()[0], autorefreshAction);
     sceneViewMenu->insertAction(sceneViewMenu->actions()[0], actionRefresh);
     connect(actionRefresh,&QAction::triggered,this,&MainWindow::refresh);
 
@@ -380,11 +435,18 @@ namespace MBSimGUI {
     fileView->setColumnWidth(1,50);
     fileView->hideColumn(3);
 
-    connect(elementView->selectionModel(), &QItemSelectionModel::currentRowChanged, this, &MainWindow::elementChanged);
-    connect(elementView, &ElementView::pressed, this, &MainWindow::elementViewClicked);
+    connect(elementView->selectionModel(), &QItemSelectionModel::currentRowChanged, this, &MainWindow::highlightElement);
+    connect(elementView->selectionModel(), &QItemSelectionModel::currentRowChanged, this, &MainWindow::updateParameterTreeOnlyForCurrentElement);
+    connect(elementView, &ElementView::pressed, this, &MainWindow::showElementContextMenu);
+
     connect(parameterView, &ParameterView::pressed, this, &MainWindow::parameterViewClicked);
 
-    QDockWidget *dockModelTree = new QDockWidget("Model Tree", this);
+    //mfmf use rowsAboutToBeInserted,... to save the expandState and then restore the expand state (this needs updateParameterTreeAll to be split into two functions)
+    connect(elementView->model(), &QAbstractItemModel::rowsInserted, this, &MainWindow::updateParameterTreeAll);
+    connect(elementView->model(), &QAbstractItemModel::rowsMoved   , this, &MainWindow::updateParameterTreeAll);
+    connect(elementView->model(), &QAbstractItemModel::rowsRemoved , this, &MainWindow::updateParameterTreeAll);
+
+    QDockWidget *dockModelTree = new QDockWidget("Element Tree", this);
     dockMenu->addAction(dockModelTree->toggleViewAction());
     dockModelTree->setFeatures(dockModelTree->features() | QDockWidget::DockWidgetVerticalTitleBar);
     dockModelTree->setObjectName("dockWidget/mbs");
@@ -403,7 +465,12 @@ namespace MBSimGUI {
         s->setEnabled(visible);
     });
 
-    QDockWidget *dockParameterTree = new QDockWidget("Parameter Tree (of selected object)", this);
+    auto parView = static_cast<OptionsDialog::ParameterView>(settings.value("mainwindow/options/parameterview", static_cast<int>(OptionsDialog::ParameterView::onlyForCurrentElement)).toInt());
+    dockParameterTree = new QDockWidget(
+      parView==OptionsDialog::ParameterView::onlyForCurrentElement ?
+        "Parameter Tree (for selected element)" :
+        "Parameter Tree (all parameters)",
+      this);
     dockMenu->addAction(dockParameterTree->toggleViewAction());
     dockParameterTree->setFeatures(dockParameterTree->features() | QDockWidget::DockWidgetVerticalTitleBar);
     dockParameterTree->setObjectName("dockWidget/parameters");
@@ -421,29 +488,10 @@ namespace MBSimGUI {
     dockEchoArea->setFeatures(dockEchoArea->features() | QDockWidget::DockWidgetVerticalTitleBar);
     dockEchoArea->setObjectName("dockWidget/echoArea");
     addDockWidget(Qt::BottomDockWidgetArea, dockEchoArea);
-    echoView = new EchoView(dockEchoArea);
+    echoView->setParent(dockEchoArea);
     dockEchoArea->setWidget(echoView);
 
-    // initialize streams
-    auto outputFunc=[this](const string &s){
-      echoView->addOutputText(QString::fromStdString(s));
-    };
-    debugStreamFlag=std::make_shared<bool>(false);
-    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Info      , std::make_shared<bool>(true),
-      make_shared<fmatvec::PrePostfixedStream>("<span class=\"MBSIMGUI_INFO\">", "</span>", outputFunc, DOMEvalException::htmlEscaping));
-    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Warn      , std::make_shared<bool>(true),
-      make_shared<fmatvec::PrePostfixedStream>("<span class=\"MBSIMGUI_WARN\">", "</span>", outputFunc, DOMEvalException::htmlEscaping));
-    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Debug     , debugStreamFlag             ,
-      make_shared<fmatvec::PrePostfixedStream>("<span class=\"MBSIMGUI_DEBUG\">", "</span>", outputFunc, DOMEvalException::htmlEscaping));
-    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Error     , std::make_shared<bool>(true),
-      make_shared<fmatvec::PrePostfixedStream>("<span class=\"MBSIMGUI_ERROR\">", "</span>", outputFunc, DOMEvalException::htmlEscaping));
-    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Deprecated, std::make_shared<bool>(true),
-      make_shared<fmatvec::PrePostfixedStream>("<span class=\"MBSIMGUI_DEPRECATED\">", "</span>", outputFunc, DOMEvalException::htmlEscaping));
-    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Status    , std::make_shared<bool>(true),
-      make_shared<fmatvec::PrePostfixedStream>("", "\n", [this](const string &s){
-        // this usually gets never called -> no need to ensure that it is only called every 250ms
-        updateStatusMessage(s);
-      }));
+    startProcessRefresh();
 
     QWidget *centralWidget = new QWidget(this);
     setCentralWidget(centralWidget);
@@ -452,52 +500,63 @@ namespace MBSimGUI {
     centralWidget->setLayout(mainlayout);
     mainlayout->addWidget(inlineOpenMBVMW);
 
-    connect(&process,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),this,&MainWindow::processFinished);
-    connect(&process,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),this,&MainWindow::mbsimxmlQueue);
+    connect(&process,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
+      this, &MainWindow::processFinished);
+    processRefreshFinishedConnection=connect(&processRefresh,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
+      this, &MainWindow::startProcessRefresh);
 
     // if process has new error output call statusBar()->showMessage(...) but only every 250ms
-    processStatusTimer.start();
-    connect(&process,&QProcess::readyReadStandardError,[this](){
-      int e=processStatusTimer.elapsed();
-      if(e<250) {
-        // last output is less then 250ms ago -> if a "single shot" output is not yet active start one
-        if(!processStatusSingleShot.isActive())
-          processStatusSingleShot.start(250-e);
-        return;
+    auto readyReadStandardError = [this]() {
+      if(process.isOpen()) {
+        auto output=process.readAllStandardError();
+        if(!output.isEmpty())
+          updateStatusMessage(output);
       }
-      // last output is more then 250ms ago -> stop "single shot" output, restart timer, and update output
-      processStatusSingleShot.stop();
-      processStatusTimer.restart();
-      updateStatusMessage(process.readAllStandardError().data());
-    });
-    processStatusSingleShot.setSingleShot(true);
-    connect(&processStatusSingleShot, &QTimer::timeout, [this](){
-      // if this gets called new output is available but not yet outputed -> output now and restart timer
-      processStatusTimer.restart();
-      updateStatusMessage(process.readAllStandardError().data());
-    });
+      auto output=processRefresh.readAllStandardError();
+      if(!output.isEmpty())
+        updateStatusMessage(output);
+    };
+    connect(&process,&QProcess::readyReadStandardError,readyReadStandardError);
+    connect(&processRefresh,&QProcess::readyReadStandardError,readyReadStandardError);
 
-    // if process has new standard output call updateEchoView but only every 250ms
-    processOutputTimer.start();
-    connect(&process,&QProcess::readyReadStandardOutput,[this](){
-      int e=processOutputTimer.elapsed();
-      if(e<250) {
-        // last output is less then 250ms ago -> if a "single shot" output is not yet active start one
-        if(!processOutputSingleShot.isActive())
-          processOutputSingleShot.start(250-e);
-        return;
+    // if process has new standard output call updateEchoView but only every 100ms
+    auto readyReadStandardOutput = [this, &arg]() {
+      if(process.isOpen()) {
+        auto output=process.readAllStandardOutput();
+        if(!output.isEmpty())
+          updateEchoView(output);
       }
-      // last output is more then 250ms ago -> stop "single shot" output, restart timer, and update output
-      processOutputSingleShot.stop();
-      processOutputTimer.restart();
-      updateEchoView();
-    });
-    processOutputSingleShot.setSingleShot(true);
-    connect(&processOutputSingleShot, &QTimer::timeout, [this](){
-      // if this gets called new output is available but not yet outputed -> output now and restart timer
-      processOutputTimer.restart();
-      updateEchoView();
-    });
+      if(!arg.contains("--autoExit")) { // do not read from processRefresh if --autoExit
+        auto output=processRefresh.readAllStandardOutput();
+        if(!output.isEmpty())
+          updateEchoView(output);
+      }
+    };
+    connect(&process,&QProcess::readyReadStandardOutput,readyReadStandardOutput);
+    if(!arg.contains("--autoExit")) // normal run (no --autoExit) -> pass also the output of processRefresh to readyReadStandardOutput
+      connect(&processRefresh,&QProcess::readyReadStandardOutput,readyReadStandardOutput);
+    else { // --autoExit case
+      // do not restart processRefresh (mbsimxml)
+      disconnect(processRefreshFinishedConnection);
+      // store all output of processRefresh in "allOutput" and ...
+      static QString allOutput;
+      connect(&processRefresh,&QProcess::readyReadStandardOutput,[this](){
+        allOutput+=processRefresh.readAllStandardOutput();
+        // ... if 'MBXMLUTILS_PREPROCESS_CTOR' is found in the output then mbsimxml has already started
+        // and we can now close the write stream to exit mbsimxml after the content is processed which will call
+        // QProcess::finished at the end
+        if(allOutput.contains("MBXMLUTILS_PREPROCESS_CTOR"))
+          processRefresh.closeWriteChannel();
+      });
+      // if QProcess::finished gets called dump all output to cout and close MainWindow
+      connect(&processRefresh,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
+      [this](int exitCode, QProcess::ExitStatus exitStatus){
+        cout<<allOutput.toStdString();
+        close();
+      });
+      // do how show the error dialog if a hidden parameter cannot be evaluated
+      HiddenParErrorDialog::show = false;
+    }
 
     setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
 
@@ -526,20 +585,6 @@ namespace MBSimGUI {
       }
     }
 
-    // auto exit if everything is finished
-    if(arg.contains("--autoExit")) {
-      process.setProcessChannelMode(QProcess::ForwardedChannels);
-      auto timer=new QTimer(this);
-      connect(timer, &QTimer::timeout, this, [this, timer](){
-        if(process.state()==QProcess::NotRunning) {
-          timer->stop();
-          if(!close())
-            timer->start(100);
-        }
-      });
-      timer->start(100);
-    }
-
     if(projectFile.size())
       loadProject(QDir::current().absoluteFilePath(projectFile));
     else
@@ -560,50 +605,28 @@ namespace MBSimGUI {
   }
 
   void MainWindow::processFinished(int exitCode, QProcess::ExitStatus exitStatus) {
-    updateEchoView();
-    if(currentTask==1) {
-      QModelIndex index = elementView->selectionModel()->currentIndex();
-      auto *model = static_cast<ElementTreeModel*>(elementView->model());
-      auto *element=dynamic_cast<Element*>(model->getItem(index)->getItemData());
-      if(element)
-        highlightObject(element->getID());
-    }
-    else {
-      if(exitStatus == QProcess::NormalExit) {
-        QSettings settings;
-        bool saveFinalStateVector = settings.value("mainwindow/options/savestatevector", false).toBool();
-        if(settings.value("mainwindow/options/autoexport", false).toBool()) {
-	  QString dir = settings.value("mainwindow/options/autoexportdir", "./").toString();
-	  saveMBSimH5Data(dir+"/MBS.mbsh5");
-	  saveOpenMBVXMLData(dir+"/MBS.ombvx");
-	  saveOpenMBVH5Data(dir+"/MBS.ombvh5");
-	  saveLinearSystemAnalysis(dir+"/eigenanalysis.mat");
-	  saveInputTable(dir+"/inputtable.asc");
-	  saveOutputTable(dir+"/outputtable.asc");
-	  if(saveFinalStateVector)
-	    saveStateVector(dir+"/statevector.asc");
-	  saveStateTable(dir+"/statetable.asc");
-        }
-        actionSaveDataAs->setDisabled(false);
-	actionSaveStateTableAs->setDisabled(false);
-	actionSaveMBSimH5DataAs->setDisabled(false);
-	actionSaveOpenMBVDataAs->setDisabled(false);
-	if(saveFinalStateVector)
-	  actionSaveStateVectorAs->setDisabled(false);
-	if(dynamic_cast<LinearSystemAnalyzer*>(project->getSolver())) {
-	  actionSaveLinearSystemAnalysisAs->setDisabled(false);
-	  actionLinearSystemAnalysis->setDisabled(false);
-	}
+    if(process.isOpen())
+      updateEchoView(process.readAllStandardOutput());
+    if(exitStatus == QProcess::NormalExit) {
+      QSettings settings;
+      bool saveFinalStateVector = settings.value("mainwindow/options/savestatevector", false).toBool();
+      if(settings.value("mainwindow/options/autoexport", false).toBool()) {
+        QString dir = settings.value("mainwindow/options/autoexportdir", "./").toString();
+        saveMBSimH5Data(dir+"/MBS.mbsh5");
+        saveOpenMBVXMLData(dir+"/MBS.ombvx");
+        saveOpenMBVH5Data(dir+"/MBS.ombvh5");
+        saveLinearSystemAnalysis(dir+"/eigenanalysis.mat");
+        saveInputTable(dir+"/inputtable.asc");
+        saveOutputTable(dir+"/outputtable.asc");
+        if(saveFinalStateVector)
+          saveStateVector(dir+"/statevector.asc");
+        saveStateTable(dir+"/statetable.asc");
       }
-      else {
-        setExitBad();
-      }
+      setSimulateActionsEnabled(true);
     }
-    actionSimulate->setDisabled(false);
-    actionInterrupt->setDisabled(true);
-    actionKill->setDisabled(true);
-    actionRefresh->setDisabled(false);
-    actionDebug->setDisabled(false);
+    else
+      setExitBad();
+    setProcessActionsEnabled(true);
     statusBar()->showMessage(tr("Ready"));
   }
 
@@ -648,18 +671,36 @@ namespace MBSimGUI {
     };
     bfs__copy_file(getInstallPath()/"share"/"mbsimgui"/"MBS_tmp.ombvx",  uniqueTempDir/"MBS_tmp.ombvx",  overwrite_existing);
     bfs__copy_file(getInstallPath()/"share"/"mbsimgui"/"MBS_tmp.ombvh5", uniqueTempDir/"MBS_tmp.ombvh5", overwrite_existing);
-    inlineOpenMBVMW->openFile(uniqueTempDir.generic_string()+"/MBS_tmp.ombvx");
+    inlineOpenMBVMW->openFile(uniqueTempDir.generic_string()+"/MBS_tmp.ombvh5");
   }
 
   void MainWindow::fileReloadedSlot() {
+    // call view all for the very first time
     if(callViewAllAfterFileReloaded)
       inlineOpenMBVMW->viewAllSlot();
     callViewAllAfterFileReloaded = false;
+
+    // re-highlight object
+    QModelIndex index = elementView->selectionModel()->currentIndex();
+    auto *model = static_cast<ElementTreeModel*>(elementView->model());
+    auto *element=dynamic_cast<Element*>(model->getItem(index)->getItemData());
+    if(element)
+      highlightObject(element->getID());
+
+    // set to not-outdated if the modelID of the scene view matches the currentModelID
+    auto modelIDLabel = static_cast<SoLabel*>(SoNode::getByName("mbsimgui_modelID"));
+    if(modelIDLabel) {
+      int modelID = atoi(modelIDLabel->label.getValue().getString());
+      if(currentModelID == modelID)
+        setSceneViewOutdated(false);
+    }
   }
 
   MainWindow::~MainWindow() {
-    process.waitForFinished(-1);
-    if(process.exitStatus()!=QProcess::NormalExit || process.exitCode()!=0)
+    disconnect(processRefreshFinishedConnection);
+    processRefresh.closeWriteChannel();
+    processRefresh.waitForFinished(-1);
+    if(processRefresh.exitStatus()!=QProcess::NormalExit || processRefresh.exitCode()!=0)
       setExitBad();
     if(lsa) delete lsa;
     if(st) delete st;
@@ -680,6 +721,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::updateUndos() {
+    setWindowModified(true);
     auto oldDoc = shared_ptr<DOMDocument>(static_cast<DOMDocument*>(doc->cloneNode(true)));
     oldDoc->setDocumentURI(X()%D(doc)->getDocumentFilename().string());
     auto u = vector<shared_ptr<DOMDocument>>(1+file.size());
@@ -739,17 +781,22 @@ namespace MBSimGUI {
     menu.setSaveStateVector(settings.value("mainwindow/options/savestatevector", false).toBool());
     menu.setMaxUndo(settings.value("mainwindow/options/maxundo", 10).toInt());
     menu.setShowFilters(settings.value("mainwindow/options/showfilters", true).toBool());
-    menu.setShowHiddenElements(settings.value("mainwindow/options/showhiddenelements", false).toBool());
-    bool oldShowHiddenElement=menu.getShowHiddenElements();
-    menu.setAutoRefresh(settings.value("mainwindow/options/autorefresh", true).toBool());
+    menu.setShowHiddenItems(settings.value("mainwindow/options/showhiddenelements", false).toBool());
+    bool oldShowHiddenElement=menu.getShowHiddenItems();
+    menu.setShowEmptyParameters(settings.value("mainwindow/options/showemptyparameters", true).toBool());
+    bool oldShowEmptyParameters=menu.getShowEmptyParameters();
+    menu.setParameterView(static_cast<OptionsDialog::ParameterView>(settings.value("mainwindow/options/parameterview", static_cast<int>(OptionsDialog::ParameterView::onlyForCurrentElement)).toInt()));
+    auto oldParameterView=menu.getParameterView();
     menu.setStatusUpdate(settings.value("mainwindow/options/statusupdate", true).toBool());
     menu.setPlugins(settings.value("mainwindow/options/plugins", QString()).toString());
     menu.setDefaultEvaluator(settings.value("mainwindow/options/defaultevaluator", 0).toInt());
 
     QFile file(configPath+"mbsimxml.modulepath");
-    file.open(QIODevice::ReadOnly | QIODevice::Text);
-    menu.setModulePath(file.readAll());
-    file.close();
+    if(file.exists()) {
+      file.open(QIODevice::ReadOnly | QIODevice::Text);
+      menu.setModulePath(file.readAll());
+      file.close();
+    }
 
     auto oldPlugins=menu.getPlugins();
 
@@ -757,18 +804,19 @@ namespace MBSimGUI {
     if(!justSetOptions)
       res = menu.exec();
     if(res == 1) {
-      settings.setValue("mainwindow/options/autosave"          , menu.getAutoSave());
-      settings.setValue("mainwindow/options/autosaveinterval"  , menu.getAutoSaveInterval());
-      settings.setValue("mainwindow/options/autoexport"        , menu.getAutoExport());
-      settings.setValue("mainwindow/options/autoexportdir"     , menu.getAutoExportDir());
-      settings.setValue("mainwindow/options/savestatevector"   , menu.getSaveStateVector());
-      settings.setValue("mainwindow/options/maxundo"           , menu.getMaxUndo());
-      settings.setValue("mainwindow/options/showfilters"       , menu.getShowFilters());
-      settings.setValue("mainwindow/options/showhiddenelements", menu.getShowHiddenElements());
-      settings.setValue("mainwindow/options/autorefresh"       , menu.getAutoRefresh());
-      settings.setValue("mainwindow/options/statusupdate"      , menu.getStatusUpdate());
-      settings.setValue("mainwindow/options/plugins"           , menu.getPlugins());
-      settings.setValue("mainwindow/options/defaultevaluator"  , menu.getDefaultEvaluator());
+      settings.setValue("mainwindow/options/autosave"           , menu.getAutoSave());
+      settings.setValue("mainwindow/options/autosaveinterval"   , menu.getAutoSaveInterval());
+      settings.setValue("mainwindow/options/autoexport"         , menu.getAutoExport());
+      settings.setValue("mainwindow/options/autoexportdir"      , menu.getAutoExportDir());
+      settings.setValue("mainwindow/options/savestatevector"    , menu.getSaveStateVector());
+      settings.setValue("mainwindow/options/maxundo"            , menu.getMaxUndo());
+      settings.setValue("mainwindow/options/showfilters"        , menu.getShowFilters());
+      settings.setValue("mainwindow/options/showhiddenelements" , menu.getShowHiddenItems());
+      settings.setValue("mainwindow/options/showemptyparameters", menu.getShowEmptyParameters());
+      settings.setValue("mainwindow/options/parameterview"      , static_cast<int>(menu.getParameterView()));
+      settings.setValue("mainwindow/options/statusupdate"       , menu.getStatusUpdate());
+      settings.setValue("mainwindow/options/plugins"            , menu.getPlugins());
+      settings.setValue("mainwindow/options/defaultevaluator"   , menu.getDefaultEvaluator());
 
       file.open(QIODevice::WriteOnly | QIODevice::Text);
       file.write(menu.getModulePath().toUtf8());
@@ -788,10 +836,22 @@ namespace MBSimGUI {
       elementViewFilter->setVisible(showFilters);
       parameterViewFilter->setVisible(showFilters);
 
-      if(menu.getShowHiddenElements()!=oldShowHiddenElement)
-        elementChanged(elementView->currentIndex()); // this update the parameters (calls Parameter::updateValue())
+      if(menu.getShowHiddenItems()!=oldShowHiddenElement ||
+         menu.getShowEmptyParameters()!=oldShowEmptyParameters ||
+         menu.getParameterView()!=oldParameterView) {
+        // this update the parameters (calls Parameter::updateValue())
+        highlightElement(elementView->currentIndex());
+        if(menu.getParameterView()==OptionsDialog::ParameterView::onlyForCurrentElement) updateParameterTreeOnlyForCurrentElement(elementView->currentIndex());
+        if(menu.getParameterView()==OptionsDialog::ParameterView::all                  ) updateParameterTreeAll();
+      }
+      if(menu.getParameterView()!=oldParameterView) {
+        dockParameterTree->setWindowTitle(
+          menu.getParameterView()==OptionsDialog::ParameterView::onlyForCurrentElement ?
+            "Parameter Tree (for selected element)" :
+            "Parameter Tree (all parameters)"
+        );
+      }
 
-      autoRefresh = menu.getAutoRefresh();
       statusUpdate = menu.getStatusUpdate();
 
       if(oldPlugins!=menu.getPlugins())
@@ -803,11 +863,10 @@ namespace MBSimGUI {
   }
 
   void MainWindow::manageTemplates() {
-    QString templatesPath = configPath+"templates";
-    if(QFileInfo(templatesPath).exists())
-      QDesktopServices::openUrl(QUrl::fromLocalFile(templatesPath));
-    else
-      QMessageBox::information(this, "Manage project templates", "A project template does not exist yet.");
+    QDir configDir(configPath);
+    if(not configDir.exists("templates"))
+      configDir.mkdir("templates");
+    QDesktopServices::openUrl(QUrl::fromLocalFile(configPath+"templates"));
   }
 
   void MainWindow::highlightObject(const string &ID) {
@@ -815,7 +874,7 @@ namespace MBSimGUI {
     inlineOpenMBVMW->highlightObject(ID);
   }
 
-  void MainWindow::elementChanged(const QModelIndex &current) {
+  void MainWindow::highlightElement(const QModelIndex &current) {
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     auto *item = model->getItem(current)->getItemData();
     auto *embeditem = dynamic_cast<EmbedItemData*>(item);
@@ -824,19 +883,7 @@ namespace MBSimGUI {
       if(container) embeditem = container->getElement();
     }
     if(embeditem) {
-      auto *pmodel = static_cast<ParameterTreeModel*>(parameterView->model());
-      vector<EmbedItemData*> parents = embeditem->getEmbedItemParents();
-      pmodel->removeRow(pmodel->index(0,0).row(), QModelIndex());
-      if(!parents.empty()) {
-        pmodel->createParameterItem(parents[0]->getParameters());
-        for(size_t i=0; i<parents.size()-1; i++)
-          pmodel->createParameterItem(parents[i+1]->getParameters(),parents[i]->getParameters()->getModelIndex());
-        pmodel->createParameterItem(embeditem->getParameters(),parents[parents.size()-1]->getParameters()->getModelIndex());
-      }
-      else
-        pmodel->createParameterItem(embeditem->getParameters());
-      parameterView->expandAll();
-      parameterView->scrollToBottom();
+      // highlight the current element in the 3D view
       auto *element = dynamic_cast<Element*>(item);
       if(element)
         highlightObject(element->getID());
@@ -845,7 +892,142 @@ namespace MBSimGUI {
     }
   }
 
-  void MainWindow::elementViewClicked(const QModelIndex &current) {
+  void MainWindow::updateParameterTreeOnlyForCurrentElement(QModelIndex current) {
+    QSettings settings;
+    auto parView = static_cast<OptionsDialog::ParameterView>(settings.value("mainwindow/options/parameterview", static_cast<int>(OptionsDialog::ParameterView::onlyForCurrentElement)).toInt());
+    if(parView!=OptionsDialog::ParameterView::onlyForCurrentElement)
+      return;
+    auto showEmptyPars = settings.value("mainwindow/options/showemptyparameters", true).toBool();
+    auto *emodel = static_cast<ElementTreeModel*>(elementView->model());
+
+    auto *eleItem = emodel->getItem(current)->getItemData();
+    auto *eleEmbedItem = dynamic_cast<EmbedItemData*>(eleItem);
+    if(not eleEmbedItem) {
+      auto *container = dynamic_cast<ContainerItemData*>(eleItem);
+      if(container) eleEmbedItem = container->getElement();
+    }
+    if(eleEmbedItem) {
+      // update parameter tree based on new current element
+      auto *pmodel = static_cast<ParameterTreeModel*>(parameterView->model());
+
+      // walk the tree before removal
+      function<void(TreeItem *parItem)> walk1;
+      walk1 = [&walk1](TreeItem *parItem) {
+        // reset the modelindex stored in the model to invalid since we now change the modelindex
+        parItem->getItemData()->setModelIndex(QModelIndex());
+
+        for(int cNr=0; cNr<parItem->childCount(); ++cNr)
+          walk1(parItem->child(cNr));
+      };
+      if(auto i = pmodel->getItem(QModelIndex())->child(0); i)
+        walk1(i);
+
+      pmodel->removeRow(pmodel->index(0,0).row(), QModelIndex());
+
+      vector<EmbedItemData*> parents = eleEmbedItem->getEmbedItemParents();
+      if(!parents.empty()) {
+        pmodel->createParameterItem(parents[0]->getParameterEmbedItem());
+        for(size_t i=0; i<parents.size()-1; i++)
+          pmodel->createParameterItem(parents[i+1]->getParameterEmbedItem(),parents[i]->getParameterEmbedItem()->getModelIndex());
+        pmodel->createParameterItem(eleEmbedItem->getParameterEmbedItem(),parents[parents.size()-1]->getParameterEmbedItem()->getModelIndex());
+      }
+      else
+        pmodel->createParameterItem(eleEmbedItem->getParameterEmbedItem());
+      
+      if(!showEmptyPars) {
+        auto parIndex = eleEmbedItem->getParameterEmbedItem()->getModelIndex();
+        do {
+          auto parItem = pmodel->getItem(parIndex);
+          auto parametersIndex=static_cast<ParameterEmbedItem*>(parItem->getItemData())->getParameters()->getModelIndex();
+          if(parItem->child(0)->childCount(getParameterView())==0)
+            getParameterView()->setRowHidden(parametersIndex.row(), parametersIndex.parent(), true);
+          if(parItem->childCount(getParameterView())==0)
+            getParameterView()->setRowHidden(parIndex.row(), parIndex.parent(), true);
+          parIndex = parIndex.parent();
+        }
+        while(parIndex.isValid());
+      }
+      parameterView->expandAll();
+      parameterView->scrollToBottom();
+    }
+  }
+
+  void MainWindow::updateParameterTreeAll() {
+    QSettings settings;
+    auto parView = static_cast<OptionsDialog::ParameterView>(settings.value("mainwindow/options/parameterview", static_cast<int>(OptionsDialog::ParameterView::onlyForCurrentElement)).toInt());
+    if(parView!=OptionsDialog::ParameterView::all)
+      return;
+    auto showEmptyPars = settings.value("mainwindow/options/showemptyparameters", true).toBool();
+    auto *emodel = static_cast<ElementTreeModel*>(elementView->model());
+
+    // update parameter tree (elements, and hence parameters, may have been added, removed or moved)
+    auto *pmodel = static_cast<ParameterTreeModel*>(parameterView->model());
+
+    // walk the tree before removal
+    map<vector<QString>, bool> expandState;
+    function<void(TreeItem *parItem, vector<QString> path)> walk1;
+    walk1 = [&walk1, &expandState, this](TreeItem *parItem, vector<QString> path) {
+      // save the current expand state of parameters
+      path.emplace_back(parItem->getItemData()->getName());
+      expandState.emplace(path, parameterView->isExpanded(parItem->getItemData()->getModelIndex()));
+      // reset the modelindex stored in the model to invalid since we now change the modelindex
+      parItem->getItemData()->setModelIndex(QModelIndex());
+
+      for(int cNr=0; cNr<parItem->childCount(); ++cNr)
+        walk1(parItem->child(cNr), path);
+    };
+    if(auto i = pmodel->getItem(QModelIndex())->child(0); i)
+      walk1(i, {});
+    // remove all parameters
+    pmodel->removeRow(pmodel->index(0,0).row(), QModelIndex());
+
+    // build new parameters using all elements
+    function<void(TreeItem *eleItem, QModelIndex parParentIndex, vector<QString> path)> walk2;
+    walk2 = [&walk2,pmodel,showEmptyPars,&expandState,this](TreeItem *eleItem, QModelIndex parParentIndex, vector<QString> path) {
+      auto *localembeditem = dynamic_cast<EmbedItemData*>(eleItem->getItemData());
+      QModelIndex parIndex;
+      TreeItem* parItem { nullptr };
+      if(localembeditem) {
+        pmodel->createParameterItem(localembeditem->getParameterEmbedItem(), parParentIndex);
+        parIndex = localembeditem->getParameterEmbedItem()->getModelIndex();
+        parItem = pmodel->getItem(parIndex);
+        path.emplace_back(parItem->getItemData()->getName());
+      }
+      else
+        parIndex = parParentIndex;
+
+      for(int cNr=0; cNr<eleItem->childCount(); ++cNr)
+        walk2(eleItem->child(cNr), parIndex, path);
+
+      if(localembeditem) {
+        // set the expand state of a created parameter to the value of the old parameter or to true
+        auto parEmbedIndex = parItem->getItemData()->getModelIndex();
+        if(auto it=expandState.find(path); it!=expandState.end())
+          parameterView->setExpanded(parEmbedIndex, it->second);
+        else
+          parameterView->setExpanded(parEmbedIndex, true);
+
+        auto parametersIndex=static_cast<ParameterEmbedItem*>(parItem->getItemData())->getParameters()->getModelIndex();
+        auto path2(path);
+        path2.emplace_back("Parameters");
+        if(auto it=expandState.find(path2); it!=expandState.end())
+          parameterView->setExpanded(parametersIndex, it->second);
+        else
+          parameterView->setExpanded(parametersIndex, true);
+
+        // hide empty parameters if requested by the user
+        if(!showEmptyPars) {
+          if(parItem->child(0)->childCount(getParameterView())==0)
+            getParameterView()->setRowHidden(parametersIndex.row(), parametersIndex.parent(), true);
+          if(parItem->childCount(getParameterView())==0)
+            getParameterView()->setRowHidden(parIndex.row(), parIndex.parent(), true);
+        }
+      }
+    };
+    walk2(emodel->getItem(QModelIndex()), QModelIndex(), {});
+  }
+
+  void MainWindow::showElementContextMenu(const QModelIndex &current) {
     if(QApplication::mouseButtons()==Qt::RightButton) {
       TreeItemData *itemData = static_cast<ElementTreeModel*>(elementView->model())->getItem(current)->getItemData();
       QMenu *menu = itemData->createContextMenu();
@@ -854,9 +1036,33 @@ namespace MBSimGUI {
       menu->exec(QCursor::pos());
       delete menu;
     }
+
+    // when a element is selected -> select also the corresponding parameter (if all parameters are shown)
+    QSettings settings;
+    auto parView = static_cast<OptionsDialog::ParameterView>(settings.value("mainwindow/options/parameterview", static_cast<int>(OptionsDialog::ParameterView::onlyForCurrentElement)).toInt());
+    if(parView==OptionsDialog::ParameterView::all) {
+      auto *model = static_cast<ElementTreeModel*>(elementView->model());
+      auto *itemData = model->getItem(current)->getItemData();
+      if(auto *cont = dynamic_cast<ContainerItemData*>(itemData); cont)
+        itemData = model->getItem(current.parent())->getItemData();
+      if(auto *ele = dynamic_cast<EmbedItemData*>(itemData); ele)
+        if(auto *par = ele->getParameterEmbedItem(); par)
+          parameterView->setCurrentIndex(par->getModelIndex());
+    }
   }
 
   void MainWindow::parameterViewClicked(const QModelIndex &current) {
+    // when a parameter is selected -> select also the corresponding element (if all parameters are shown)
+    QSettings settings;
+    auto parView = static_cast<OptionsDialog::ParameterView>(settings.value("mainwindow/options/parameterview", static_cast<int>(OptionsDialog::ParameterView::onlyForCurrentElement)).toInt());
+    if(parView==OptionsDialog::ParameterView::all) {
+      auto *model = static_cast<ParameterTreeModel*>(parameterView->model());
+      auto *item = model->getItem(current)->getItemData();
+      auto *par = static_cast<ParameterItem*>(item);
+      if(par->getParent())
+        elementView->setCurrentIndex(par->getParent()->getModelIndex());
+    }
+
     if(QApplication::mouseButtons()==Qt::RightButton) {
       auto *item = dynamic_cast<ParameterItem*>(static_cast<ParameterTreeModel*>(parameterView->model())->getItem(current)->getItemData());
       QMenu *menu = item->createContextMenu();
@@ -877,13 +1083,7 @@ namespace MBSimGUI {
       setWindowModified(false);
       actionOpenMBV->setDisabled(true);
       actionH5plotserie->setDisabled(true);
-      actionLinearSystemAnalysis->setDisabled(true);
-      actionSaveDataAs->setDisabled(true);
-      actionSaveMBSimH5DataAs->setDisabled(true);
-      actionSaveOpenMBVDataAs->setDisabled(true);
-      actionSaveStateVectorAs->setDisabled(true);
-      actionSaveStateTableAs->setDisabled(true);
-      actionSaveLinearSystemAnalysisAs->setDisabled(true);
+      setSimulateActionsEnabled(false);
       actionSave->setDisabled(true);
       actionSaveProject->setDisabled(true);
       projectFile="";
@@ -908,6 +1108,8 @@ namespace MBSimGUI {
       doc->setDocumentURI(X()%QDir::current().absoluteFilePath("Project.mbsx").toStdString());
 
       project = new Project;
+      QSettings settings;
+      project->setEvaluator(Evaluator::evaluators[settings.value("mainwindow/options/defaultevaluator", 0).toInt()]);
       project->createXMLElement(doc.get());
 
       model->createProjectItem(project);
@@ -948,13 +1150,7 @@ namespace MBSimGUI {
       setWindowModified(false);
       actionOpenMBV->setDisabled(true);
       actionH5plotserie->setDisabled(true);
-      actionLinearSystemAnalysis->setDisabled(true);
-      actionSaveDataAs->setDisabled(true);
-      actionSaveMBSimH5DataAs->setDisabled(true);
-      actionSaveOpenMBVDataAs->setDisabled(true);
-      actionSaveStateVectorAs->setDisabled(true);
-      actionSaveStateTableAs->setDisabled(true);
-      actionSaveLinearSystemAnalysisAs->setDisabled(true);
+      setSimulateActionsEnabled(false);
       actionSave->setDisabled(false);
       actionSaveProject->setDisabled(false);
       if(updateRecent) {
@@ -1046,15 +1242,15 @@ namespace MBSimGUI {
       if(modifyStatus) setWindowModified(false);
       return true;
     }
-    catch(const std::exception &ex) {
-      mw->setExitBad();
-      mw->statusBar()->showMessage(ex.what());
-      cerr << ex.what() << endl;
-    }
     catch(const DOMException &ex) {
       mw->setExitBad();
       mw->statusBar()->showMessage((X()%ex.getMessage()).c_str());
       cerr << X()%ex.getMessage() << endl;
+    }
+    catch(const std::exception &ex) {
+      mw->setExitBad();
+      mw->statusBar()->showMessage(ex.what());
+      cerr << ex.what() << endl;
     }
     catch(...) {
       mw->setExitBad();
@@ -1086,7 +1282,6 @@ namespace MBSimGUI {
 
   void MainWindow::selectSolver(Solver *solver) {
     updateUndos();
-    setWindowModified(true);
     DOMElement *ele = nullptr;
     auto *parameterFileItem = project->getSolver()->getParameterFileItem();
     DOMElement *embed = project->getSolver()->getEmbedXMLElement();
@@ -1094,7 +1289,7 @@ namespace MBSimGUI {
       ele = parameterFileItem->getXMLElement();
     else if(embed)
       ele = MBXMLUtils::E(embed)->getFirstElementChildNamed(MBXMLUtils::PV%"Parameter");
-    QModelIndex pindex = project->getSolver()->getParameters()->getModelIndex();
+    QModelIndex pindex = project->getSolver()->getParameterEmbedItem()->getModelIndex();
     static_cast<ParameterTreeModel*>(parameterView->model())->removeRow(pindex.row(), pindex.parent());
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     model->removeRow(project->getSolver()->getModelIndex().row(), project->getModelIndex());
@@ -1114,57 +1309,6 @@ namespace MBSimGUI {
     openElementEditor(false);
   }
 
-  class NewParamLevelHeap {
-    public:
-      NewParamLevelHeap(std::shared_ptr<Eval> oe) : npl(std::move(oe)) {}
-    private:
-      NewParamLevel npl;
-  };
-
-  void MainWindow::createNewEvaluator() {
-    // get evaluator (octave, python, ...)
-    string evalName=Evaluator::defaultEvaluator;
-    if(project)
-      evalName = project->getEvaluator();
-    else {
-      DOMElement *root = doc->getDocumentElement();
-      DOMElement *evaluator;
-      if(E(root)->getTagName()==PV%"Embed") {
-        auto r=root->getFirstElementChild();
-        if(E(r)->getTagName()==PV%"Parameter")
-          r=r->getNextElementSibling();
-        evaluator=E(r)->getFirstElementChildNamed(PV%"evaluator");
-      }
-      else
-        evaluator=E(root)->getFirstElementChildNamed(PV%"evaluator");
-      if(evaluator)
-        evalName=X()%E(evaluator)->getFirstTextChild()->getData();
-    }
-
-    // if this is this the first call (no eval exists yet) or the evaluator type has changed -> create a new one and init it
-    if(!eval || eval->getName()!=evalName) {
-      eval = Eval::createEvaluator(evalName);
-
-      auto code=Evaluator::getInitCode();
-      if(!code.second.empty())
-        eval->addImport(code.second, nullptr, code.first);
-    }
-
-    // restore the original state of the evaluator (we no longer create a new one every time, see above)
-    evalNPL.reset(); // calls Eval::popContext() (but not at the first call where evelNPL==nullptr)
-    assert(eval->getStackSize()==0);
-    evalNPL = make_unique<NewParamLevelHeap>(eval); // calls Eval::pushContext()
-  }
-
-  MainWindow::CreateTemporaryNewEvaluator::CreateTemporaryNewEvaluator() {
-    oldEval.swap(mw->eval); // save the old evaluator
-    mw->createNewEvaluator(); // create a completely new evaluator with a new stack
-  }
-
-  MainWindow::CreateTemporaryNewEvaluator::~CreateTemporaryNewEvaluator() {
-    mw->eval = oldEval; // restore the old evaluator
-  }
-
   // Create an new eval and fills its context with all parameters/imports which may influence item.
   // The context contains also all counterName variables where the count is set to 0 or 1 for 0-based or 1-based evaluators, respectively
   // Also a list of all parameter levels which may influence item is returned. This list contains for each parameter level:
@@ -1172,10 +1316,8 @@ namespace MBSimGUI {
   // - the counterName which is none empty if this parameter has a Array/Pattern with a counterName, else couterName is empty
   // - the unevaluated count string of the Array/Pattern
   // - the unevaluated onlyif string of the Array/Pattern
-  vector<MainWindow::ParameterLevel> MainWindow::updateParameters(EmbedItemData *item, bool exceptLatestParameter,
+  vector<MainWindow::ParameterLevel> MainWindow::updateParameters(EmbedItemData *item, Parameter *lastParToUse, bool skipEvenLastParToUse,
                                                                   const std::vector<int>& count) {
-    createNewEvaluator();
-
     vector<ParameterLevel> parameterLevels;
     if(item) {
       vector<EmbedItemData*> parents = item->getEmbedItemParents();
@@ -1187,13 +1329,17 @@ namespace MBSimGUI {
         doc->setDocumentURI(X()%D(this->doc)->getDocumentFilename().string());
         DOMElement *eleP = D(doc)->createElement(PV%"Parameter");
         doc->insertBefore(eleP,nullptr);
-        int skipLast = (parent==item && exceptLatestParameter) ? 1 : 0;
-        for(size_t j=0; j<parent->getNumberOfParameters() - skipLast; j++) {
-          DOMNode *node = doc->importNode(parent->getParameter(j)->getXMLElement(),true);
+        for(size_t j=0; j<parent->getNumberOfParameters(); j++) {
+          auto par=parent->getParameter(j);
+          if(skipEvenLastParToUse && par==lastParToUse)
+            break;
+          DOMNode *node = doc->importNode(par->getXMLElement(),true);
           eleP->insertBefore(node,nullptr);
-          boost::filesystem::path orgFileName=E(parent->getParameter(j)->getXMLElement())->getOriginalFilename();
+          boost::filesystem::path orgFileName=E(par->getXMLElement())->getOriginalFilename();
           E(static_cast<DOMElement*>(node))->addEmbedData("MBXMLUtils_OriginalFilename", orgFileName.string());
           E(static_cast<DOMElement*>(node))->setOriginalElementLineNumber(E(eleP)->getLineNumber());
+          if(par==lastParToUse)
+            break;
         }
         try {
           D(doc)->validate();
@@ -1244,11 +1390,12 @@ namespace MBSimGUI {
     // helper to catch errors, print it to the statusBar and continue if catchErrors is true.
     // if catchErrors is false the exception is rethrown.
     #define CATCH(msg) \
-      catch(DOMEvalException &e) { \
+      catch(exception &ex) { \
         if(catchErrors) { \
+          auto exmsg = dynamic_cast<DOMEvalException*>(&ex) ? static_cast<DOMEvalException&>(ex).getMessage() : ex.what(); \
           mw->setExitBad(); \
-          mw->statusBar()->showMessage(e.getMessage().c_str()); \
-          std::cerr << msg << ": " << e.getMessage() << std::endl; \
+          mw->statusBar()->showMessage(exmsg.c_str()); \
+          std::cerr << msg << ": " << exmsg << std::endl; \
         } \
         else \
           throw e; \
@@ -1270,8 +1417,6 @@ namespace MBSimGUI {
       // if lastCall is not nullptr and is negative this is the first call to worker which
       // just track how many time code will be evaluated without evaluating it
       bool trackLastCall = lastCall && *lastCall<0;
-
-      mw->createNewEvaluator();
 
       vector<string> counterNames;
       for(auto &x : parameterLevels)
@@ -1358,7 +1503,7 @@ namespace MBSimGUI {
     };
 
     if(!trackFirstLastCall)
-      // track the first and last call was not requested -> just all the worker (once)
+      // track the first and last call was not requested -> just call the worker (once)
       return worker(parameterLevels, code, e, fullEval, catchErrors, nullptr);
     else {
       // track the first and last call was requested
@@ -1395,7 +1540,8 @@ namespace MBSimGUI {
   void MainWindow::saveMBSimH5DataAs() {
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = model->index(0,0);
-    QString file=QFileDialog::getSaveFileName(this, "Export MBSim H5 file", getProjectDir().absoluteFilePath(model->getItem(index)->getItemData()->getName()+".mbsh5"), "H5 files (*.mbsh5)");
+    QString fileBasename = static_cast<Project*>(model->getItem(index)->getItemData())->getDynamicSystemSolver()->getName();
+    QString file=QFileDialog::getSaveFileName(this, "Export MBSim H5 file", getProjectDir().absoluteFilePath(fileBasename+".mbsh5"), "H5 files (*.mbsh5)");
     if(file!="") {
       saveMBSimH5Data(file);
     }
@@ -1424,13 +1570,15 @@ namespace MBSimGUI {
   void MainWindow::saveOpenMBVXMLData(const QString &file) {
     if(QFile::exists(file))
       QFile::remove(file);
-    QFile::copy(QString::fromStdString(uniqueTempDir.generic_string())+"/"+project->getDynamicSystemSolver()->getName()+".ombvx",file);
+    if(auto fn=QString::fromStdString(uniqueTempDir.generic_string())+"/"+project->getDynamicSystemSolver()->getName()+".ombvx"; QFile::exists(fn))
+      QFile::copy(fn,file);
   }
 
   void MainWindow::saveOpenMBVH5Data(const QString &file) {
     if(QFile::exists(file))
       QFile::remove(file);
-    QFile::copy(QString::fromStdString(uniqueTempDir.generic_string())+"/"+project->getDynamicSystemSolver()->getName()+".ombvh5",file);
+    if(auto fn=QString::fromStdString(uniqueTempDir.generic_string())+"/"+project->getDynamicSystemSolver()->getName()+".ombvh5"; QFile::exists(fn))
+      QFile::copy(fn,file);
   }
 
   void MainWindow::saveStateVectorAs() {
@@ -1492,31 +1640,183 @@ namespace MBSimGUI {
     QFile::copy(QString::fromStdString(uniqueTempDir.generic_string())+"/linear_system_analysis.h5",file);
   }
 
-  void MainWindow::mbsimxmlQueue() {
-    // this function is called whenever "process" finishes
-    // -> if a new task is queued run it now.
-    if(mbsimxmlQueuedTask!=-1) {
-      int newtask=mbsimxmlQueuedTask;
-      mbsimxmlQueuedTask=-1;
-      mbsimxml(newtask);
+  void MainWindow::startProcessRefresh() {
+    QStringList arg;
+    arg.append("--stopafterfirststep");
+    arg.append("--savestatetable");
+
+    // we print everything except status messages to stdout
+    arg.append("--stdout"); arg.append(R"#(info~<span class="MBSIMGUI_INFO">~</span>~HTML)#");
+    arg.append("--stdout"); arg.append(R"#(warn~<span class="MBSIMGUI_WARN">~</span>~HTML)#");
+    *debugStreamFlag=echoView->debugEnabled(); // processRefresh is restarted if debugEnabled changes
+    if(*debugStreamFlag) {
+      arg.append("--stdout"); arg.append(R"#(debug~<span class="MBSIMGUI_DEBUG">~</span>~HTML)#");
     }
+    arg.append("--stdout"); arg.append(R"#(error~<span class="MBSIMGUI_ERROR">~</span>~HTML)#");
+    arg.append("--stdout"); arg.append(R"#(depr~<span class="MBSIMGUI_DEPRECATED">~</span>~HTML)#");
+    // status message go to stderr
+    arg.append("--stderr"); arg.append("status~~\n");
+
+    // we change the current directory (see below) hence we need to add the current dir as modulePath
+    arg.append("--modulePath");
+    arg.append(QDir::currentPath());
+
+    arg.append("--onlyLatestStdin"); // skip all input except the latest one
+    arg.append("-"); // input stream mode of mbsimxml
+    QString uniqueTempDir_ = QString::fromStdString(uniqueTempDir.generic_string());
+    processRefresh.setWorkingDirectory(uniqueTempDir_);
+    processRefresh.start(QString::fromStdString((getInstallPath()/"bin"/"mbsimxml").string()), arg);
+    refresh();
   }
 
-  void MainWindow::mbsimxml(int task) {
-    // try to stop a old task
-    process.terminate();
-    // if a old task is still running queue the new one (start it if the old has finished, see above)
-    if(process.state()!=QProcess::NotRunning) {
-      mbsimxmlQueuedTask=task;
+  void MainWindow::refresh() {
+    if(!this->doc)
       return;
+
+    statusBar()->showMessage(tr("Refresh"));
+    currentModelID++;
+    setSceneViewOutdated(true);
+
+    shared_ptr<DOMDocument> doc=mbxmlparser->createDocument();
+    doc->setDocumentURI(X()%D(this->doc)->getDocumentFilename().string());
+    auto *newDocElement = static_cast<DOMElement*>(doc->importNode(this->doc->getDocumentElement(), true));
+    doc->insertBefore(newDocElement, nullptr);
+
+    project->processIDAndHref(newDocElement);
+
+    // get dss XML element
+    auto dssEle=newDocElement;
+    if(E(dssEle)->getTagName()!=MBSIMXML%"MBSimProject")
+      dssEle=E(dssEle)->getFirstElementChildNamed(MBSIMXML%"MBSimProject");
+    if(auto x=E(dssEle)->getFirstElementChildNamed(MBSIM%"DynamicSystemSolver"); x==nullptr) {
+      dssEle=E(dssEle)->getFirstElementChildNamed(PV%"Embed");
+      dssEle=E(dssEle)->getFirstElementChildNamed(MBSIM%"DynamicSystemSolver");
+    }
+    else
+      dssEle=x;
+
+    // set output filename (for openmbv)
+    E(dssEle)->setAttribute("name","MBS_tmp");
+
+    // disable plotting in DSS
+    DOMElement *ele1 = D(doc)->createElement( MBSIM%"plotFeatureRecursive" );
+    E(ele1)->setAttribute("value","plotRecursive");
+    ele1->insertBefore(doc->createTextNode(X()%project->getVarFalse().toStdString()), nullptr);
+    dssEle->insertBefore( ele1, dssEle->getFirstElementChild() );
+
+    // disable initial projection if requested
+    if(solverInitialProj->isChecked()) {
+      auto ip = E(dssEle)->getFirstElementChildNamed(MBSIM%"initialProjection");
+      if(ip) {
+        // remove all child text nodes (since we add "0" as data = text node)
+        DOMNode *nNext;
+        for(auto *n=ip->getFirstChild(); n; n=nNext) {
+          nNext = n->getNextSibling();
+          if(n->getNodeType()==DOMNode::TEXT_NODE || n->getNodeType()==DOMNode::CDATA_SECTION_NODE)
+            ip->removeChild(n)->release();
+        }
+      }
+      else {
+        // if no initialProjection element exists we need to add it at the right position which is a bit complicated
+        // due to many optional elements before initialProjection
+        // -> we search the first preceding element up to a element which must exist (here environments)
+        vector<FQN> preInitialProjectionElements {
+          MBSIM%"environments",
+          MBSIM%"smoothSolver",
+          MBSIM%"constraintSolver",
+          MBSIM%"impactSolver",
+          MBSIM%"maximumNumberOfIterations",
+          MBSIM%"highNumberOfIterations",
+          MBSIM%"numericalJacobian",
+          MBSIM%"stopIfNoConvergence",
+          MBSIM%"projectionTolerance",
+          MBSIM%"localSolverTolerance",
+          MBSIM%"dynamicSystemSolverTolerance",
+          MBSIM%"generalizedRelativePositionTolerance",
+          MBSIM%"generalizedRelativeVelocityTolerance",
+          MBSIM%"generalizedRelativeAccelerationTolerance",
+          MBSIM%"generalizedForceTolerance",
+          MBSIM%"generalizedImpulseTolerance",
+          MBSIM%"generalizedRelativePositionCorrectionValue",
+          MBSIM%"generalizedRelativeVelocityCorrectionValue",
+          MBSIM%"inverseKinetics",
+        };
+        DOMElement *preEle = nullptr;
+        for(auto preEleNameIt=preInitialProjectionElements.rbegin(); preEleNameIt!= preInitialProjectionElements.rend(); ++preEleNameIt) {
+          preEle = E(dssEle)->getFirstElementChildNamed(*preEleNameIt);
+          if(preEle)
+            break;
+        }
+        ip = D(doc)->createElement( MBSIM%"initialProjection" );
+        dssEle->insertBefore(ip, preEle->getNextElementSibling());
+      }
+      ip->insertBefore(doc->createTextNode(X()%"0"), nullptr);
     }
 
-    currentTask = task;
+    // add the "Outdated" IvScreenAnnotation openmbv element
+    auto envEle = E(dssEle)->getFirstElementChildNamed(MBSIM%"environments");
+    auto mbsimEnvEle = E(envEle)->getFirstElementChildNamed(MBSIM%"MBSimEnvironment");
+    if(!mbsimEnvEle) {
+      mbsimEnvEle = D(doc)->createElement(MBSIM%"MBSimEnvironment");
+      envEle->insertBefore(mbsimEnvEle, nullptr);
+      auto gravEle = D(doc)->createElement(MBSIM%"accelerationOfGravity");
+      mbsimEnvEle->insertBefore(gravEle, nullptr);
+      gravEle->insertBefore(doc->createTextNode(X()%eval->createSourceCode(vector<double>{0,0,0})), nullptr);
+    }
+    auto ombvObjEle = E(mbsimEnvEle)->getFirstElementChildNamed(MBSIM%"openMBVObject");
+    if(!ombvObjEle) {
+      ombvObjEle = D(doc)->createElement(MBSIM%"openMBVObject");
+      mbsimEnvEle->insertBefore(ombvObjEle, nullptr);
+    }
+    auto outdatedGrp = D(doc)->createElement(OPENMBV%"Group");
+    ombvObjEle->insertBefore(outdatedGrp, nullptr);
+    E(outdatedGrp)->setAttribute("environment", 1);
+    E(outdatedGrp)->setAttribute("name", "mbsimgui_outdated_group");
+    auto outdatedEle = D(doc)->createElement(OPENMBV%"IvScreenAnnotation");
+    outdatedGrp->insertBefore(outdatedEle, nullptr);
+    E(outdatedEle)->setAttribute("name", "mbsimgui_outdated_annotation");
+    auto scaleEle = D(doc)->createElement(OPENMBV%"scale1To1At");
+    outdatedEle->insertBefore(scaleEle, nullptr);
+    scaleEle->insertBefore(doc->createTextNode(X()%eval->createSourceCode(vector<double>{0,-1})), nullptr);
+    auto ivContEle = D(doc)->createElement(OPENMBV%"ivContent");
+    outdatedEle->insertBefore(ivContEle, nullptr);
+    string ivStr=R"(#Inventor V2.0 ascii
+DEF mbsimgui_outdated_switch Switch {
+  whichChild -3
+  Material {
+    diffuseColor 0.8 0 0
+  }
+  Translation {
+    translation 0 -0.99 0
+  }
+  Font {
+    name "SANS:bold"
+    size 20
+  }
+  Text2 {
+    string "Outdated"
+    justification CENTER
+  }
+  DEF mbsimgui_modelID Label {
+    label "@modelID@"
+  }
+})";
+    boost::replace_all(ivStr, "@modelID@", to_string(currentModelID));
+    ivContEle->insertBefore(doc->createTextNode(X()%eval->createSourceCode(ivStr)), nullptr);
 
-    if(task==0)
-      statusBar()->showMessage(tr("Simulate"));
-    else
-      statusBar()->showMessage(tr("Refresh"));
+    clearEchoView("");
+    echoView->showXMLCode(false);
+    echoView->updateOutput(true);
+    string projectString;
+    DOMParser::serializeToString(doc.get(), projectString);
+    processRefresh.write(projectString.data(), projectString.size());
+    processRefresh.write("\0", 1);
+  }
+
+  void MainWindow::simulate() {
+    setProcessActionsEnabled(false);
+
+    statusBar()->showMessage(tr("Simulate"));
 
     shared_ptr<DOMDocument> doc=mbxmlparser->createDocument();
     doc->setDocumentURI(X()%D(this->doc)->getDocumentFilename().string());
@@ -1525,84 +1825,25 @@ namespace MBSimGUI {
     project->processIDAndHref(newDocElement);
 
     QString uniqueTempDir_ = QString::fromStdString(uniqueTempDir.generic_string());
-    QString projectFile;
+    QString projectFile = uniqueTempDir_+"/MBS_tmp.mbsx";
+    setSimulateActionsEnabled(false);
+    actionOpenMBV->setDisabled(false);
+    actionH5plotserie->setDisabled(false);
 
-    projectFile=uniqueTempDir_+"/Project.flat.mbsx";
-
-    actionSimulate->setDisabled(true);
-    actionInterrupt->setDisabled(false);
-    actionKill->setDisabled(false);
-    actionRefresh->setDisabled(true);
-    if(task==0) {
-      actionSaveDataAs->setDisabled(true);
-      actionSaveMBSimH5DataAs->setDisabled(true);
-      actionSaveOpenMBVDataAs->setDisabled(true);
-      actionSaveStateVectorAs->setDisabled(true);
-      actionSaveStateTableAs->setDisabled(true);
-      actionSaveLinearSystemAnalysisAs->setDisabled(true);
-      actionOpenMBV->setDisabled(false);
-      actionH5plotserie->setDisabled(false);
-      actionLinearSystemAnalysis->setDisabled(true);
-    }
-
-    clearEchoView("Running 'mbsimxml':\n\n");
+    clearEchoView("Running 'mbsimxml' to simulate the model:\n\n");
     echoView->showXMLCode(false);
-    DOMElement *root { nullptr };
-    QString errorText;
 
-    *debugStreamFlag=echoView->debugEnabled();
-
-    try {
-      Preprocess preprocess(doc, false);
-      preprocess.processAndGetDocument();
-      root = doc->getDocumentElement();
-    }
-    catch(exception &ex) {
-      mw->setExitBad();
-      errorText = ex.what();
-    }
-    catch(...) {
-      mw->setExitBad();
-      errorText = "Unknown error";
-    }
-    if(not errorText.isEmpty()) {
-      echoView->addOutputText("<span class=\"MBSIMGUI_ERROR\">"+errorText+"</span>");
-      echoView->updateOutput(true);
-      actionSimulate->setDisabled(false);
-      actionInterrupt->setDisabled(true);
-      actionKill->setDisabled(true);
-      actionRefresh->setDisabled(false);
-      actionDebug->setDisabled(false);
-      statusBar()->showMessage(tr("Ready"));
-      cerr<<"<span class=\"MBSIMGUI_ERROR\">"<<errorText.toStdString()<<"</span>"<<endl;
-      statusBar()->showMessage(errorText.remove(QRegExp("<[^>]*>")));
-      return;
-    }
-    echoView->updateOutput(true);
-    // adapt the evaluator in the dom
-    DOMElement *evaluator=E(root)->getFirstElementChildNamed(PV%"evaluator");
-    if(evaluator)
-      E(evaluator)->getFirstTextChild()->setData(X()%"xmlflat");
-    else {
-      evaluator=D(doc)->createElement(PV%"evaluator");
-      evaluator->appendChild(doc->createTextNode(X()%"xmlflat"));
-      root->insertBefore(evaluator, root->getFirstChild());
-    }
-    E(root)->setOriginalFilename();
     DOMParser::serialize(doc.get(), projectFile.toStdString());
     QStringList arg;
     QSettings settings;
-    if(currentTask==1)
-      arg.append("--stopafterfirststep");
-    else {
-      if(settings.value("mainwindow/options/savestatevector", false).toBool())
-        arg.append("--savefinalstatevector");
-    }
+    if(settings.value("mainwindow/options/savestatevector", false).toBool())
+      arg.append("--savefinalstatevector");
     arg.append("--savestatetable");
 
     // we print everything except status messages to stdout
     arg.append("--stdout"); arg.append(R"#(info~<span class="MBSIMGUI_INFO">~</span>~HTML)#");
     arg.append("--stdout"); arg.append(R"#(warn~<span class="MBSIMGUI_WARN">~</span>~HTML)#");
+    *debugStreamFlag=echoView->debugEnabled();
     if(*debugStreamFlag) {
       arg.append("--stdout"); arg.append(R"#(debug~<span class="MBSIMGUI_DEBUG">~</span>~HTML)#");
     }
@@ -1617,19 +1858,11 @@ namespace MBSimGUI {
 
     arg.append(projectFile);
     process.setWorkingDirectory(uniqueTempDir_);
-    process.start(QString::fromStdString((getInstallPath()/"bin"/"mbsimflatxml").string()), arg);
-  }
-
-  void MainWindow::simulate() {
-    mbsimxml(0);
-  }
-
-  void MainWindow::refresh() {
-    mbsimxml(1);
+    process.start(QString::fromStdString((getInstallPath()/"bin"/"mbsimxml").string()), arg);
   }
 
   void MainWindow::openmbv() {
-    QString name = QString::fromStdString(uniqueTempDir.generic_string())+"/"+project->getDynamicSystemSolver()->getName()+".ombvx";
+    QString name = QString::fromStdString(uniqueTempDir.generic_string())+"/"+project->getDynamicSystemSolver()->getName()+".ombvh5";
     if(QFile::exists(name))
       QProcess::startDetached(QString::fromStdString((getInstallPath()/"bin"/"openmbv").string()), QStringList(name));
   }
@@ -1646,7 +1879,7 @@ namespace MBSimGUI {
     if(QFile::exists(file1) and QFile::exists(file2)) {
       if(not lsa) {
 	lsa = new LinearSystemAnalysisDialog(this);
-	connect(&process,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),this,[=](){ if(currentTask==0) lsa->updateWidget(); });
+	connect(&process,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),this,[=](){ lsa->updateWidget(); });
       }
       lsa->show();
     }
@@ -1661,42 +1894,6 @@ namespace MBSimGUI {
       }
       st->show();
     }
-  }
-
-  void MainWindow::debug() {
-    currentTask = 0;
-    shared_ptr<DOMDocument> doc=mbxmlparser->createDocument();
-    doc->setDocumentURI(X()%D(this->doc)->getDocumentFilename().string());
-    auto *newDocElement = static_cast<DOMElement*>(doc->importNode(this->doc->getDocumentElement(), true));
-    doc->insertBefore(newDocElement, nullptr);
-    project->processIDAndHref(newDocElement);
-    QString uniqueTempDir_ = QString::fromStdString(uniqueTempDir.generic_string());
-    QString projectFile = uniqueTempDir_+"/Project.mbsx";
-    serializer->writeToURI(doc.get(), X()%projectFile.toStdString());
-    QStringList arg;
-    arg.append("--stopafterfirststep");
-
-    // we print everything except status messages to stdout
-    arg.append("--stdout"); arg.append(R"#(info~<span class="MBSIMGUI_INFO">~</span>~HTML)#");
-    arg.append("--stdout"); arg.append(R"#(warn~<span class="MBSIMGUI_WARN">~</span>~HTML)#");
-    if(*debugStreamFlag) {
-      arg.append("--stdout"); arg.append(R"#(debug~<span class="MBSIMGUI_DEBUG">~</span>~HTML)#");
-    }
-    arg.append("--stdout"); arg.append(R"#(error~<span class="MBSIMGUI_ERROR">~</span>~HTML)#");
-    arg.append("--stdout"); arg.append(R"#(depr~<span class="MBSIMGUI_DEPRECATED">~</span>~HTML)#");
-    // status message go to stderr
-    arg.append("--stderr"); arg.append("status~~\n");
-
-    // we change the current directory (see below) hence we need to add the current dir as modulePath
-    arg.append("--modulePath");
-    arg.append(QDir::currentPath());
-
-    arg.append(projectFile);
-    clearEchoView("Running 'mbsimxml' in debug mode:\n\n");
-    echoView->showXMLCode(true);
-    process.setWorkingDirectory(uniqueTempDir_);
-    process.start(QString::fromStdString((getInstallPath()/"bin"/"mbsimxml").string()), arg);
-    statusBar()->showMessage(tr("Debug model"));
   }
 
   void MainWindow::selectElement(const string& ID, OpenMBVGUI::Object *obj) {
@@ -1724,14 +1921,6 @@ namespace MBSimGUI {
     QSettings settings;
     settings.setValue("mainwindow/filter/type", static_cast<int>(OpenMBVGUI::AbstractViewFilter::getFilterType()));
     settings.setValue("mainwindow/filter/casesensitivity", OpenMBVGUI::AbstractViewFilter::getCaseSensitive());
-  }
-
-  void MainWindow::help() {
-    QMessageBox::information(this, tr("MBSimGUI - Help"), tr("<p>Please visit <a href=\"https://www.mbsim-env.de\">MBSim-Environment</a> for documentation.</p>"));
-  }
-
-  void MainWindow::xmlHelp(const QString &url) {
-    QDesktopServices::openUrl(QUrl::fromLocalFile(QString::fromStdString((getInstallPath()/"share"/"mbxmlutils"/"doc"/"http___www_mbsim-env_de_MBSimXML"/"mbsimxml.html").string())));
   }
 
   void MainWindow::relnotes() {
@@ -1838,7 +2027,7 @@ namespace MBSimGUI {
     if(element and (not dynamic_cast<DynamicSystemSolver*>(element)) and (not dynamic_cast<InternalFrame*>(element))) {
       if(element == elementBuffer.first)
         elementBuffer.first = nullptr;
-      QModelIndex pindex = element->getParameters()->getModelIndex();
+      QModelIndex pindex = element->getParameterEmbedItem()->getModelIndex();
       static_cast<ParameterTreeModel*>(parameterView->model())->removeRow(pindex.row(), pindex.parent());
       model->removeRow(index.row(), index.parent());
       element->removeXMLElement();
@@ -2018,6 +2207,7 @@ namespace MBSimGUI {
       model->createParameterItem(parameter->getParent()->getParameter(i),parentIndex);
     parameterView->setCurrentIndex(parameter->getParent()->getParameter(j)->getModelIndex());
     updateParameterReferences(parameter->getParent());
+    refresh();
   }
 
   void MainWindow::moveFrame(bool up) {
@@ -2042,6 +2232,7 @@ namespace MBSimGUI {
       model->createFrameItem(frame->getParent()->getFrame(i),parentIndex);
     elementView->setCurrentIndex(frame->getParent()->getFrame(j)->getModelIndex());
     updateReferences(frame->getParent());
+    refresh();
   }
 
   void MainWindow::moveContour(bool up) {
@@ -2066,6 +2257,7 @@ namespace MBSimGUI {
       model->createContourItem(contour->getParent()->getContour(i),parentIndex);
     elementView->setCurrentIndex(contour->getParent()->getContour(j)->getModelIndex());
     updateReferences(contour->getParent());
+    refresh();
   }
 
   void MainWindow::moveGroup(bool up) {
@@ -2090,6 +2282,7 @@ namespace MBSimGUI {
       model->createGroupItem(group->getParent()->getGroup(i),parentIndex);
     elementView->setCurrentIndex(group->getParent()->getGroup(j)->getModelIndex());
     updateReferences(group->getParent());
+    refresh();
   }
 
   void MainWindow::moveObject(bool up) {
@@ -2114,6 +2307,7 @@ namespace MBSimGUI {
       model->createObjectItem(object->getParent()->getObject(i),parentIndex);
     elementView->setCurrentIndex(object->getParent()->getObject(j)->getModelIndex());
     updateReferences(object->getParent());
+    refresh();
   }
 
   void MainWindow::moveLink(bool up) {
@@ -2138,6 +2332,7 @@ namespace MBSimGUI {
       model->createLinkItem(link->getParent()->getLink(i),parentIndex);
     elementView->setCurrentIndex(link->getParent()->getLink(j)->getModelIndex());
     updateReferences(link->getParent());
+    refresh();
   }
 
   void MainWindow::moveConstraint(bool up) {
@@ -2162,6 +2357,7 @@ namespace MBSimGUI {
       model->createConstraintItem(constraint->getParent()->getConstraint(i),parentIndex);
     elementView->setCurrentIndex(constraint->getParent()->getConstraint(j)->getModelIndex());
     updateReferences(constraint->getParent());
+    refresh();
   }
 
   void MainWindow::moveObserver(bool up) {
@@ -2186,6 +2382,7 @@ namespace MBSimGUI {
       model->createObserverItem(observer->getParent()->getObserver(i),parentIndex);
     elementView->setCurrentIndex(observer->getParent()->getObserver(j)->getModelIndex());
     updateReferences(observer->getParent());
+    refresh();
   }
 
   void MainWindow::exportElement(const QString &title) {
@@ -2229,8 +2426,6 @@ namespace MBSimGUI {
     auto *fileItem = element->getDedicatedFileItem();
     if(fileItem)
       fileItem->setModified(true);
-    else
-      setWindowModified(true);
     if(enable) {
       // - if "MBSimGUI_EnabledCount" ProcessingInstruction exists copy it to "count" Attribute
       string count;
@@ -2271,8 +2466,8 @@ namespace MBSimGUI {
   void MainWindow::exportParameters() {
     auto *model = static_cast<ParameterTreeModel*>(parameterView->model());
     auto index = parameterView->selectionModel()->currentIndex();
-    auto *parameters = static_cast<Parameters*>(model->getItem(index)->getItemData());
-    SaveParameterDialog dialog(getProjectDir().absoluteFilePath(parameters->getParent()->getName()+".mbspx"));
+    auto *parameterEmbedItem = static_cast<Parameters*>(model->getItem(index)->getItemData());
+    SaveParameterDialog dialog(getProjectDir().absoluteFilePath(parameterEmbedItem->getParent()->getName()+".mbspx"));
     int result = dialog.exec();
     if(result and not dialog.getParameterFileName().isEmpty()) {
       QMessageBox::StandardButton ret = QMessageBox::Yes;
@@ -2280,7 +2475,7 @@ namespace MBSimGUI {
 	ret = QMessageBox::question(this, "Replace file", "A file named " + dialog.getParameterFileName() + " already exists. Do you want to replace it?", QMessageBox::Yes | QMessageBox::No);
       if(ret == QMessageBox::Yes) {
 	auto doc = mbxmlparserNoVal->createDocument();
-	DOMNode *node = doc->importNode(parameters->getParent()->getEmbedXMLElement()->getFirstElementChild(),true);
+	DOMNode *node = doc->importNode(parameterEmbedItem->getParent()->getEmbedXMLElement()->getFirstElementChild(),true);
 	doc->insertBefore(node,nullptr);
 	serializer->writeToURI(doc.get(), X()%dialog.getParameterFileName().toStdString());
       }
@@ -2475,7 +2670,7 @@ namespace MBSimGUI {
         param->getXMLElement()->getParentNode()->removeChild(ps);
       param->getXMLElement()->getParentNode()->removeChild(param->getXMLElement());
       auto *model = static_cast<ParameterTreeModel*>(parameterView->model());
-      QModelIndex index = model->findItem(param,project->getParameters()->getModelIndex());
+      QModelIndex index = model->findItem(param,project->getParameterEmbedItem()->getModelIndex());
       if(index.isValid()) model->removeRow(index.row(), index.parent());
       parent->removeParameter(param);
       parent->maybeRemoveEmbedXMLElement();
@@ -2483,12 +2678,12 @@ namespace MBSimGUI {
     Parameter *parameter=ObjectFactory::getInstance().create<Parameter>(pele);
     parentele->insertBefore(pele,nullptr);
     parameter->setXMLElement(pele);
-    parameter->updateValue();
+    parameter->updateValue(true);
     parent->addParameter(parameter);
     parent->updateName();
-    static_cast<ParameterTreeModel*>(parameterView->model())->createParameterItem(parameter,parent->getParameters()->getModelIndex());
+    static_cast<ParameterTreeModel*>(parameterView->model())->createParameterItem(parameter,parent->getParameterEmbedItem()->getParameters()->getModelIndex());
     updateParameterReferences(parent);
-    parameterView->selectionModel()->setCurrentIndex(parent->getParameters()->getModelIndex(), QItemSelectionModel::ClearAndSelect);
+    parameterView->selectionModel()->setCurrentIndex(parameter->getModelIndex(), QItemSelectionModel::ClearAndSelect);
     if(getAutoRefresh()) refresh();
   }
 
@@ -2529,10 +2724,10 @@ namespace MBSimGUI {
       parent->createParameters();
       parent->updateName();
       for(int i=0; i<parent->getNumberOfParameters(); i++)
-	static_cast<ParameterTreeModel*>(parameterView->model())->createParameterItem(parent->getParameter(i),parent->getParameters()->getModelIndex());
+	static_cast<ParameterTreeModel*>(parameterView->model())->createParameterItem(parent->getParameter(i),parent->getParameterEmbedItem()->getParameters()->getModelIndex());
       parameterView->scrollToBottom();
       updateParameterReferences(parent);
-      parameterView->selectionModel()->setCurrentIndex(parent->getParameters()->getModelIndex(), QItemSelectionModel::ClearAndSelect);
+      parameterView->selectionModel()->setCurrentIndex(parent->getParameterEmbedItem()->getParameters()->getModelIndex(), QItemSelectionModel::ClearAndSelect);
       if(getAutoRefresh()) refresh();
     }
   }
@@ -2798,7 +2993,7 @@ namespace MBSimGUI {
 
   void MainWindow::createDynamicSystemSolver(DOMElement *ele) {
     if(not ele) return;
-    auto pindex = project->getDynamicSystemSolver()->getParameters()->getModelIndex();
+    auto pindex = project->getDynamicSystemSolver()->getParameterEmbedItem()->getModelIndex();
     static_cast<ParameterTreeModel*>(parameterView->model())->removeRow(pindex.row(), pindex.parent());
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     model->removeRows(0,model->rowCount(project->getModelIndex()),project->getModelIndex());
@@ -2820,7 +3015,7 @@ namespace MBSimGUI {
 
   void MainWindow::createSolver(DOMElement *ele) {
     if(not ele) return;
-    QModelIndex pindex = project->getSolver()->getParameters()->getModelIndex();
+    QModelIndex pindex = project->getSolver()->getParameterEmbedItem()->getModelIndex();
     static_cast<ParameterTreeModel*>(parameterView->model())->removeRow(pindex.row(), pindex.parent());
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     model->removeRow(project->getSolver()->getModelIndex().row(), project->getModelIndex());
@@ -2889,11 +3084,11 @@ namespace MBSimGUI {
           editor->fromWidget();
           int n = parent->getNumberOfParameters();
           for(int i=n-1; i>=0; i--) parent->removeParameter(parent->getParameter(i));
-          QModelIndex index = parent->getParameters()->getModelIndex();
+          QModelIndex index = parent->getParameterEmbedItem()->getParameters()->getModelIndex();
           auto *model = static_cast<ParameterTreeModel*>(parameterView->model());
           model->removeRows(0,n,index);
           parent->createParameters();
-          model->updateParameterItem(parent->getParameters());
+          model->updateParameterItem(parent->getParameterEmbedItem());
           updateParameterReferences(parent);
           if(getAutoRefresh()) refresh();
         }
@@ -2902,11 +3097,11 @@ namespace MBSimGUI {
         editor->fromWidget();
         int n = parent->getNumberOfParameters();
         for(int i=n-1; i>=0; i--) parent->removeParameter(parent->getParameter(i));
-        QModelIndex index = parent->getParameters()->getModelIndex();
+        QModelIndex index = parent->getParameterEmbedItem()->getParameters()->getModelIndex();
         auto *model = static_cast<ParameterTreeModel*>(parameterView->model());
         model->removeRows(0,n,index);
         parent->createParameters();
-        model->updateParameterItem(parent->getParameters());
+        model->updateParameterItem(parent->getParameterEmbedItem());
         updateParameterReferences(parent);
         if(getAutoRefresh()) refresh();
       });
@@ -2997,26 +3192,26 @@ namespace MBSimGUI {
   }
 
   void MainWindow::interrupt() {
-    if(process.state()==QProcess::NotRunning)
+    if(process.state()==QProcess::NotRunning && processRefresh.state()==QProcess::NotRunning)
       return;
-    echoView->addOutputText("<span class=\"MBSIMGUI_ERROR\">'Interrupt simulation' clicked</span>\n");
+    echoView->addOutputText("<span class=\"MBSIMGUI_ERROR\">'Interrupt background tasks' clicked</span>\n");
     echoView->updateOutput(true);
     process.terminate();
+    processRefresh.terminate();
   }
 
   void MainWindow::kill() {
-    if(process.state()==QProcess::NotRunning)
+    if(process.state()==QProcess::NotRunning && processRefresh.state()==QProcess::NotRunning)
       return;
-    echoView->addOutputText("<span class=\"MBSIMGUI_ERROR\">'Kill simulation' clicked</span>\n");
+    echoView->addOutputText("<span class=\"MBSIMGUI_ERROR\">'Kill background tasks' clicked</span>\n");
     echoView->updateOutput(true);
     process.kill();
+    processRefresh.kill();
   }
 
   void MainWindow::flexibleBodyTool() {
-    if(not fbt) {
+    if(not fbt)
       fbt = new FlexibleBodyTool(this);
-      updateParameters(project);
-    }
     fbt->show();
   }
 
@@ -3026,6 +3221,8 @@ namespace MBSimGUI {
   }
 
   void MainWindow::createFMU() {
+    setProcessActionsEnabled(false);
+
     QFileInfo projectFile = QFileInfo(getProjectFilePath());
     CreateFMUDialog dialog(projectFile.absolutePath()+"/"+projectFile.baseName()+".fmu");
     int result = dialog.exec();
@@ -3041,7 +3238,7 @@ namespace MBSimGUI {
 	  doc->insertBefore(newDocElement, nullptr);
 	  project->processIDAndHref(newDocElement);
 	  QString uniqueTempDir_ = QString::fromStdString(uniqueTempDir.generic_string());
-	  QString projectFile = uniqueTempDir_+"/Project.mbsx";
+	  QString projectFile = uniqueTempDir_+"/MBS_tmp.mbsx";
 	  serializer->writeToURI(doc.get(), X()%projectFile.toStdString());
 	  QStringList arg;
 	  if(dialog.cosim()) arg.append("--cosim");
@@ -3053,7 +3250,7 @@ namespace MBSimGUI {
             arg.append(modulePath);
           }
 	  arg.append(projectFile);
-	  clearEchoView("Running 'createFMU':\n\n");
+	  clearEchoView("Running 'createFMU' to create a FMU from the model:\n\n");
 	  echoView->showXMLCode(false);
 	  process.setWorkingDirectory(uniqueTempDir_);
 	  fmuFileName = dialog.getFileName();
@@ -3069,10 +3266,44 @@ namespace MBSimGUI {
     }
   }
 
-  void MainWindow::updateEchoView() {
-    auto data=process.readAllStandardOutput();
-    echoView->addOutputText(data.data());
-    echoView->updateOutput(true);
+  void MainWindow::updateEchoViewSlot(const QByteArray &data) {
+    if(process.isOpen())
+      // if a process (simulation) is running just add the new output
+      echoView->addOutputText(data.constData());
+    else {
+      // if no process (simulation) is running and MBXMLUTILS_PREPROCESS_CTOR was found -> skip the output before MBXMLUTILS_PREPROCESS_CTOR
+      // (this is used to avoid the message about exiting the last existing mbsimxml run)
+      auto idx=data.lastIndexOf("<a name=\"MBXMLUTILS_PREPROCESS_CTOR\"></a>");
+      if(idx==-1)
+        echoView->addOutputText(data.constData());
+      else {
+        clearEchoView("");
+        echoView->addOutputText(data.constData()+idx);
+      }
+    }
+
+    static qint64 last=0;
+    static QTimer singleShot;
+    static int delta=100;
+    if(last==0) {
+      singleShot.setSingleShot(true);
+      singleShot.callOnTimeout([this](){
+        auto cur=QDateTime::currentMSecsSinceEpoch();
+        echoView->updateOutput(true);
+        last=QDateTime::currentMSecsSinceEpoch();
+        delta = std::max(100ll, std::min(500ll, last-cur));
+      });
+    }
+
+    auto cur=QDateTime::currentMSecsSinceEpoch();
+    if(cur>last+delta) {
+      singleShot.stop();
+      echoView->updateOutput(true);
+      last=QDateTime::currentMSecsSinceEpoch();
+      delta = std::max(100ll, std::min(500ll, last-cur));
+    }
+    else if(!singleShot.isActive())
+      singleShot.start(last+delta-cur);
   }
 
   void MainWindow::clearEchoView(const QString &initialText) {
@@ -3080,13 +3311,50 @@ namespace MBSimGUI {
     echoView->addOutputText(initialText);
   }
 
-  void MainWindow::updateStatusMessage(string s) {
-    // show only last line
-    assert(s[s.length()-1]=='\n');
-    s.resize(s.length()-1);
-    auto i=s.rfind('\n');
-    i = i==string::npos ? 0 : i+1;
-    statusBar()->showMessage(QString::fromStdString(s.substr(i)));
+  void MainWindow::updateStatusMessageSlot(const QByteArray &data) {
+    static string ss;
+    ss+=data.constData();
+
+    // remove multiple newline at and of ss
+    int i=ss.length()-1;
+    for(; i>=1; --i)
+      if(ss[i]!='\n' || ss[i-1]!='\n')
+        break;
+    ss=ss.substr(0,i+1);
+
+    auto out=[this](){
+      // show only last line one empty line
+      if(ss.empty())
+        return;
+      auto end = ss[ss.length()-1]=='\n' ? ss.length()-1 : ss.rfind('\n');
+      if(end==string::npos)
+        return;
+      auto start = ss.rfind('\n', end-1);
+      if(start==string::npos)
+        start=0;
+      statusBar()->showMessage(QString::fromStdString(ss.substr(start, end-start)));
+      ss=ss.substr(end+1);
+    };
+
+    static qint64 last=0;
+    static QTimer singleShot;
+    if(last==0) {
+      singleShot.setSingleShot(true);
+      singleShot.callOnTimeout([out](){
+        out();
+        last=QDateTime::currentMSecsSinceEpoch();
+      });
+    }
+
+    const int delta=250;
+    auto cur=QDateTime::currentMSecsSinceEpoch();
+    if(cur>last+delta) {
+      singleShot.stop();
+      out();
+      last=QDateTime::currentMSecsSinceEpoch();
+    }
+    else if(!singleShot.isActive())
+      singleShot.start(last+delta-cur);
   }
 
   QString MainWindow::getProjectFilePath() const {
@@ -3099,7 +3367,6 @@ namespace MBSimGUI {
       QModelIndex index = elementView->selectionModel()->currentIndex();
       auto *element = dynamic_cast<EmbedItemData*>(static_cast<ElementTreeModel*>(elementView->model())->getItem(index)->getItemData());
       if(element) {
-        updateParameters(element);
         auto editor = element->createPropertyDialog();
         editor->setAttribute(Qt::WA_DeleteOnClose);
         if(config)
@@ -3134,17 +3401,16 @@ namespace MBSimGUI {
           if(getAutoRefresh()) refresh();
           editor->setCancel(true);
         });
-//        connect(editor,&ElementPropertyDialog::showXMLHelp,this,[=](){
-//          // generate url for current element
-//          string url="file://"+(getInstallPath()/"share"/"mbxmlutils"/"doc").string();
-//          string ns=element->getXMLType().first;
-//          replace(ns.begin(), ns.end(), ':', '_');
-//          replace(ns.begin(), ns.end(), '.', '_');
-//          replace(ns.begin(), ns.end(), '/', '_');
-//          url+="/"+ns+"/index.html#"+element->getXMLType().second;
-//          // open in XML help dialog
-//          xmlHelp(QString::fromStdString(url));
-//        });
+        connect(editor,&ElementPropertyDialog::showXMLHelp,[element](){
+          // generate url for current element
+          string url="file://"+(getInstallPath()/"share"/"mbxmlutils"/"doc").string();
+          string ns=element->getXMLType().first;
+          replace(ns.begin(), ns.end(), ':', '_');
+          replace(ns.begin(), ns.end(), '.', '_');
+          replace(ns.begin(), ns.end(), '/', '_');
+          url+="/"+ns+"/index.html#"+element->getXMLType().second;
+          QDesktopServices::openUrl(QUrl(url.c_str()));
+        });
       }
     }
   }
@@ -3154,7 +3420,6 @@ namespace MBSimGUI {
       QModelIndex index = parameterView->selectionModel()->currentIndex();
       auto *parameter = dynamic_cast<Parameter*>(static_cast<ParameterTreeModel*>(parameterView->model())->getItem(index)->getItemData());
       if(parameter) {
-        updateParameters(parameter->getParent(),true);
         auto editor = parameter->createPropertyDialog();
         editor->setAttribute(Qt::WA_DeleteOnClose);
         if(config)
@@ -3173,6 +3438,7 @@ namespace MBSimGUI {
               updateUndos();
             editor->fromWidget();
 	    updateValues(parameter->getParent());
+            MainWindow::updateNameOfCorrespondingElementAndItsChilds(parameter->getParent()->getModelIndex());
             if(getAutoRefresh()) refresh();
             if(getStatusUpdate()) parameter->getParent()->updateStatus();
           }
@@ -3187,9 +3453,13 @@ namespace MBSimGUI {
             updateUndos();
           editor->fromWidget();
 	  updateValues(parameter->getParent());
+          MainWindow::updateNameOfCorrespondingElementAndItsChilds(parameter->getParent()->getModelIndex());
           if(getAutoRefresh()) refresh();
           editor->setCancel(true);
 	  if(getStatusUpdate()) parameter->getParent()->updateStatus();
+        });
+        connect(editor,&ElementPropertyDialog::showXMLHelp,[](){
+          QDesktopServices::openUrl(QUrl(("file://"+getInstallPath().string()+"/share/mbxmlutils/doc/http___www_mbsim-env_de_MBXMLUtils/index.html#parameters").c_str()));
         });
       }
     }
@@ -3200,7 +3470,6 @@ namespace MBSimGUI {
       QModelIndex index = elementView->selectionModel()->currentIndex();
       auto *element = dynamic_cast<Element*>(static_cast<ElementTreeModel*>(elementView->model())->getItem(index)->getItemData());
       if(element) {
-        updateParameters(element);
         auto editor = new ClonePropertyDialog(element);
         editor->setAttribute(Qt::WA_DeleteOnClose);
         editor->toWidget();
@@ -3265,15 +3534,15 @@ namespace MBSimGUI {
       serializer->writeToURI(file[i]->getXMLDocument().get(), X()%file[i]->getFileInfo().absoluteFilePath().toStdString());
       file[i]->setModified(false);
     }
-    catch(const std::exception &ex) {
-      mw->setExitBad();
-      mw->statusBar()->showMessage(ex.what());
-      cerr << ex.what() << endl;
-    }
     catch(const DOMException &ex) {
       mw->setExitBad();
       mw->statusBar()->showMessage((X()%ex.getMessage()).c_str());
       cerr << X()%ex.getMessage() << endl;
+    }
+    catch(const std::exception &ex) {
+      mw->setExitBad();
+      mw->statusBar()->showMessage(ex.what());
+      cerr << ex.what() << endl;
     }
     catch(...) {
       mw->setExitBad();
@@ -3334,6 +3603,33 @@ namespace MBSimGUI {
       parameterView->expandToDepth(parameterView->selectionModel()->currentIndex(),depth);
   }
 
+  void MainWindow::setProcessActionsEnabled(bool enabled) {
+    actionSimulate->setEnabled(enabled);
+    actionCreateFMU->setEnabled(enabled);
+  }
+
+  void MainWindow::setSimulateActionsEnabled(bool enabled) {
+    actionSaveDataAs->setEnabled(enabled);
+    actionSaveMBSimH5DataAs->setEnabled(enabled);
+    actionSaveOpenMBVDataAs->setEnabled(enabled);
+    actionSaveStateTableAs->setEnabled(enabled);
+    if(enabled) {
+      QSettings settings;
+      bool saveFinalStateVector = settings.value("mainwindow/options/savestatevector", false).toBool();
+      if(saveFinalStateVector)
+        actionSaveStateVectorAs->setEnabled(true);
+      if(dynamic_cast<LinearSystemAnalyzer*>(project->getSolver())) {
+        actionSaveLinearSystemAnalysisAs->setEnabled(true);
+        actionLinearSystemAnalysis->setEnabled(true);
+      }
+    }
+    else {
+      actionSaveStateVectorAs->setEnabled(false);
+      actionSaveLinearSystemAnalysisAs->setEnabled(false);
+      actionLinearSystemAnalysis->setEnabled(false);
+    }
+  }
+
   void MainWindow::prepareForPropertyDialogOpen() {
     openedEditors++;
     if(openedEditors>1)
@@ -3357,11 +3653,34 @@ namespace MBSimGUI {
   void MainWindow::updateNameOfCorrespondingElementAndItsChilds(const QModelIndex &index) {
     auto model=static_cast<const ElementTreeModel*>(index.model());
     auto *item = model->getItem(index)->getItemData();
-    if(auto *embedItemData = dynamic_cast<EmbedItemData*>(item); embedItemData && embedItemData->getXMLElement())
-        embedItemData->updateName();
+    if(auto *embedItemData = dynamic_cast<EmbedItemData*>(item); embedItemData && embedItemData->getXMLElement()) {
+      embedItemData->updateName();
+      for(int i=0; i<embedItemData->getNumberOfParameters(); ++i)
+        embedItemData->getParameter(i)->updateValue(true);
+    }
     QModelIndex childIndex;
     for(int i=0; (childIndex=model->index(i,0,index)).isValid(); ++i)
       updateNameOfCorrespondingElementAndItsChilds(childIndex);
+  }
+
+  void MainWindow::setWindowModified(bool mod) {
+    QMainWindow::setWindowModified(mod);
+    currentModelID++;
+    if(mod)
+      setSceneViewOutdated(true);
+  }
+
+  void MainWindow::setSceneViewOutdated(bool outdated) {
+    auto switchNode = static_cast<SoSwitch*>(SoNode::getByName("mbsimgui_outdated_switch"));
+    if(switchNode) {
+      switchNode->whichChild.setValue(outdated ? -3 : -1);
+      inlineOpenMBVMW->updateScene();
+    }
+  }
+
+  bool MainWindow::getAutoRefresh() const {
+    QSettings settings;
+    return settings.value("mainwindow/options/autorefresh", true).toBool();
   }
 
 }
@@ -3392,21 +3711,38 @@ extern "C" {
     }
   }
 
-  void mbsimgui_Element_setParameterCode(MBSimGUI::Element *element, const char* parName, const char *code) noexcept {
+  void mbsimgui_Element_setParameterValue(MBSimGUI::Element *element, const char* parName, const char *code) noexcept {
     try {
       string parName_(parName);
       string code_(code);
       QTimer::singleShot(0, [element, parName_, code_](){
         try {
-          element->setParameterCode(parName_, code_);
+          element->setParameterValue(parName_, code_);
         }
         catch(...) {
-          cerr<<"Internal error: this should never happen: setParameterCode failed!"<<endl;
+          cerr<<"Internal error: this should never happen: Element::setParameterValue failed!"<<endl;
         }
       });
     }
     catch(...) {
-      cerr<<"Internal error: this should never happen: setParameterCode failed!"<<endl;
+      cerr<<"Internal error: this should never happen: Element::setParameterValue failed!"<<endl;
+    }
+  }
+
+  void mbsimgui_Parameter_setValue(MBSimGUI::Parameter *parameter, const char *code) noexcept {
+    try {
+      string code_(code);
+      QTimer::singleShot(0, [parameter, code_](){
+        try {
+          parameter->setValue(code_.c_str());
+        }
+        catch(...) {
+          cerr<<"Internal error: this should never happen: Parameter::setValue failed!"<<endl;
+        }
+      });
+    }
+    catch(...) {
+      cerr<<"Internal error: this should never happen: Parameter::setValue failed!"<<endl;
     }
   }
 
@@ -3417,12 +3753,12 @@ extern "C" {
           MBSimGUI::mw->refresh();
         }
         catch(...) {
-          cerr<<"Internal error: this should never happen: setParameterCode failed!"<<endl;
+          cerr<<"Internal error: this should never happen: MainWindow::refresh() failed!"<<endl;
         }
       });
     }
     catch(...) {
-      cerr<<"Internal error: this should never happen: MainWindows::refresh() failed!"<<endl;
+      cerr<<"Internal error: this should never happen: MainWindow::refresh() failed!"<<endl;
     }
   }
 

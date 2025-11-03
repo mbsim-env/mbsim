@@ -28,6 +28,7 @@ namespace MBSimGUI {
   class Parameter;
   class ExtWidget;
   class CommentWidget;
+  class MBSimGUIContextAction;
 
   class ParameterPropertyDialog : public PropertyDialog {
 
@@ -35,13 +36,19 @@ namespace MBSimGUI {
       ParameterPropertyDialog(Parameter *parameter_);
       virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr);
+      static std::vector<std::pair<std::string, std::string>> getMBSimGUIContextActions(xercesc::DOMElement *parent);
       void toWidget() override;
       void fromWidget() override;
+      void showEvent(QShowEvent *ev) override;
+      void hideEvent(QHideEvent *ev) override;
     protected:
       Parameter *parameter;
       ExtWidget *name;
       CommentWidget *comment;
-      QCheckBox *hidden;
+      MBSimGUIContextAction *mbsimguiContextAction;
+      ExtWidget *hidden;
+    private:
+      MBXMLUtils::NewParamLevel npl;
   };
 
   class StringParameterPropertyDialog : public ParameterPropertyDialog {
@@ -101,8 +108,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *value;
-      ExtWidget *action;
+      ExtWidget *label, *action, *value;
       std::vector<std::pair<QString, QString>> actionList;
   };
 

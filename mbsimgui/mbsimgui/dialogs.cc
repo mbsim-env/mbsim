@@ -56,6 +56,7 @@
 #include "hdf5serie/file.h"
 #include "hdf5serie/simpledataset.h"
 #include "evaluator/evaluator.h"
+#include "single_line_delegate.h"
 
 using namespace std;
 using namespace boost::math::constants;
@@ -123,7 +124,8 @@ namespace MBSimGUI {
       mw->eval->convertIndex(value, true);
       count[idx]=mw->eval->cast<int>(value)-1;
     }
-    auto levels = mw->updateParameters(embeditem, false, count);
+    MBXMLUtils::NewParamLevel npl(mw->eval);
+    auto levels = mw->updateParameters(embeditem, nullptr, false, count);
     count.resize(levels.size(), 0);
 
     auto var=widget->getEvalMat();
@@ -253,6 +255,8 @@ namespace MBSimGUI {
     eleList->setColumnWidth(0,250);
     eleList->setColumnWidth(1,200);
     eleList->hideColumn(1);
+    auto commentDelegate=new SingleLineDelegate(eleList);
+    eleList->setItemDelegateForColumn(2, commentDelegate);
     auto *eleFilter = new OpenMBVGUI::AbstractViewFilter(eleList, 0, 3);
     layout->addWidget(eleFilter);
     layout->addWidget(eleList);
@@ -1751,6 +1755,34 @@ namespace MBSimGUI {
     QSettings settings;
     settings.setValue("saveprojectastemplate/geometry", saveGeometry());
     QDialog::hideEvent(event);
+  }
+
+  bool HiddenParErrorDialog::show { true };
+
+  HiddenParErrorDialog::HiddenParErrorDialog(QWidget *parent, const QString &xpath, const QString &msg) : QDialog(parent) {
+    setWindowTitle("Evaluation of 'hidden' flag failed");
+    auto layout = new QVBoxLayout(this);
+    setLayout(layout);
+    layout->addWidget(new QLabel("The evaluation of the 'hidden' flag of the element", this), 0);
+    layout->setStretch(0,0);
+    auto xpathBox = new QTextEdit(xpath, this);
+    xpathBox->setReadOnly(true);
+    layout->addWidget(xpathBox, 1);
+    layout->setStretch(1,0);
+    layout->addWidget(new QLabel("failed with the message:", this), 2);
+    layout->setStretch(2,0);
+    auto msgBox = new QTextEdit(msg, this);
+    layout->addWidget(msgBox, 3);
+    layout->setStretch(3,10);
+    msgBox->setReadOnly(true);
+    auto skip = new QPushButton("Skip this dialog", this);
+    layout->addWidget(skip, 4);
+    layout->setStretch(4,0);
+    connect(skip, &QPushButton::clicked, [this](){ show=false; close(); });
+    auto ok = new QPushButton("OK", this);
+    layout->addWidget(ok, 5);
+    layout->setStretch(5,0);
+    connect(ok, &QPushButton::clicked, [this](){ close(); });
   }
 
 }

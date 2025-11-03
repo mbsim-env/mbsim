@@ -33,7 +33,7 @@ namespace XERCES_CPP_NAMESPACE {
 namespace MBSimGUI {
 
   class Parameter;
-  class Parameters;
+  class ParameterEmbedItem;
   class FileItemData;
 
   class EmbedItemData : public TreeItemData {
@@ -41,7 +41,7 @@ namespace MBSimGUI {
       QString name, comment;
       std::vector<Parameter*> parameter;
       xercesc::DOMElement *element{nullptr}, *embed{nullptr};
-      Parameters *parameters;
+      ParameterEmbedItem *parameterEmbedItem;
       FileItemData *fileItem{nullptr};
       FileItemData *parameterFileItem{nullptr};
       FileItemData *dedicatedFileItem{nullptr};
@@ -67,7 +67,7 @@ namespace MBSimGUI {
       void addParameter(Parameter *param);
       void removeParameter(Parameter *param);
       int getIndexOfParameter(Parameter *param) const;
-      xercesc::DOMElement* getXMLElement() { return element; }
+      xercesc::DOMElement* getXMLElement() override { return element; }
       void setXMLElement(xercesc::DOMElement *element_) { element = element_; }
       virtual void removeXMLElements();
       void removeXMLElement(bool removeEmbedding=true);
@@ -82,7 +82,7 @@ namespace MBSimGUI {
       virtual void setDedicatedFileItem(FileItemData *dedicatedFileItem_) { dedicatedFileItem = dedicatedFileItem_; }
       virtual void setDedicatedParameterFileItem(FileItemData *dedicatedParameterFileItem_) { dedicatedParameterFileItem = dedicatedParameterFileItem_; }
       virtual EmbedItemData *getDedicatedItem() { return this; }
-      Parameters* getParameters() { return parameters; }
+      ParameterEmbedItem* getParameterEmbedItem() { return parameterEmbedItem; }
       FileItemData *getFileItem() { return fileItem; }
       FileItemData *getParameterFileItem() { return parameterFileItem; }
       FileItemData *getDedicatedFileItem() { return dedicatedFileItem; }

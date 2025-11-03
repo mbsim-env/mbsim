@@ -20,6 +20,7 @@
 #ifndef _PROJECT__H_
 #define _PROJECT__H_
 
+#include "embed.h"
 #include "embeditemdata.h"
 #include "project_property_dialog.h"
 #include "project_context_menu.h"
@@ -53,7 +54,7 @@ namespace MBSimGUI {
       Solver* getSolver() const { return solver; }
       xercesc::DOMElement* createEmbedXMLElement() override;
       void maybeRemoveEmbedXMLElement() override;
-      void setEvaluator(const std::string &evaluator_) { evaluator = evaluator_; }
+      void setEvaluator(const std::string &evaluator_);
       const std::string& getEvaluator() { return evaluator; }
       void setDefaultEvaluator(int index) { defaultEvaluator = index; }
       int getDefaultEvaluator() const { return defaultEvaluator; }

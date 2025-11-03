@@ -47,7 +47,7 @@ class DOMEvalExceptionStack : public MBXMLUtils::DOMEvalException {
   protected:
     std::vector<std::pair<std::string, std::shared_ptr<MBXMLUtils::DOMEvalException>>> exVec;
     mutable std::string whatStr;
-    void generateWhat(std::stringstream &str, const std::string &indent) const;
+    void generateWhat(std::stringstream &str, const std::string &indent, bool &normalErrorFound) const;
 };
 
 /* Just to distinguish a wrong type (not castable) error of the object factory

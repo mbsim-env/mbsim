@@ -121,6 +121,10 @@ namespace MBSimGUI {
       mw->setExitBad();
       cerr << e.getMessage() << endl;
     }
+    catch(exception &e) {
+      mw->setExitBad();
+      cerr << e.what() << endl;
+    }
     catch(...) {
       mw->setExitBad();
       cerr << "Unknwon error" << endl;

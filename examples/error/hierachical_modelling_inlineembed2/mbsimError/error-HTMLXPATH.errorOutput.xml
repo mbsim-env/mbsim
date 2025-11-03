@@ -1,0 +1,22 @@
+<root>
+  <span class="MBSIMGUI_ERROR">
+    <span class="MBXMLUTILS_ERROROUTPUT">
+      <a href="submodel/Untergruppe.xml?xpath=/{http://www.mbsim-env.de/MBSim}Group[1]/{http://www.mbsim-env.de/MBSim}objects[1]/{http://www.mbsim-env.de/MBSim}RigidBody[1]&amp;line=10">submodel/Untergruppe.xml:10:/Group[1]/objects[1]/RigidBody[1]</a>:<br />
+      <span class="MBXMLUTILS_MSG">The diagonal elements of the inertia tensor must be nonnegative.
+</span>
+      <span class="MBSIMGUI_ERROR">(At MBSim element /Group[Hauptgruppe1]/Group[Untergruppe]/Object[Box1])
+</span>
+      <span class="MBSIMGUI_ERROR" />
+    </span>
+    <span class="MBXMLUTILS_ERROROUTPUT MBXMLUTILS_SSE">
+      <a href="MBS.mbsim.xml?xpath=/{http://www.mbsim-env.de/MBSim}DynamicSystemSolver[1]/{http://www.mbsim-env.de/MBSim}groups[1]/{http://www.mbsim-env.de/MBXMLUtils}Embed[1]/{http://www.mbsim-env.de/MBSim}Group[1]/{http://www.mbsim-env.de/MBSim}groups[1]/{http://www.mbsim-env.de/MBXMLUtils}Embed[2]&amp;line=55">MBS.mbsim.xml:55:/DynamicSystemSolver[1]/groups[1]/p:Embed[1]/Group[1]/groups[1]/p:Embed[2]</a>:<br />
+      <span class="MBXMLUTILS_MSG">included from here
+</span>
+      <span class="MBSIMGUI_ERROR" />
+    </span>
+    <span class="MBXMLUTILS_ERROROUTPUT MBXMLUTILS_SSE">
+      <a href="MBS.mbsx?xpath=/{http://www.mbsim-env.de/MBXMLUtils}Embed[1]/{http://www.mbsim-env.de/MBSimXML}MBSimProject[1]/{http://www.mbsim-env.de/MBXMLUtils}Embed[1]&amp;line=8">MBS.mbsx:8:/p:Embed[1]/mx:MBSimProject[1]/p:Embed[1]</a>:<br />
+      <span class="MBXMLUTILS_MSG">included from here</span>
+    </span>
+  </span>
+</root>

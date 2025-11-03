@@ -45,6 +45,9 @@ using namespace MBSimGUI;
 
 namespace {
   int loadPlugins(const QStringList &arg);
+  #ifndef NDEBUG
+    void myQtMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg);
+  #endif
 }
 
 int main(int argc, char *argv[]) {
@@ -154,6 +157,9 @@ int main(int argc, char *argv[]) {
 
   auto argSaved=arg; // save arguments (QApplication removes all arguments known by Qt)
   QApplication app(argc, argv);
+#ifndef NDEBUG
+  qInstallMessageHandler(myQtMessageHandler);
+#endif
   arg=argSaved; // restore arguments
 #ifndef _WIN32
   UnixSignalWatcher sigwatch;
@@ -231,4 +237,36 @@ int loadPlugins(const QStringList &arg)
   return 0;
 }
 
+}
+
+namespace {
+#ifndef NDEBUG
+  void myQtMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg) {
+    static map<QtMsgType, string> typeStr {
+      {QtDebugMsg,    "Debug"},
+      {QtWarningMsg,  "Warning"},
+      {QtCriticalMsg, "Critical"},
+      {QtFatalMsg,    "Fatal"},
+      {QtInfoMsg,     "Info"},
+    };
+    string category(context.category?context.category:"[nocategory]");
+    cerr<<(context.file?context.file:"[nofile]")<<":"<<context.line<<": "<<(context.function?context.function:"[nofunc]")<<": "<<category
+        <<": "<<typeStr[type]<<": "<<msg.toStdString()<<endl;
+    cerr.flush();
+    if(category=="qt.accessibility.atspi" || // do not stop on accessibility messages
+       category=="qt.qpa.xcb" || // do not stop on QPA messages
+       (category=="default" && type==QtWarningMsg && msg.startsWith("setGeometry:"))) // do not stop for an old Qt bug about setGeometry (QTBUG-73258)
+      return;
+    switch(type) {
+      case QtDebugMsg:
+      case QtInfoMsg:
+        break;
+      case QtWarningMsg:
+      case QtCriticalMsg:
+      case QtFatalMsg:
+        std::abort();
+        break;
+    }
+  }
+#endif
 }

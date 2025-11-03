@@ -28,6 +28,8 @@
 #include <QIcon>
 #include <QApplication>
 
+class QTreeView;
+
 namespace MBSimGUI {
 
   class TreeItem {
@@ -36,8 +38,11 @@ namespace MBSimGUI {
       TreeItem(TreeItemData *itemData=nullptr, TreeItem *parent=nullptr);
       ~TreeItem();
 
-      TreeItem *child(int number) { return childItems.value(number); }
-      int childCount() const { return childItems.count(); }
+      TreeItem *child(int number) { if(number<0 || number>=childItems.size()) return nullptr; return childItems.value(number); }
+
+      // if model==nullptr hidden and none-hidden childs are counted
+      // if model is given only none-hidden childs of the specified model are counted
+      int childCount(QTreeView *model=nullptr) const;
 
       TreeItem *parent() { return parentItem; }
       bool insertChildren(TreeItem *item, int count);
@@ -60,8 +65,8 @@ namespace MBSimGUI {
 
     protected:
       QList<TreeItem*> childItems;
-      TreeItemData *itemData;
-      TreeItem *parentItem;
+      TreeItemData *itemData { nullptr };
+      TreeItem *parentItem { nullptr };
       QFont font[2];
       QIcon decoration;
       QBrush foreground { QApplication::palette().brush(QPalette::Active, QPalette::Text) }; // foreground is adapted by AbstractViewFilter

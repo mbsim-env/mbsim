@@ -24,17 +24,14 @@
 
 namespace MBSimGUI {
 
-  class SingleLineDelegate;
-
   class ParameterView : public QTreeView {
     public:
       ParameterView(QWidget *parent=nullptr);
-      ~ParameterView();
+      ~ParameterView() = default;
       void expandToDepth(const QModelIndex &index, int depth);
     private:
       void mouseDoubleClickEvent(QMouseEvent *event) override;
       void mousePressEvent(QMouseEvent *event) override;
-      SingleLineDelegate *valueDelegate, *commentDelegate;
   };
 
 }

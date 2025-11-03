@@ -41,7 +41,6 @@ namespace MBSimGUI {
       void removeXMLElements() override;
       xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent) override;
       void create() override;
-      xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
       PropertyDialog* createPropertyDialog() override { return new DynamicSystemSolverPropertyDialog(this); }
       QMenu* createContextMenu() override { return new DynamicSystemSolverContextMenu(this); }
       EmbedItemData* getEmbedItemParent() override;

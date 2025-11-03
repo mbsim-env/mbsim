@@ -29,12 +29,8 @@ namespace MBSimGUI {
   extern MainWindow *mw;
 
   ElementView::ElementView(QWidget *parent) : QTreeView(parent) {
-    commentDelegate=new SingleLineDelegate(this);
+    auto commentDelegate=new SingleLineDelegate(this);
     setItemDelegateForColumn(2, commentDelegate);
-  }
-
-  ElementView::~ElementView() {
-    delete commentDelegate;
   }
 
   void ElementView::save(const QModelIndex &index, Node &node) {

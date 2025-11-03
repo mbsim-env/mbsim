@@ -665,3 +665,45 @@
    fun:ffi_call
    obj:/usr/lib/python*/lib-dynload/_ctypes.cpython-*-x86_64-linux-gnu.so
 }
+{
+   PySide2
+   Memcheck:Leak
+   match-leak-kinds: definite
+   ...
+   fun:PyInit_QtCore
+}
+{
+   PySide2
+   Memcheck:Leak
+   match-leak-kinds: definite
+   ...
+   fun:PyInit_QtGui
+}
+{
+   PySide2
+   Memcheck:Leak
+   match-leak-kinds: definite
+   ...
+   fun:PyInit_QtWidgets
+}
+{
+   PySide2
+   Memcheck:Leak
+   match-leak-kinds: possible
+   ...
+   fun:PyInit_QtCore
+}
+{
+   PySide2
+   Memcheck:Leak
+   match-leak-kinds: possible
+   ...
+   fun:PyInit_QtGui
+}
+{
+   PySide2
+   Memcheck:Leak
+   match-leak-kinds: possible
+   ...
+   fun:PyInit_QtWidgets
+}

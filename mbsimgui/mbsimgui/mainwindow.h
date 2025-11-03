@@ -87,7 +87,6 @@ namespace MBSimGUI {
   class LinearSystemAnalysisDialog;
   class FlexibleBodyTool;
   class StateTableDialog;
-  class NewParamLevelHeap;
 
   class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -106,20 +105,19 @@ namespace MBSimGUI {
       std::shared_ptr<bool> debugStreamFlag;
       QString projectFile;
       QProcess process;
+      QProcess processRefresh;
       OpenMBVGUI::MainWindow *inlineOpenMBVMW;
       boost::filesystem::path uniqueTempDir;
-      QAction *actionSave, *actionSaveProject, *actionSimulate, *actionInterrupt, *actionKill, *actionOpenMBV, *actionH5plotserie, *actionLinearSystemAnalysis, *actionStateTable, *actionSaveDataAs, *actionSaveMBSimH5DataAs, *actionSaveOpenMBVDataAs, *actionRefresh, *actionDebug, *actionSaveStateVectorAs, *actionSaveStateTableAs, *actionSaveLinearSystemAnalysisAs, *actionUndo, *actionRedo;
+      QAction *actionSave, *actionSaveProject, *actionSimulate, *actionInterrupt, *actionKill, *actionOpenMBV, *actionH5plotserie, *actionLinearSystemAnalysis, *actionStateTable, *actionSaveDataAs, *actionSaveMBSimH5DataAs, *actionSaveOpenMBVDataAs, *actionRefresh, *actionCreateFMU, *actionSaveStateVectorAs, *actionSaveStateTableAs, *actionSaveLinearSystemAnalysisAs, *actionUndo, *actionRedo, *solverInitialProj;
       OpenMBVGUI::AbstractViewFilter *elementViewFilter, *parameterViewFilter;
+      QDockWidget *dockParameterTree;
       QTimer autoSaveTimer;
-      QElapsedTimer processStatusTimer     , processOutputTimer;
-      QTimer        processStatusSingleShot, processOutputSingleShot;
       int IDcounter{0};
       std::string currentID;
       enum { maxRecentFiles = 5 };
       QAction *recentProjectFileActs[maxRecentFiles];
       bool allowUndo;
       int maxUndo;
-      bool autoRefresh;
       bool statusUpdate;
       bool callViewAllAfterFileReloaded { false };
       std::shared_ptr<xercesc::DOMDocument> doc;
@@ -162,7 +160,6 @@ namespace MBSimGUI {
       void saveStateVectorAs();
       void saveStateTableAs();
       void saveLinearSystemAnalysisAs();
-      void help();
       void about();
       void relnotes();
       void simulate();
@@ -171,11 +168,10 @@ namespace MBSimGUI {
       void h5plotserie();
       void linearSystemAnalysis();
       void showStateTable();
-      void debug();
       void kill();
       void createFMU();
-      void elementChanged(const QModelIndex &current);
-      void elementViewClicked(const QModelIndex &current);
+      void highlightElement(const QModelIndex &current);
+      void showElementContextMenu(const QModelIndex &current);
       void parameterViewClicked(const QModelIndex &current);
       void processFinished(int exitCode, QProcess::ExitStatus exitStatus);
       void autoSaveProject();
@@ -183,13 +179,22 @@ namespace MBSimGUI {
       void updateValues(EmbedItemData *element);
       void updateReferences(EmbedItemData *element);
       void updateParameterReferences(EmbedItemData *parent);
+      void updateParameterTreeOnlyForCurrentElement(QModelIndex current);
+      void updateParameterTreeAll();
       void saveReferencedFile(int i);
       void convertDocument();
-      void createNewEvaluator();
+      void setSceneViewOutdated(bool outdated);
 
       int openedEditors { 0 };
-      int mbsimxmlQueuedTask { -1 };
-      std::unique_ptr<NewParamLevelHeap> evalNPL;
+      void startProcessRefresh();
+      QMetaObject::Connection processRefreshFinishedConnection;
+      void updateEchoViewSlot(const QByteArray &data);
+      void updateStatusMessageSlot(const QByteArray &data);
+
+      TreeItemData* currentlyEditedItem { nullptr };
+    Q_SIGNALS:
+      void updateEchoView(const QByteArray &data);
+      void updateStatusMessage(const QByteArray &data);
     private slots:
       void selectElement(const std::string& ID, OpenMBVGUI::Object *obj);
       void fileReloadedSlot();
@@ -198,13 +203,12 @@ namespace MBSimGUI {
     public:
       MainWindow(QStringList &arg);
       ~MainWindow() override;
+      void setWindowModified(bool mod);
       std::shared_ptr<MBXMLUtils::DOMParser> mbxmlparser;
       std::shared_ptr<MBXMLUtils::DOMParser> mbxmlparserNoVal;
       std::shared_ptr<MBXMLUtils::Eval> eval;
       xercesc::DOMImplementation *impl;
       xercesc::DOMLSSerializer *serializer;
-      void mbsimxmlQueue();
-      void mbsimxml(int task);
       const boost::filesystem::path& getUniqueTempDir() const { return uniqueTempDir; }
       void addParameter(Parameter *parameter, EmbedItemData *parent);
       void addFrame(Frame *frame, Element *parent);
@@ -220,8 +224,6 @@ namespace MBSimGUI {
       void removeParameter(EmbedItemData *parent);
       xercesc::DOMElement* pasteElement(Element *parent, Element *element);
       xercesc::DOMElement* loadEmbedItemData(EmbedItemData *parent, const QString &title);
-      void updateEchoView();
-      void updateStatusMessage(std::string s);
       void clearEchoView(const QString &initialText="");
 
       template<class Container>
@@ -252,7 +254,7 @@ namespace MBSimGUI {
       QString getProjectFilePath() const;
       QString getProjectPath() const { return QFileInfo(getProjectFilePath()).canonicalPath(); }
       QDir getProjectDir() const { return QFileInfo(getProjectFilePath()).dir(); }
-      bool getAutoRefresh() const { return autoRefresh; }
+      bool getAutoRefresh() const;
       bool getStatusUpdate() const { return statusUpdate; }
 
       bool editorIsOpen() const { return openedEditors > 0; }
@@ -261,7 +263,6 @@ namespace MBSimGUI {
       bool saveProjectAs();
       void saveProjectAsTemplate();
       void refresh();
-      void xmlHelp(const QString &url="");
       void editElementSource();
       void editParametersSource();
       void exportElement(const QString &title);
@@ -306,7 +307,9 @@ namespace MBSimGUI {
       // count is used as the count for the embeds, if not given 0 (0-based count) is used.
       // In rare cases it is possible that count changes the result of vector<ParameterLevel>. In this case
       // you need to call updateParameter again to get the proper result.
-      std::vector<ParameterLevel> updateParameters(EmbedItemData *item, bool exceptLatestParameter=false,
+      // If lastParToUse is set then lastParToUse is the last parameter which is added.
+      // If skipEvenLastParToUse is set to true then even lastParToUse is not added.
+      std::vector<ParameterLevel> updateParameters(EmbedItemData *item, Parameter *lastParToUse=nullptr, bool skipEvenLastParToUse=false,
                                                    const std::vector<int>& count={});
 
       // Evaluates the string code as full eval if set to true or as partial eval if it is false.
@@ -336,10 +339,13 @@ namespace MBSimGUI {
       void flexibleBodyTool();
       FlexibleBodyTool *getFlexibleBodyTool() { return fbt; }
       void expandToDepth(int depth);
+      void restartProcessRefresh() { processRefresh.closeWriteChannel(); }
+      void setProcessActionsEnabled(bool enabled);
+      void setSimulateActionsEnabled(bool enabled);
 
       // Prepare the MainWindow for a "quasi" modal dialog open.
       // The MainWindow will still be active (the dialog to open is none modal) but many features of the MainWindow
-      // are disabled, e.g. only the 3D view and other basic stuff is still active.
+      // are disabled, e.g. only the Scene view and other basic stuff is still active.
       // prepareForPropertyDialogOpen/prepareForPropertyDialogClose must be called as a pair!
       void prepareForPropertyDialogOpen();
       // Prepare the MainWindow for a "quasi" modal dialog close.
@@ -347,21 +353,12 @@ namespace MBSimGUI {
       void prepareForPropertyDialogClose();
       static void updateNameOfCorrespondingElementAndItsChilds(const QModelIndex &index);
 
+      void setCurrentlyEditedItem(TreeItemData *item) { currentlyEditedItem = item; }
+      TreeItemData* getCurrentlyEditedItem() { return currentlyEditedItem; }
+
       // Creates a variable on the stack which's ctor saves the current mw->eval and instantiates a new
       // evaluator on mw->eval. The dtor restores the saved evaluator on mw->eval.
       // This must be used if for a short time, the lifetime of the stack variable, a new evaluator is needed while
-      // another evaluator is already in use by the callers code.
-      class CreateTemporaryNewEvaluator {
-        public:
-          CreateTemporaryNewEvaluator();
-          ~CreateTemporaryNewEvaluator();
-          CreateTemporaryNewEvaluator(const CreateTemporaryNewEvaluator &) = delete;
-          CreateTemporaryNewEvaluator(CreateTemporaryNewEvaluator &&) = delete;
-          CreateTemporaryNewEvaluator& operator=(const CreateTemporaryNewEvaluator &) = delete;
-          CreateTemporaryNewEvaluator& operator=(CreateTemporaryNewEvaluator &&) = delete;
-        private:
-          std::shared_ptr<MBXMLUtils::Eval> oldEval;
-      };
     public slots:
       void openElementEditor(bool config=true);
 
