@@ -136,7 +136,7 @@ namespace MBSimGUI {
   GeneralizedVelocityConstraintPropertyDialog::GeneralizedVelocityConstraintPropertyDialog(Element *constraint) : GeneralizedDualConstraintPropertyDialog(constraint) {
     addTab("Initial conditions",1);
 
-    x0 = new ExtWidget("Initial state",new ChoiceWidget(new VecWidgetFactory(0,vector<QStringList>(3,QStringList())),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialState");
+    x0 = new ExtWidget("Initial state",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialState");
     addToTab("Initial conditions", x0);
 
     constraintFunction = new ExtWidget("Constraint function",new ChoiceWidget(new ConstraintWidgetFactory(constraint,this),QBoxLayout::TopToBottom,3),false,false,"",true);
@@ -166,7 +166,7 @@ namespace MBSimGUI {
   GeneralizedAccelerationConstraintPropertyDialog::GeneralizedAccelerationConstraintPropertyDialog(Element *constraint) : GeneralizedDualConstraintPropertyDialog(constraint) {
     addTab("Initial conditions",1);
 
-    x0 = new ExtWidget("Initial state",new ChoiceWidget(new VecWidgetFactory(0,vector<QStringList>(3,QStringList())),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialState");
+    x0 = new ExtWidget("Initial state",new ChoiceWidget(new VecSizeVarWidgetFactory(2),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialState");
     addToTab("Initial conditions", x0);
 
     constraintFunction = new ExtWidget("Constraint function",new ChoiceWidget(new ConstraintWidgetFactory(constraint,this),QBoxLayout::TopToBottom,3),false,false,"",true);
