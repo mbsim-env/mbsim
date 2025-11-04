@@ -59,7 +59,7 @@ namespace MBSimGUI {
 	else if(ele_.cols()==npe+1)
 	  ele.emplace_back(ele_(RangeV(0,ele_.rows()-1),RangeV(1,ele_.cols()-1)));
 	else
-	  throw 5;
+	  throw std::runtime_error("FlexibleBodyTool::fe failed with id=5");
       }
     }
 

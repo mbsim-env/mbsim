@@ -141,7 +141,7 @@ namespace MBSim {
     double eta = newton.solve(0);
     if(newton.getNumberOfIterations() > ds->getHighIter())
       msg(Warn) << "high number of iterations in BevelGear::getEtaMax: " << newton.getNumberOfIterations() << endl;
-    if(newton.getInfo()!=0) throw 1;
+    if(newton.getInfo()!=0) throw std::runtime_error("Solver in BevelGear::getEtaMax failed");
     return eta;
   }
 

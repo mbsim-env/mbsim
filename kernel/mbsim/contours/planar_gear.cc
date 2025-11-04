@@ -69,7 +69,7 @@ namespace MBSim {
     double phi = newton.solve(atan(2*h/(sin(al)*cos(al)*N*m)));
     if(newton.getNumberOfIterations() > ds->getHighIter())
       msg(Warn) << "high number of iterations in PlanarGear::getPhiMax: " << newton.getNumberOfIterations() << endl;
-    if(newton.getInfo()!=0) throw 1;
+    if(newton.getInfo()!=0) throw std::runtime_error("Solver in PlanarGear::getPhiMax failed");
     return phi;
   }
 

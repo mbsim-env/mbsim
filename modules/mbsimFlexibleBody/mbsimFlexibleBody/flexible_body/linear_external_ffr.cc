@@ -127,7 +127,7 @@ namespace MBSimFlexibleBody {
     ifstream u0Infile(inFilePath + "/u0.dat");
     if (!u0Infile.is_open()) {
       msg(Error) << "Can not open file " << inFilePath << "u0.dat" << endl;
-      throw 1;
+      throw std::runtime_error("Failed to open FFR file u0.dat");
     }
     for (string s; getline(u0Infile, s);) {
       fmatvec::Vec u0Line(3);
@@ -156,7 +156,7 @@ namespace MBSimFlexibleBody {
     ifstream mijInfile(inFilePath + "/mij.dat");
     if (!mijInfile.is_open()) {
       msg(Error) << "Can not open file " << inFilePath << "mij.dat" << endl;
-      throw 1;
+      throw std::runtime_error("Failed to open FFR file mij.dat");
     }
 
     double totalMass = 0;
@@ -178,7 +178,7 @@ namespace MBSimFlexibleBody {
     ifstream phiInfile(inFilePath + "/modeShapeMatrix.dat");
     if (!phiInfile.is_open()) {
       msg(Error) << "Can not open file " << inFilePath << "modeShapeMatrix.dat" << endl;
-      throw 1;
+      throw std::runtime_error("Failed to open FFR file modeShapeMatrix.dat");
     }
     string s1;
     std::vector<double> phiLine;
@@ -194,7 +194,7 @@ namespace MBSimFlexibleBody {
     phiInfile.open((inFilePath + "/modeShapeMatrix.dat").c_str());
     if (!phiInfile.is_open()) {
       msg(Error) << "Can not open file " << inFilePath << "modeShapeMatrix.dat" << endl;
-      throw 1;
+      throw std::runtime_error("Failed to open FFR file modeShapeMatrix.dat");
     }
     int row = 0;
     for (string s; getline(phiInfile, s); row++) {
@@ -209,7 +209,7 @@ namespace MBSimFlexibleBody {
     ifstream KInfile(inFilePath + "/stiffnessMatrix.dat");
     if (!KInfile.is_open()) {
       msg(Error) << "Can not open file " << inFilePath << "stiffnessMatrix.dat" << endl;
-      throw 1;
+      throw std::runtime_error("Failed to open FFR file stiffnessMatrix.dat");
     }
     for (string s; getline(KInfile, s);) {
       std::vector<double> KLine;
