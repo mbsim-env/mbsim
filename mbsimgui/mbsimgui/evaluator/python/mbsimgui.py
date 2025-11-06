@@ -43,8 +43,8 @@ class StdMatplotlibDialog(BasicPropertyDialog, mbxmlutils.Qt.StdMatplotlibDialog
 class _MainWindow(object):
   def waitForPropertyDialogs(self, *args):
     import warnings
-    warnings.warn("mw.waitForPropertyDialogs is deprecated, please use mbxmlutils.Qt.blockUntilDialoagsAreClosed(*args)")
-    mbxmlutils.Qt.blockUntilDialoagsAreClosed(*args)
+    warnings.warn("mw.waitForPropertyDialogs is deprecated, please use mbxmlutils.Qt.blockUntilDialogsAreClosed(*args)")
+    mbxmlutils.Qt.blockUntilDialogsAreClosed(*args)
   def refresh(self):
     _libmbsimgui.mbsimgui_MainWindow_refresh()
 

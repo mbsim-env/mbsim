@@ -401,7 +401,7 @@ namespace MBSim {
         throwError("Evaluation of refernece '"+path+"' failed: Message from "+
           ex.getPath()+": "+ex.getErrorMessage());
       else
-        throw ex;
+        throw;
     }
   }
 

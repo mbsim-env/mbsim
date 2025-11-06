@@ -1398,7 +1398,7 @@ namespace MBSimGUI {
           std::cerr << msg << ": " << exmsg << std::endl; \
         } \
         else \
-          throw e; \
+          throw; \
       } \
       catch(...) { \
         if(catchErrors) { \
@@ -1407,7 +1407,7 @@ namespace MBSimGUI {
           std::cerr << msg << ": Unknwon exception" << std::endl; \
         } \
         else \
-          throw e; \
+          throw; \
       }
 
     // this is a lambda for the real body of this function.
