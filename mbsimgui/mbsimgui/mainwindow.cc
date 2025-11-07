@@ -204,7 +204,7 @@ namespace MBSimGUI {
     QAction *action;
     action = fileMenu->addAction(QIcon::fromTheme("document-new"), "New", this, &MainWindow::newProject);
     action->setShortcut(QKeySequence::New);
-    action = fileMenu->addAction(QIcon::fromTheme("document-new"), "New from template", this, &MainWindow::newProjectFromTemplate);
+    action = fileMenu->addAction(QIcon::fromTheme("document-new"), "New from template...", this, &MainWindow::newProjectFromTemplate);
     action->setShortcut(QKeySequence::New);
     action->setStatusTip("New project");
     action = fileMenu->addAction(QIcon::fromTheme("document-open"), "Open...", this, QOverload<>::of(&MainWindow::loadProject));
@@ -440,11 +440,6 @@ namespace MBSimGUI {
     connect(elementView, &ElementView::pressed, this, &MainWindow::showElementContextMenu);
 
     connect(parameterView, &ParameterView::pressed, this, &MainWindow::parameterViewClicked);
-
-    //mfmf use rowsAboutToBeInserted,... to save the expandState and then restore the expand state (this needs updateParameterTreeAll to be split into two functions)
-    connect(elementView->model(), &QAbstractItemModel::rowsInserted, this, &MainWindow::updateParameterTreeAll);
-    connect(elementView->model(), &QAbstractItemModel::rowsMoved   , this, &MainWindow::updateParameterTreeAll);
-    connect(elementView->model(), &QAbstractItemModel::rowsRemoved , this, &MainWindow::updateParameterTreeAll);
 
     QDockWidget *dockModelTree = new QDockWidget("Element Tree", this);
     dockMenu->addAction(dockModelTree->toggleViewAction());
@@ -842,7 +837,7 @@ namespace MBSimGUI {
         // this update the parameters (calls Parameter::updateValue())
         highlightElement(elementView->currentIndex());
         if(menu.getParameterView()==OptionsDialog::ParameterView::onlyForCurrentElement) updateParameterTreeOnlyForCurrentElement(elementView->currentIndex());
-        if(menu.getParameterView()==OptionsDialog::ParameterView::all                  ) updateParameterTreeAll();
+        if(menu.getParameterView()==OptionsDialog::ParameterView::all                  ) updateParameterTreeAll(false);
       }
       if(menu.getParameterView()!=oldParameterView) {
         dockParameterTree->setWindowTitle(
@@ -952,7 +947,7 @@ namespace MBSimGUI {
     }
   }
 
-  void MainWindow::updateParameterTreeAll() {
+  void MainWindow::updateParameterTreeAll(bool keepExpandState) {
     QSettings settings;
     auto parView = static_cast<OptionsDialog::ParameterView>(settings.value("mainwindow/options/parameterview", static_cast<int>(OptionsDialog::ParameterView::onlyForCurrentElement)).toInt());
     if(parView!=OptionsDialog::ParameterView::all)
@@ -965,25 +960,28 @@ namespace MBSimGUI {
 
     // walk the tree before removal
     map<vector<QString>, bool> expandState;
-    function<void(TreeItem *parItem, vector<QString> path)> walk1;
-    walk1 = [&walk1, &expandState, this](TreeItem *parItem, vector<QString> path) {
-      // save the current expand state of parameters
-      path.emplace_back(parItem->getItemData()->getName());
-      expandState.emplace(path, parameterView->isExpanded(parItem->getItemData()->getModelIndex()));
-      // reset the modelindex stored in the model to invalid since we now change the modelindex
-      parItem->getItemData()->setModelIndex(QModelIndex());
+    if(keepExpandState) {
+      function<void(TreeItem *parItem, vector<QString> path)> walk1;
+      walk1 = [&walk1, &expandState, this](TreeItem *parItem, vector<QString> path) {
+        // save the current expand state of parameters
+        path.emplace_back(parItem->getItemData()->getName());
+        expandState.emplace(path, parameterView->isExpanded(parItem->getItemData()->getModelIndex()));
+        // reset the modelindex stored in the model to invalid since we now change the modelindex
+        parItem->getItemData()->setModelIndex(QModelIndex());
 
-      for(int cNr=0; cNr<parItem->childCount(); ++cNr)
-        walk1(parItem->child(cNr), path);
-    };
-    if(auto i = pmodel->getItem(QModelIndex())->child(0); i)
-      walk1(i, {});
+        for(int cNr=0; cNr<parItem->childCount(); ++cNr)
+          walk1(parItem->child(cNr), path);
+      };
+      if(auto i = pmodel->getItem(QModelIndex())->child(0); i)
+        walk1(i, {});
+    }
+
     // remove all parameters
     pmodel->removeRow(pmodel->index(0,0).row(), QModelIndex());
 
     // build new parameters using all elements
     function<void(TreeItem *eleItem, QModelIndex parParentIndex, vector<QString> path)> walk2;
-    walk2 = [&walk2,pmodel,showEmptyPars,&expandState,this](TreeItem *eleItem, QModelIndex parParentIndex, vector<QString> path) {
+    walk2 = [&walk2,pmodel,showEmptyPars,&expandState,this, keepExpandState](TreeItem *eleItem, QModelIndex parParentIndex, vector<QString> path) {
       auto *localembeditem = dynamic_cast<EmbedItemData*>(eleItem->getItemData());
       QModelIndex parIndex;
       TreeItem* parItem { nullptr };
@@ -1002,18 +1000,19 @@ namespace MBSimGUI {
       if(localembeditem) {
         // set the expand state of a created parameter to the value of the old parameter or to true
         auto parEmbedIndex = parItem->getItemData()->getModelIndex();
-        if(auto it=expandState.find(path); it!=expandState.end())
-          parameterView->setExpanded(parEmbedIndex, it->second);
-        else
-          parameterView->setExpanded(parEmbedIndex, true);
+        parameterView->setExpanded(parEmbedIndex, true);
+        if(keepExpandState)
+          if(auto it=expandState.find(path); it!=expandState.end())
+            parameterView->setExpanded(parEmbedIndex, it->second);
 
         auto parametersIndex=static_cast<ParameterEmbedItem*>(parItem->getItemData())->getParameters()->getModelIndex();
-        auto path2(path);
-        path2.emplace_back("Parameters");
-        if(auto it=expandState.find(path2); it!=expandState.end())
-          parameterView->setExpanded(parametersIndex, it->second);
-        else
-          parameterView->setExpanded(parametersIndex, true);
+        parameterView->setExpanded(parametersIndex, false);
+        if(keepExpandState) {
+          auto path2(path);
+          path2.emplace_back("Parameters");
+          if(auto it=expandState.find(path2); it!=expandState.end())
+            parameterView->setExpanded(parametersIndex, it->second);
+        }
 
         // hide empty parameters if requested by the user
         if(!showEmptyPars) {
@@ -1117,6 +1116,7 @@ namespace MBSimGUI {
       elementView->selectionModel()->setCurrentIndex(project->getModelIndex(), QItemSelectionModel::ClearAndSelect);
 
       callViewAllAfterFileReloaded = true;
+      updateParameterTreeAll(false);
       refresh();
     }
   }
@@ -1203,6 +1203,7 @@ namespace MBSimGUI {
       elementView->selectionModel()->setCurrentIndex(project->getModelIndex(), QItemSelectionModel::ClearAndSelect);
 
       callViewAllAfterFileReloaded = true;
+      updateParameterTreeAll(false);
       refresh();
     }
     else
@@ -1306,6 +1307,7 @@ namespace MBSimGUI {
       solver->setParameterFileItem(parameterFileItem);
       solver->createParameters();
     }
+    updateParameterTreeAll();
     openElementEditor(false);
   }
 
@@ -1971,6 +1973,8 @@ DEF mbsimgui_outdated_switch Switch {
     model->createProjectItem(project);
 
     elementView->restore(model->index(0,0),root);
+
+    updateParameterTreeAll();
   }
 
   void MainWindow::edit() {
@@ -2529,6 +2533,7 @@ DEF mbsimgui_outdated_switch Switch {
           model->updateElementItem(static_cast<Element*>(fileItem->getFileReference(i)));
         }
       }
+      updateParameterTreeAll();
     }
     else
       setWindowModified(true);
@@ -2551,6 +2556,7 @@ DEF mbsimgui_outdated_switch Switch {
 	    model->updateElementItem(static_cast<Element*>(fileItem->getFileReference(i)));
 	  }
 	}
+        updateParameterTreeAll();
       }
     }
     auto* fileItem = parent->getDedicatedParameterFileItem();
@@ -2771,6 +2777,7 @@ DEF mbsimgui_outdated_switch Switch {
       model->removeRow(index.row(), index.parent());
       element->removeXMLElement();
       parent->removeElement(element);
+      updateParameterTreeAll();
     }
     return ele;
   }
@@ -3010,6 +3017,7 @@ DEF mbsimgui_outdated_switch Switch {
     model->createGroupItem(dss,project->getModelIndex());
     model->createSolverItem(project->getSolver(),project->getModelIndex());
     elementView->selectionModel()->setCurrentIndex(dss->getModelIndex(), QItemSelectionModel::ClearAndSelect);
+    updateParameterTreeAll();
     if(getAutoRefresh()) refresh();
   }
 
@@ -3033,6 +3041,7 @@ DEF mbsimgui_outdated_switch Switch {
     setWindowModified(true);
     model->createSolverItem(solver,project->getModelIndex());
     elementView->selectionModel()->setCurrentIndex(solver->getModelIndex(), QItemSelectionModel::ClearAndSelect);
+    updateParameterTreeAll();
   }
 
   void MainWindow::editElementSource() {

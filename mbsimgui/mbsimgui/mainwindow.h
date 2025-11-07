@@ -180,7 +180,7 @@ namespace MBSimGUI {
       void updateReferences(EmbedItemData *element);
       void updateParameterReferences(EmbedItemData *parent);
       void updateParameterTreeOnlyForCurrentElement(QModelIndex current);
-      void updateParameterTreeAll();
+      void updateParameterTreeAll(bool keepExpandState=true);
       void saveReferencedFile(int i);
       void convertDocument();
       void setSceneViewOutdated(bool outdated);
