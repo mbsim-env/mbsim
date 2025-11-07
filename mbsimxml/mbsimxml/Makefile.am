@@ -12,7 +12,7 @@ mbsimxml.o: $(srcdir)/mbsimxml.rc $(srcdir)/mbsimxml.manifest
 lib_LTLIBRARIES = libmbsimflatxml.la libmbsimxml.la
 libmbsimflatxml_la_SOURCES = mbsimflatxml.cc
 libmbsimflatxml_la_CPPFLAGS = $(DEPS_CFLAGS) $(PYCPPWRAPPER_CFLAGS) -D_hypot=hypot # -D_hypot is a MSVS/python bug workaround
-libmbsimflatxml_la_LIBADD = $(DEPS_LIBS) $(PYCPPWRAPPER_LIBS) -l@BOOST_FILESYSTEM_LIB@ -l@BOOST_SYSTEM_LIB@ $(EXTRA_LIBS)
+libmbsimflatxml_la_LIBADD = $(DEPS_LIBS) $(PYCPPWRAPPER_LIBS) -l@BOOST_FILESYSTEM_LIB@ $(EXTRA_LIBS)
 mbsimflatxmlincludedir = $(includedir)/mbsimxml
 mbsimflatxmlinclude_HEADERS = namespace.h mbsimflatxml.h
 
@@ -32,7 +32,7 @@ mbsimflatxml_SOURCES = mbsimflatxml-main.cc
 
 mbsimxml_CPPFLAGS = $(DEPS_CFLAGS) $(MBXMLUTILS_CFLAGS)
 mbsimxml_LDFLAGS = $(PYCPPWRAPPER_LIBS_MAIN)
-mbsimxml_LDADD = ./libmbsimflatxml.la ./libmbsimxml.la $(DEPS_LIBS) $(PYCPPWRAPPER_LIBS) $(MBXMLUTILS_LIBS) -l@BOOST_FILESYSTEM_LIB@ -l@BOOST_IOSTREAMS_LIB@ -l@BOOST_SYSTEM_LIB@ $(MAYBE_WIN32_mbsimxml_OBJ)
+mbsimxml_LDADD = ./libmbsimflatxml.la ./libmbsimxml.la $(DEPS_LIBS) $(PYCPPWRAPPER_LIBS) $(MBXMLUTILS_LIBS) -l@BOOST_FILESYSTEM_LIB@ -l@BOOST_IOSTREAMS_LIB@ $(MAYBE_WIN32_mbsimxml_OBJ)
 mbsimxml_SOURCES = mbsimxml-main.cc
 
 schemadir = @MBXMLUTILSSCHEMA@/http___www_mbsim-env_de_MBSimXML

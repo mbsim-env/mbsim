@@ -56,10 +56,6 @@ AC_ARG_WITH([boost-iostreams-lib],
   [  --with-boost-iostreams-lib=LIBNAME  The library name of boost iostreams excluding prefix/suffix (Default: boost_iostreams).],
   [BOOST_IOSTREAMS_LIB="$withval"], [BOOST_IOSTREAMS_LIB="boost_iostreams"])
 AC_SUBST([BOOST_IOSTREAMS_LIB])
-AC_ARG_WITH([boost-system-lib],
-  [  --with-boost-system-lib=LIBNAME  The library name of boost system excluding prefix/suffix (Default: boost_system).],
-  [BOOST_SYSTEM_LIB="$withval"], [BOOST_SYSTEM_LIB="boost_system"])
-AC_SUBST([BOOST_SYSTEM_LIB])
 AC_ARG_WITH([boost-timer-lib],
   [  --with-boost-timer-lib=LIBNAME  The library name of boost timer excluding prefix/suffix (Default: boost_timer).],
   [BOOST_TIMER_LIB="$withval"], [BOOST_TIMER_LIB="boost_timer"])

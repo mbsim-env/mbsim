@@ -32,11 +32,6 @@ AC_ARG_WITH([boost-inc],
 dnl Check for optional boost type_trains and static_assert
 AC_CHECK_HEADERS([boost/asio.hpp], [], [])
 
-AC_ARG_WITH([boost-system-lib],
-  [  --with-boost-system-lib=LIBNAME  The library name of boost system excluding prefix/suffix (Default: boost_system).],
-  [BOOST_SYSTEM_LIB="$withval"], [BOOST_SYSTEM_LIB="boost_system"])
-AC_SUBST([BOOST_SYSTEM_LIB])
-
 PKG_CHECK_MODULES(DEPS, mbsim >= 3.0.0 mbsimControl)
 
 if test "_$host_os" = "_mingw32"; then

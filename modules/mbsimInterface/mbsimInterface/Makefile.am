@@ -9,7 +9,7 @@ libmbsimInterface_la_SOURCES = \
 
 
 libmbsimInterface_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS)
-libmbsimInterface_la_LIBADD = $(DEPS_LIBS) -l@BOOST_SYSTEM_LIB@ $(EXTRA_LIBS)
+libmbsimInterface_la_LIBADD = $(DEPS_LIBS) $(EXTRA_LIBS)
 
 mbsimInterfaceincludedir = $(includedir)/mbsimInterface
 mbsimInterfaceinclude_HEADERS = \

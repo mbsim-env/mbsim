@@ -70,12 +70,6 @@ AC_ARG_WITH([boost-inc],
   [  --with-boost-inc=PATH  The path Boost include directory.],
   [CPPFLAGS="$CPPFLAGS -I$withval"; DEFINES="$DEFINES -I$withval"])
 
-dnl Include boost system lib
-AC_ARG_WITH([boost-system-lib],
-  [  --with-boost-system-lib=LIBNAME  The library name of boost system excluding prefix/suffix (Default: boost_system).],
-  [BOOST_SYSTEM_LIB="$withval"], [BOOST_SYSTEM_LIB="boost_system"])
-AC_SUBST([BOOST_SYSTEM_LIB])
-
 AC_SUBST([DEFINES])
 
 dnl Check for MinGW
