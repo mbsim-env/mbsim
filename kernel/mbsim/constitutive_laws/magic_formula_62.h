@@ -59,7 +59,6 @@ namespace MBSim {
       void setScaleFactorForCamberStiffness(double LKYC_) { LKYC = LKYC_; }
       void setScaleFactorForResidualTorque(double LKZC_) { LKZC = LKZC_; }
       void setMotorcycleKinematics(bool mck_) { mck = mck_; }
-      void setContactPointTransformation(bool contactPointTransformation_) { contactPointTransformation = contactPointTransformation_; }
       void setTurnSlip(bool ts_) { ts = ts_; }
       void setReferenceTreadWidth(double rtw_) { rtw = rtw_; }
 
@@ -101,7 +100,7 @@ namespace MBSim {
 
       double vx, vsx, vcx, vcy, vc, ka, ga, Kyal, alF, rhoz, dpi, Re, Rs, phit{0}, phiF{0}, epsga{0};
 
-      bool mck{false}, ts{false}, contactPointTransformation{true};
+      bool mck{false}, ts{false};
 
       std::vector<ContourFrame*> slipPoint;
  };

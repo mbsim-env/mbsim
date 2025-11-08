@@ -533,8 +533,8 @@ namespace MBSim {
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"motorcycleKinematics");
     if(e) setMotorcycleKinematics(E(e)->getText<bool>());
-    e=E(element)->getFirstElementChildNamed(MBSIM%"contactPointTransformation");
-    if(e) setContactPointTransformation(E(e)->getText<bool>());
+//    e=E(element)->getFirstElementChildNamed(MBSIM%"contactPointTransformation");
+//    if(e) setContactPointTransformation(E(e)->getText<bool>());
 //    e=E(element)->getFirstElementChildNamed(MBSIM%"coordinateTransformation");
 //    if(e) setCoordinateTransformation(E(e)->getText<bool>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"turnSlip");
@@ -865,12 +865,12 @@ namespace MBSim {
       Rs = 0;
     }
 
-    if(mck and contactPointTransformation) {
-      double y_ = y*cos(ga) - z*sin(ga);
-      double dy  = h*tan(ga)-y_;
-      Mx += dy*Fz;
-      Mz -= dy*Fx;
-    }
+//    if(mck and contactPointTransformation) {
+//      double y_ = y*cos(ga) - z*sin(ga);
+//      double dy  = h*tan(ga)-y_;
+//      Mx += dy*Fz;
+//      Mz -= dy*Fx;
+//    }
 //    if(coordinateTransformation) {
 //      double My_ = My*cos(ga) - Mz*sin(ga);
 //      double Mz_ = My*sin(ga) + Mz*cos(ga);

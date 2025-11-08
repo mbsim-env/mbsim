@@ -759,8 +759,6 @@ namespace MBSimGUI {
     layout->addWidget(tyreSide);
     mck = new ExtWidget("Motorcycle kinematics",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"motorcycleKinematics");
     layout->addWidget(mck);
-    cpt = new ExtWidget("Contact point transformation",new ChoiceWidget(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"contactPointTransformation");
-    layout->addWidget(cpt);
     ts = new ExtWidget("Turn slip",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"turnSlip");
     layout->addWidget(ts);
     p = new ExtWidget("Inflation pressure",new ChoiceWidget(new ScalarWidgetFactory("",vector<QStringList>(4,pressureUnits()),vector<int>(4,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"inflationPressure");
@@ -882,7 +880,6 @@ namespace MBSimGUI {
     inputDataFile->getWidget<FileWidget>()->blockSignals(false);
     tyreSide->initializeUsingXML(element);
     mck->initializeUsingXML(element);
-    cpt->initializeUsingXML(element);
     ts->initializeUsingXML(element);
     p->initializeUsingXML(element);
     cz->initializeUsingXML(element);
@@ -911,7 +908,6 @@ namespace MBSimGUI {
     inputDataFile->writeXMLFile(ele0);
     tyreSide->writeXMLFile(ele0);
     mck->writeXMLFile(ele0);
-    cpt->writeXMLFile(ele0);
     ts->writeXMLFile(ele0);
     p->writeXMLFile(ele0);
     cz->writeXMLFile(ele0);

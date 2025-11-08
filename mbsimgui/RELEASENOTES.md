@@ -1,6 +1,10 @@
 Release NEXT
 ============
 
+MBSim
+-----
+- Feature "contact point transformation" is removed from magic formula 62 as it leads to incorrect tyre moments.
+
 MBSimXML
 --------
 - Added a new class MBSimProject and SWIG Python directors in order to have access to mbsim xml models from Python.
@@ -42,6 +46,7 @@ MBSimGUI
 - The hidden flag for parameters can now use evaluator code which results in true or false. This allows to hide parameters
   dependent on the value of other parameters.
 - The parameter view now shows the parameters inside a "Parameters" group. This allows all parameters of a element to be collapsed.
+- Feature "contact point transformation" is removed from magic formula 62 as it leads to incorrect tyre moments.
 
 H5Plotserie
 -----------
