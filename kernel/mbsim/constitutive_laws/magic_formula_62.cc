@@ -663,7 +663,7 @@ namespace MBSim {
 	  rhozg = pow((Q_CAM1*Rl+Q_CAM2*pow(Rl,2))*ga,2)*(rtw/8*abs(tan(ga)))/pow((Q_CAM1*ROm+Q_CAM2*pow(ROm,2))*ga,2)-(Q_CAM3*rhozfr*abs(ga));
 	rhoz = rhozfr+rhozg;
       }
-      if(rhoz<0) {
+      if(rhoz<1e-13) {
 	Fz = 0;
 	rhoz = 0;
       }
