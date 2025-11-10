@@ -31,7 +31,10 @@ namespace MBSim {
       Function<Ret(fmatvec::VecV)> *f;
       int n{0};
     public:
-      StateDependentFunction(Function<Ret(fmatvec::VecV)> *f_=NULL) : f(f_) { }
+      StateDependentFunction(Function<Ret(fmatvec::VecV)> *f_=NULL) : f(f_) { 
+        if(f)
+          f->setParent(this);
+      }
       ~StateDependentFunction() override { delete f; }
       int getArg1Size() const override { return f->getArgSize();}
       int getArg2Size() const override { return 0; }
@@ -55,10 +58,6 @@ namespace MBSim {
       void setDynamicSystemSolver(DynamicSystemSolver* sys) override {
         Function<Ret(fmatvec::VecV,double)>::setDynamicSystemSolver(sys);
 	f->setDynamicSystemSolver(sys);
-      }
-      void setParent(Element *element) override {
-        Function<Ret(fmatvec::VecV,double)>::setParent(element);
-        if(f) f->setParent(element);
       }
   };
 
