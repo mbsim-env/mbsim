@@ -207,36 +207,50 @@ namespace MBSimGUI {
       name = "<unhandled array/pattern>";
     else {
       name = QString::fromStdString(E(element)->getAttribute("name"));
-      if(name.contains('{')) {
-        // instantiate a new evaluator on mw->eval and restore the old one at scope end
-        NewParamLevel npl(mw->eval);
 
-        auto parameterLevels = mw->updateParameters(this);
-        auto values = MainWindow::evaluateForAllArrayPattern(parameterLevels, name.toStdString(), getXMLElement(), false, false, true).second;
-        // build the evaluated display name
-        name.clear();
-        set<string> uniqueNames;
-        for(auto &v : values)
-          try {
-            auto curName = mw->eval->cast<string>(v.second);
-            if(uniqueNames.insert(curName).second) // only add unique names
-              name += QString(" ❙ ") + QString::fromStdString(curName);
+      if(name.contains('{')) {
+        const static QString notUsedStr("<not used>: ");
+        // skip name evaluation if a parent name was already unable to evaluate
+        bool skipNameEvaluation = false;
+        for(auto parent=this; parent; parent = parent->getEmbedItemParent()) {
+          if(parent->getName().startsWith(notUsedStr)) {
+            skipNameEvaluation = true;
+            break;
           }
-          catch(exception &ex) {
-            mw->setExitBad();
-            auto msg = dynamic_cast<DOMEvalException*>(&ex) ? static_cast<DOMEvalException&>(ex).getMessage() : ex.what();
-            mw->statusBar()->showMessage(("Cannot evaluate element name to string: " + msg).c_str());
-            std::cerr << "Cannot evaluate element name to string: " << msg << std::endl;
-          }
-          catch(...) {
-            mw->setExitBad();
-            mw->statusBar()->showMessage("Cannot evaluate element name to string: Unknwon exception");
-            std::cerr << "Cannot evaluate element name to string: Unknwon exception" << std::endl;
-          }
-        if(name.isEmpty())
-          name = "<not used>";
-        else
-          name = name.mid(3);
+        }
+        if(skipNameEvaluation)
+          name = notUsedStr + E(element)->getAttribute("name").c_str();
+        else {
+          // instantiate a new evaluator on mw->eval and restore the old one at scope end
+          NewParamLevel npl(mw->eval);
+
+          auto parameterLevels = mw->updateParameters(this);
+          auto values = MainWindow::evaluateForAllArrayPattern(parameterLevels, name.toStdString(), getXMLElement(), false, false, true).second;
+          // build the evaluated display name
+          name.clear();
+          set<string> uniqueNames;
+          for(auto &v : values)
+            try {
+              auto curName = mw->eval->cast<string>(v.second);
+              if(uniqueNames.insert(curName).second) // only add unique names
+                name += QString(" ❙ ") + QString::fromStdString(curName);
+            }
+            catch(exception &ex) {
+              mw->setExitBad();
+              auto msg = dynamic_cast<DOMEvalException*>(&ex) ? static_cast<DOMEvalException&>(ex).getMessage() : ex.what();
+              mw->statusBar()->showMessage(("Cannot evaluate element name to string: " + msg).c_str());
+              std::cerr << "Cannot evaluate element name to string: " << msg << std::endl;
+            }
+            catch(...) {
+              mw->setExitBad();
+              mw->statusBar()->showMessage("Cannot evaluate element name to string: Unknwon exception");
+              std::cerr << "Cannot evaluate element name to string: Unknwon exception" << std::endl;
+            }
+          if(name.isEmpty())
+            name = notUsedStr + E(element)->getAttribute("name").c_str();
+          else
+            name = name.mid(3);
+        }
       }
     }
     auto *cele = E(element)->getFirstCommentChild();

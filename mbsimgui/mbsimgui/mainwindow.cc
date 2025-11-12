@@ -2862,6 +2862,7 @@ DEF mbsimgui_outdated_switch Switch {
     updateReferences(parent);
     static_cast<ElementTreeModel*>(elementView->model())->createFrameItem(frame,getContainerIndex<FrameItemData>(parent));
     elementView->selectionModel()->setCurrentIndex(frame->getModelIndex(), QItemSelectionModel::ClearAndSelect);
+    updateParameterTreeAll();
     if(getAutoRefresh()) refresh();
     return true;
   }
@@ -2879,6 +2880,7 @@ DEF mbsimgui_outdated_switch Switch {
     updateReferences(parent);
     static_cast<ElementTreeModel*>(elementView->model())->createContourItem(contour,getContainerIndex<ContourItemData>(parent));
     elementView->selectionModel()->setCurrentIndex(contour->getModelIndex(), QItemSelectionModel::ClearAndSelect);
+    updateParameterTreeAll();
     if(getAutoRefresh()) refresh();
     return true;
   }
@@ -2896,6 +2898,7 @@ DEF mbsimgui_outdated_switch Switch {
     updateReferences(parent);
     static_cast<ElementTreeModel*>(elementView->model())->createGroupItem(group,getContainerIndex<GroupItemData>(parent));
     elementView->selectionModel()->setCurrentIndex(group->getModelIndex(), QItemSelectionModel::ClearAndSelect);
+    updateParameterTreeAll();
     if(getAutoRefresh()) refresh();
     return true;
   }
@@ -2913,6 +2916,7 @@ DEF mbsimgui_outdated_switch Switch {
     updateReferences(parent);
     static_cast<ElementTreeModel*>(elementView->model())->createObjectItem(object,getContainerIndex<ObjectItemData>(parent));
     elementView->selectionModel()->setCurrentIndex(object->getModelIndex(), QItemSelectionModel::ClearAndSelect);
+    updateParameterTreeAll();
     if(getAutoRefresh()) refresh();
     return true;
   }
@@ -2930,6 +2934,7 @@ DEF mbsimgui_outdated_switch Switch {
     updateReferences(parent);
     static_cast<ElementTreeModel*>(elementView->model())->createLinkItem(link,getContainerIndex<LinkItemData>(parent));
     elementView->selectionModel()->setCurrentIndex(link->getModelIndex(), QItemSelectionModel::ClearAndSelect);
+    updateParameterTreeAll();
     if(getAutoRefresh()) refresh();
     return true;
   }
@@ -2947,6 +2952,7 @@ DEF mbsimgui_outdated_switch Switch {
     updateReferences(parent);
     static_cast<ElementTreeModel*>(elementView->model())->createConstraintItem(constraint,getContainerIndex<ConstraintItemData>(parent));
     elementView->selectionModel()->setCurrentIndex(constraint->getModelIndex(), QItemSelectionModel::ClearAndSelect);
+    updateParameterTreeAll();
     if(getAutoRefresh()) refresh();
     return true;
   }
@@ -2964,6 +2970,7 @@ DEF mbsimgui_outdated_switch Switch {
     updateReferences(parent);
     static_cast<ElementTreeModel*>(elementView->model())->createObserverItem(observer,getContainerIndex<ObserverItemData>(parent));
     elementView->selectionModel()->setCurrentIndex(observer->getModelIndex(), QItemSelectionModel::ClearAndSelect);
+    updateParameterTreeAll();
     if(getAutoRefresh()) refresh();
     return true;
   }
