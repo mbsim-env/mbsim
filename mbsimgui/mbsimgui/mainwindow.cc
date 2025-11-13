@@ -511,7 +511,7 @@ namespace MBSimGUI {
       if(!output.isEmpty())
         updateStatusMessage(output);
     };
-    connect(&process,&QProcess::readyReadStandardError,readyReadStandardError);
+    connect(&process       ,&QProcess::readyReadStandardError,readyReadStandardError);
     connect(&processRefresh,&QProcess::readyReadStandardError,readyReadStandardError);
 
     // if process has new standard output call updateEchoView but only every 100ms
@@ -527,14 +527,18 @@ namespace MBSimGUI {
           updateEchoView(output);
       }
     };
-    connect(&process,&QProcess::readyReadStandardOutput,readyReadStandardOutput);
-    if(!arg.contains("--autoExit")) // normal run (no --autoExit) -> pass also the output of processRefresh to readyReadStandardOutput
+    if(!arg.contains("--autoExit")) { // normal run (no --autoExit) -> pass also the output of process/processRefresh to readyReadStandardOutput
+      connect(&process       ,&QProcess::readyReadStandardOutput,readyReadStandardOutput);
       connect(&processRefresh,&QProcess::readyReadStandardOutput,readyReadStandardOutput);
+    }
     else { // --autoExit case
       // do not restart processRefresh (mbsimxml)
       disconnect(processRefreshFinishedConnection);
       // store all output of processRefresh in "allOutput" and ...
       static QString allOutput;
+      connect(&process       ,&QProcess::readyReadStandardOutput,[this](){
+        allOutput+=process.readAllStandardOutput();
+      });
       connect(&processRefresh,&QProcess::readyReadStandardOutput,[this](){
         allOutput+=processRefresh.readAllStandardOutput();
         // ... if 'MBXMLUTILS_PREPROCESS_CTOR' is found in the output then mbsimxml has already started
@@ -546,8 +550,16 @@ namespace MBSimGUI {
       // if QProcess::finished gets called dump all output to cout and close MainWindow
       connect(&processRefresh,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
       [this](int exitCode, QProcess::ExitStatus exitStatus){
-        cout<<allOutput.toStdString();
-        close();
+        if(exitCode!=0)
+          setExitBad();
+        connect(&process,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
+        [this](int exitCode, QProcess::ExitStatus exitStatus){
+          cout<<allOutput.toStdString();
+          if(exitCode!=0)
+            setExitBad();
+          close();
+        });
+        simulate(true);
       });
       // do how show the error dialog if a hidden parameter cannot be evaluated
       HiddenParErrorDialog::show = false;
@@ -1815,7 +1827,7 @@ DEF mbsimgui_outdated_switch Switch {
     processRefresh.write("\0", 1);
   }
 
-  void MainWindow::simulate() {
+  void MainWindow::simulate(bool stopAfterFirstStep) {
     setProcessActionsEnabled(false);
 
     statusBar()->showMessage(tr("Simulate"));
@@ -1841,6 +1853,9 @@ DEF mbsimgui_outdated_switch Switch {
     if(settings.value("mainwindow/options/savestatevector", false).toBool())
       arg.append("--savefinalstatevector");
     arg.append("--savestatetable");
+
+    if(stopAfterFirstStep)
+      arg.append("--stopafterfirststep");
 
     // we print everything except status messages to stdout
     arg.append("--stdout"); arg.append(R"#(info~<span class="MBSIMGUI_INFO">~</span>~HTML)#");

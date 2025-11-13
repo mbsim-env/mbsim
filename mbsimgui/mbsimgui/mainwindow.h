@@ -162,7 +162,7 @@ namespace MBSimGUI {
       void saveLinearSystemAnalysisAs();
       void about();
       void relnotes();
-      void simulate();
+      void simulate(bool stopAfterFirstStep=false);
       void interrupt();
       void openmbv();
       void h5plotserie();
