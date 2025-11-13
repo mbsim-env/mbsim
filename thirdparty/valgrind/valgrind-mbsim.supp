@@ -749,3 +749,26 @@
    ...
    fun:_ZN5QIconC1ERK7QString
 }
+{
+   python
+   Memcheck:Leak
+   match-leak-kinds: possible
+   ...
+   fun:PyEval_EvalCode
+}
+{
+   python
+   Memcheck:Leak
+   match-leak-kinds: definite
+   ...
+   fun:PyEval_EvalCode
+}
+{
+   soqt
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:calloc
+   ...
+   fun:_ZN13SoQtGLWidgetP13buildGLWidgetEv
+   fun:_ZN10OpenMBVGUI12SoQtMyViewerC1EP7QWidget
+}
