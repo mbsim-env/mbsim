@@ -62,7 +62,7 @@
       <objects>
         <RigidBody name="Mass">
           <frameOfReference ref="../Frame[P1]"/>
-          <mass unit="kg">1</mass>
+          <mass unit="kg">m</mass>
           <inertiaTensor unit="kg*m^2">
             <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
               <row>

@@ -394,7 +394,7 @@
             <dependentRigidBody ref="../Object[Boden]"/>
             <stateDependentConstraintFunction>
               <SignalFunction xmlns="http://www.mbsim-env.de/MBSimControl">
-                <returnSignal ref="../../../Link[ExternSignalSource]"/>
+                <returnSignal ref="../../Link[ExternSignalSource]"/>
               </SignalFunction>
             </stateDependentConstraintFunction>
           </GeneralizedAccelerationConstraint>
