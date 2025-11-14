@@ -82,19 +82,19 @@ def checkErrorFormat(dir, errorFormat):
     ET.indent(curRoot)
     cur=ET.tostring(curRoot).decode("utf-8")+"\n"
 
-  r=checkUpdateDiff(dir, errorFormat, cur); appendRet(ret, r)
+  r=checkUpdateDiff(dir, "", errorFormat, cur); appendRet(ret, r)
   return ret
 
-def checkUpdateDiff(dir, errorFormat, cur):
+def checkUpdateDiff(dir, errorFile, errorFormat, cur):
   ret=[0,""]
   if args.update:
     # update reference error output
-    with open(dir+"/error-"+errorFormat+".errorOutput"+errorOutputExt(errorFormat), "wt") as f:
+    with open(dir+"/error-"+errorFile+errorFormat+".errorOutput"+errorOutputExt(errorFormat), "wt") as f:
       f.write(cur)
   else:
     # check error output
-    if os.path.isfile(dir+"/error-"+errorFormat+".errorOutput"+errorOutputExt(errorFormat)):
-      with open(dir+"/error-"+errorFormat+".errorOutput"+errorOutputExt(errorFormat), "rt") as f:
+    if os.path.isfile(dir+"/error-"+errorFile+errorFormat+".errorOutput"+errorOutputExt(errorFormat)):
+      with open(dir+"/error-"+errorFile+errorFormat+".errorOutput"+errorOutputExt(errorFormat), "rt") as f:
         ref=f.read()
       if ref!=cur:
         if args.showdiff:
@@ -103,15 +103,15 @@ def checkUpdateDiff(dir, errorFormat, cur):
           try:
             with open(curFile, "wt") as f:
               f.write(cur)
-            subprocess.check_call(difftoolCmd(dir+"/error-"+errorFormat+".errorOutput"+errorOutputExt(errorFormat), curFile), shell=True)
+            subprocess.check_call(difftoolCmd(dir+"/error-"+errorFile+errorFormat+".errorOutput"+errorOutputExt(errorFormat), curFile), shell=True)
           finally:
             os.remove(curFile)
         else:
-          ret[1]+=dir+": "+errorFormat+": error output does not match reference\n"; ret[0]+=1
+          ret[1]+=dir+": "+errorFile+errorFormat+": error output does not match reference\n"; ret[0]+=1
           ret[1]+="".join(difflib.unified_diff(ref.splitlines(keepends=True), cur.splitlines(keepends=True),
-                                               fromfile=dir+"/error-"+errorFormat+".errorOutput"+errorOutputExt(errorFormat), tofile="output"))
+                                               fromfile=dir+"/error-"+errorFile+errorFormat+".errorOutput"+errorOutputExt(errorFormat), tofile="output"))
     else:
-      ret[1]+=dir+": "+errorFormat+": no reference\n"; ret[0]+=1
+      ret[1]+=dir+": "+errorFile+errorFormat+": no reference\n"; ret[0]+=1
   return ret
 
 def checkGUIError(dir):
@@ -131,14 +131,14 @@ def checkGUIError(dir):
   # get all elements, including and  after the first <span class="MBSIMGUI_ERROR"> element as childs of curRoot
   curRoot=ET.Element("root")
   for child in ET.fromstring('<root>'+cur+'</root>'):
-    if (child.tag=="span" and child.attrib.get("class")=="MBSIMGUI_ERROR") or len(curRoot)>0:
+    if child.tag=="span" and child.attrib.get("class")=="MBSIMGUI_ERROR":
       curRoot.append(child);
 
   adaptXML(curRoot, dir)
   ET.indent(curRoot)
   cur=ET.tostring(curRoot).decode("utf-8")+"\n"
 
-  r=checkUpdateDiff(dir, "HTMLXPATH", cur); appendRet(ret, r)
+  r=checkUpdateDiff(dir, "gui-", "HTMLXPATH", cur); appendRet(ret, r)
   return ret
 
 def adaptXML(ele, dir):

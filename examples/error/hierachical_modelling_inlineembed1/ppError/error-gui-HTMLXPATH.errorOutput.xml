@@ -1,0 +1,38 @@
+<root>
+  <span class="MBSIMGUI_ERROR">
+    <span class="MBXMLUTILS_ERROROUTPUT">
+      <a href="Hauptgruppe.xml?xpath=/{http://www.mbsim-env.de/MBSim}Group[1]/{http://www.mbsim-env.de/MBSim}groups[1]/{http://www.mbsim-env.de/MBXMLUtils}Embed[2]/{http://www.mbsim-env.de/MBSim}Group[1]/{http://www.mbsim-env.de/MBSim}objects[1]/{http://www.mbsim-env.de/MBSim}RigidBody[1]/{http://www.mbsim-env.de/MBSim}plotFeature[1]/@value&amp;line=48">Hauptgruppe.xml:48:/Group[1]/groups[1]/p:Embed[2]/Group[1]/objects[1]/RigidBody[1]/plotFeature[1]/@value</a>:<br />
+      <span class="MBXMLUTILS_MSG">QName attribute value defined by '[uri]localname' syntax but no ] found.
+</span>
+      <span class="MBSIMGUI_ERROR" />
+    </span>
+    <span class="MBXMLUTILS_ERROROUTPUT MBXMLUTILS_SSE">
+      <a href="MBS.mbsim.xml?xpath=/{http://www.mbsim-env.de/MBSim}DynamicSystemSolver[1]/{http://www.mbsim-env.de/MBSim}groups[1]/{http://www.mbsim-env.de/MBXMLUtils}Embed[1]&amp;line=18">MBS.mbsim.xml:18:/DynamicSystemSolver[1]/groups[1]/p:Embed[1]</a>:<br />
+      <span class="MBXMLUTILS_MSG">included from here
+</span>
+      <span class="MBSIMGUI_ERROR" />
+    </span>
+    <span class="MBXMLUTILS_ERROROUTPUT MBXMLUTILS_SSE">
+      <a href="MBS.mbsx?xpath=/{http://www.mbsim-env.de/MBXMLUtils}Embed[1]/{http://www.mbsim-env.de/MBSimXML}MBSimProject[1]/{http://www.mbsim-env.de/MBXMLUtils}Embed[1]&amp;line=8">MBS.mbsx:8:/p:Embed[1]/mx:MBSimProject[1]/p:Embed[1]</a>:<br />
+      <span class="MBXMLUTILS_MSG">included from here</span>
+    </span>
+  </span>
+  <span class="MBSIMGUI_ERROR">
+    <span class="MBXMLUTILS_ERROROUTPUT">
+      <a href="Hauptgruppe.xml?xpath=/{http://www.mbsim-env.de/MBSim}Group[1]/{http://www.mbsim-env.de/MBSim}groups[1]/{http://www.mbsim-env.de/MBXMLUtils}Embed[2]/{http://www.mbsim-env.de/MBSim}Group[1]/{http://www.mbsim-env.de/MBSim}objects[1]/{http://www.mbsim-env.de/MBSim}RigidBody[1]/{http://www.mbsim-env.de/MBSim}plotFeature[1]/@value&amp;line=48">Hauptgruppe.xml:48:/Group[1]/groups[1]/p:Embed[2]/Group[1]/objects[1]/RigidBody[1]/plotFeature[1]/@value</a>:<br />
+      <span class="MBXMLUTILS_MSG">QName attribute value defined by '[uri]localname' syntax but no ] found.
+</span>
+      <span class="MBSIMGUI_ERROR" />
+    </span>
+    <span class="MBXMLUTILS_ERROROUTPUT MBXMLUTILS_SSE">
+      <a href="MBS.mbsim.xml?xpath=/{http://www.mbsim-env.de/MBSim}DynamicSystemSolver[1]/{http://www.mbsim-env.de/MBSim}groups[1]/{http://www.mbsim-env.de/MBXMLUtils}Embed[1]&amp;line=18">MBS.mbsim.xml:18:/DynamicSystemSolver[1]/groups[1]/p:Embed[1]</a>:<br />
+      <span class="MBXMLUTILS_MSG">included from here
+</span>
+      <span class="MBSIMGUI_ERROR" />
+    </span>
+    <span class="MBXMLUTILS_ERROROUTPUT MBXMLUTILS_SSE">
+      <a href="MBS.mbsx?xpath=/{http://www.mbsim-env.de/MBXMLUtils}Embed[1]/{http://www.mbsim-env.de/MBSimXML}MBSimProject[1]/{http://www.mbsim-env.de/MBXMLUtils}Embed[1]&amp;line=8">MBS.mbsx:8:/p:Embed[1]/mx:MBSimProject[1]/p:Embed[1]</a>:<br />
+      <span class="MBXMLUTILS_MSG">included from here</span>
+    </span>
+  </span>
+</root>
