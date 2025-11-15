@@ -250,14 +250,25 @@ R"+(</pre>
   }
 
   void EchoView::linkClicked(const QUrl &link) {
-    for(auto fileItemData : mw->getFile())
-      if(fileItemData->getFileInfo().absoluteFilePath()==link.path()) {
-        auto source = X()%mw->serializer->writeToString(fileItemData->getXMLDocument().get());
-	SourceCodeDialog dialog(source.c_str(),true,this);
-	dialog.highlightLine(QUrlQuery(link).queryItemValue("line").toInt()-1);
-	dialog.exec();
-        return;
+    std::shared_ptr<xercesc::DOMDocument> doc;
+    if(QFileInfo(mw->getProjectFile()).absoluteFilePath()==link.path())
+      doc = mw->getProjectDocument();
+    else
+      for(auto fileItemData : mw->getFile()) {
+        if(fileItemData->getFileInfo().absoluteFilePath()==link.path()) {
+          doc = fileItemData->getXMLDocument();
+          break;
+        }
       }
+
+    if(!doc) {
+      mw->statusBar()->showMessage("No XML document found for the clicked link.");
+      return;
+    }
+    auto source = X()%mw->serializer->writeToString(doc.get());
+    SourceCodeDialog dialog(source.c_str(),true,this);
+    dialog.highlightLine(QUrlQuery(link).queryItemValue("line").toInt()-1);
+    dialog.exec();
   }
 
   void EchoView::updateDebug() {
