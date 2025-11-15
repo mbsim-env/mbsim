@@ -1819,7 +1819,6 @@ DEF mbsimgui_outdated_switch Switch {
     ivContEle->insertBefore(doc->createTextNode(X()%eval->createSourceCode(ivStr)), nullptr);
 
     clearEchoView("");
-    echoView->showXMLCode(false);
     echoView->updateOutput(true);
     string projectString;
     DOMParser::serializeToString(doc.get(), projectString);
@@ -1845,7 +1844,6 @@ DEF mbsimgui_outdated_switch Switch {
     actionH5plotserie->setDisabled(false);
 
     clearEchoView("Running 'mbsimxml' to simulate the model:\n\n");
-    echoView->showXMLCode(false);
 
     DOMParser::serialize(doc.get(), projectFile.toStdString());
     QStringList arg;
@@ -3285,7 +3283,6 @@ DEF mbsimgui_outdated_switch Switch {
           }
 	  arg.append(projectFile);
 	  clearEchoView("Running 'createFMU' to create a FMU from the model:\n\n");
-	  echoView->showXMLCode(false);
 	  process.setWorkingDirectory(uniqueTempDir_);
 	  fmuFileName = dialog.getFileName();
 	  process.start(QString::fromStdString((getInstallPath()/"bin"/"mbsimCreateFMU").string()), arg);
