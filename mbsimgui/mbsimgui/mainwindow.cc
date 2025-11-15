@@ -1914,8 +1914,11 @@ DEF mbsimgui_outdated_switch Switch {
   }
 
   void MainWindow::selectElement(const string& ID, OpenMBVGUI::Object *obj) {
-    if(!obj)
+    if(!obj) {
+      highlightObject("");
+      elementView->selectionModel()->clearCurrentIndex();
       return;
+    }
     auto id=ID;
     // if no ID is given (obj->getObject() has no ID set) and its a RigidBody inside of a CompoundRigidBody then use the ID of the parent CompoundRigidBody.
     auto o=obj->getObject();
