@@ -69,7 +69,6 @@
 #include <QTextStream>
 #include <QShortcut>
 #include <mbxmlutils/eval.h>
-#include <mbxmlutils/preprocess.h>
 #include <boost/dll.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/algorithm/string/join.hpp>
@@ -1878,8 +1877,8 @@ DEF mbsimgui_outdated_switch Switch {
     process.setWorkingDirectory(uniqueTempDir_);
     process.start(QString::fromStdString((getInstallPath()/"bin"/"mbsimxml").string()), arg);
     process.write(projectString.data(), projectString.size());
-    process.write("\1", 1);
     process.write("\0", 1);
+    process.closeWriteChannel();
   }
 
   void MainWindow::openmbv() {
