@@ -1723,7 +1723,7 @@ namespace MBSimGUI {
     // add it as the last plotFeatureRecursive element to avoid that the XML tree get not changed regarding the xpath
     // of existing elements AND to ensure it overwrites a equivalent plot-feature
     auto before = E(dssEle)->getFirstElementChildNamed(MBSIM%"frames");
-    if(auto prev = static_cast<DOMElement*>(before->getPreviousSibling()); E(prev)->getTagName()==MBSIM%"frameOfReference")
+    if(auto prev = static_cast<DOMElement*>(before->getPreviousSibling()); prev && E(prev)->getTagName()==MBSIM%"frameOfReference")
       before = prev;
     dssEle->insertBefore( ele1, before );
 
