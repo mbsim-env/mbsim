@@ -1878,6 +1878,7 @@ DEF mbsimgui_outdated_switch Switch {
     process.setWorkingDirectory(uniqueTempDir_);
     process.start(QString::fromStdString((getInstallPath()/"bin"/"mbsimxml").string()), arg);
     process.write(projectString.data(), projectString.size());
+    process.write("\1", 1);
     process.write("\0", 1);
   }
 
