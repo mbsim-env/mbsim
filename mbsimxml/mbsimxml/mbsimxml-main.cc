@@ -303,7 +303,6 @@ int main(int argc, char *argv[]) {
     // execute
     int ret; // command return value
     bool runAgain=true; // always run the first time
-    bool stop = false;
     while(runAgain) {
       ret=0;
 
@@ -337,10 +336,6 @@ int main(int argc, char *argv[]) {
           }
           else {
             getline(cin, str, '\0'); // read the next file content (up to next null-char or EOF)
-            if(str[str.length()-1]=='\1') {
-              str[str.length()-1]=' ';
-              stop = true;
-            }
             if(cin.eof())
               break;
             sigHandler=make_unique<DynamicSystemSolver::SignalHandler>();
@@ -445,9 +440,6 @@ int main(int argc, char *argv[]) {
         fmatvec::Atom::msgStatic(fmatvec::Atom::Error)<<"Unknown exception"<<endl;
         ret=1;
       }
-
-      if(stop==true)
-        break;
 
       if(MBSIMPRJ!="-") {
         runAgain=false; // only run ones except --autoreload is given
