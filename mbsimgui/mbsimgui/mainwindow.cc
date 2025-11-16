@@ -1788,7 +1788,7 @@ namespace MBSimGUI {
     }
     auto ombvObjEle = E(mbsimEnvEle)->getFirstElementChildNamed(MBSIM%"openMBVObject");
     if(!ombvObjEle) {
-      auto ombvObjEle = D(doc)->createElement(MBSIM%"openMBVObject");
+      ombvObjEle = D(doc)->createElement(MBSIM%"openMBVObject");
       mbsimEnvEle->insertBefore(ombvObjEle, nullptr);
     }
     auto outdatedGrp = D(doc)->createElement(OPENMBV%"Group");
