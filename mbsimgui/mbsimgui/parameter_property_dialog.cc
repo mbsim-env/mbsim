@@ -110,6 +110,7 @@ namespace MBSimGUI {
   void ParameterPropertyDialog::fromWidget() {
     writeXMLFile(parameter->getXMLElement());
     parameter->updateValue();
+    mw->updateLineNumbers(parameter->getXMLElement());
   }
 
   void ParameterPropertyDialog::showEvent(QShowEvent *ev) {

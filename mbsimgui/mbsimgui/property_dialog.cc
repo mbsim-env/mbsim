@@ -134,6 +134,7 @@ namespace MBSimGUI {
 
   void EmbedItemPropertyDialog::fromWidget() {
     writeXMLFile(item->getXMLElement());
+    mw->updateLineNumbers(item->getXMLElement());
   }
 
   void EmbedItemPropertyDialog::showEvent(QShowEvent *ev) {
