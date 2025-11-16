@@ -1,14 +1,8 @@
 <root>
   <span class="MBSIMGUI_ERROR">
     <span class="MBXMLUTILS_ERROROUTPUT">
-      <a href="submodel/Untergruppe.xml?xpath=/{http://www.mbsim-env.de/MBXMLUtils}Parameter[1]/{http://www.mbsim-env.de/MBXMLUtils}scalarParameter[2]&amp;line=60">submodel/Untergruppe.xml:60:/p:Parameter[1]/p:scalarParameter[2]</a>:<br />
+      <a href="submodel/Untergruppe.xml?xpath=/{http://www.mbsim-env.de/MBSim}Group[1]/{http://www.mbsim-env.de/MBSim}objects[1]/{http://www.mbsim-env.de/MBSim}RigidBody[1]/{http://www.mbsim-env.de/MBSim}frames[1]/{http://www.mbsim-env.de/MBXMLUtils}Embed[1]/{http://www.mbsim-env.de/MBXMLUtils}Parameter[1]/{http://www.mbsim-env.de/MBXMLUtils}scalarParameter[2]&amp;line=60">submodel/Untergruppe.xml:60:/Group[1]/objects[1]/RigidBody[1]/frames[1]/p:Embed[1]/p:Parameter[1]/p:scalarParameter[2]</a>:<br />
       <span class="MBXMLUTILS_MSG">Caught octave exception **octave version dependent**
-</span>
-      <span class="MBSIMGUI_ERROR" />
-    </span>
-    <span class="MBXMLUTILS_ERROROUTPUT MBXMLUTILS_SSE">
-      <a href="submodel/Untergruppe.xml?xpath=/{http://www.mbsim-env.de/MBSim}Group[1]/{http://www.mbsim-env.de/MBSim}objects[1]/{http://www.mbsim-env.de/MBSim}RigidBody[1]/{http://www.mbsim-env.de/MBSim}frames[1]/{http://www.mbsim-env.de/MBXMLUtils}Embed[1]&amp;line=57">submodel/Untergruppe.xml:57:/Group[1]/objects[1]/RigidBody[1]/frames[1]/p:Embed[1]</a>:<br />
-      <span class="MBXMLUTILS_MSG">included from here
 </span>
       <span class="MBSIMGUI_ERROR" />
     </span>
@@ -31,14 +25,8 @@
   </span>
   <span class="MBSIMGUI_ERROR">
     <span class="MBXMLUTILS_ERROROUTPUT">
-      <a href="submodel/Untergruppe.xml?xpath=/{http://www.mbsim-env.de/MBXMLUtils}Parameter[1]/{http://www.mbsim-env.de/MBXMLUtils}scalarParameter[2]&amp;line=60">submodel/Untergruppe.xml:60:/p:Parameter[1]/p:scalarParameter[2]</a>:<br />
+      <a href="submodel/Untergruppe.xml?xpath=/{http://www.mbsim-env.de/MBSim}Group[1]/{http://www.mbsim-env.de/MBSim}objects[1]/{http://www.mbsim-env.de/MBSim}RigidBody[1]/{http://www.mbsim-env.de/MBSim}frames[1]/{http://www.mbsim-env.de/MBXMLUtils}Embed[1]/{http://www.mbsim-env.de/MBXMLUtils}Parameter[1]/{http://www.mbsim-env.de/MBXMLUtils}scalarParameter[2]&amp;line=60">submodel/Untergruppe.xml:60:/Group[1]/objects[1]/RigidBody[1]/frames[1]/p:Embed[1]/p:Parameter[1]/p:scalarParameter[2]</a>:<br />
       <span class="MBXMLUTILS_MSG">Caught octave exception **octave version dependent**
-</span>
-      <span class="MBSIMGUI_ERROR" />
-    </span>
-    <span class="MBXMLUTILS_ERROROUTPUT MBXMLUTILS_SSE">
-      <a href="submodel/Untergruppe.xml?xpath=/{http://www.mbsim-env.de/MBSim}Group[1]/{http://www.mbsim-env.de/MBSim}objects[1]/{http://www.mbsim-env.de/MBSim}RigidBody[1]/{http://www.mbsim-env.de/MBSim}frames[1]/{http://www.mbsim-env.de/MBXMLUtils}Embed[1]&amp;line=57">submodel/Untergruppe.xml:57:/Group[1]/objects[1]/RigidBody[1]/frames[1]/p:Embed[1]</a>:<br />
-      <span class="MBXMLUTILS_MSG">included from here
 </span>
       <span class="MBSIMGUI_ERROR" />
     </span>
