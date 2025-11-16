@@ -3714,27 +3714,6 @@ DEF mbsimgui_outdated_switch Switch {
     return settings.value("mainwindow/options/autorefresh", true).toBool();
   }
 
-  void MainWindow::updateLineNumbers(xercesc::DOMNode *n) {
-    // serialize the document without using the MBXMLUtils_ processing instructions (its a user written XML source file)
-    auto rootEle = n->getOwnerDocument()->getDocumentElement();
-    auto xml = X()%mw->serializer->writeToString(rootEle);
-    // re-parse the serialized document (while recording the line number using the MBXMLUtils_ processing instructions
-    stringstream str(std::move(xml));
-    auto docReparsed = mw->mbxmlparserNoVal->parse(str);
-
-    // walk the original document elements, together with the re-parsed document elements, and copy all line number of the
-    // re-parsed document to the original document
-    function<void(DOMElement* e, DOMElement* eReparsed)> walk;
-    walk=[&walk](DOMElement *e, DOMElement *eReparsed) {
-      auto lineNr = E(eReparsed)->getEmbedData("MBXMLUtils_LineNr");
-      E(e)->addEmbedData("MBXMLUtils_LineNr", lineNr);
-      for(auto c=e->getFirstElementChild(), cReparsed=eReparsed->getFirstElementChild(); c!=nullptr && cReparsed!=nullptr;
-          c=c->getNextElementSibling(), cReparsed=cReparsed->getNextElementSibling())
-        walk(c, cReparsed);
-    };
-    walk(rootEle, docReparsed->getDocumentElement());
-  }
-
 }
 
 extern "C" {
