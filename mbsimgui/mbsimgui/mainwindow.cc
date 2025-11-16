@@ -1837,9 +1837,9 @@ DEF mbsimgui_outdated_switch Switch {
     auto *newDocElement = static_cast<DOMElement*>(doc->importNode(this->doc->getDocumentElement(), true));
     doc->insertBefore(newDocElement, nullptr);
     project->processIDAndHref(newDocElement);
+    string projectString;
+    DOMParser::serializeToString(doc.get(), projectString);
 
-    QString uniqueTempDir_ = QString::fromStdString(uniqueTempDir.generic_string());
-    QString projectFile = uniqueTempDir_+"/MBS_tmp.mbsx";
     setSimulateActionsEnabled(false);
     actionOpenMBV->setDisabled(false);
     actionH5plotserie->setDisabled(false);
@@ -1847,7 +1847,6 @@ DEF mbsimgui_outdated_switch Switch {
     clearEchoView("Running 'mbsimxml' to simulate the model:\n\n");
     echoView->showXMLCode(false);
 
-    DOMParser::serialize(doc.get(), projectFile.toStdString());
     QStringList arg;
     QSettings settings;
     if(settings.value("mainwindow/options/savestatevector", false).toBool())
@@ -1873,9 +1872,13 @@ DEF mbsimgui_outdated_switch Switch {
     arg.append("--modulePath");
     arg.append(QDir::currentPath());
 
-    arg.append(projectFile);
+    //arg.append("--onlyLatestStdin"); // skip all input except the latest one
+    arg.append("-"); // input stream mode of mbsimxml
+    QString uniqueTempDir_ = QString::fromStdString(uniqueTempDir.generic_string());
     process.setWorkingDirectory(uniqueTempDir_);
     process.start(QString::fromStdString((getInstallPath()/"bin"/"mbsimxml").string()), arg);
+    process.write(projectString.data(), projectString.size());
+    process.write("\0", 1);
   }
 
   void MainWindow::openmbv() {
