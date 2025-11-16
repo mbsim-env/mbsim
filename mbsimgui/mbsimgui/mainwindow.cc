@@ -134,10 +134,12 @@ namespace MBSimGUI {
 
     impl=DOMImplementation::getImplementation();
     serializer=impl->createLSSerializer();
-    // use html output of MBXMLUtils
-    static char HTMLOUTPUT[100];
-    strcpy(HTMLOUTPUT, "MBXMLUTILS_ERROROUTPUT=HTMLXPATH");
-    putenv(HTMLOUTPUT);
+    // output type of MBXMLUtils
+    if(getenv("MBXMLUTILS_ERROROUTPUT")==nullptr) {
+      static char ERROROUTPUT[10000];
+      strcpy(ERROROUTPUT, R"|(MBXMLUTILS_ERROROUTPUT=HTMLOUTPUT:<span class="MBXMLUTILS_ERROROUTPUT(?{sse} MBXMLUTILS_SSE:)"><a href="$+{file}?xpath=$+{xpath}(?{ecount}&amp;ecount=$+{ecount}:)(?{line}\&amp;line=$+{line}:)">$+{basefile}:$+{shorthrxpath}</a>:<br/><span class="MBXMLUTILS_MSG">$+{msg}</span></span>)|");
+      putenv(ERROROUTPUT);
+    }
 
     serializer->getDomConfig()->setParameter(X()%"format-pretty-print", true);
 
@@ -1709,6 +1711,8 @@ namespace MBSimGUI {
     else
       dssEle=x;
 
+    // DO NOT ADAPT THE XML TREE IN A WAY THAT THE XPATH OF EXISTING ELEMENTS CHANGES!!!!!!!!!!!!!!!!!!!!
+
     // set output filename (for openmbv)
     E(dssEle)->setAttribute("name","MBS_tmp");
 
@@ -1716,7 +1720,12 @@ namespace MBSimGUI {
     DOMElement *ele1 = D(doc)->createElement( MBSIM%"plotFeatureRecursive" );
     E(ele1)->setAttribute("value","plotRecursive");
     ele1->insertBefore(doc->createTextNode(X()%project->getVarFalse().toStdString()), nullptr);
-    dssEle->insertBefore( ele1, dssEle->getFirstElementChild() );
+    // add it as the last plotFeatureRecursive element to avoid that the XML tree get not changed regarding the xpath
+    // of existing elements AND to ensure it overwrites a equivalent plot-feature
+    auto before = E(dssEle)->getFirstElementChildNamed(MBSIM%"frames");
+    if(auto prev = static_cast<DOMElement*>(before->getPreviousSibling()); E(prev)->getTagName()==MBSIM%"frameOfReference")
+      before = prev;
+    dssEle->insertBefore( ele1, before );
 
     // disable initial projection if requested
     if(solverInitialProj->isChecked()) {
@@ -1779,7 +1788,7 @@ namespace MBSimGUI {
     }
     auto ombvObjEle = E(mbsimEnvEle)->getFirstElementChildNamed(MBSIM%"openMBVObject");
     if(!ombvObjEle) {
-      ombvObjEle = D(doc)->createElement(MBSIM%"openMBVObject");
+      auto ombvObjEle = D(doc)->createElement(MBSIM%"openMBVObject");
       mbsimEnvEle->insertBefore(ombvObjEle, nullptr);
     }
     auto outdatedGrp = D(doc)->createElement(OPENMBV%"Group");

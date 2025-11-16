@@ -36,6 +36,7 @@
 #include "parameter.h"
 #include "dialogs.h"
 #include "xercesc/dom/DOMLSSerializer.hpp"
+#include "xercesc/dom/DOMAttr.hpp"
 #include <QTextStream>
 #include <QProcessEnvironment>
 #include <QUrlQuery>
@@ -265,9 +266,41 @@ R"+(</pre>
       mw->statusBar()->showMessage("No XML document found for the clicked link.");
       return;
     }
-    auto source = X()%mw->serializer->writeToString(doc.get());
-    SourceCodeDialog dialog(source.c_str(),true,this);
-    dialog.highlightLine(QUrlQuery(link).queryItemValue("line").toInt()-1);
+
+    // serialize the document without using the MBXMLUtils_ processing instructions (its a user written XML source file)
+    auto rootEle = doc->getDocumentElement();
+    auto xml = X()%mw->serializer->writeToString(rootEle);
+    // re-parse the serialized document (while recording the line number using the MBXMLUtils_ processing instructions
+    stringstream str(std::move(xml));
+    auto docReparsed = mw->mbxmlparserNoVal->parse(str);
+
+    // get the xpath in the re-parsed document
+    auto xpath = QUrlQuery(link).queryItemValue("xpath").toStdString();
+    xercesc::DOMNode *n;
+    try {
+      n = D(docReparsed)->evalRootXPathExpression(xpath);
+    }
+    catch(...) {
+      mw->statusBar()->showMessage("The xpath of the clicked link was not found in the document.");
+      return;
+    }
+    auto e = n->getNodeType() == xercesc::DOMNode::ATTRIBUTE_NODE ?
+      static_cast<xercesc::DOMAttr*>(n)->getOwnerElement() :
+      static_cast<xercesc::DOMElement*>(n);
+
+    // get the linenr of this re-parsed element
+    // (Note that we cannot just take the linenr of the original element this its linenr is usually wrong, at least
+    //  when mbsimgui has changed something in the XML DOM tree since it was read from file)
+    auto lineNr = E(e)->getLineNumber();
+
+    // show the dialog
+    auto absPath = link.path();
+    auto relPath = QDir(QFileInfo(mw->getProjectFile()).absoluteDir()).relativeFilePath(absPath);
+    SourceCodeDialog dialog(xml.c_str(),
+      (absPath.size()<relPath.size() || relPath.startsWith("../")) ? absPath : relPath, // filename to show
+      EmbedDOMLocator::convertToRootHRXPathExpression(xpath).c_str(), // xpath to show
+      this);
+    dialog.highlightLine(lineNr-1);
     dialog.exec();
   }
 
