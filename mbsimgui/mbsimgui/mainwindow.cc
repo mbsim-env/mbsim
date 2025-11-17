@@ -100,6 +100,13 @@ namespace MBSimGUI {
   MainWindow *mw;
 
   bool MainWindow::exitOK = true;
+  
+  const string NO_FILENAME("{no filename}");
+#ifdef _WIN32 // just a dummy absolute path used with NO_FILENAME
+  const string dummyAbsPath("x:/");
+#else
+  const string dummyAbsPath("/");
+#endif
 
   static int currentModelID = 0;
 
@@ -1099,8 +1106,8 @@ namespace MBSimGUI {
       setSimulateActionsEnabled(false);
       actionSave->setDisabled(true);
       actionSaveProject->setDisabled(true);
-      projectFile="";
-      setWindowTitle("Project.mbsx[*]");
+      projectFile=(dummyAbsPath+NO_FILENAME).c_str();
+      setWindowTitle((NO_FILENAME+"[*]").c_str());
 
       auto *pmodel = static_cast<ParameterTreeModel*>(parameterView->model());
       pmodel->removeRows(pmodel->index(0,0).row(), pmodel->rowCount(QModelIndex()), QModelIndex());
@@ -1118,12 +1125,12 @@ namespace MBSimGUI {
       IDcounter = 0;
 
       doc = mbxmlparserNoVal->createDocument();
-      doc->setDocumentURI(X()%QDir::current().absoluteFilePath("Project.mbsx").toStdString());
 
       project = new Project;
       QSettings settings;
       project->setEvaluator(Evaluator::evaluators[settings.value("mainwindow/options/defaultevaluator", 0).toInt()]);
       project->createXMLElement(doc.get());
+      E(doc->getDocumentElement())->setOriginalFilename(dummyAbsPath+NO_FILENAME);
 
       model->createProjectItem(project);
 
@@ -1151,7 +1158,8 @@ namespace MBSimGUI {
         file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
       loadProject(file,false);
     }
-    doc->setDocumentURI(X()%QDir::current().absoluteFilePath("Project.mbsx").toStdString());
+    projectFile=(dummyAbsPath+NO_FILENAME).c_str();
+    E(doc->getDocumentElement())->setOriginalFilename(dummyAbsPath+NO_FILENAME);
   }
 
   void MainWindow::loadProject(const QString &fileName, bool updateRecent) {
@@ -1172,8 +1180,8 @@ namespace MBSimGUI {
 	setWindowTitle(projectFile+"[*]");
 	setCurrentProjectFile(fileName);
       } else {
-	projectFile="";
-	setWindowTitle("Project.mbsx[*]");
+	projectFile=(dummyAbsPath+NO_FILENAME).c_str();
+	setWindowTitle((NO_FILENAME+"[*]").c_str());
       }
 
       try { 
@@ -1240,13 +1248,15 @@ namespace MBSimGUI {
       file = file.endsWith(".mbsx")?file:file+".mbsx";
       if(file.startsWith("//"))
         file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
-      doc->setDocumentURI(X()%file.toStdString());
+      E(doc->getDocumentElement())->setOriginalFilename(file.toStdString());
       projectFile = QDir::current().relativeFilePath(file);
       setCurrentProjectFile(file);
       setWindowTitle(projectFile+"[*]");
       actionSave->setDisabled(false);
       actionSaveProject->setDisabled(false);
-      return saveProject();
+      bool ret = saveProject();
+      refresh();
+      return ret;
     }
     return false;
   }

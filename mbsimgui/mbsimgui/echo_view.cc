@@ -263,7 +263,7 @@ R"+(</pre>
       }
 
     if(!doc) {
-      mw->statusBar()->showMessage("No XML document found for the clicked link.");
+      mw->statusBar()->showMessage("XML document not found: "+link.path());
       return;
     }
 
@@ -281,7 +281,7 @@ R"+(</pre>
       n = D(docReparsed)->evalRootXPathExpression(xpath);
     }
     catch(...) {
-      mw->statusBar()->showMessage("The xpath of the clicked link was not found in the document.");
+      mw->statusBar()->showMessage("XPath not found in doc: "+QString::fromStdString(xpath));
       return;
     }
     auto e = n->getNodeType() == xercesc::DOMNode::ATTRIBUTE_NODE ?
