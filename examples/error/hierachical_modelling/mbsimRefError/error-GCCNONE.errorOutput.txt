@@ -1,0 +1,14 @@
+submodel/Untergruppe.xml:10: Evaluation of refernece 'Frame[Cerror]' failed: Message from Object[Box1(with_ID_0xXXXXXX)]: (Body::getFrame): The body comprises no frame "Cerror"!
+Created by object of type MBSim::RigidBody
+Hauptgruppe.xml:38: [ecount=1] included from here
+MBS.mbsim.xml:18: [ecount=1] included from here
+MBS.mbsx:8: [ecount=1] included from here
+  submodel/Untergruppe.xml:9: Created by object of type MBSim::Group
+  Hauptgruppe.xml:38: [ecount=1] included from here
+  MBS.mbsim.xml:18: [ecount=1] included from here
+  MBS.mbsx:8: [ecount=1] included from here
+    Hauptgruppe.xml:26: Created by object of type MBSim::Group
+    MBS.mbsim.xml:18: [ecount=1] included from here
+    MBS.mbsx:8: [ecount=1] included from here
+      MBS.mbsim.xml:17: Created by object of type MBSim::DynamicSystemSolver
+      MBS.mbsx:8: [ecount=1] included from here
