@@ -380,12 +380,12 @@ namespace MBSimGUI {
     runMenu->addAction(actionSimulate);
     actionSimulate->setStatusTip(tr("Simulate the multibody system"));
     connect(actionSimulate,&QAction::triggered,this,&MainWindow::simulate);
-    actionInterrupt = runBar->addAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_MediaStop)),"Stop background tasks");
-    runMenu->addAction(actionInterrupt);
-    connect(actionInterrupt,&QAction::triggered,this,&MainWindow::interrupt);
-    actionKill = runBar->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"kill.svg").string())),"Kill background tasks");
-    runMenu->addAction(actionKill);
-    connect(actionKill,&QAction::triggered,this,&MainWindow::kill);
+    actionStop = runBar->addAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_MediaStop)),"Stop simulation");
+    runMenu->addAction(actionStop);
+    connect(actionStop,&QAction::triggered,this,&MainWindow::stop);
+    actionTerminate = runBar->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"kill.svg").string())),"Terminate background tasks");
+    runMenu->addAction(actionTerminate);
+    connect(actionTerminate,&QAction::triggered,this,&MainWindow::terminate);
     actionOpenMBV = runBar->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"openmbv.svg").string())),"OpenMBV");
     runMenu->addAction(actionOpenMBV);
     connect(actionOpenMBV,&QAction::triggered,this,&MainWindow::openmbv);
@@ -510,7 +510,7 @@ namespace MBSimGUI {
     if(!arg.contains("--autoExit")) { // normal run (no --autoExit) -> pass also the output of process/processRefresh to readyReadStandardOutput
       startProcessSimulate();
       processSimulateFinishedConnection=connect(&processSimulate,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
-          this, &MainWindow::startProcessSimulate);
+          [this]() { startProcessSimulate(); });
       processRefreshFinishedConnection=connect(&processRefresh,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
           this, &MainWindow::startProcessRefresh);
       connect(&processSimulate,&QProcess::readyReadStandardOutput,[this]() {
@@ -1873,7 +1873,7 @@ DEF mbsimgui_outdated_switch Switch {
     doc->insertBefore(newDocElement, nullptr);
     project->processIDAndHref(newDocElement);
 
-    setSimulateActionsEnabled(false);
+    setSimulateActionsEnabled(true);
     actionOpenMBV->setDisabled(false);
     actionH5plotserie->setDisabled(false);
 
@@ -3232,11 +3232,11 @@ DEF mbsimgui_outdated_switch Switch {
   void MainWindow::stop() {
     echoView->addOutputText("<span class=\"MBSIMGUI_ERROR\">'Stop simulation' clicked</span>\n");
     echoView->updateOutput(true);
-    processSimulate.write("", 0);
+    processSimulate.write("\0", 1);
   }
 
-  void MainWindow::interrupt() {
-    echoView->addOutputText("<span class=\"MBSIMGUI_ERROR\">'Stop background tasks' clicked</span>\n");
+  void MainWindow::terminate() {
+    echoView->addOutputText("<span class=\"MBSIMGUI_ERROR\">'Terminate background tasks' clicked</span>\n");
     echoView->updateOutput(true);
     if(not processRefresh.state()==QProcess::NotRunning)
       processRefresh.terminate();

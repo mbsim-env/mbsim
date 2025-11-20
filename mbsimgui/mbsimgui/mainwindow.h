@@ -108,7 +108,7 @@ namespace MBSimGUI {
       QProcess processRefresh;
       OpenMBVGUI::MainWindow *inlineOpenMBVMW;
       boost::filesystem::path uniqueTempDir;
-      QAction *actionSave, *actionSaveProject, *actionSimulate, *actionInterrupt, *actionKill, *actionOpenMBV, *actionH5plotserie, *actionLinearSystemAnalysis, *actionStateTable, *actionSaveDataAs, *actionSaveMBSimH5DataAs, *actionSaveOpenMBVDataAs, *actionRefresh, *actionCreateFMU, *actionSaveStateVectorAs, *actionSaveStateTableAs, *actionSaveLinearSystemAnalysisAs, *actionUndo, *actionRedo, *solverInitialProj;
+      QAction *actionSave, *actionSaveProject, *actionSimulate, *actionStop, *actionTerminate, *actionOpenMBV, *actionH5plotserie, *actionLinearSystemAnalysis, *actionStateTable, *actionSaveDataAs, *actionSaveMBSimH5DataAs, *actionSaveOpenMBVDataAs, *actionRefresh, *actionCreateFMU, *actionSaveStateVectorAs, *actionSaveStateTableAs, *actionSaveLinearSystemAnalysisAs, *actionUndo, *actionRedo, *solverInitialProj;
       OpenMBVGUI::AbstractViewFilter *elementViewFilter, *parameterViewFilter;
       QDockWidget *dockParameterTree;
       QTimer autoSaveTimer;
@@ -164,12 +164,12 @@ namespace MBSimGUI {
       void relnotes();
       void simulate();
       void stop();
-      void interrupt();
+      void terminate();
+      void kill();
       void openmbv();
       void h5plotserie();
       void linearSystemAnalysis();
       void showStateTable();
-      void kill();
       void createFMU();
       void highlightElement(const QModelIndex &current);
       void showElementContextMenu(const QModelIndex &current);
