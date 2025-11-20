@@ -27,8 +27,6 @@
 
 namespace MBSim {
 
-  extern bool odePackInUse;
-
   /** \brief Hindmarsh’s ODE solver LSODE
    *
    * Livermore Solver for Ordinary Differential Equations.
@@ -39,6 +37,7 @@ namespace MBSim {
   class LSODEIntegrator : public ImplicitIntegrator {
 
     public:
+      ~LSODEIntegrator();
 
       enum Method {
         nonstiff=0,

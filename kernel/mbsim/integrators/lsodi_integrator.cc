@@ -40,6 +40,8 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, LSODIIntegrator)
 
+  extern bool odePackInUse;
+
   LSODIIntegrator::Res LSODIIntegrator::res[5];
   LSODIIntegrator::Jac LSODIIntegrator::jac[5];
 

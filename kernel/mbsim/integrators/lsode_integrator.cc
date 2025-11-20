@@ -42,6 +42,10 @@ namespace MBSim {
 
   bool odePackInUse = false;
 
+  LSODEIntegrator::~LSODEIntegrator() {
+    odePackInUse = false;
+  }
+
   // This code is taken from opkda1.f
   double LSODEIntegrator::delta(int i, double z) const {
     return max(epsroot*abs(z),r0/rWork(lewt+i));

@@ -40,6 +40,8 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, LSODAIntegrator)
 
+  extern bool odePackInUse;
+
   // This code is taken from opkda1.f
   double LSODAIntegrator::delta(int i, double z) const {
     return max(epsroot*abs(z),r0/rWork(lewt+i));

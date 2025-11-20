@@ -27,8 +27,6 @@
 
 namespace MBSim {
 
-  extern bool odePackInUse;
-
   /** \brief Hindmarsh’s ODE solver LSODI
    *
    * Livermore Solver for Ordinary Differential Equations (Implicit form).
