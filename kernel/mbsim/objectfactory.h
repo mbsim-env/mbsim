@@ -137,7 +137,13 @@ ContainerType* ObjectFactory::createAndInit(const xercesc::DOMElement *element) 
     catch(MBXMLUtils::DOMEvalException &ex) {
       allErrors.add(boost::core::demangle(typeid(*ele).name()), std::make_shared<MBXMLUtils::DOMEvalException>(ex));
     }
-    catch(std::exception &ex) { // handles also MBSimError
+    catch(MBSimError &ex) {
+      // do not use ex.what(), but ex.getErrorMessage(), since ex.what() may be HTML encoded and polluted with location information
+      // the location information is useless since we already add here the error location of element.
+      allErrors.add(boost::core::demangle(typeid(*ele).name()),
+                    std::make_shared<MBXMLUtils::DOMEvalException>(ex.getErrorMessage(), element));
+    }
+    catch(std::exception &ex) {
       allErrors.add(boost::core::demangle(typeid(*ele).name()),
                     std::make_shared<MBXMLUtils::DOMEvalException>(ex.what(), element));
     }
