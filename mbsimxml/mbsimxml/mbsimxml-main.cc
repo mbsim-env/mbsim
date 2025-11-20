@@ -314,8 +314,8 @@ int main(int argc, char *argv[]) {
         unique_ptr<DynamicSystemSolver::SignalHandler> sigHandler; // install signal handler from now on (and deinstall on scope exit)
 
         stringstream MBSIMPRJstream;
+        string str;
         if(MBSIMPRJ=="-") {
-          string str;
           if(onlyLatestStdin) {
             // lock "mu" and check in a endless loop for new information from the thread
             unique_lock l(mu);
@@ -344,6 +344,9 @@ int main(int argc, char *argv[]) {
         }
         else
           sigHandler=make_unique<DynamicSystemSolver::SignalHandler>();
+
+        if(str.length()==0)
+          throw runtime_error("Simulation stopped.");
 
         Preprocess preprocess = MBSIMPRJ=="-" ?
           Preprocess(MBSIMPRJstream, parser, AUTORELOADTIME>0) : // ctor for input by stdin
