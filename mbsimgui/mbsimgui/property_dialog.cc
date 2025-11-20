@@ -66,6 +66,12 @@ namespace MBSimGUI {
     connect(buttonResize, &QPushButton::clicked, this, &PropertyDialog::updateWidget);
   }
 
+  void PropertyDialog::keyPressEvent(QKeyEvent *e) {
+    if(e->key() == Qt::Key_Escape)
+      return; // block Esc: a silent dialog close is using ESC is very unconvinient
+    BasicPropertyDialog::keyPressEvent(e);
+  }
+
   void PropertyDialog::clicked(QAbstractButton *button) {
     if(button == buttonBox->button(QDialogButtonBox::Ok))
       accept();
