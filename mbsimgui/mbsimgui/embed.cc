@@ -118,15 +118,15 @@ namespace MBSimGUI {
       //   return {};
     }
     catch(DOMEvalException &e) {
-      mw->setExitBad();
+      mw->setErrorOccured();
       cerr << e.getMessage() << endl;
     }
     catch(exception &e) {
-      mw->setExitBad();
+      mw->setErrorOccured();
       cerr << e.what() << endl;
     }
     catch(...) {
-      mw->setExitBad();
+      mw->setErrorOccured();
       cerr << "Unknwon error" << endl;
     }
     auto docFilename = D(ele1->getOwnerDocument())->getDocumentFilename();

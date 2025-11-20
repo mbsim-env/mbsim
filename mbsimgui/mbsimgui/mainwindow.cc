@@ -99,8 +99,6 @@ namespace MBSimGUI {
 
   MainWindow *mw;
 
-  bool MainWindow::exitOK = true;
-  
   const string NO_FILENAME("{no filename}");
 #ifdef _WIN32 // just a dummy absolute path used with NO_FILENAME
   const string dummyAbsPath("x:/");
@@ -560,12 +558,12 @@ namespace MBSimGUI {
       connect(&processRefresh,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
       [this](int exitCode, QProcess::ExitStatus exitStatus){
         if(exitCode!=0)
-          setExitBad();
+          setErrorOccured();
         connect(&process,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
         [this](int exitCode, QProcess::ExitStatus exitStatus){
           cout<<allOutput.toStdString();
           if(exitCode!=0)
-            setExitBad();
+            setErrorOccured();
           close();
         });
         simulate(true);
@@ -641,7 +639,7 @@ namespace MBSimGUI {
       setSimulateActionsEnabled(true);
     }
     else
-      setExitBad();
+      setErrorOccured();
     setProcessActionsEnabled(true);
     statusBar()->showMessage(tr("Ready"));
   }
@@ -717,7 +715,7 @@ namespace MBSimGUI {
     processRefresh.closeWriteChannel();
     processRefresh.waitForFinished(-1);
     if(processRefresh.exitStatus()!=QProcess::NormalExit || processRefresh.exitCode()!=0)
-      setExitBad();
+      setErrorOccured();
     if(lsa) delete lsa;
     if(st) delete st;
     centralWidget()->layout()->removeWidget(inlineOpenMBVMW);
@@ -1190,13 +1188,13 @@ namespace MBSimGUI {
           throw runtime_error("Unable load or parse XML file: "+fileName.toStdString());
       }
       catch(const std::exception &ex) {
-        mw->setExitBad();
+        mw->setErrorOccured();
         mw->statusBar()->showMessage(ex.what());
         cerr << ex.what() << endl;
         return;
       }
       catch(...) {
-        mw->setExitBad();
+        mw->setErrorOccured();
         mw->statusBar()->showMessage("Unknown exception");
         cerr << "Unknown exception." << endl;
         return;
@@ -1268,17 +1266,17 @@ namespace MBSimGUI {
       return true;
     }
     catch(const DOMException &ex) {
-      mw->setExitBad();
+      mw->setErrorOccured();
       mw->statusBar()->showMessage((X()%ex.getMessage()).c_str());
       cerr << X()%ex.getMessage() << endl;
     }
     catch(const std::exception &ex) {
-      mw->setExitBad();
+      mw->setErrorOccured();
       mw->statusBar()->showMessage(ex.what());
       cerr << ex.what() << endl;
     }
     catch(...) {
-      mw->setExitBad();
+      mw->setErrorOccured();
       mw->statusBar()->showMessage("Unknown exception");
       cerr << "Unknown exception." << endl;
     }
@@ -1395,12 +1393,12 @@ namespace MBSimGUI {
           eval->addParamSet(ele);
         }
         catch(const std::exception &error) {
-          mw->setExitBad();
+          mw->setErrorOccured();
           mw->statusBar()->showMessage((string("An exception occurred in updateParameters: ") + error.what()).c_str());
           cerr << string("An exception occurred in updateParameters: ") + error.what() << endl;
         }
         catch(...) {
-          mw->setExitBad();
+          mw->setErrorOccured();
           mw->statusBar()->showMessage("An unknown exception occurred in updateParameters.");
           cerr << "An unknown exception occurred in updateParameters." << endl;
         }
@@ -1419,7 +1417,7 @@ namespace MBSimGUI {
       catch(exception &ex) { \
         if(catchErrors) { \
           auto exmsg = dynamic_cast<DOMEvalException*>(&ex) ? static_cast<DOMEvalException&>(ex).getMessage() : ex.what(); \
-          mw->setExitBad(); \
+          mw->setErrorOccured(); \
           mw->statusBar()->showMessage(exmsg.c_str()); \
           std::cerr << msg << ": " << exmsg << std::endl; \
         } \
@@ -1428,7 +1426,7 @@ namespace MBSimGUI {
       } \
       catch(...) { \
         if(catchErrors) { \
-          mw->setExitBad(); \
+          mw->setErrorOccured(); \
           mw->statusBar()->showMessage("Unknown exception"); \
           std::cerr << msg << ": Unknwon exception" << std::endl; \
         } \
@@ -3585,17 +3583,17 @@ DEF mbsimgui_outdated_switch Switch {
       file[i]->setModified(false);
     }
     catch(const DOMException &ex) {
-      mw->setExitBad();
+      mw->setErrorOccured();
       mw->statusBar()->showMessage((X()%ex.getMessage()).c_str());
       cerr << X()%ex.getMessage() << endl;
     }
     catch(const std::exception &ex) {
-      mw->setExitBad();
+      mw->setErrorOccured();
       mw->statusBar()->showMessage(ex.what());
       cerr << ex.what() << endl;
     }
     catch(...) {
-      mw->setExitBad();
+      mw->setErrorOccured();
       mw->statusBar()->showMessage("Unknown exception");
       cerr << "Unknown exception." << endl;
     }
@@ -3633,12 +3631,12 @@ DEF mbsimgui_outdated_switch Switch {
 	  serializer->writeToURI(doc.get(), X()%(file.toStdString()));
 	}
 	catch(const std::exception &ex) {
-          mw->setExitBad();
+          mw->setErrorOccured();
           mw->statusBar()->showMessage(ex.what());
 	  cerr << ex.what() << endl;
 	}
 	catch(...) {
-          mw->setExitBad();
+          mw->setErrorOccured();
           mw->statusBar()->showMessage("Unknown exception");
 	  cerr << "Unknown exception" << endl;
 	}
@@ -3701,6 +3699,8 @@ DEF mbsimgui_outdated_switch Switch {
   }
 
   void MainWindow::updateNameOfCorrespondingElementAndItsChilds(const QModelIndex &index) {
+    bool oldErrorOccured = mw->errorOccured;
+    mw->errorOccured = false;
     auto model=static_cast<const ElementTreeModel*>(index.model());
     auto *item = model->getItem(index)->getItemData();
     if(auto *embedItemData = dynamic_cast<EmbedItemData*>(item); embedItemData && embedItemData->getXMLElement()) {
@@ -3711,6 +3711,7 @@ DEF mbsimgui_outdated_switch Switch {
     QModelIndex childIndex;
     for(int i=0; (childIndex=model->index(i,0,index)).isValid(); ++i)
       updateNameOfCorrespondingElementAndItsChilds(childIndex);
+    mw->errorOccured = mw->errorOccured || oldErrorOccured;
   }
 
   void MainWindow::setWindowModified(bool mod) {

@@ -50,17 +50,17 @@ using namespace xercesc;
 
 #define CATCH \
   catch(DOMLSException &ex) { \
-    mw->setExitBad(); \
+    mw->setErrorOccured(); \
     mw->statusBar()->showMessage((X()%ex.msg).c_str()); \
     cerr << X()%ex.msg << endl; \
   } \
   catch(exception &ex) { \
-    mw->setExitBad(); \
+    mw->setErrorOccured(); \
     mw->statusBar()->showMessage(ex.what()); \
     cerr << X()%ex.what() << endl; \
   } \
   catch(...) { \
-    mw->setExitBad(); \
+    mw->setErrorOccured(); \
     mw->statusBar()->showMessage("Unknown exception"); \
     cerr << "Unknown exception" << endl; \
   }
