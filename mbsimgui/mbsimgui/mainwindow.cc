@@ -380,7 +380,7 @@ namespace MBSimGUI {
     runMenu->addAction(actionSimulate);
     actionSimulate->setStatusTip(tr("Simulate the multibody system"));
     connect(actionSimulate,&QAction::triggered,this,&MainWindow::simulate);
-    actionInterrupt = runBar->addAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_MediaStop)),"Interrupt background tasks");
+    actionInterrupt = runBar->addAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_MediaStop)),"Stop background tasks");
     runMenu->addAction(actionInterrupt);
     connect(actionInterrupt,&QAction::triggered,this,&MainWindow::interrupt);
     actionKill = runBar->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"kill.svg").string())),"Kill background tasks");
@@ -485,8 +485,6 @@ namespace MBSimGUI {
     echoView->setParent(dockEchoArea);
     dockEchoArea->setWidget(echoView);
 
-    startProcessRefresh();
-
     QWidget *centralWidget = new QWidget(this);
     setCentralWidget(centralWidget);
     auto *mainlayout = new QHBoxLayout;
@@ -494,49 +492,49 @@ namespace MBSimGUI {
     centralWidget->setLayout(mainlayout);
     mainlayout->addWidget(inlineOpenMBVMW);
 
-    connect(&process,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
-      this, &MainWindow::processFinished);
-    processRefreshFinishedConnection=connect(&processRefresh,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
-      this, &MainWindow::startProcessRefresh);
-
-    // if process has new error output call statusBar()->showMessage(...) but only every 250ms
-    auto readyReadStandardError = [this]() {
-      if(process.isOpen()) {
-        auto output=process.readAllStandardError();
-        if(!output.isEmpty())
-          updateStatusMessage(output);
-      }
+    // if simulation process has new error output call statusBar()->showMessage(...) but only every 250ms
+    connect(&processSimulate,&QProcess::readyReadStandardError,[this]() {
+      auto output=processSimulate.readAllStandardError();
+      if(!output.isEmpty())
+        updateStatusMessage(output);
+        });
+    // if refresh process has new error output call statusBar()->showMessage(...) but only every 250ms
+    connect(&processRefresh,&QProcess::readyReadStandardError,[this]() {
       auto output=processRefresh.readAllStandardError();
       if(!output.isEmpty())
         updateStatusMessage(output);
-    };
-    connect(&process       ,&QProcess::readyReadStandardError,readyReadStandardError);
-    connect(&processRefresh,&QProcess::readyReadStandardError,readyReadStandardError);
+       });
 
-    // if process has new standard output call updateEchoView but only every 100ms
-    auto readyReadStandardOutput = [this, &arg]() {
-      if(process.isOpen()) {
-        auto output=process.readAllStandardOutput();
+    startProcessRefresh();
+
+    if(!arg.contains("--autoExit")) { // normal run (no --autoExit) -> pass also the output of process/processRefresh to readyReadStandardOutput
+      startProcessSimulate();
+      processSimulateFinishedConnection=connect(&processSimulate,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
+          this, &MainWindow::startProcessSimulate);
+      processRefreshFinishedConnection=connect(&processRefresh,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
+          this, &MainWindow::startProcessRefresh);
+      connect(&processSimulate,&QProcess::readyReadStandardOutput,[this]() {
+        auto output=processSimulate.readAllStandardOutput();
         if(!output.isEmpty())
           updateEchoView(output);
-      }
-      if(!arg.contains("--autoExit")) { // do not read from processRefresh if --autoExit
+          });
+      connect(&processRefresh,&QProcess::readyReadStandardOutput,[this]() {
         auto output=processRefresh.readAllStandardOutput();
         if(!output.isEmpty())
           updateEchoView(output);
-      }
-    };
-    if(!arg.contains("--autoExit")) { // normal run (no --autoExit) -> pass also the output of process/processRefresh to readyReadStandardOutput
-      connect(&process       ,&QProcess::readyReadStandardOutput,readyReadStandardOutput);
-      connect(&processRefresh,&QProcess::readyReadStandardOutput,readyReadStandardOutput);
+          });
     }
     else { // --autoExit case
-      // do not restart processRefresh (mbsimxml)
-      disconnect(processRefreshFinishedConnection);
+      startProcessSimulate(true);
       // store all output of processRefresh in "allOutput" and ...
       static QString allOutput;
-      connect(&process       ,&QProcess::readyReadStandardOutput,[this](){
-        allOutput+=process.readAllStandardOutput();
+      connect(&processSimulate,&QProcess::readyReadStandardOutput,[this](){
+        allOutput+=processSimulate.readAllStandardOutput();
+        // ... if 'MBXMLUTILS_PREPROCESS_CTOR' is found in the output then mbsimxml has already started
+        // and we can now close the write stream to exit mbsimxml after the content is processed which will call
+        // QProcess::finished at the end
+        if(allOutput.contains("MBXMLUTILS_PREPROCESS_CTOR"))
+          processSimulate.closeWriteChannel();
       });
       connect(&processRefresh,&QProcess::readyReadStandardOutput,[this](){
         allOutput+=processRefresh.readAllStandardOutput();
@@ -551,14 +549,14 @@ namespace MBSimGUI {
       [this](int exitCode, QProcess::ExitStatus exitStatus){
         if(exitCode!=0)
           setExitBad();
-        connect(&process,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
+        connect(&processSimulate,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
         [this](int exitCode, QProcess::ExitStatus exitStatus){
           cout<<allOutput.toStdString();
           if(exitCode!=0)
             setExitBad();
           close();
         });
-        simulate(true);
+        simulate();
       });
       // do how show the error dialog if a hidden parameter cannot be evaluated
       HiddenParErrorDialog::show = false;
@@ -611,29 +609,29 @@ namespace MBSimGUI {
   }
 
   void MainWindow::processFinished(int exitCode, QProcess::ExitStatus exitStatus) {
-    if(process.isOpen())
-      updateEchoView(process.readAllStandardOutput());
-    if(exitStatus == QProcess::NormalExit) {
-      QSettings settings;
-      bool saveFinalStateVector = settings.value("mainwindow/options/savestatevector", false).toBool();
-      if(settings.value("mainwindow/options/autoexport", false).toBool()) {
-        QString dir = settings.value("mainwindow/options/autoexportdir", "./").toString();
-        saveMBSimH5Data(dir+"/MBS.mbsh5");
-        saveOpenMBVXMLData(dir+"/MBS.ombvx");
-        saveOpenMBVH5Data(dir+"/MBS.ombvh5");
-        saveLinearSystemAnalysis(dir+"/eigenanalysis.mat");
-        saveInputTable(dir+"/inputtable.asc");
-        saveOutputTable(dir+"/outputtable.asc");
-        if(saveFinalStateVector)
-          saveStateVector(dir+"/statevector.asc");
-        saveStateTable(dir+"/statetable.asc");
-      }
-      setSimulateActionsEnabled(true);
-    }
-    else
-      setExitBad();
-    setProcessActionsEnabled(true);
-    statusBar()->showMessage(tr("Ready"));
+//    if(processSimulate.isOpen())
+//      updateEchoView(process.readAllStandardOutput());
+//    if(exitStatus == QProcess::NormalExit) {
+//      QSettings settings;
+//      bool saveFinalStateVector = settings.value("mainwindow/options/savestatevector", false).toBool();
+//      if(settings.value("mainwindow/options/autoexport", false).toBool()) {
+//        QString dir = settings.value("mainwindow/options/autoexportdir", "./").toString();
+//        saveMBSimH5Data(dir+"/MBS.mbsh5");
+//        saveOpenMBVXMLData(dir+"/MBS.ombvx");
+//        saveOpenMBVH5Data(dir+"/MBS.ombvh5");
+//        saveLinearSystemAnalysis(dir+"/eigenanalysis.mat");
+//        saveInputTable(dir+"/inputtable.asc");
+//        saveOutputTable(dir+"/outputtable.asc");
+//        if(saveFinalStateVector)
+//          saveStateVector(dir+"/statevector.asc");
+//        saveStateTable(dir+"/statetable.asc");
+//      }
+//      setSimulateActionsEnabled(true);
+//    }
+//    else
+//      setExitBad();
+//    setProcessActionsEnabled(true);
+//    statusBar()->showMessage(tr("Ready"));
   }
 
   void MainWindow::initInlineOpenMBV() {
@@ -707,6 +705,11 @@ namespace MBSimGUI {
     processRefresh.closeWriteChannel();
     processRefresh.waitForFinished(-1);
     if(processRefresh.exitStatus()!=QProcess::NormalExit || processRefresh.exitCode()!=0)
+      setExitBad();
+    disconnect(processSimulateFinishedConnection);
+    processSimulate.closeWriteChannel();
+    processSimulate.waitForFinished(-1);
+    if(processSimulate.exitStatus()!=QProcess::NormalExit || processSimulate.exitCode()!=0)
       setExitBad();
     if(lsa) delete lsa;
     if(st) delete st;
@@ -1679,7 +1682,7 @@ namespace MBSimGUI {
     QString uniqueTempDir_ = QString::fromStdString(uniqueTempDir.generic_string());
     processRefresh.setWorkingDirectory(uniqueTempDir_);
     processRefresh.start(QString::fromStdString((getInstallPath()/"bin"/"mbsimxml").string()), arg);
-    refresh();
+//    refresh();
   }
 
   void MainWindow::refresh() {
@@ -1826,26 +1829,7 @@ DEF mbsimgui_outdated_switch Switch {
     processRefresh.write("\0", 1);
   }
 
-  void MainWindow::simulate(bool stopAfterFirstStep) {
-    setProcessActionsEnabled(false);
-
-    statusBar()->showMessage(tr("Simulate"));
-
-    shared_ptr<DOMDocument> doc=mbxmlparser->createDocument();
-    doc->setDocumentURI(X()%D(this->doc)->getDocumentFilename().string());
-    auto *newDocElement = static_cast<DOMElement*>(doc->importNode(this->doc->getDocumentElement(), true));
-    doc->insertBefore(newDocElement, nullptr);
-    project->processIDAndHref(newDocElement);
-    string projectString;
-    DOMParser::serializeToString(doc.get(), projectString);
-
-    setSimulateActionsEnabled(false);
-    actionOpenMBV->setDisabled(false);
-    actionH5plotserie->setDisabled(false);
-
-    clearEchoView("Running 'mbsimxml' to simulate the model:\n\n");
-    echoView->showXMLCode(false);
-
+  void MainWindow::startProcessSimulate(bool stopAfterFirstStep) {
     QStringList arg;
     QSettings settings;
     if(settings.value("mainwindow/options/savestatevector", false).toBool())
@@ -1871,14 +1855,34 @@ DEF mbsimgui_outdated_switch Switch {
     arg.append("--modulePath");
     arg.append(QDir::currentPath());
 
-    //arg.append("--onlyLatestStdin"); // skip all input except the latest one
+    arg.append("--onlyLatestStdin"); // skip all input except the latest one
     arg.append("-"); // input stream mode of mbsimxml
     QString uniqueTempDir_ = QString::fromStdString(uniqueTempDir.generic_string());
-    process.setWorkingDirectory(uniqueTempDir_);
-    process.start(QString::fromStdString((getInstallPath()/"bin"/"mbsimxml").string()), arg);
-    process.write(projectString.data(), projectString.size());
-    process.write("\0", 1);
-    process.closeWriteChannel();
+    processSimulate.setWorkingDirectory(uniqueTempDir_);
+    processSimulate.start(QString::fromStdString((getInstallPath()/"bin"/"mbsimxml").string()), arg);
+  }
+
+  void MainWindow::simulate() {
+    //setProcessActionsEnabled(false);
+
+    statusBar()->showMessage(tr("Simulate"));
+
+    shared_ptr<DOMDocument> doc=mbxmlparser->createDocument();
+    doc->setDocumentURI(X()%D(this->doc)->getDocumentFilename().string());
+    auto *newDocElement = static_cast<DOMElement*>(doc->importNode(this->doc->getDocumentElement(), true));
+    doc->insertBefore(newDocElement, nullptr);
+    project->processIDAndHref(newDocElement);
+
+    setSimulateActionsEnabled(false);
+    actionOpenMBV->setDisabled(false);
+    actionH5plotserie->setDisabled(false);
+
+    clearEchoView("Running 'mbsimxml' to simulate the model:\n\n");
+
+    string projectString;
+    DOMParser::serializeToString(doc.get(), projectString);
+    processSimulate.write(projectString.data(), projectString.size());
+    processSimulate.write("\0", 1);
   }
 
   void MainWindow::openmbv() {
@@ -1899,7 +1903,7 @@ DEF mbsimgui_outdated_switch Switch {
     if(QFile::exists(file1) and QFile::exists(file2)) {
       if(not lsa) {
 	lsa = new LinearSystemAnalysisDialog(this);
-	connect(&process,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),this,[=](){ lsa->updateWidget(); });
+	connect(&processSimulate,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),this,[=](){ lsa->updateWidget(); });
       }
       lsa->show();
     }
@@ -1910,7 +1914,7 @@ DEF mbsimgui_outdated_switch Switch {
     if(QFile::exists(file)) {
       if(not st) {
 	st = new StateTableDialog(this);
-	connect(&process,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),st,&StateTableDialog::updateWidget);
+	connect(&processSimulate,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),st,&StateTableDialog::updateWidget);
       }
       st->show();
     }
@@ -3225,22 +3229,28 @@ DEF mbsimgui_outdated_switch Switch {
     //separatorAct->setVisible(numRecentFiles > 0);
   }
 
-  void MainWindow::interrupt() {
-    if(process.state()==QProcess::NotRunning && processRefresh.state()==QProcess::NotRunning)
-      return;
-    echoView->addOutputText("<span class=\"MBSIMGUI_ERROR\">'Interrupt background tasks' clicked</span>\n");
+  void MainWindow::stop() {
+    echoView->addOutputText("<span class=\"MBSIMGUI_ERROR\">'Stop simulation' clicked</span>\n");
     echoView->updateOutput(true);
-    process.terminate();
-    processRefresh.terminate();
+    processSimulate.write("", 0);
+  }
+
+  void MainWindow::interrupt() {
+    echoView->addOutputText("<span class=\"MBSIMGUI_ERROR\">'Stop background tasks' clicked</span>\n");
+    echoView->updateOutput(true);
+    if(not processRefresh.state()==QProcess::NotRunning)
+      processRefresh.terminate();
+    if(not processSimulate.state()==QProcess::NotRunning)
+      processSimulate.terminate();
   }
 
   void MainWindow::kill() {
-    if(process.state()==QProcess::NotRunning && processRefresh.state()==QProcess::NotRunning)
-      return;
     echoView->addOutputText("<span class=\"MBSIMGUI_ERROR\">'Kill background tasks' clicked</span>\n");
     echoView->updateOutput(true);
-    process.kill();
-    processRefresh.kill();
+    if(not processRefresh.state()==QProcess::NotRunning)
+      processRefresh.kill();
+    if(not processSimulate.state()==QProcess::NotRunning)
+      processSimulate.kill();
   }
 
   void MainWindow::flexibleBodyTool() {
@@ -3286,10 +3296,10 @@ DEF mbsimgui_outdated_switch Switch {
 	  arg.append(projectFile);
 	  clearEchoView("Running 'createFMU' to create a FMU from the model:\n\n");
 	  echoView->showXMLCode(false);
-	  process.setWorkingDirectory(uniqueTempDir_);
+	  processSimulate.setWorkingDirectory(uniqueTempDir_);
 	  fmuFileName = dialog.getFileName();
-	  process.start(QString::fromStdString((getInstallPath()/"bin"/"mbsimCreateFMU").string()), arg);
-	  connect(&process,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),this,[=]() {
+	  processSimulate.start(QString::fromStdString((getInstallPath()/"bin"/"mbsimCreateFMU").string()), arg);
+	  connect(&processSimulate,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),this,[=]() {
 	    if(QFile::exists(fmuFileName))
 	      QFile::remove(fmuFileName);
 	    QFile::copy(QString::fromStdString(uniqueTempDir.generic_string())+"/"+"mbsim.fmu",fmuFileName);
@@ -3301,7 +3311,7 @@ DEF mbsimgui_outdated_switch Switch {
   }
 
   void MainWindow::updateEchoViewSlot(const QByteArray &data) {
-    if(process.isOpen())
+    if(processSimulate.isOpen())
       // if a process (simulation) is running just add the new output
       echoView->addOutputText(data.constData());
     else {

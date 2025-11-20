@@ -104,7 +104,7 @@ namespace MBSimGUI {
       QTabWidget *tabWidget;
       std::shared_ptr<bool> debugStreamFlag;
       QString projectFile;
-      QProcess process;
+      QProcess processSimulate;
       QProcess processRefresh;
       OpenMBVGUI::MainWindow *inlineOpenMBVMW;
       boost::filesystem::path uniqueTempDir;
@@ -162,7 +162,8 @@ namespace MBSimGUI {
       void saveLinearSystemAnalysisAs();
       void about();
       void relnotes();
-      void simulate(bool stopAfterFirstStep=false);
+      void simulate();
+      void stop();
       void interrupt();
       void openmbv();
       void h5plotserie();
@@ -187,7 +188,9 @@ namespace MBSimGUI {
 
       int openedEditors { 0 };
       void startProcessRefresh();
+      void startProcessSimulate(bool stopAfterFirstStep=false);
       QMetaObject::Connection processRefreshFinishedConnection;
+      QMetaObject::Connection processSimulateFinishedConnection;
       void updateEchoViewSlot(const QByteArray &data);
       void updateStatusMessageSlot(const QByteArray &data);
 
@@ -340,6 +343,7 @@ namespace MBSimGUI {
       FlexibleBodyTool *getFlexibleBodyTool() { return fbt; }
       void expandToDepth(int depth);
       void restartProcessRefresh() { processRefresh.closeWriteChannel(); }
+      void restartProcessSimulate() { processSimulate.closeWriteChannel(); }
       void setProcessActionsEnabled(bool enabled);
       void setSimulateActionsEnabled(bool enabled);
 
