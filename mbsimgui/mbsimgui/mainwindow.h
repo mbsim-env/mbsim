@@ -92,7 +92,7 @@ namespace MBSimGUI {
     Q_OBJECT
 
     private:
-      static bool exitOK;
+      bool errorOccured { false };
       std::unordered_map<std::string,Element*> idMap;
       Project *project;
       std::vector<FileItemData*> file;
@@ -206,6 +206,8 @@ namespace MBSimGUI {
     public:
       MainWindow(QStringList &arg);
       ~MainWindow() override;
+      const std::vector<FileItemData*> getFile() const { return file; }
+      std::shared_ptr<xercesc::DOMDocument> getProjectDocument() const { return doc; }
       void setWindowModified(bool mod);
       std::shared_ptr<MBXMLUtils::DOMParser> mbxmlparser;
       std::shared_ptr<MBXMLUtils::DOMParser> mbxmlparserNoVal;
@@ -336,8 +338,8 @@ namespace MBSimGUI {
       FileItemData* addFile(const QFileInfo &file);
       void removeFile(FileItemData *fileItem);
       std::string getID(Element* element) { std::string ID = std::to_string(IDcounter++); idMap[ID] = element; return ID; }
-      static int getExitOK() { return exitOK; }
-      static void setExitBad() { exitOK=false; }
+      int getErrorOccured() { return errorOccured; }
+      void setErrorOccured() { errorOccured=true; }
       static boost::filesystem::path getInstallPath();
       void flexibleBodyTool();
       FlexibleBodyTool *getFlexibleBodyTool() { return fbt; }

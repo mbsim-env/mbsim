@@ -265,7 +265,11 @@ namespace MBSim {
       // we convert every possible MBSimError exception here to a runtime_error since
       // we can not throw a MBSimError here since containerName and getPath is used in MBSimError itself
       // -> endless recursive call (however the code above should not throw any exception)
-      throw runtime_error(ex.what());
+      string mbsimLoc;
+      if(!ex.getPath().empty())
+        mbsimLoc="\n(At MBSim element "+ex.getPath()+")";
+      auto msg=ex.getErrorMessage()+mbsimLoc;
+      throw runtime_error(msg);
     }
   }
 

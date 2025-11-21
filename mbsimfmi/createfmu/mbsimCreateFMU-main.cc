@@ -330,10 +330,14 @@ int main(int argc, char *argv[]) {
         integrator->preIntegrate();
       }
       catch(MBSimError &ex) {
+        string mbsimLoc;
+        if(!ex.getPath().empty())
+          mbsimLoc="\n(At MBSim element "+ex.getPath()+")";
+        auto msg=ex.getErrorMessage()+mbsimLoc;
         auto &integratorRef=*integrator;
         throw runtime_error("The used integrator "+boost::core::demangle(typeid(integratorRef).name())+
           " failed to initialize the co-simulation interface. Error message was:\n"+
-          ex.what()+"\n"+
+          msg+"\n"+
           "The model may be wrong or this integrator cannot be used for cosim FMUs.");
       }
     }

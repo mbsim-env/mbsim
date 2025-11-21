@@ -46,6 +46,9 @@ difftoolCmd.diffcmd=None
 octErrRE=re.compile("Caught octave exception .*\n")
 octErrREreplace="Caught octave exception **octave version dependent**\n"
 
+mbsimIDPtrRE=re.compile("with_ID_0x[A-Fa-f0-9]+")
+mbsimIDPtrREreplace="with_ID_0xXXXXXX"
+
 def errorOutputExt(errorFormat):
   if errorFormat=="GCCNONE": return ".txt"
   if errorFormat=="HTMLFILELINE": return ".xml"
@@ -69,6 +72,7 @@ def checkErrorFormat(dir, errorFormat):
     cur=ex.output
   cur=cur.decode("utf-8")
   cur=octErrRE.sub(octErrREreplace, cur) # replace octave error output which may be octave version dependent
+  cur=mbsimIDPtrRE.sub(mbsimIDPtrREreplace, cur) # replace mbsim pointer IDs
   cur=cur.replace("\\", "/") # convert windows path \ to unix path / to allow the same reference for win/linux
 
   if errorFormat == "HTMLXPATH":
@@ -126,6 +130,7 @@ def checkGUIError(dir):
     cur=ex.output
   cur=cur.decode("utf-8")
   cur=octErrRE.sub(octErrREreplace, cur) # replace octave error output which may be octave version dependent
+  cur=mbsimIDPtrRE.sub(mbsimIDPtrREreplace, cur) # replace mbsim pointer IDs
   cur=cur.replace("\\", "/") # convert windows path \ to unix path / to allow the same reference for win/linux
 
   # get all elements, including and  after the first <span class="MBSIMGUI_ERROR"> element as childs of curRoot

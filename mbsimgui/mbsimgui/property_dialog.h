@@ -89,6 +89,7 @@ namespace MBSimGUI {
       void showEvent(QShowEvent *event) override;
       void hideEvent(QHideEvent *event) override;
       void closeEvent(QCloseEvent *event) override;
+      void keyPressEvent(QKeyEvent *e) override;
       void clicked(QAbstractButton *button);
       virtual void updateWidget() { }
       std::map<QString,QVBoxLayout*> layout;

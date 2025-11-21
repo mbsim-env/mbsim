@@ -236,13 +236,13 @@ namespace MBSimGUI {
                 name += QString(" ❙ ") + QString::fromStdString(curName);
             }
             catch(exception &ex) {
-              mw->setExitBad();
+              mw->setErrorOccured();
               auto msg = dynamic_cast<DOMEvalException*>(&ex) ? static_cast<DOMEvalException&>(ex).getMessage() : ex.what();
               mw->statusBar()->showMessage(("Cannot evaluate element name to string: " + msg).c_str());
               std::cerr << "Cannot evaluate element name to string: " << msg << std::endl;
             }
             catch(...) {
-              mw->setExitBad();
+              mw->setErrorOccured();
               mw->statusBar()->showMessage("Cannot evaluate element name to string: Unknwon exception");
               std::cerr << "Cannot evaluate element name to string: Unknwon exception" << std::endl;
             }

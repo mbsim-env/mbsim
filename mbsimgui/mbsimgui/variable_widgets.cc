@@ -1250,13 +1250,13 @@ namespace MBSimGUI {
       evalDialog.exec();
     }
     catch(exception &ex) {
-      mw->setExitBad();
+      mw->setErrorOccured();
       auto msg = dynamic_cast<DOMEvalException*>(&ex) ? static_cast<DOMEvalException&>(ex).getMessage() : ex.what();
       QMessageBox::warning(this, "Expression evaluation", QString::fromStdString(msg));
       cerr<<"Error: Expression evaluation "<<msg<<endl;
     }
     catch(...) {
-      mw->setExitBad();
+      mw->setErrorOccured();
       QMessageBox::warning(this, "Expression evaluation", "Unknown error");
       cerr<<"Error: Expression evaluation Unknown error"<<endl;
     }

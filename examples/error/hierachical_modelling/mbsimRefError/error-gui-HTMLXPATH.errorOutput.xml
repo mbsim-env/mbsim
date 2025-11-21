@@ -1,8 +1,8 @@
 <root>
   <span class="MBSIMGUI_ERROR">
     <span class="MBXMLUTILS_ERROROUTPUT">
-      <a href="submodel/Untergruppe.xml?xpath=/{http://www.mbsim-env.de/MBSim}Group[1]/{http://www.mbsim-env.de/MBSim}objects[1]/{http://www.mbsim-env.de/MBSim}RigidBody[1]/{http://www.mbsim-env.de/MBSim}mass[1]&amp;line=16">Untergruppe.xml:.../objects[1]/RigidBody[1]/mass[1]</a>:<br />
-      <span class="MBXMLUTILS_MSG">Mass must be nonnegative
+      <a href="submodel/Untergruppe.xml?xpath=/{http://www.mbsim-env.de/MBSim}Group[1]/{http://www.mbsim-env.de/MBSim}objects[1]/{http://www.mbsim-env.de/MBSim}RigidBody[1]&amp;line=10">Untergruppe.xml:/Group[1]/objects[1]/RigidBody[1]</a>:<br />
+      <span class="MBXMLUTILS_MSG">Evaluation of refernece 'Frame[Cerror]' failed: Message from Object[Box1(with_ID_0xXXXXXX)]: (Body::getFrame): The body comprises no frame "Cerror"!
 </span>
       <span class="MBSIMGUI_ERROR">Created by object of type MBSim::RigidBody
 </span>
@@ -81,8 +81,8 @@
   </span>
   <span class="MBSIMGUI_ERROR">
     <span class="MBXMLUTILS_ERROROUTPUT">
-      <a href="submodel/Untergruppe.xml?xpath=/{http://www.mbsim-env.de/MBSim}Group[1]/{http://www.mbsim-env.de/MBSim}objects[1]/{http://www.mbsim-env.de/MBSim}RigidBody[1]/{http://www.mbsim-env.de/MBSim}mass[1]&amp;line=16">Untergruppe.xml:.../objects[1]/RigidBody[1]/mass[1]</a>:<br />
-      <span class="MBXMLUTILS_MSG">Mass must be nonnegative
+      <a href="submodel/Untergruppe.xml?xpath=/{http://www.mbsim-env.de/MBSim}Group[1]/{http://www.mbsim-env.de/MBSim}objects[1]/{http://www.mbsim-env.de/MBSim}RigidBody[1]&amp;line=10">Untergruppe.xml:/Group[1]/objects[1]/RigidBody[1]</a>:<br />
+      <span class="MBXMLUTILS_MSG">Evaluation of refernece 'Frame[Cerror]' failed: Message from Object[Box1(with_ID_0xXXXXXX)]: (Body::getFrame): The body comprises no frame "Cerror"!
 </span>
       <span class="MBSIMGUI_ERROR">Created by object of type MBSim::RigidBody
 </span>

@@ -1,7 +1,7 @@
 <root>
   <span class="MBSIMGUI_ERROR">
     <span class="MBXMLUTILS_ERROROUTPUT">
-      <a href="MBS.mbsim.xml?xpath=/{http://www.mbsim-env.de/MBSim}DynamicSystemSolver[1]/{http://www.mbsim-env.de/MBSim}objects[1]/{http://www.mbsim-env.de/MBSim}RigidBody[1]/{http://www.mbsim-env.de/MBSim}timeDependentTranslation[1]/{http://www.mbsim-env.de/MBSim}BidirectionalFunction[1]/{http://www.mbsim-env.de/MBSim}negativeDirectionalFunction[1]/{http://www.mbsim-env.de/MBSim}SymbolicFunction[1]&amp;line=19">MBS.mbsim.xml:19:/DynamicSystemSolver[1]/objects[1]/RigidBody[1]/timeDependentTranslation[1]/BidirectionalFunction[1]/negativeDirectionalFunction[1]/SymbolicFunction[1]</a>:<br />
+      <a href="MBS.mbsim.xml?xpath=/{http://www.mbsim-env.de/MBSim}DynamicSystemSolver[1]/{http://www.mbsim-env.de/MBSim}objects[1]/{http://www.mbsim-env.de/MBSim}RigidBody[1]/{http://www.mbsim-env.de/MBSim}timeDependentTranslation[1]/{http://www.mbsim-env.de/MBSim}BidirectionalFunction[1]/{http://www.mbsim-env.de/MBSim}negativeDirectionalFunction[1]/{http://www.mbsim-env.de/MBSim}SymbolicFunction[1]&amp;line=19">MBS.mbsim.xml:.../BidirectionalFunction[1]/negativeDirectionalFunction[1]/SymbolicFunction[1]</a>:<br />
       <span class="MBXMLUTILS_MSG">No 'name' attribute allowed for Function's.
 </span>
       <span class="MBSIMGUI_ERROR">Created by object of type MBSim::SymbolicFunction&lt;fmatvec::Vector&lt;fmatvec::Fixed&lt;3&gt;, double&gt; (double)&gt; being the 2nd of 28 possible object types.
@@ -9,7 +9,7 @@
       <span class="MBSIMGUI_ERROR" />
     </span>
     <span class="MBXMLUTILS_ERROROUTPUT MBXMLUTILS_SSE">
-      <a href="MBS.mbsx?xpath=/{http://www.mbsim-env.de/MBSimXML}MBSimProject[1]/{http://www.mbsim-env.de/MBXMLUtils}Embed[1]&amp;line=5">MBS.mbsx:5:/mx:MBSimProject[1]/p:Embed[1]</a>:<br />
+      <a href="MBS.mbsx?xpath=/{http://www.mbsim-env.de/MBSimXML}MBSimProject[1]/{http://www.mbsim-env.de/MBXMLUtils}Embed[1]&amp;line=5">MBS.mbsx:/mx:MBSimProject[1]/p:Embed[1]</a>:<br />
       <span class="MBXMLUTILS_MSG">included from here</span>
     </span>
   </span>
@@ -17,13 +17,13 @@
 </span>
   <span class="MBSIMGUI_ERROR">
     <span class="MBXMLUTILS_ERROROUTPUT MBXMLUTILS_SSE">
-      <a href="MBS.mbsim.xml?xpath=/{http://www.mbsim-env.de/MBSim}DynamicSystemSolver[1]/{http://www.mbsim-env.de/MBSim}objects[1]/{http://www.mbsim-env.de/MBSim}RigidBody[1]/{http://www.mbsim-env.de/MBSim}timeDependentTranslation[1]/{http://www.mbsim-env.de/MBSim}BidirectionalFunction[1]/{http://www.mbsim-env.de/MBSim}negativeDirectionalFunction[1]&amp;line=18">MBS.mbsim.xml:18:/DynamicSystemSolver[1]/objects[1]/RigidBody[1]/timeDependentTranslation[1]/BidirectionalFunction[1]/negativeDirectionalFunction[1]</a>:<br />
+      <a href="MBS.mbsim.xml?xpath=/{http://www.mbsim-env.de/MBSim}DynamicSystemSolver[1]/{http://www.mbsim-env.de/MBSim}objects[1]/{http://www.mbsim-env.de/MBSim}RigidBody[1]/{http://www.mbsim-env.de/MBSim}timeDependentTranslation[1]/{http://www.mbsim-env.de/MBSim}BidirectionalFunction[1]/{http://www.mbsim-env.de/MBSim}negativeDirectionalFunction[1]&amp;line=18">MBS.mbsim.xml:.../timeDependentTranslation[1]/BidirectionalFunction[1]/negativeDirectionalFunction[1]</a>:<br />
       <span class="MBXMLUTILS_MSG">Created by object of type MBSim::BidirectionalFunction&lt;fmatvec::Vector&lt;fmatvec::Fixed&lt;3&gt;, double&gt; (double)&gt; being the 3rd of 4 possible object types.
 </span>
       <span class="MBSIMGUI_ERROR">  </span>
     </span>
     <span class="MBXMLUTILS_ERROROUTPUT MBXMLUTILS_SSE">
-      <a href="MBS.mbsx?xpath=/{http://www.mbsim-env.de/MBSimXML}MBSimProject[1]/{http://www.mbsim-env.de/MBXMLUtils}Embed[1]&amp;line=5">MBS.mbsx:5:/mx:MBSimProject[1]/p:Embed[1]</a>:<br />
+      <a href="MBS.mbsx?xpath=/{http://www.mbsim-env.de/MBSimXML}MBSimProject[1]/{http://www.mbsim-env.de/MBXMLUtils}Embed[1]&amp;line=5">MBS.mbsx:/mx:MBSimProject[1]/p:Embed[1]</a>:<br />
       <span class="MBXMLUTILS_MSG">included from here</span>
     </span>
   </span>
@@ -31,31 +31,31 @@
 </span>
   <span class="MBSIMGUI_ERROR">
     <span class="MBXMLUTILS_ERROROUTPUT MBXMLUTILS_SSE">
-      <a href="MBS.mbsim.xml?xpath=/{http://www.mbsim-env.de/MBSim}DynamicSystemSolver[1]/{http://www.mbsim-env.de/MBSim}objects[1]/{http://www.mbsim-env.de/MBSim}RigidBody[1]/{http://www.mbsim-env.de/MBSim}timeDependentTranslation[1]&amp;line=16">MBS.mbsim.xml:16:/DynamicSystemSolver[1]/objects[1]/RigidBody[1]/timeDependentTranslation[1]</a>:<br />
+      <a href="MBS.mbsim.xml?xpath=/{http://www.mbsim-env.de/MBSim}DynamicSystemSolver[1]/{http://www.mbsim-env.de/MBSim}objects[1]/{http://www.mbsim-env.de/MBSim}RigidBody[1]/{http://www.mbsim-env.de/MBSim}timeDependentTranslation[1]&amp;line=16">MBS.mbsim.xml:.../objects[1]/RigidBody[1]/timeDependentTranslation[1]</a>:<br />
       <span class="MBXMLUTILS_MSG">Created by object of type MBSim::RigidBody
 </span>
       <span class="MBSIMGUI_ERROR">    </span>
     </span>
     <span class="MBXMLUTILS_ERROROUTPUT MBXMLUTILS_SSE">
-      <a href="MBS.mbsx?xpath=/{http://www.mbsim-env.de/MBSimXML}MBSimProject[1]/{http://www.mbsim-env.de/MBXMLUtils}Embed[1]&amp;line=5">MBS.mbsx:5:/mx:MBSimProject[1]/p:Embed[1]</a>:<br />
+      <a href="MBS.mbsx?xpath=/{http://www.mbsim-env.de/MBSimXML}MBSimProject[1]/{http://www.mbsim-env.de/MBXMLUtils}Embed[1]&amp;line=5">MBS.mbsx:/mx:MBSimProject[1]/p:Embed[1]</a>:<br />
       <span class="MBXMLUTILS_MSG">included from here</span>
     </span>
   </span>
   <span class="MBSIMGUI_ERROR">
     <span class="MBXMLUTILS_ERROROUTPUT MBXMLUTILS_SSE">
-      <a href="MBS.mbsim.xml?xpath=/{http://www.mbsim-env.de/MBSim}DynamicSystemSolver[1]/{http://www.mbsim-env.de/MBSim}objects[1]&amp;line=10">MBS.mbsim.xml:10:/DynamicSystemSolver[1]/objects[1]</a>:<br />
+      <a href="MBS.mbsim.xml?xpath=/{http://www.mbsim-env.de/MBSim}DynamicSystemSolver[1]/{http://www.mbsim-env.de/MBSim}objects[1]&amp;line=10">MBS.mbsim.xml:/DynamicSystemSolver[1]/objects[1]</a>:<br />
       <span class="MBXMLUTILS_MSG">Created by object of type MBSim::DynamicSystemSolver
 </span>
       <span class="MBSIMGUI_ERROR">      </span>
     </span>
     <span class="MBXMLUTILS_ERROROUTPUT MBXMLUTILS_SSE">
-      <a href="MBS.mbsx?xpath=/{http://www.mbsim-env.de/MBSimXML}MBSimProject[1]/{http://www.mbsim-env.de/MBXMLUtils}Embed[1]&amp;line=5">MBS.mbsx:5:/mx:MBSimProject[1]/p:Embed[1]</a>:<br />
+      <a href="MBS.mbsx?xpath=/{http://www.mbsim-env.de/MBSimXML}MBSimProject[1]/{http://www.mbsim-env.de/MBXMLUtils}Embed[1]&amp;line=5">MBS.mbsx:/mx:MBSimProject[1]/p:Embed[1]</a>:<br />
       <span class="MBXMLUTILS_MSG">included from here</span>
     </span>
   </span>
   <span class="MBSIMGUI_ERROR">
     <span class="MBXMLUTILS_ERROROUTPUT">
-      <a href="MBS.mbsim.xml?xpath=/{http://www.mbsim-env.de/MBSim}DynamicSystemSolver[1]/{http://www.mbsim-env.de/MBSim}objects[1]/{http://www.mbsim-env.de/MBSim}RigidBody[1]/{http://www.mbsim-env.de/MBSim}timeDependentTranslation[1]/{http://www.mbsim-env.de/MBSim}BidirectionalFunction[1]/{http://www.mbsim-env.de/MBSim}negativeDirectionalFunction[1]/{http://www.mbsim-env.de/MBSim}SymbolicFunction[1]&amp;line=19">MBS.mbsim.xml:19:/DynamicSystemSolver[1]/objects[1]/RigidBody[1]/timeDependentTranslation[1]/BidirectionalFunction[1]/negativeDirectionalFunction[1]/SymbolicFunction[1]</a>:<br />
+      <a href="MBS.mbsim.xml?xpath=/{http://www.mbsim-env.de/MBSim}DynamicSystemSolver[1]/{http://www.mbsim-env.de/MBSim}objects[1]/{http://www.mbsim-env.de/MBSim}RigidBody[1]/{http://www.mbsim-env.de/MBSim}timeDependentTranslation[1]/{http://www.mbsim-env.de/MBSim}BidirectionalFunction[1]/{http://www.mbsim-env.de/MBSim}negativeDirectionalFunction[1]/{http://www.mbsim-env.de/MBSim}SymbolicFunction[1]&amp;line=19">MBS.mbsim.xml:.../BidirectionalFunction[1]/negativeDirectionalFunction[1]/SymbolicFunction[1]</a>:<br />
       <span class="MBXMLUTILS_MSG">No 'name' attribute allowed for Function's.
 </span>
       <span class="MBSIMGUI_ERROR">Created by object of type MBSim::SymbolicFunction&lt;fmatvec::Vector&lt;fmatvec::Fixed&lt;3&gt;, double&gt; (double)&gt; being the 2nd of 28 possible object types.
@@ -63,7 +63,7 @@
       <span class="MBSIMGUI_ERROR" />
     </span>
     <span class="MBXMLUTILS_ERROROUTPUT MBXMLUTILS_SSE">
-      <a href="MBS.mbsx?xpath=/{http://www.mbsim-env.de/MBSimXML}MBSimProject[1]/{http://www.mbsim-env.de/MBXMLUtils}Embed[1]&amp;line=5">MBS.mbsx:5:/mx:MBSimProject[1]/p:Embed[1]</a>:<br />
+      <a href="MBS.mbsx?xpath=/{http://www.mbsim-env.de/MBSimXML}MBSimProject[1]/{http://www.mbsim-env.de/MBXMLUtils}Embed[1]&amp;line=5">MBS.mbsx:/mx:MBSimProject[1]/p:Embed[1]</a>:<br />
       <span class="MBXMLUTILS_MSG">included from here</span>
     </span>
   </span>
@@ -71,13 +71,13 @@
 </span>
   <span class="MBSIMGUI_ERROR">
     <span class="MBXMLUTILS_ERROROUTPUT MBXMLUTILS_SSE">
-      <a href="MBS.mbsim.xml?xpath=/{http://www.mbsim-env.de/MBSim}DynamicSystemSolver[1]/{http://www.mbsim-env.de/MBSim}objects[1]/{http://www.mbsim-env.de/MBSim}RigidBody[1]/{http://www.mbsim-env.de/MBSim}timeDependentTranslation[1]/{http://www.mbsim-env.de/MBSim}BidirectionalFunction[1]/{http://www.mbsim-env.de/MBSim}negativeDirectionalFunction[1]&amp;line=18">MBS.mbsim.xml:18:/DynamicSystemSolver[1]/objects[1]/RigidBody[1]/timeDependentTranslation[1]/BidirectionalFunction[1]/negativeDirectionalFunction[1]</a>:<br />
+      <a href="MBS.mbsim.xml?xpath=/{http://www.mbsim-env.de/MBSim}DynamicSystemSolver[1]/{http://www.mbsim-env.de/MBSim}objects[1]/{http://www.mbsim-env.de/MBSim}RigidBody[1]/{http://www.mbsim-env.de/MBSim}timeDependentTranslation[1]/{http://www.mbsim-env.de/MBSim}BidirectionalFunction[1]/{http://www.mbsim-env.de/MBSim}negativeDirectionalFunction[1]&amp;line=18">MBS.mbsim.xml:.../timeDependentTranslation[1]/BidirectionalFunction[1]/negativeDirectionalFunction[1]</a>:<br />
       <span class="MBXMLUTILS_MSG">Created by object of type MBSim::BidirectionalFunction&lt;fmatvec::Vector&lt;fmatvec::Fixed&lt;3&gt;, double&gt; (double)&gt; being the 3rd of 4 possible object types.
 </span>
       <span class="MBSIMGUI_ERROR">  </span>
     </span>
     <span class="MBXMLUTILS_ERROROUTPUT MBXMLUTILS_SSE">
-      <a href="MBS.mbsx?xpath=/{http://www.mbsim-env.de/MBSimXML}MBSimProject[1]/{http://www.mbsim-env.de/MBXMLUtils}Embed[1]&amp;line=5">MBS.mbsx:5:/mx:MBSimProject[1]/p:Embed[1]</a>:<br />
+      <a href="MBS.mbsx?xpath=/{http://www.mbsim-env.de/MBSimXML}MBSimProject[1]/{http://www.mbsim-env.de/MBXMLUtils}Embed[1]&amp;line=5">MBS.mbsx:/mx:MBSimProject[1]/p:Embed[1]</a>:<br />
       <span class="MBXMLUTILS_MSG">included from here</span>
     </span>
   </span>
@@ -85,25 +85,25 @@
 </span>
   <span class="MBSIMGUI_ERROR">
     <span class="MBXMLUTILS_ERROROUTPUT MBXMLUTILS_SSE">
-      <a href="MBS.mbsim.xml?xpath=/{http://www.mbsim-env.de/MBSim}DynamicSystemSolver[1]/{http://www.mbsim-env.de/MBSim}objects[1]/{http://www.mbsim-env.de/MBSim}RigidBody[1]/{http://www.mbsim-env.de/MBSim}timeDependentTranslation[1]&amp;line=16">MBS.mbsim.xml:16:/DynamicSystemSolver[1]/objects[1]/RigidBody[1]/timeDependentTranslation[1]</a>:<br />
+      <a href="MBS.mbsim.xml?xpath=/{http://www.mbsim-env.de/MBSim}DynamicSystemSolver[1]/{http://www.mbsim-env.de/MBSim}objects[1]/{http://www.mbsim-env.de/MBSim}RigidBody[1]/{http://www.mbsim-env.de/MBSim}timeDependentTranslation[1]&amp;line=16">MBS.mbsim.xml:.../objects[1]/RigidBody[1]/timeDependentTranslation[1]</a>:<br />
       <span class="MBXMLUTILS_MSG">Created by object of type MBSim::RigidBody
 </span>
       <span class="MBSIMGUI_ERROR">    </span>
     </span>
     <span class="MBXMLUTILS_ERROROUTPUT MBXMLUTILS_SSE">
-      <a href="MBS.mbsx?xpath=/{http://www.mbsim-env.de/MBSimXML}MBSimProject[1]/{http://www.mbsim-env.de/MBXMLUtils}Embed[1]&amp;line=5">MBS.mbsx:5:/mx:MBSimProject[1]/p:Embed[1]</a>:<br />
+      <a href="MBS.mbsx?xpath=/{http://www.mbsim-env.de/MBSimXML}MBSimProject[1]/{http://www.mbsim-env.de/MBXMLUtils}Embed[1]&amp;line=5">MBS.mbsx:/mx:MBSimProject[1]/p:Embed[1]</a>:<br />
       <span class="MBXMLUTILS_MSG">included from here</span>
     </span>
   </span>
   <span class="MBSIMGUI_ERROR">
     <span class="MBXMLUTILS_ERROROUTPUT MBXMLUTILS_SSE">
-      <a href="MBS.mbsim.xml?xpath=/{http://www.mbsim-env.de/MBSim}DynamicSystemSolver[1]/{http://www.mbsim-env.de/MBSim}objects[1]&amp;line=10">MBS.mbsim.xml:10:/DynamicSystemSolver[1]/objects[1]</a>:<br />
+      <a href="MBS.mbsim.xml?xpath=/{http://www.mbsim-env.de/MBSim}DynamicSystemSolver[1]/{http://www.mbsim-env.de/MBSim}objects[1]&amp;line=10">MBS.mbsim.xml:/DynamicSystemSolver[1]/objects[1]</a>:<br />
       <span class="MBXMLUTILS_MSG">Created by object of type MBSim::DynamicSystemSolver
 </span>
       <span class="MBSIMGUI_ERROR">      </span>
     </span>
     <span class="MBXMLUTILS_ERROROUTPUT MBXMLUTILS_SSE">
-      <a href="MBS.mbsx?xpath=/{http://www.mbsim-env.de/MBSimXML}MBSimProject[1]/{http://www.mbsim-env.de/MBXMLUtils}Embed[1]&amp;line=5">MBS.mbsx:5:/mx:MBSimProject[1]/p:Embed[1]</a>:<br />
+      <a href="MBS.mbsx?xpath=/{http://www.mbsim-env.de/MBSimXML}MBSimProject[1]/{http://www.mbsim-env.de/MBXMLUtils}Embed[1]&amp;line=5">MBS.mbsx:/mx:MBSimProject[1]/p:Embed[1]</a>:<br />
       <span class="MBXMLUTILS_MSG">included from here</span>
     </span>
   </span>

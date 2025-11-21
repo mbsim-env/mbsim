@@ -98,7 +98,12 @@ namespace MBSimGUI {
 
   MainWindow *mw;
 
-  bool MainWindow::exitOK = true;
+  const string NO_FILENAME("{no filename}");
+#ifdef _WIN32 // just a dummy absolute path used with NO_FILENAME
+  const string dummyAbsPath("x:/");
+#else
+  const string dummyAbsPath("/");
+#endif
 
   static int currentModelID = 0;
 
@@ -133,10 +138,12 @@ namespace MBSimGUI {
 
     impl=DOMImplementation::getImplementation();
     serializer=impl->createLSSerializer();
-    // use html output of MBXMLUtils
-    static char HTMLOUTPUT[100];
-    strcpy(HTMLOUTPUT, "MBXMLUTILS_ERROROUTPUT=HTMLXPATH");
-    putenv(HTMLOUTPUT);
+    // output type of MBXMLUtils
+    if(getenv("MBXMLUTILS_ERROROUTPUT")==nullptr) {
+      static char ERROROUTPUT[10000];
+      strcpy(ERROROUTPUT, R"|(MBXMLUTILS_ERROROUTPUT=HTMLOUTPUT:<span class="MBXMLUTILS_ERROROUTPUT(?{sse} MBXMLUTILS_SSE:)"><a href="$+{file}?xpath=$+{xpath}(?{ecount}&amp;ecount=$+{ecount}:)(?{line}\&amp;line=$+{line}:)">$+{basefile}:$+{shorthrxpath}</a>:<br/><span class="MBXMLUTILS_MSG">$+{msg}</span></span>)|");
+      putenv(ERROROUTPUT);
+    }
 
     serializer->getDomConfig()->setParameter(X()%"format-pretty-print", true);
 
@@ -548,12 +555,12 @@ namespace MBSimGUI {
       connect(&processRefresh,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
       [this](int exitCode, QProcess::ExitStatus exitStatus){
         if(exitCode!=0)
-          setExitBad();
+          setErrorOccured();
         connect(&processSimulate,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
         [this](int exitCode, QProcess::ExitStatus exitStatus){
           cout<<allOutput.toStdString();
           if(exitCode!=0)
-            setExitBad();
+            setErrorOccured();
           close();
         });
         simulate();
@@ -629,7 +636,7 @@ namespace MBSimGUI {
 //      setSimulateActionsEnabled(true);
 //    }
 //    else
-//      setExitBad();
+//      setErrorOccured();
 //    setProcessActionsEnabled(true);
 //    statusBar()->showMessage(tr("Ready"));
   }
@@ -705,12 +712,12 @@ namespace MBSimGUI {
     processRefresh.closeWriteChannel();
     processRefresh.waitForFinished(-1);
     if(processRefresh.exitStatus()!=QProcess::NormalExit || processRefresh.exitCode()!=0)
-      setExitBad();
+      setErrorOccured();
     disconnect(processSimulateFinishedConnection);
     processSimulate.closeWriteChannel();
     processSimulate.waitForFinished(-1);
     if(processSimulate.exitStatus()!=QProcess::NormalExit || processSimulate.exitCode()!=0)
-      setExitBad();
+      setErrorOccured();
     if(lsa) delete lsa;
     if(st) delete st;
     centralWidget()->layout()->removeWidget(inlineOpenMBVMW);
@@ -1099,8 +1106,8 @@ namespace MBSimGUI {
       setSimulateActionsEnabled(false);
       actionSave->setDisabled(true);
       actionSaveProject->setDisabled(true);
-      projectFile="";
-      setWindowTitle("Project.mbsx[*]");
+      projectFile=(dummyAbsPath+NO_FILENAME).c_str();
+      setWindowTitle((NO_FILENAME+"[*]").c_str());
 
       auto *pmodel = static_cast<ParameterTreeModel*>(parameterView->model());
       pmodel->removeRows(pmodel->index(0,0).row(), pmodel->rowCount(QModelIndex()), QModelIndex());
@@ -1118,12 +1125,12 @@ namespace MBSimGUI {
       IDcounter = 0;
 
       doc = mbxmlparserNoVal->createDocument();
-      doc->setDocumentURI(X()%QDir::current().absoluteFilePath("Project.mbsx").toStdString());
 
       project = new Project;
       QSettings settings;
       project->setEvaluator(Evaluator::evaluators[settings.value("mainwindow/options/defaultevaluator", 0).toInt()]);
       project->createXMLElement(doc.get());
+      E(doc->getDocumentElement())->setOriginalFilename(dummyAbsPath+NO_FILENAME);
 
       model->createProjectItem(project);
 
@@ -1151,7 +1158,8 @@ namespace MBSimGUI {
         file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
       loadProject(file,false);
     }
-    doc->setDocumentURI(X()%QDir::current().absoluteFilePath("Project.mbsx").toStdString());
+    projectFile=(dummyAbsPath+NO_FILENAME).c_str();
+    E(doc->getDocumentElement())->setOriginalFilename(dummyAbsPath+NO_FILENAME);
   }
 
   void MainWindow::loadProject(const QString &fileName, bool updateRecent) {
@@ -1172,8 +1180,8 @@ namespace MBSimGUI {
 	setWindowTitle(projectFile+"[*]");
 	setCurrentProjectFile(fileName);
       } else {
-	projectFile="";
-	setWindowTitle("Project.mbsx[*]");
+	projectFile=(dummyAbsPath+NO_FILENAME).c_str();
+	setWindowTitle((NO_FILENAME+"[*]").c_str());
       }
 
       try { 
@@ -1182,13 +1190,13 @@ namespace MBSimGUI {
           throw runtime_error("Unable load or parse XML file: "+fileName.toStdString());
       }
       catch(const std::exception &ex) {
-        mw->setExitBad();
+        mw->setErrorOccured();
         mw->statusBar()->showMessage(ex.what());
         cerr << ex.what() << endl;
         return;
       }
       catch(...) {
-        mw->setExitBad();
+        mw->setErrorOccured();
         mw->statusBar()->showMessage("Unknown exception");
         cerr << "Unknown exception." << endl;
         return;
@@ -1240,13 +1248,15 @@ namespace MBSimGUI {
       file = file.endsWith(".mbsx")?file:file+".mbsx";
       if(file.startsWith("//"))
         file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
-      doc->setDocumentURI(X()%file.toStdString());
+      E(doc->getDocumentElement())->setOriginalFilename(file.toStdString());
       projectFile = QDir::current().relativeFilePath(file);
       setCurrentProjectFile(file);
       setWindowTitle(projectFile+"[*]");
       actionSave->setDisabled(false);
       actionSaveProject->setDisabled(false);
-      return saveProject();
+      bool ret = saveProject();
+      refresh();
+      return ret;
     }
     return false;
   }
@@ -1258,17 +1268,17 @@ namespace MBSimGUI {
       return true;
     }
     catch(const DOMException &ex) {
-      mw->setExitBad();
+      mw->setErrorOccured();
       mw->statusBar()->showMessage((X()%ex.getMessage()).c_str());
       cerr << X()%ex.getMessage() << endl;
     }
     catch(const std::exception &ex) {
-      mw->setExitBad();
+      mw->setErrorOccured();
       mw->statusBar()->showMessage(ex.what());
       cerr << ex.what() << endl;
     }
     catch(...) {
-      mw->setExitBad();
+      mw->setErrorOccured();
       mw->statusBar()->showMessage("Unknown exception");
       cerr << "Unknown exception." << endl;
     }
@@ -1385,12 +1395,12 @@ namespace MBSimGUI {
           eval->addParamSet(ele);
         }
         catch(const std::exception &error) {
-          mw->setExitBad();
+          mw->setErrorOccured();
           mw->statusBar()->showMessage((string("An exception occurred in updateParameters: ") + error.what()).c_str());
           cerr << string("An exception occurred in updateParameters: ") + error.what() << endl;
         }
         catch(...) {
-          mw->setExitBad();
+          mw->setErrorOccured();
           mw->statusBar()->showMessage("An unknown exception occurred in updateParameters.");
           cerr << "An unknown exception occurred in updateParameters." << endl;
         }
@@ -1409,7 +1419,7 @@ namespace MBSimGUI {
       catch(exception &ex) { \
         if(catchErrors) { \
           auto exmsg = dynamic_cast<DOMEvalException*>(&ex) ? static_cast<DOMEvalException&>(ex).getMessage() : ex.what(); \
-          mw->setExitBad(); \
+          mw->setErrorOccured(); \
           mw->statusBar()->showMessage(exmsg.c_str()); \
           std::cerr << msg << ": " << exmsg << std::endl; \
         } \
@@ -1418,7 +1428,7 @@ namespace MBSimGUI {
       } \
       catch(...) { \
         if(catchErrors) { \
-          mw->setExitBad(); \
+          mw->setErrorOccured(); \
           mw->statusBar()->showMessage("Unknown exception"); \
           std::cerr << msg << ": Unknwon exception" << std::endl; \
         } \
@@ -1711,6 +1721,8 @@ namespace MBSimGUI {
     else
       dssEle=x;
 
+    // DO NOT ADAPT THE XML TREE IN A WAY THAT THE XPATH OF EXISTING ELEMENTS CHANGES!!!!!!!!!!!!!!!!!!!!
+
     // set output filename (for openmbv)
     E(dssEle)->setAttribute("name","MBS_tmp");
 
@@ -1718,7 +1730,12 @@ namespace MBSimGUI {
     DOMElement *ele1 = D(doc)->createElement( MBSIM%"plotFeatureRecursive" );
     E(ele1)->setAttribute("value","plotRecursive");
     ele1->insertBefore(doc->createTextNode(X()%project->getVarFalse().toStdString()), nullptr);
-    dssEle->insertBefore( ele1, dssEle->getFirstElementChild() );
+    // add it as the last plotFeatureRecursive element to avoid that the XML tree get not changed regarding the xpath
+    // of existing elements AND to ensure it overwrites a equivalent plot-feature
+    auto before = E(dssEle)->getFirstElementChildNamed(MBSIM%"frames");
+    if(auto prev = static_cast<DOMElement*>(before->getPreviousSibling()); prev && E(prev)->getTagName()==MBSIM%"frameOfReference")
+      before = prev;
+    dssEle->insertBefore( ele1, before );
 
     // disable initial projection if requested
     if(solverInitialProj->isChecked()) {
@@ -1821,7 +1838,6 @@ DEF mbsimgui_outdated_switch Switch {
     ivContEle->insertBefore(doc->createTextNode(X()%eval->createSourceCode(ivStr)), nullptr);
 
     clearEchoView("");
-    echoView->showXMLCode(false);
     echoView->updateOutput(true);
     string projectString;
     DOMParser::serializeToString(doc.get(), projectString);
@@ -1921,8 +1937,11 @@ DEF mbsimgui_outdated_switch Switch {
   }
 
   void MainWindow::selectElement(const string& ID, OpenMBVGUI::Object *obj) {
-    if(!obj)
+    if(!obj) {
+      highlightObject("");
+      elementView->selectionModel()->clearCurrentIndex();
       return;
+    }
     auto id=ID;
     // if no ID is given (obj->getObject() has no ID set) and its a RigidBody inside of a CompoundRigidBody then use the ID of the parent CompoundRigidBody.
     auto o=obj->getObject();
@@ -3295,7 +3314,6 @@ DEF mbsimgui_outdated_switch Switch {
           }
 	  arg.append(projectFile);
 	  clearEchoView("Running 'createFMU' to create a FMU from the model:\n\n");
-	  echoView->showXMLCode(false);
 	  processSimulate.setWorkingDirectory(uniqueTempDir_);
 	  fmuFileName = dialog.getFileName();
 	  processSimulate.start(QString::fromStdString((getInstallPath()/"bin"/"mbsimCreateFMU").string()), arg);
@@ -3579,17 +3597,17 @@ DEF mbsimgui_outdated_switch Switch {
       file[i]->setModified(false);
     }
     catch(const DOMException &ex) {
-      mw->setExitBad();
+      mw->setErrorOccured();
       mw->statusBar()->showMessage((X()%ex.getMessage()).c_str());
       cerr << X()%ex.getMessage() << endl;
     }
     catch(const std::exception &ex) {
-      mw->setExitBad();
+      mw->setErrorOccured();
       mw->statusBar()->showMessage(ex.what());
       cerr << ex.what() << endl;
     }
     catch(...) {
-      mw->setExitBad();
+      mw->setErrorOccured();
       mw->statusBar()->showMessage("Unknown exception");
       cerr << "Unknown exception." << endl;
     }
@@ -3627,12 +3645,12 @@ DEF mbsimgui_outdated_switch Switch {
 	  serializer->writeToURI(doc.get(), X()%(file.toStdString()));
 	}
 	catch(const std::exception &ex) {
-          mw->setExitBad();
+          mw->setErrorOccured();
           mw->statusBar()->showMessage(ex.what());
 	  cerr << ex.what() << endl;
 	}
 	catch(...) {
-          mw->setExitBad();
+          mw->setErrorOccured();
           mw->statusBar()->showMessage("Unknown exception");
 	  cerr << "Unknown exception" << endl;
 	}
@@ -3695,6 +3713,8 @@ DEF mbsimgui_outdated_switch Switch {
   }
 
   void MainWindow::updateNameOfCorrespondingElementAndItsChilds(const QModelIndex &index) {
+    bool oldErrorOccured = mw->errorOccured;
+    mw->errorOccured = false;
     auto model=static_cast<const ElementTreeModel*>(index.model());
     auto *item = model->getItem(index)->getItemData();
     if(auto *embedItemData = dynamic_cast<EmbedItemData*>(item); embedItemData && embedItemData->getXMLElement()) {
@@ -3705,6 +3725,7 @@ DEF mbsimgui_outdated_switch Switch {
     QModelIndex childIndex;
     for(int i=0; (childIndex=model->index(i,0,index)).isValid(); ++i)
       updateNameOfCorrespondingElementAndItsChilds(childIndex);
+    mw->errorOccured = mw->errorOccured || oldErrorOccured;
   }
 
   void MainWindow::setWindowModified(bool mod) {

@@ -23,6 +23,8 @@
 #include <QScrollBar>
 #include <QToolBar>
 #include <boost/dll.hpp>
+#include "file_view.h"
+#include "fileitemdata.h"
 #include "utils.h"
 #include "echo_view.h"
 #include "file_editor.h"
@@ -33,6 +35,8 @@
 #include "embeditemdata.h"
 #include "parameter.h"
 #include "dialogs.h"
+#include "xercesc/dom/DOMLSSerializer.hpp"
+#include "xercesc/dom/DOMAttr.hpp"
 #include <QTextStream>
 #include <QProcessEnvironment>
 #include <QUrlQuery>
@@ -246,62 +250,58 @@ R"+(</pre>
     return size;
   }
 
-  namespace {
-    bool walk(QModelIndex index, ParameterTreeModel *model, const QUrl &link) {
-      // get the filename from the error message
-      boost::filesystem::path errorFile(boost::filesystem::absolute(link.path().toStdString()));
-
-      int row = 0;
-      // loop over all elements in the current level
-      while(index.isValid()) {
-        // get the item of the current element (index)
-        ParameterEmbedItem *item = dynamic_cast<ParameterEmbedItem*>(model->getItem(index)->getItemData());
-        // handle only embed elements but not parameters
-        if(item) {
-          // get the root element of this embed
-          xercesc::DOMElement *e = item->getParent()->getXMLElement();
-          // if the file name matchs than the error is from this embed
-          if(errorFile==boost::filesystem::absolute(D(e->getOwnerDocument())->getDocumentFilename())) {
-            // evalute the xpath expression of the error message in this embed ...
-            xercesc::DOMNode *n=D(e->getOwnerDocument())->evalRootXPathExpression(QUrlQuery(link).queryItemValue("xpath").toStdString());
-            // ... the node n is there the error occured:
-            cerr<<"MISSING this XML node generated the error addr="<<n<<" name="<<X()%n->getNodeName()<<" value="<<X()%n->getNodeValue()<<endl;
-            return true;
-          }
-        }
-
-        // walk child elements
-        if(walk(model->index(0, 0, index), model, link))
-          return true;
-
-        // next element on this level
-        index = index.sibling(++row, 0);
-      }
-      return false;
-    }
-  }
-
   void EchoView::linkClicked(const QUrl &link) {
-    if(showXML) {
-      QFile data(link.path());
-      if(data.open(QFile::ReadOnly)) {
-	QTextStream out(&data);
-	SourceCodeDialog dialog(out.readAll(),true,this);
-	dialog.highlightLine(QUrlQuery(link).queryItemValue("line").toInt()-1);
-	dialog.exec();
-      }
-    }
+    std::shared_ptr<xercesc::DOMDocument> doc;
+    if(QFileInfo(mw->getProjectFile()).absoluteFilePath()==link.path())
+      doc = mw->getProjectDocument();
     else
-      QMessageBox::information(this, "Debug information", "For more debug information press \"Debug model\" and click this link again.");
-    //MISSING mbsimgui adds new elements e.g. <plotFeatureRecursive value="plotRecursive">false</plotFeatureRecursive>
-    //MISSING this break the xpath of the error messages
-    // get the model of the embedding
-//    ParameterTreeModel *model = static_cast<ParameterTreeModel*>(mw->getParameterView()->model());
-//    // walk all embeded elements
-//    if(!walk(model->index(0,0), model, link))
-//      cerr<<"MISSING No XML node found for file="<<link.path().toStdString()<<
-//            " line="<<QUrlQuery(link).queryItemValue("line").toStdString()<<endl<<
-//            "        xpath="<<QUrlQuery(link).queryItemValue("xpath").toStdString()<<endl;
+      for(auto fileItemData : mw->getFile()) {
+        if(fileItemData->getFileInfo().absoluteFilePath()==link.path()) {
+          doc = fileItemData->getXMLDocument();
+          break;
+        }
+      }
+
+    if(!doc) {
+      mw->statusBar()->showMessage("XML document not found: "+link.path());
+      return;
+    }
+
+    // serialize the document without using the MBXMLUtils_ processing instructions (its a user written XML source file)
+    auto rootEle = doc->getDocumentElement();
+    auto xml = X()%mw->serializer->writeToString(rootEle);
+    // re-parse the serialized document (while recording the line number using the MBXMLUtils_ processing instructions
+    stringstream str(std::move(xml));
+    auto docReparsed = mw->mbxmlparserNoVal->parse(str);
+
+    // get the xpath in the re-parsed document
+    auto xpath = QUrlQuery(link).queryItemValue("xpath").toStdString();
+    xercesc::DOMNode *n;
+    try {
+      n = D(docReparsed)->evalRootXPathExpression(xpath);
+    }
+    catch(...) {
+      mw->statusBar()->showMessage("XPath not found in doc: "+QString::fromStdString(xpath));
+      return;
+    }
+    auto e = n->getNodeType() == xercesc::DOMNode::ATTRIBUTE_NODE ?
+      static_cast<xercesc::DOMAttr*>(n)->getOwnerElement() :
+      static_cast<xercesc::DOMElement*>(n);
+
+    // get the linenr of this re-parsed element
+    // (Note that we cannot just take the linenr of the original element this its linenr is usually wrong, at least
+    //  when mbsimgui has changed something in the XML DOM tree since it was read from file)
+    auto lineNr = E(e)->getLineNumber();
+
+    // show the dialog
+    auto absPath = link.path();
+    auto relPath = QDir(QFileInfo(mw->getProjectFile()).absoluteDir()).relativeFilePath(absPath);
+    SourceCodeDialog dialog(xml.c_str(),
+      (absPath.size()<relPath.size() || relPath.startsWith("../")) ? absPath : relPath, // filename to show
+      EmbedDOMLocator::convertToRootHRXPathExpression(xpath).c_str(), // xpath to show
+      this);
+    dialog.highlightLine(lineNr-1);
+    dialog.exec();
   }
 
   void EchoView::updateDebug() {

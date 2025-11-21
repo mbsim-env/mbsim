@@ -772,3 +772,21 @@
    fun:_ZN13SoQtGLWidgetP13buildGLWidgetEv
    fun:_ZN10OpenMBVGUI12SoQtMyViewerC1EP7QWidget
 }
+{
+   Coin3d
+   Memcheck:Addr8
+   ...
+   fun:_ZN17SoGLRenderActionP12renderSingleEP6SoNode
+   fun:_ZN17SoGLRenderActionP6renderEP6SoNode
+   fun:_ZN8SoAction5applyEP6SoNode
+   fun:_ZN10OpenMBVGUI12SoQtMyViewer12actualRedrawEv
+}
+{
+   Coin/Qt
+   Memcheck:Addr8
+   ...
+   fun:_ZN7QWidgetD1Ev
+   fun:~TouchWidget
+   fun:~MyTouchWidget
+   fun:_ZN10OpenMBVGUI13MyTouchWidgetD0Ev
+}

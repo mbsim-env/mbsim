@@ -310,17 +310,35 @@ namespace MBSimGUI {
 
   SourceCodeDialog::SourceCodeDialog(const QString &text, bool readOnly, QWidget *parent) : QDialog(parent) {
     setWindowTitle(QString("XML view"));
-    auto *layout = new QVBoxLayout;
+    auto *layout = new QGridLayout;
     setLayout(layout);
     xmlEditor = new XMLEditorWidget(text);
-    layout->addWidget(xmlEditor);
+    layout->addWidget(xmlEditor, 2,0,1,2);
     QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
     buttonBox->addButton(QDialogButtonBox::Ok);
     buttonBox->addButton(QDialogButtonBox::Cancel);
-    layout->addWidget(buttonBox);
+    layout->addWidget(buttonBox, 3,0,1,2);
     connect(buttonBox, &QDialogButtonBox::accepted, this, &SourceCodeDialog::accept);
     connect(buttonBox, &QDialogButtonBox::rejected, this, &SourceCodeDialog::reject);
     xmlEditor->getEditor()->setReadOnly(readOnly);
+  }
+
+  SourceCodeDialog::SourceCodeDialog(const QString &text, const QString &filename, const QString &xpath, QWidget *parent) :
+    SourceCodeDialog(text, true, parent) {
+    auto *layout = static_cast<QGridLayout*>(this->layout());
+    layout->addWidget(new QLabel("Filename:"), 0,0,1,1);
+    layout->addWidget(new QLabel("XPath:"), 1,0,1,1);
+    layout->setColumnStretch(0,0);
+    layout->setColumnStretch(1,1);
+    auto filenameW =new QLabel(filename);
+    filenameW->setToolTip("Either absolute or relative to the file-path of the project.");
+    filenameW->setWordWrap(true);
+    filenameW->setTextInteractionFlags(Qt::TextBrowserInteraction);
+    layout->addWidget(filenameW, 0,1,1,1);
+    auto xpathW =new QLabel(xpath);
+    xpathW->setWordWrap(true);
+    xpathW->setTextInteractionFlags(Qt::TextBrowserInteraction);
+    layout->addWidget(xpathW, 1,1,1,1);
   }
 
   void SourceCodeDialog::highlightLine(int n) {
@@ -329,13 +347,15 @@ namespace MBSimGUI {
     xmlEditor->getEditor()->setTextCursor(c);
     QList<QTextEdit::ExtraSelection> extraSelections;
     QTextEdit::ExtraSelection selection;
-    QColor lineColor = QColor(Qt::yellow).lighter(160);
+    bool darkTheme = qApp->palette().color(QPalette::Window).lightness()<qApp->palette().color(QPalette::WindowText).lightness();
+    QColor lineColor = QColor(Qt::yellow).lighter(!darkTheme ? 160 : 60);
     selection.format.setBackground(lineColor);
     selection.format.setProperty(QTextFormat::FullWidthSelection, true);
     selection.cursor = c;
     selection.cursor.clearSelection();
     extraSelections.append(selection);
     xmlEditor->getEditor()->setExtraSelections(extraSelections);
+    QTimer::singleShot(0, [this](){ xmlEditor->getEditor()->ensureCursorVisible(); });
   }
 
   void SourceCodeDialog::showEvent(QShowEvent *event) {

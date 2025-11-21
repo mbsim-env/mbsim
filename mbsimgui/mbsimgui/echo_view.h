@@ -36,7 +36,6 @@ namespace MBSimGUI {
       void addOutputText(const QString &outText_);
       bool debugEnabled() { return enableDebug->isChecked(); }
       void updateOutput(bool moveToErrorOrEnd=false);
-      void showXMLCode(bool showXML_) { showXML = showXML_; }
     private:
       void linkClicked(const QUrl &link);
       void updateDebug();
@@ -49,7 +48,6 @@ namespace MBSimGUI {
       QAction *showDepr;
       QAction *enableDebug;
       QAction *showDebug;
-      bool showXML{false};
   };
 
 }

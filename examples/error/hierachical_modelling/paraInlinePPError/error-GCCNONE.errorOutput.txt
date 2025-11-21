@@ -1,5 +1,4 @@
 submodel/Untergruppe.xml:60: Caught octave exception **octave version dependent**
-submodel/Untergruppe.xml:57: included from here
 Hauptgruppe.xml:38: [ecount=1] included from here
 MBS.mbsim.xml:18: [ecount=1] included from here
 MBS.mbsx:8: [ecount=1] included from here
