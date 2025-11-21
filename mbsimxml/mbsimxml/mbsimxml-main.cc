@@ -345,8 +345,8 @@ int main(int argc, char *argv[]) {
         else
           sigHandler=make_unique<DynamicSystemSolver::SignalHandler>();
 
-//        if(str.length()==0)
-//          throw runtime_error("Simulation stopped.");
+        if(str.length()==1 and str[0]=='\1')
+          throw runtime_error("Simulation stopped.");
 
         Preprocess preprocess = MBSIMPRJ=="-" ?
           Preprocess(MBSIMPRJstream, parser, AUTORELOADTIME>0) : // ctor for input by stdin
