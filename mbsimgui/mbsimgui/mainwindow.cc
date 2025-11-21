@@ -800,6 +800,7 @@ namespace MBSimGUI {
     menu.setShowEmptyParameters(settings.value("mainwindow/options/showemptyparameters", true).toBool());
     bool oldShowEmptyParameters=menu.getShowEmptyParameters();
     menu.setParameterView(static_cast<OptionsDialog::ParameterView>(settings.value("mainwindow/options/parameterview", static_cast<int>(OptionsDialog::ParameterView::onlyForCurrentElement)).toInt()));
+    menu.setOpenPropertyDialogOnErrorLinks(settings.value("mainwindow/options/openPropertyDialogOnErrorLinks", true).toBool());
     auto oldParameterView=menu.getParameterView();
     menu.setStatusUpdate(settings.value("mainwindow/options/statusupdate", true).toBool());
     menu.setPlugins(settings.value("mainwindow/options/plugins", QString()).toString());
@@ -818,19 +819,20 @@ namespace MBSimGUI {
     if(!justSetOptions)
       res = menu.exec();
     if(res == 1) {
-      settings.setValue("mainwindow/options/autosave"           , menu.getAutoSave());
-      settings.setValue("mainwindow/options/autosaveinterval"   , menu.getAutoSaveInterval());
-      settings.setValue("mainwindow/options/autoexport"         , menu.getAutoExport());
-      settings.setValue("mainwindow/options/autoexportdir"      , menu.getAutoExportDir());
-      settings.setValue("mainwindow/options/savestatevector"    , menu.getSaveStateVector());
-      settings.setValue("mainwindow/options/maxundo"            , menu.getMaxUndo());
-      settings.setValue("mainwindow/options/showfilters"        , menu.getShowFilters());
-      settings.setValue("mainwindow/options/showhiddenelements" , menu.getShowHiddenItems());
-      settings.setValue("mainwindow/options/showemptyparameters", menu.getShowEmptyParameters());
-      settings.setValue("mainwindow/options/parameterview"      , static_cast<int>(menu.getParameterView()));
-      settings.setValue("mainwindow/options/statusupdate"       , menu.getStatusUpdate());
-      settings.setValue("mainwindow/options/plugins"            , menu.getPlugins());
-      settings.setValue("mainwindow/options/defaultevaluator"   , menu.getDefaultEvaluator());
+      settings.setValue("mainwindow/options/autosave"                      , menu.getAutoSave());
+      settings.setValue("mainwindow/options/autosaveinterval"              , menu.getAutoSaveInterval());
+      settings.setValue("mainwindow/options/autoexport"                    , menu.getAutoExport());
+      settings.setValue("mainwindow/options/autoexportdir"                 , menu.getAutoExportDir());
+      settings.setValue("mainwindow/options/savestatevector"               , menu.getSaveStateVector());
+      settings.setValue("mainwindow/options/maxundo"                       , menu.getMaxUndo());
+      settings.setValue("mainwindow/options/showfilters"                   , menu.getShowFilters());
+      settings.setValue("mainwindow/options/showhiddenelements"            , menu.getShowHiddenItems());
+      settings.setValue("mainwindow/options/showemptyparameters"           , menu.getShowEmptyParameters());
+      settings.setValue("mainwindow/options/parameterview"                 , static_cast<int>(menu.getParameterView()));
+      settings.setValue("mainwindow/options/openPropertyDialogOnErrorLinks", menu.getOpenPropertyDialogOnErrorLinks());
+      settings.setValue("mainwindow/options/statusupdate"                  , menu.getStatusUpdate());
+      settings.setValue("mainwindow/options/plugins"                       , menu.getPlugins());
+      settings.setValue("mainwindow/options/defaultevaluator"              , menu.getDefaultEvaluator());
 
       file.open(QIODevice::WriteOnly | QIODevice::Text);
       file.write(menu.getModulePath().toUtf8());
