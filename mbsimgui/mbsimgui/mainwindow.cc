@@ -615,32 +615,6 @@ namespace MBSimGUI {
     saveProject("./.Project.mbsx",false);
   }
 
-  void MainWindow::processFinished(int exitCode, QProcess::ExitStatus exitStatus) {
-//    if(processSimulate.isOpen())
-//      updateEchoView(process.readAllStandardOutput());
-//    if(exitStatus == QProcess::NormalExit) {
-//      QSettings settings;
-//      bool saveFinalStateVector = settings.value("mainwindow/options/savestatevector", false).toBool();
-//      if(settings.value("mainwindow/options/autoexport", false).toBool()) {
-//        QString dir = settings.value("mainwindow/options/autoexportdir", "./").toString();
-//        saveMBSimH5Data(dir+"/MBS.mbsh5");
-//        saveOpenMBVXMLData(dir+"/MBS.ombvx");
-//        saveOpenMBVH5Data(dir+"/MBS.ombvh5");
-//        saveLinearSystemAnalysis(dir+"/eigenanalysis.mat");
-//        saveInputTable(dir+"/inputtable.asc");
-//        saveOutputTable(dir+"/outputtable.asc");
-//        if(saveFinalStateVector)
-//          saveStateVector(dir+"/statevector.asc");
-//        saveStateTable(dir+"/statetable.asc");
-//      }
-//      setSimulateActionsEnabled(true);
-//    }
-//    else
-//      setErrorOccured();
-//    setProcessActionsEnabled(true);
-//    statusBar()->showMessage(tr("Ready"));
-  }
-
   void MainWindow::initInlineOpenMBV() {
     std::list<string> arg;
     arg.emplace_back("--wst");
@@ -3261,6 +3235,8 @@ DEF mbsimgui_outdated_switch Switch {
       processRefresh.terminate();
     if(not processSimulate.state()==QProcess::NotRunning)
       processSimulate.terminate();
+    if(not processCreateFMU.state()==QProcess::NotRunning)
+      processCreateFMU.terminate();
   }
 
   void MainWindow::kill() {
@@ -3270,6 +3246,8 @@ DEF mbsimgui_outdated_switch Switch {
       processRefresh.kill();
     if(not processSimulate.state()==QProcess::NotRunning)
       processSimulate.kill();
+    if(not processCreateFMU.state()==QProcess::NotRunning)
+      processCreateFMU.kill();
   }
 
   void MainWindow::flexibleBodyTool() {
@@ -3284,8 +3262,6 @@ DEF mbsimgui_outdated_switch Switch {
   }
 
   void MainWindow::createFMU() {
-    setProcessActionsEnabled(false);
-
     QFileInfo projectFile = QFileInfo(getProjectFilePath());
     CreateFMUDialog dialog(projectFile.absolutePath()+"/"+projectFile.baseName()+".fmu");
     int result = dialog.exec();
@@ -3314,10 +3290,25 @@ DEF mbsimgui_outdated_switch Switch {
           }
 	  arg.append(projectFile);
 	  clearEchoView("Running 'createFMU' to create a FMU from the model:\n\n");
-	  processSimulate.setWorkingDirectory(uniqueTempDir_);
+          echoView->updateOutput(true);
+	  processCreateFMU.setWorkingDirectory(uniqueTempDir_);
 	  fmuFileName = dialog.getFileName();
-	  processSimulate.start(QString::fromStdString((getInstallPath()/"bin"/"mbsimCreateFMU").string()), arg);
-	  connect(&processSimulate,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),this,[=]() {
+	  processCreateFMU.start(QString::fromStdString((getInstallPath()/"bin"/"mbsimCreateFMU").string()), arg);
+          connect(&processCreateFMU, &QProcess::readyReadStandardOutput, this, [=]() {
+            if(processCreateFMU.isOpen()) {
+              auto output=processCreateFMU.readAllStandardOutput();
+              if(!output.isEmpty())
+                updateEchoView(output);
+            }
+          });
+          connect(&processCreateFMU, &QProcess::readyReadStandardError, this, [=]() {
+            if(processCreateFMU.isOpen()) {
+              auto output=processCreateFMU.readAllStandardOutput();
+              if(!output.isEmpty())
+                updateStatusMessage(output);
+            }
+          });
+	  connect(&processCreateFMU, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),this,[=]() {
 	    if(QFile::exists(fmuFileName))
 	      QFile::remove(fmuFileName);
 	    QFile::copy(QString::fromStdString(uniqueTempDir.generic_string())+"/"+"mbsim.fmu",fmuFileName);

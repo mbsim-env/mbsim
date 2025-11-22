@@ -104,8 +104,7 @@ namespace MBSimGUI {
       QTabWidget *tabWidget;
       std::shared_ptr<bool> debugStreamFlag;
       QString projectFile;
-      QProcess processSimulate;
-      QProcess processRefresh;
+      QProcess processRefresh, processSimulate, processCreateFMU;
       OpenMBVGUI::MainWindow *inlineOpenMBVMW;
       boost::filesystem::path uniqueTempDir;
       QAction *actionSave, *actionSaveProject, *actionSimulate, *actionStop, *actionTerminate, *actionOpenMBV, *actionH5plotserie, *actionLinearSystemAnalysis, *actionStateTable, *actionSaveDataAs, *actionSaveMBSimH5DataAs, *actionSaveOpenMBVDataAs, *actionRefresh, *actionCreateFMU, *actionSaveStateVectorAs, *actionSaveStateTableAs, *actionSaveLinearSystemAnalysisAs, *actionUndo, *actionRedo, *solverInitialProj;
@@ -174,7 +173,6 @@ namespace MBSimGUI {
       void highlightElement(const QModelIndex &current);
       void showElementContextMenu(const QModelIndex &current);
       void parameterViewClicked(const QModelIndex &current);
-      void processFinished(int exitCode, QProcess::ExitStatus exitStatus);
       void autoSaveProject();
       void updateNames(EmbedItemData *element);
       void updateValues(EmbedItemData *element);
