@@ -387,10 +387,10 @@ namespace MBSimGUI {
     runMenu->addAction(actionSimulate);
     actionSimulate->setStatusTip(tr("Simulate the multibody system"));
     connect(actionSimulate,&QAction::triggered,this,&MainWindow::simulate);
-    actionStop = runBar->addAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_MediaStop)),"Stop simulation");
+    auto *actionStop = runBar->addAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_MediaStop)),"Stop simulation");
     runMenu->addAction(actionStop);
     connect(actionStop,&QAction::triggered,this,&MainWindow::stop);
-    actionTerminate = runBar->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"kill.svg").string())),"Terminate background tasks");
+    auto *actionTerminate = runBar->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"kill.svg").string())),"Terminate background tasks");
     runMenu->addAction(actionTerminate);
     connect(actionTerminate,&QAction::triggered,this,&MainWindow::terminate);
     auto *actionKill = new QAction(Utils::QIconCached(QString::fromStdString((iconPath/"kill.svg").string())),"Kill background tasks");
@@ -405,7 +405,7 @@ namespace MBSimGUI {
     actionLinearSystemAnalysis = runBar->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"eigenanalysis.svg").string())),"Linear system analysis");
     runMenu->addAction(actionLinearSystemAnalysis);
     connect(actionLinearSystemAnalysis,&QAction::triggered,this,&MainWindow::linearSystemAnalysis);
-    actionStateTable = runBar->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"state_table.svg").string())),"Show state table");
+    auto *actionStateTable = runBar->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"state_table.svg").string())),"Show state table");
     runMenu->addAction(actionStateTable);
     connect(actionStateTable,&QAction::triggered,this,&MainWindow::showStateTable);
 
@@ -428,7 +428,7 @@ namespace MBSimGUI {
     sceneViewToolBar->setObjectName("toolbar/sceneview");
     toolMenu->addAction(sceneViewToolBar->toggleViewAction());
     sceneViewToolBar->insertSeparator(sceneViewToolBar->actions()[0]);
-    actionRefresh = new QAction(Utils::QIconCached(QString::fromStdString((iconPath/"reload.svg").string())),"Refresh scene view", this);
+    auto *actionRefresh = new QAction(Utils::QIconCached(QString::fromStdString((iconPath/"reload.svg").string())),"Refresh scene view", this);
     sceneViewToolBar->insertAction(sceneViewToolBar->actions()[0], solverInitialProj);
     sceneViewToolBar->insertAction(sceneViewToolBar->actions()[0], autorefreshAction);
     sceneViewToolBar->insertAction(sceneViewToolBar->actions()[0], actionRefresh);

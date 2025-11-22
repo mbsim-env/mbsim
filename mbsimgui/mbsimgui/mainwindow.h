@@ -107,7 +107,7 @@ namespace MBSimGUI {
       QProcess processRefresh, processSimulate, processCreateFMU;
       OpenMBVGUI::MainWindow *inlineOpenMBVMW;
       boost::filesystem::path uniqueTempDir;
-      QAction *actionSave, *actionSaveProject, *actionSimulate, *actionStop, *actionTerminate, *actionOpenMBV, *actionH5plotserie, *actionLinearSystemAnalysis, *actionStateTable, *actionSaveDataAs, *actionSaveMBSimH5DataAs, *actionSaveOpenMBVDataAs, *actionRefresh, *actionCreateFMU, *actionSaveStateVectorAs, *actionSaveStateTableAs, *actionSaveLinearSystemAnalysisAs, *actionUndo, *actionRedo, *solverInitialProj;
+      QAction *actionSave, *actionSaveProject, *actionSimulate, *actionOpenMBV, *actionH5plotserie, *actionLinearSystemAnalysis, *actionSaveDataAs, *actionSaveMBSimH5DataAs, *actionSaveOpenMBVDataAs, *actionCreateFMU, *actionSaveStateVectorAs, *actionSaveStateTableAs, *actionSaveLinearSystemAnalysisAs, *actionUndo, *actionRedo, *solverInitialProj;
       OpenMBVGUI::AbstractViewFilter *elementViewFilter, *parameterViewFilter;
       QDockWidget *dockParameterTree;
       QTimer autoSaveTimer;
