@@ -3227,7 +3227,7 @@ DEF mbsimgui_outdated_switch Switch {
   void MainWindow::stop() {
     echoView->addOutputText("<span class=\"MBSIMGUI_ERROR\">'Stop simulation' clicked</span>\n");
     echoView->updateOutput(true);
-    processSimulate.write("\1\0", 2);
+    processSimulate.terminate();
   }
 
   void MainWindow::terminate() {
