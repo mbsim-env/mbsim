@@ -160,7 +160,8 @@ namespace MBSimGUI {
       static QRegularExpression spanStartRE(R"|(<\s*span\s)|");
       static QRegularExpression spanEndRE  (R"|(<\s*/\s*span\s*>)|");
       int start;
-      while((start=outText.indexOf(span))!=-1) {
+      bool stop=false;
+      while(!stop && (start=outText.indexOf(span))!=-1) {
         int count=1;
         int s=start;
         while(true) {
@@ -171,6 +172,7 @@ namespace MBSimGUI {
             spanStartM_capturedStart=numeric_limits<int>::max();
           if(spanEndM.capturedStart()==-1) {
             cerr<<"Internal error: <span> elements do not match"<<endl;
+            stop = true; // break also the outer loop (we cannot match the <span> elements
             break;
           }
           auto spanEndM_capturedStart = spanEndM.capturedStart();
