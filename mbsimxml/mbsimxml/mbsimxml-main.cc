@@ -12,6 +12,7 @@
 #include <vector>
 #include <algorithm>
 #include <cstring>
+#include <csignal>
 #include <fstream>
 #include <boost/dll.hpp>
 #include <mbxmlutilshelper/last_write_time.h>
@@ -35,10 +36,6 @@ using namespace std;
 using namespace MBXMLUtils;
 using namespace MBSim;
 namespace bfs=boost::filesystem;
-
-namespace MBSim {
-  extern int baseIndexForPlot;
-}
 
 int main(int argc, char *argv[]) {
 #ifdef _WIN32
@@ -261,6 +258,17 @@ int main(int argc, char *argv[]) {
 
     // create parser from catalog file to avoid regenerating the parser if multiple inputs are handled
     auto parser = DOMParser::create(xmlCatalogDoc->getDocumentElement());
+
+    // From now on do nothing on interrupt signals!
+    // For long running code parts (MBSim preprocessing/simulation/...) a special interrupt handler is installed,
+    // see variable sigHandler, which cleanly stops the preprocessing/simulation/... (stops the current task of the main loop).
+    // All other code parts are short and should not hang at all. These code parts should just continue since
+    // a interrupt should only stop the current task of the main loop of mbsimxml but not exit mbsimxml completely.
+    #ifndef _WIN32
+    signal(SIGHUP, SIG_IGN);
+    #endif
+    signal(SIGINT, SIG_IGN);
+    signal(SIGTERM, SIG_IGN);
 
     thread stdinReadThread;
     mutex mu;
