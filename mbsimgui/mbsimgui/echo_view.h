@@ -37,7 +37,8 @@ namespace MBSimGUI {
       bool debugEnabled() { return enableDebug->isChecked(); }
       void updateOutput(bool moveToErrorOrEnd=false);
     private:
-      void linkClicked(const QUrl &link);
+      void linkClicked(const QUrl &link, bool openPropertyDialog);
+      void linkRightClicked(const QUrl &link);
       void updateDebug();
       QTextBrowser *out;
       QString outText;

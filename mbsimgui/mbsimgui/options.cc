@@ -91,19 +91,30 @@ namespace MBSimGUI {
                                     "- negative effect: a parameter can only be added if already another exists");
     layout->addWidget(showEmptyParameters);
 
-    auto parameterViewGroup = new QGroupBox("'Parameter Tree' shows", this);
+    auto parameterViewGroup = new QGroupBox("'Parameter Tree' shows the following parameters", this);
     layout->addWidget(parameterViewGroup);
-    auto parameterViewLO = new QVBoxLayout(parameterViewGroup);
+    auto parameterViewLO = new QHBoxLayout(parameterViewGroup);
     parameterViewGroup->setLayout(parameterViewLO);
-    parameterViewOnlyForCurrentElement = new QRadioButton("only the parameters which influence the current element of the model");
-    parameterViewOnlyForCurrentElement->setToolTip("The currently selected element of the model influences which parameters are shown");
-    parameterViewAll = new QRadioButton("all parameters of the model");
-    parameterViewAll->setToolTip("The 'Parameter Tree' always shows all available parameters of the model");
+    parameterViewOnlyForCurrentElement = new QRadioButton("the current selected element");
+    parameterViewOnlyForCurrentElement->setToolTip("Only the parameters which influence the currently selected element are shown");
+    parameterViewAll = new QRadioButton("all");
+    parameterViewAll->setToolTip("All parameters of the model are shown");
     parameterViewLO->addWidget(parameterViewOnlyForCurrentElement);
     parameterViewLO->addWidget(parameterViewAll);
 
     statusUpdate = new QCheckBox("Always update element status");
     layout->addWidget(statusUpdate);
+
+    auto onErrorLinks = new QGroupBox("When a error link in 'Echo Area' is clicked open", this);
+    layout->addWidget(onErrorLinks);
+    auto onErrorLinksLO = new QHBoxLayout(onErrorLinks);
+    onErrorLinks->setLayout(onErrorLinksLO);
+    onErrorLinksOpenPropertyDialog = new QRadioButton("the property dialog");
+    onErrorLinksOpenPropertyDialog->setToolTip("The property dialog of the element is shown or, if its not found, the XML source");
+    onErrorLinksOpenXMLSource = new QRadioButton("the XML source");
+    onErrorLinksOpenPropertyDialog->setToolTip("The XML source view is shown");
+    onErrorLinksLO->addWidget(onErrorLinksOpenPropertyDialog);
+    onErrorLinksLO->addWidget(onErrorLinksOpenXMLSource);
 
     layout->addWidget(new QLabel("MBSimGUI plugin search dirs (one directory per line; libmbsimgui-plugin-*.[so|dll]):"));
     plugins = new QTextEdit;
@@ -229,6 +240,17 @@ namespace MBSimGUI {
   void OptionsDialog::setParameterView(ParameterView flag) {
     if(flag == ParameterView::onlyForCurrentElement) parameterViewOnlyForCurrentElement->setChecked(true);
     if(flag == ParameterView::all                  ) parameterViewAll                  ->setChecked(true);
+  }
+
+  bool OptionsDialog::getOpenPropertyDialogOnErrorLinks() const {
+    if(onErrorLinksOpenPropertyDialog->isChecked()) return true;
+    if(onErrorLinksOpenXMLSource     ->isChecked()) return false;
+    throw std::runtime_error("Internal error: 'OpenPropertyDialogOnErrorLinks' is not handled.");
+  }
+
+  void OptionsDialog::setOpenPropertyDialogOnErrorLinks(bool propertyDialog) {
+    if( propertyDialog) onErrorLinksOpenPropertyDialog->setChecked(true);
+    if(!propertyDialog) onErrorLinksOpenXMLSource     ->setChecked(true);
   }
 
   bool OptionsDialog::getStatusUpdate() const {

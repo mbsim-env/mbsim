@@ -47,6 +47,8 @@ MBSimGUI
   dependent on the value of other parameters.
 - The parameter view now shows the parameters inside a "Parameters" group. This allows all parameters of a element to be collapsed.
 - Feature "contact point transformation" is removed from magic formula 62 as it leads to incorrect tyre moments.
+- Improved the error message links in the 'Echo Area'. Allow to open either the property dialog or the XML source of the element
+  which generates the error. The left click action on a error link is configureable to open either of both.
 
 H5Plotserie
 -----------

@@ -22,7 +22,9 @@
 #include <QDesktopWidget>
 #include <QScrollBar>
 #include <QToolBar>
+#include <QClipboard>
 #include <boost/dll.hpp>
+#include "element_view.h"
 #include "file_view.h"
 #include "fileitemdata.h"
 #include "utils.h"
@@ -35,6 +37,7 @@
 #include "embeditemdata.h"
 #include "parameter.h"
 #include "dialogs.h"
+#include "project.h"
 #include "xercesc/dom/DOMLSSerializer.hpp"
 #include "xercesc/dom/DOMAttr.hpp"
 #include <QTextStream>
@@ -59,10 +62,27 @@ namespace MBSimGUI {
 
     setIconSize(iconSize()*0.5);
 
-    out=new QTextBrowser(this);
+    class EchoViewTextBrowser : public QTextBrowser {
+      public:
+        EchoViewTextBrowser(EchoView* ev=nullptr) : QTextBrowser(ev), echoView(ev) {}
+      protected:
+        void contextMenuEvent(QContextMenuEvent *e) override {
+          if(auto link = anchorAt(e->pos()); !link.isEmpty()) {
+            echoView->linkRightClicked(QUrl(link));
+            return;
+          }
+          QTextBrowser::contextMenuEvent(e);
+        }
+      private:
+        EchoView *echoView;
+    };
+    out=new EchoViewTextBrowser(this);
     out->setOpenLinks(false);
     out->setHorizontalScrollBarPolicy(Qt::ScrollBarPolicy::ScrollBarAlwaysOn); // if the bar appears/disappears then scrolling to the last line may fail (the very last is hidden by the bar)
-    connect(out, &QTextBrowser::anchorClicked, this, &EchoView::linkClicked);
+    connect(out, &QTextBrowser::anchorClicked, [this](const QUrl &link){
+      QSettings settings;
+      linkClicked(link, settings.value("mainwindow/options/openPropertyDialogOnErrorLinks", true).toBool());
+    });
     setCentralWidget(out);
     auto tb=new QToolBar(this);
     addToolBar(Qt::RightToolBarArea, tb);
@@ -250,14 +270,22 @@ R"+(</pre>
     return size;
   }
 
-  void EchoView::linkClicked(const QUrl &link) {
+  void EchoView::linkClicked(const QUrl &link, bool openPropertyDialog) {
+    // get the XML document doc and the rootIndex of this element corresponding the path of the link
+    QModelIndex rootIndex;
     std::shared_ptr<xercesc::DOMDocument> doc;
-    if(QFileInfo(mw->getProjectFile()).absoluteFilePath()==link.path())
+    if(QFileInfo(mw->getProjectFile()).absoluteFilePath()==link.path()) {
       doc = mw->getProjectDocument();
+      rootIndex = mw->getProject()->getModelIndex();
+    }
     else
       for(auto fileItemData : mw->getFile()) {
         if(fileItemData->getFileInfo().absoluteFilePath()==link.path()) {
           doc = fileItemData->getXMLDocument();
+          if(E(fileItemData->getXMLElement()).getTagName() == PV%"Parameter")
+            rootIndex = fileItemData->getFileReference(0)->getParameterEmbedItem()->getModelIndex();
+          else
+            rootIndex = fileItemData->getFileReference(0)->getModelIndex();
           break;
         }
       }
@@ -267,41 +295,113 @@ R"+(</pre>
       return;
     }
 
-    // serialize the document without using the MBXMLUtils_ processing instructions (its a user written XML source file)
-    auto rootEle = doc->getDocumentElement();
-    auto xml = X()%mw->serializer->writeToString(rootEle);
-    // re-parse the serialized document (while recording the line number using the MBXMLUtils_ processing instructions
-    stringstream str(std::move(xml));
-    auto docReparsed = mw->mbxmlparserNoVal->parse(str);
-
     // get the xpath in the re-parsed document
     auto xpath = QUrlQuery(link).queryItemValue("xpath").toStdString();
-    xercesc::DOMNode *n;
-    try {
-      n = D(docReparsed)->evalRootXPathExpression(xpath);
-    }
-    catch(...) {
-      mw->statusBar()->showMessage("XPath not found in doc: "+QString::fromStdString(xpath));
-      return;
-    }
-    auto e = n->getNodeType() == xercesc::DOMNode::ATTRIBUTE_NODE ?
-      static_cast<xercesc::DOMAttr*>(n)->getOwnerElement() :
-      static_cast<xercesc::DOMElement*>(n);
 
-    // get the linenr of this re-parsed element
-    // (Note that we cannot just take the linenr of the original element this its linenr is usually wrong, at least
-    //  when mbsimgui has changed something in the XML DOM tree since it was read from file)
-    auto lineNr = E(e)->getLineNumber();
+    if(openPropertyDialog) {
+      // open the property dialog of the element which generated the error
 
-    // show the dialog
-    auto absPath = link.path();
-    auto relPath = QDir(QFileInfo(mw->getProjectFile()).absoluteDir()).relativeFilePath(absPath);
-    SourceCodeDialog dialog(xml.c_str(),
-      (absPath.size()<relPath.size() || relPath.startsWith("../")) ? absPath : relPath, // filename to show
-      EmbedDOMLocator::convertToRootHRXPathExpression(xpath).c_str(), // xpath to show
-      this);
-    dialog.highlightLine(lineNr-1);
-    dialog.exec();
+      // walk the element tree to find the item with the same xpath as the link
+      auto *model = static_cast<const TreeModel*>(rootIndex.model());
+      if(model) {
+        QModelIndex clickedIndex;
+        size_t maxXPathFound = 0;
+        function<void(TreeItem *item)> walk;
+        walk = [&walk,&xpath,&maxXPathFound,&clickedIndex](TreeItem *item) {
+          if(auto e = item->getItemData()->getXMLElement(); e) {
+            auto itemXPath = E(e)->getRootXPathExpression();
+            if(xpath.substr(0,itemXPath.size())==itemXPath && itemXPath.size()>maxXPathFound) {
+              clickedIndex = item->getItemData()->getModelIndex();
+              maxXPathFound = itemXPath.size();
+            }
+          }
+
+          for(int cNr=0; cNr<item->childCount(); ++cNr)
+            walk(item->child(cNr));
+        };
+        walk(model->getItem(rootIndex));
+        if(clickedIndex.isValid()) {
+          if(dynamic_cast<const ElementTreeModel*>(model)) {
+            mw->getElementView()->setCurrentIndex(clickedIndex);
+            mw->openElementEditor();
+          }
+          else if(dynamic_cast<const ParameterTreeModel*>(model)) {
+            mw->getParameterView()->setCurrentIndex(clickedIndex);
+            mw->openParameterEditor();
+          }
+        }
+        else {
+          mw->statusBar()->showMessage("No element/parameter found for XPath in doc: "+
+            QString::fromStdString(EmbedDOMLocator::convertToRootHRXPathExpression(xpath)));
+          openPropertyDialog = false;
+        }
+      }
+      else
+        openPropertyDialog = false;
+    }
+
+    if(!openPropertyDialog) {
+      // show the XML source code of doc and the line number of the error
+
+      // serialize the document without using the MBXMLUtils_ processing instructions (its a user written XML source file)
+      auto rootEle = doc->getDocumentElement();
+      auto xml = X()%mw->serializer->writeToString(rootEle);
+      // re-parse the serialized document (while recording the line number using the MBXMLUtils_ processing instructions
+      // (this generated a equal XML document as the document used by the MainWindow refresh and simulation action)
+      stringstream str(std::move(xml));
+      auto docReparsed = mw->mbxmlparserNoVal->parse(str);
+
+      xercesc::DOMNode *n;
+      try {
+        n = D(docReparsed)->evalRootXPathExpression(xpath);
+      }
+      catch(...) {
+        mw->statusBar()->showMessage("XPath not found in doc: "+
+          QString::fromStdString(EmbedDOMLocator::convertToRootHRXPathExpression(xpath)));
+        return;
+      }
+      auto e = n->getNodeType() == xercesc::DOMNode::ATTRIBUTE_NODE ?
+        static_cast<xercesc::DOMAttr*>(n)->getOwnerElement() :
+        static_cast<xercesc::DOMElement*>(n);
+
+      // get the linenr of this re-parsed element
+      // (Note that we cannot just take the linenr of the original element this its linenr is usually wrong, at least
+      //  when mbsimgui has changed something in the XML DOM tree since it was read from file)
+      auto lineNr = E(e)->getLineNumber();
+
+      // show the dialog, highlight lineNr and scroll to it
+      auto absPath = link.path();
+      auto relPath = QDir(QFileInfo(mw->getProjectFile()).absoluteDir()).relativeFilePath(absPath);
+      SourceCodeDialog dialog(xml.c_str(),
+        (absPath.size()<relPath.size() || relPath.startsWith("../")) ? absPath : relPath, // filename to show
+        EmbedDOMLocator::convertToRootHRXPathExpression(xpath).c_str(), // xpath to show
+        this);
+      dialog.highlightLine(lineNr-1);
+      dialog.exec();
+    }
+  }
+
+  void EchoView::linkRightClicked(const QUrl &link) {
+    QSettings settings;
+    bool openProperyDialog = settings.value("mainwindow/options/openPropertyDialogOnErrorLinks", true).toBool();
+    QMenu menu;
+    menu.addAction(openProperyDialog ? "Open element (or, if not found, XML source)..." : "Open XML source...",
+      [this, openProperyDialog, &link](){
+        linkClicked(link, openProperyDialog);
+    });
+    menu.addSeparator();
+    menu.addAction("Open element...", [this, &link](){
+      linkClicked(link, true);
+    }),
+    menu.addAction("Open XML source...", [this, &link](){
+      linkClicked(link, false);
+    }),
+    menu.addSeparator();
+    menu.addAction("Copy link location", [&link](){
+      QGuiApplication::clipboard()->setText(link.url(), QClipboard::Clipboard);
+      QGuiApplication::clipboard()->setText(link.url(), QClipboard::Selection);
+    });
+    menu.exec(QCursor::pos());
   }
 
   void EchoView::updateDebug() {

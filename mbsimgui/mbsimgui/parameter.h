@@ -52,7 +52,7 @@ namespace MBSimGUI {
       static std::vector<Parameter*> createParameters(xercesc::DOMElement *element);
     protected:
       EmbedItemData *parent { nullptr };
-      xercesc::DOMElement *element;
+      xercesc::DOMElement *element { nullptr };
   };
 
   class Parameter : public ParameterItem {
