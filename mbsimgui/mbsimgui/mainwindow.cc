@@ -766,8 +766,6 @@ namespace MBSimGUI {
     OptionsDialog menu(this);
     menu.setAutoSave(settings.value("mainwindow/options/autosave", false).toBool());
     menu.setAutoSaveInterval(settings.value("mainwindow/options/autosaveinterval", 5).toInt());
-    menu.setAutoExport(settings.value("mainwindow/options/autoexport", false).toBool());
-    menu.setAutoExportDir(settings.value("mainwindow/options/autoexportdir", "./").toString());
     menu.setSaveStateVector(settings.value("mainwindow/options/savestatevector", false).toBool());
     menu.setMaxUndo(settings.value("mainwindow/options/maxundo", 10).toInt());
     menu.setShowFilters(settings.value("mainwindow/options/showfilters", true).toBool());
@@ -797,8 +795,6 @@ namespace MBSimGUI {
     if(res == 1) {
       settings.setValue("mainwindow/options/autosave"                      , menu.getAutoSave());
       settings.setValue("mainwindow/options/autosaveinterval"              , menu.getAutoSaveInterval());
-      settings.setValue("mainwindow/options/autoexport"                    , menu.getAutoExport());
-      settings.setValue("mainwindow/options/autoexportdir"                 , menu.getAutoExportDir());
       settings.setValue("mainwindow/options/savestatevector"               , menu.getSaveStateVector());
       settings.setValue("mainwindow/options/maxundo"                       , menu.getMaxUndo());
       settings.setValue("mainwindow/options/showfilters"                   , menu.getShowFilters());
