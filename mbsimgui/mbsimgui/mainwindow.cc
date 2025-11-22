@@ -766,8 +766,6 @@ namespace MBSimGUI {
     OptionsDialog menu(this);
     menu.setAutoSave(settings.value("mainwindow/options/autosave", false).toBool());
     menu.setAutoSaveInterval(settings.value("mainwindow/options/autosaveinterval", 5).toInt());
-    menu.setAutoExport(settings.value("mainwindow/options/autoexport", false).toBool());
-    menu.setAutoExportDir(settings.value("mainwindow/options/autoexportdir", "./").toString());
     menu.setSaveStateVector(settings.value("mainwindow/options/savestatevector", false).toBool());
     menu.setMaxUndo(settings.value("mainwindow/options/maxundo", 10).toInt());
     menu.setShowFilters(settings.value("mainwindow/options/showfilters", true).toBool());
@@ -797,8 +795,6 @@ namespace MBSimGUI {
     if(res == 1) {
       settings.setValue("mainwindow/options/autosave"                      , menu.getAutoSave());
       settings.setValue("mainwindow/options/autosaveinterval"              , menu.getAutoSaveInterval());
-      settings.setValue("mainwindow/options/autoexport"                    , menu.getAutoExport());
-      settings.setValue("mainwindow/options/autoexportdir"                 , menu.getAutoExportDir());
       settings.setValue("mainwindow/options/savestatevector"               , menu.getSaveStateVector());
       settings.setValue("mainwindow/options/maxundo"                       , menu.getMaxUndo());
       settings.setValue("mainwindow/options/showfilters"                   , menu.getShowFilters());
@@ -1668,7 +1664,7 @@ namespace MBSimGUI {
     QString uniqueTempDir_ = QString::fromStdString(uniqueTempDir.generic_string());
     processRefresh.setWorkingDirectory(uniqueTempDir_);
     processRefresh.start(QString::fromStdString((getInstallPath()/"bin"/"mbsimxml").string()), arg);
-//    refresh();
+    refresh();
   }
 
   void MainWindow::refresh() {
@@ -1890,24 +1886,19 @@ DEF mbsimgui_outdated_switch Switch {
   }
 
   void MainWindow::linearSystemAnalysis() {
-    QString file1 = QString::fromStdString(uniqueTempDir.generic_string())+"/linear_system_analysis.h5";
-    QString file2 = QString::fromStdString(uniqueTempDir.generic_string())+"/statetable.asc";
-    if(QFile::exists(file1) and QFile::exists(file2)) {
-      if(not lsa) {
-	lsa = new LinearSystemAnalysisDialog(this);
-	connect(&processSimulate,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),this,[=](){ lsa->updateWidget(); });
-      }
+    QFileInfo fileInfo = QString::fromStdString(uniqueTempDir.generic_string())+"/linear_system_analysis.h5";
+    if(fileInfo.exists() and QFile::exists(QString::fromStdString(uniqueTempDir.generic_string())+"/statetable.asc")) {
+      if(not lsa)
+	lsa = new LinearSystemAnalysisDialog(fileInfo,this);
       lsa->show();
     }
   }
 
   void MainWindow::showStateTable() {
-    QString file = QString::fromStdString(uniqueTempDir.generic_string())+"/statetable.asc";
-    if(QFile::exists(file)) {
-      if(not st) {
-	st = new StateTableDialog(this);
-	connect(&processSimulate,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),st,&StateTableDialog::updateWidget);
-      }
+    QFileInfo fileInfo = QString::fromStdString(uniqueTempDir.generic_string())+"/statetable.asc";
+    if(fileInfo.exists()) {
+      if(not st)
+	st = new StateTableDialog(fileInfo,this);
       st->show();
     }
   }
@@ -3227,7 +3218,7 @@ DEF mbsimgui_outdated_switch Switch {
   void MainWindow::stop() {
     echoView->addOutputText("<span class=\"MBSIMGUI_ERROR\">'Stop simulation' clicked</span>\n");
     echoView->updateOutput(true);
-    processSimulate.write("\1\0", 2);
+    processSimulate.terminate();
   }
 
   void MainWindow::terminate() {

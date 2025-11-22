@@ -370,7 +370,7 @@ namespace MBSimGUI {
     QDialog::hideEvent(event);
   }
 
-  StateTableDialog::StateTableDialog(QWidget *parent) : QDialog(parent) {
+  StateTableDialog::StateTableDialog(const QFileInfo &fileInfo_, QWidget *parent) : QDialog(parent), fileInfo(fileInfo_) {
     setWindowTitle(QString("State table"));
     auto *layout = new QVBoxLayout;
     setLayout(layout);
@@ -418,12 +418,23 @@ namespace MBSimGUI {
   }
 
   void StateTableDialog::showEvent(QShowEvent *event) {
+    updateWidget();
+    timer.start(1000);
+    timeStamp = fileInfo.lastModified();
+    connect(&timer, &QTimer::timeout, this, [=]() {
+      fileInfo.refresh();
+      if(fileInfo.lastModified() != timeStamp) {
+          timeStamp = fileInfo.lastModified();
+          updateWidget();
+          }
+        });
     QSettings settings;
     restoreGeometry(settings.value("statetabledialog/geometry").toByteArray());
     QDialog::showEvent(event);
   }
 
   void StateTableDialog::hideEvent(QHideEvent *event) {
+    timer.stop();
     QSettings settings;
     settings.setValue("statetabledialog/geometry", saveGeometry());
     QDialog::hideEvent(event);
@@ -1202,7 +1213,7 @@ namespace MBSimGUI {
     plot->replot();
   }
 
-  LinearSystemAnalysisDialog::LinearSystemAnalysisDialog(QWidget *parent) : QDialog(parent) {
+  LinearSystemAnalysisDialog::LinearSystemAnalysisDialog(const QFileInfo &fileInfo_, QWidget *parent) : QDialog(parent), fileInfo(fileInfo_)  {
     setWindowTitle("Linear system analysis");
     auto *layout = new QVBoxLayout;
     setLayout(layout);
@@ -1236,12 +1247,23 @@ namespace MBSimGUI {
   }
 
   void LinearSystemAnalysisDialog::showEvent(QShowEvent *event) {
+    updateWidget();
+    timer.start(1000);
+    timeStamp = fileInfo.lastModified();
+    connect(&timer, &QTimer::timeout, this, [=]() {
+      fileInfo.refresh();
+      if(fileInfo.lastModified() != timeStamp) {
+          timeStamp = fileInfo.lastModified();
+          updateWidget();
+          }
+        });
     QSettings settings;
     restoreGeometry(settings.value("linearsystemanalysisdialog/geometry").toByteArray());
     QDialog::showEvent(event);
   }
 
   void LinearSystemAnalysisDialog::hideEvent(QHideEvent *event) {
+    timer.stop();
     QSettings settings;
     settings.setValue("linearsystemanalysisdialog/geometry", saveGeometry());
     QDialog::hideEvent(event);

@@ -55,17 +55,6 @@ namespace MBSimGUI {
     QLabel *label = new QLabel("min");
     sublayout->addWidget(label);
 
-    sublayout = new QHBoxLayout;
-    layout->addLayout(sublayout);
-    autoExport = new QCheckBox("Auto export simulation data");
-    connect(autoExport,&QCheckBox::stateChanged,this,&OptionsDialog::autoExportChanged);
-    sublayout->addWidget(autoExport);
-    autoExportDir = new QLineEdit("Export directory");
-    sublayout->addWidget(autoExportDir);
-    button = new QPushButton("Browse");
-    connect(button,&QPushButton::clicked,this,&OptionsDialog::openFileBrowser);
-    sublayout->addWidget(button);
-
     saveStateVector = new QCheckBox("Save final state vector");
     layout->addWidget(saveStateVector);
 
@@ -142,19 +131,8 @@ namespace MBSimGUI {
     setWindowTitle("Options");
   }
 
-  void OptionsDialog::openFileBrowser() {
-    QString dir = QFileDialog::getExistingDirectory (this, "Select directory", ".");
-    if(dir != "")
-      setAutoExportDir(dir);
-  }
-  
   void OptionsDialog::autoSaveChanged(int state) {
     autoSaveInterval->setEnabled(state);
-  }
-
-  void OptionsDialog::autoExportChanged(int state) {
-    autoExportDir->setEnabled(state);
-    button->setEnabled(state);
   }
 
   bool OptionsDialog::getAutoSave() const {
@@ -172,23 +150,6 @@ namespace MBSimGUI {
 
   void OptionsDialog::setAutoSaveInterval(int min) {
     autoSaveInterval->setValue(min);
-  }
-
-  bool OptionsDialog::getAutoExport() const {
-    return (autoExport->checkState()==Qt::Checked);
-  }
-
-  void OptionsDialog::setAutoExport(bool flag) {
-    autoExport->setCheckState(flag?Qt::Checked:Qt::Unchecked);
-    autoExportChanged(flag);
-  }
-
-  QString OptionsDialog::getAutoExportDir() const {
-    return autoExportDir->text();
-  }
-
-  void OptionsDialog::setAutoExportDir(const QString& dir) {
-    autoExportDir->setText(dir);
   }
 
   bool OptionsDialog::getSaveStateVector() const {

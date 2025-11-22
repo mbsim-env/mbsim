@@ -42,10 +42,6 @@ namespace MBSimGUI {
       void setAutoSaveInterval(int min);
       int getAutoSaveInterval() const;
       void setAutoSave(bool flag);
-      bool getAutoExport() const;
-      void setAutoExport(bool flag);
-      QString getAutoExportDir() const;
-      void setAutoExportDir(const QString &dir);
       void setMaxUndo(int num);
       int getMaxUndo() const;
       bool getShowFilters() const;
@@ -74,14 +70,11 @@ namespace MBSimGUI {
       void setModulePath(const QString &path);
     private:
       void autoSaveChanged(int state);
-      void autoExportChanged(int state);
-      void openFileBrowser();
-      QCheckBox *autoSave, *autoExport, *saveStateVector, *showFilters, *showHiddenItems, *showEmptyParameters, *statusUpdate;
+      QCheckBox *autoSave, *saveStateVector, *showFilters, *showHiddenItems, *showEmptyParameters, *statusUpdate;
       QRadioButton *parameterViewOnlyForCurrentElement, *parameterViewAll;
       QRadioButton *onErrorLinksOpenPropertyDialog, *onErrorLinksOpenXMLSource;
       QComboBox *defaultEvaluator;
       QSpinBox *autoSaveInterval, *maxUndo;
-      QLineEdit *autoExportDir;
       QPushButton *button;
       QTextEdit *plugins;
       QTextEdit *modulePath;
