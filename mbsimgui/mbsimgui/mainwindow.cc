@@ -1668,7 +1668,7 @@ namespace MBSimGUI {
     QString uniqueTempDir_ = QString::fromStdString(uniqueTempDir.generic_string());
     processRefresh.setWorkingDirectory(uniqueTempDir_);
     processRefresh.start(QString::fromStdString((getInstallPath()/"bin"/"mbsimxml").string()), arg);
-//    refresh();
+    refresh();
   }
 
   void MainWindow::refresh() {
