@@ -565,7 +565,7 @@ namespace MBSimGUI {
         });
         simulate();
       });
-      // do how show the error dialog if a hidden parameter cannot be evaluated
+      // do not show the error dialog if a hidden parameter cannot be evaluated
       HiddenParErrorDialog::show = false;
     }
 
