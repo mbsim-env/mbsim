@@ -25,6 +25,9 @@
 #include <QTreeWidgetItem>
 #include <QCheckBox>
 #include <QUrl>
+#include <QFileInfo>
+#include <QDateTime>
+#include <QTimer>
 #include <mbxmlutilshelper/dom.h>
 
 class QTableWidget;
@@ -111,12 +114,15 @@ namespace MBSimGUI {
 
   class StateTableDialog : public QDialog {
     public:
-      StateTableDialog(QWidget *parent);
+      StateTableDialog(const QFileInfo &fileInfo_, QWidget *parent);
       void updateWidget();
     private:
       void showEvent(QShowEvent *event) override;
       void hideEvent(QHideEvent *event) override;
       QTreeWidget *stateTable;
+      QFileInfo fileInfo;
+      QDateTime timeStamp;
+      QTimer timer;
   };
 
   class LoadModelDialog : public QDialog {
@@ -223,7 +229,7 @@ namespace MBSimGUI {
 
   class LinearSystemAnalysisDialog : public QDialog {
     public:
-      LinearSystemAnalysisDialog(QWidget *parent);
+      LinearSystemAnalysisDialog(const QFileInfo &fileInfo_, QWidget *parent);
       void updateWidget();
     private:
       void showEvent(QShowEvent *event) override;
@@ -232,6 +238,9 @@ namespace MBSimGUI {
       FrequencyResponseWidget *frwidget;
       InitialOutputWidget *iowidget;
       EigenanalysisWidget *eawidget;
+      QFileInfo fileInfo;
+      QDateTime timeStamp;
+      QTimer timer;
   };
 
   class CreateFMUDialog : public QDialog {

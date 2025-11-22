@@ -1890,24 +1890,19 @@ DEF mbsimgui_outdated_switch Switch {
   }
 
   void MainWindow::linearSystemAnalysis() {
-    QString file1 = QString::fromStdString(uniqueTempDir.generic_string())+"/linear_system_analysis.h5";
-    QString file2 = QString::fromStdString(uniqueTempDir.generic_string())+"/statetable.asc";
-    if(QFile::exists(file1) and QFile::exists(file2)) {
-      if(not lsa) {
-	lsa = new LinearSystemAnalysisDialog(this);
-	connect(&processSimulate,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),this,[=](){ lsa->updateWidget(); });
-      }
+    QFileInfo fileInfo = QString::fromStdString(uniqueTempDir.generic_string())+"/linear_system_analysis.h5";
+    if(fileInfo.exists() and QFile::exists(QString::fromStdString(uniqueTempDir.generic_string())+"/statetable.asc")) {
+      if(not lsa)
+	lsa = new LinearSystemAnalysisDialog(fileInfo,this);
       lsa->show();
     }
   }
 
   void MainWindow::showStateTable() {
-    QString file = QString::fromStdString(uniqueTempDir.generic_string())+"/statetable.asc";
-    if(QFile::exists(file)) {
-      if(not st) {
-	st = new StateTableDialog(this);
-	connect(&processSimulate,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),st,&StateTableDialog::updateWidget);
-      }
+    QFileInfo fileInfo = QString::fromStdString(uniqueTempDir.generic_string())+"/statetable.asc";
+    if(fileInfo.exists()) {
+      if(not st)
+	st = new StateTableDialog(fileInfo,this);
       st->show();
     }
   }
