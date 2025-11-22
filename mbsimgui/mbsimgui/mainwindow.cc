@@ -393,6 +393,9 @@ namespace MBSimGUI {
     actionTerminate = runBar->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"kill.svg").string())),"Terminate background tasks");
     runMenu->addAction(actionTerminate);
     connect(actionTerminate,&QAction::triggered,this,&MainWindow::terminate);
+    auto *actionKill = new QAction(Utils::QIconCached(QString::fromStdString((iconPath/"kill.svg").string())),"Kill background tasks");
+    runMenu->addAction(actionKill);
+    connect(actionKill,&QAction::triggered,this,&MainWindow::kill);
     actionOpenMBV = runBar->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"openmbv.svg").string())),"OpenMBV");
     runMenu->addAction(actionOpenMBV);
     connect(actionOpenMBV,&QAction::triggered,this,&MainWindow::openmbv);
