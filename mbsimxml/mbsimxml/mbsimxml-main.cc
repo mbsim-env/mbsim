@@ -172,6 +172,17 @@ int main(int argc, char *argv[]) {
     // create xml catalog
     auto xmlCatalogDoc=MBSim::getMBSimXMLCatalog(searchDirs);
 
+    // load MBSim modules
+    MBSimXML::loadModules(searchDirs);
+    // check for errors during ObjectFactory
+    string errorMsg3(ObjectFactory::getAndClearErrorMsg());
+    if(!errorMsg3.empty()) {
+      cerr<<"The following errors occured during the loading of MBSim modules object factory:"<<endl;
+      cerr<<errorMsg3;
+      cerr<<"Exiting now."<<endl;
+      return 1;
+    }
+
     if((i=std::find(args.begin(), args.end(), "--dumpXMLCatalog"))!=args.end()) {
       i2=i; i2++;
       if(i2==args.end())
@@ -395,17 +406,6 @@ int main(int argc, char *argv[]) {
         auto mainXMLDoc = preprocess.processAndGetDocument();
 
         if(!ONLYPP) {
-          // load MBSim modules
-          MBSimXML::loadModules(searchDirs);
-          // check for errors during ObjectFactory
-          string errorMsg3(ObjectFactory::getAndClearErrorMsg());
-          if(!errorMsg3.empty()) {
-            cerr<<"The following errors occured during the loading of MBSim modules object factory:"<<endl;
-            cerr<<errorMsg3;
-            cerr<<"Exiting now."<<endl;
-            return 1;
-          }
-
           auto e=mainXMLDoc->getDocumentElement();
           // create object for DynamicSystemSolver and check correct type
           e=E(e)->getFirstElementChildNamed(MBSIM%"DynamicSystemSolver");
