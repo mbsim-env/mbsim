@@ -65,7 +65,8 @@ def checkErrorFormat(dir, errorFormat):
     stdout="error~~"
     if errorFormat == "HTMLXPATH":
       stdout="error~<span class=\"MBSIMGUI_ERROR\">~</span>"
-    cur=subprocess.check_output([prefix+"mbsimxml", "--stopafterfirststep", "--stdout", stdout, "MBS.mbsx"],
+    mbsFile=["MBS.mbsx"] if os.path.exists(dir+"/MBS.mbsx") else []
+    cur=subprocess.check_output([prefix+"mbsimxml", "--stopafterfirststep", "--stdout", stdout]+mbsFile,
                                 env=env, stderr=subprocess.DEVNULL, cwd=dir)
     ret[1]+=dir+": "+errorFormat+": did not return with !=0 (ret=0)\n"; ret[0]+=1
   except subprocess.CalledProcessError as ex:
@@ -124,7 +125,8 @@ def checkGUIError(dir):
   # run command and get error output
   try:
     prefix=args.prefix+"/bin/" if args.prefix is not None else ""
-    cur=subprocess.check_output([prefix+"mbsimgui", "--autoExit", "MBS.mbsx"],
+    mbsFile=["MBS.mbsx"] if os.path.exists(dir+"/MBS.mbsx") else []
+    cur=subprocess.check_output([prefix+"mbsimgui", "--autoExit"]+mbsFile,
                                 stderr=subprocess.STDOUT, cwd=dir, env=guiEnvVars(displayNR))
   except subprocess.CalledProcessError as ex:
     cur=ex.output

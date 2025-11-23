@@ -99,11 +99,7 @@ namespace MBSimGUI {
   MainWindow *mw;
 
   const string NO_FILENAME("{no filename}");
-#ifdef _WIN32 // just a dummy absolute path used with NO_FILENAME
-  const string dummyAbsPath("x:/");
-#else
-  const string dummyAbsPath("/");
-#endif
+  const string NO_FILENANE_PATH(boost::filesystem::current_path().string()+"/");
 
   static int currentModelID = 0;
 
@@ -1081,7 +1077,7 @@ namespace MBSimGUI {
       setSimulateActionsEnabled(false);
       actionSave->setDisabled(true);
       actionSaveProject->setDisabled(true);
-      projectFile=(dummyAbsPath+NO_FILENAME).c_str();
+      projectFile=(NO_FILENANE_PATH+NO_FILENAME).c_str();
       setWindowTitle((NO_FILENAME+"[*]").c_str());
 
       auto *pmodel = static_cast<ParameterTreeModel*>(parameterView->model());
@@ -1105,7 +1101,7 @@ namespace MBSimGUI {
       QSettings settings;
       project->setEvaluator(Evaluator::evaluators[settings.value("mainwindow/options/defaultevaluator", 0).toInt()]);
       project->createXMLElement(doc.get());
-      E(doc->getDocumentElement())->setOriginalFilename(dummyAbsPath+NO_FILENAME);
+      E(doc->getDocumentElement())->setOriginalFilename(NO_FILENANE_PATH+NO_FILENAME);
 
       model->createProjectItem(project);
 
@@ -1133,8 +1129,8 @@ namespace MBSimGUI {
         file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
       loadProject(file,false);
     }
-    projectFile=(dummyAbsPath+NO_FILENAME).c_str();
-    E(doc->getDocumentElement())->setOriginalFilename(dummyAbsPath+NO_FILENAME);
+    projectFile=(NO_FILENANE_PATH+NO_FILENAME).c_str();
+    E(doc->getDocumentElement())->setOriginalFilename(NO_FILENANE_PATH+NO_FILENAME);
   }
 
   void MainWindow::loadProject(const QString &fileName, bool updateRecent) {
@@ -1155,7 +1151,7 @@ namespace MBSimGUI {
 	setWindowTitle(projectFile+"[*]");
 	setCurrentProjectFile(fileName);
       } else {
-	projectFile=(dummyAbsPath+NO_FILENAME).c_str();
+	projectFile=(NO_FILENANE_PATH+NO_FILENAME).c_str();
 	setWindowTitle((NO_FILENAME+"[*]").c_str());
       }
 
