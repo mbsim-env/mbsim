@@ -5,9 +5,4 @@ if [ @XC@ == 1 ]; then
   exit 0
 fi
 
-if [ "_$(uname -s)" != "_Linux" ]; then
-  echo "mbsimxml error tests are skipped for a none Linux build (Windows has sporadic errors)"
-  exit 0
-fi
-
 $srcdir/../examples/error/run_error_checks.py --run xml --prefix @prefix@ $srcdir/../examples
