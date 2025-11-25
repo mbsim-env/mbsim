@@ -330,6 +330,7 @@ int main(int argc, char *argv[]) {
     int ret; // command return value
     bool runAgain=true; // always run the first time
     while(runAgain) {
+      Deprecated::clear(); // clear deprecated messages we what to see deprecated messages again for a new run of a model
       ret=0;
 
       vector<bfs::path> dependencies;
