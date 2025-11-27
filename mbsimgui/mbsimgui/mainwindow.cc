@@ -1640,6 +1640,7 @@ namespace MBSimGUI {
     QStringList arg;
     arg.append("--stopafterfirststep");
     arg.append("--savestatetable");
+    arg.append("--skipplot");
 
     // we print everything except status messages to stdout
     arg.append("--stdout"); arg.append(R"#(info~<span class="MBSIMGUI_INFO">~</span>~HTML)#");
@@ -1696,17 +1697,6 @@ namespace MBSimGUI {
     // set output filename (for openmbv)
     E(dssEle)->setAttribute("name","MBS_tmp");
 
-    // disable plotting in DSS
-    DOMElement *ele1 = D(doc)->createElement( MBSIM%"plotFeatureRecursive" );
-    E(ele1)->setAttribute("value","plotRecursive");
-    ele1->insertBefore(doc->createTextNode(X()%project->getVarFalse().toStdString()), nullptr);
-    // add it as the last plotFeatureRecursive element to avoid that the XML tree get not changed regarding the xpath
-    // of existing elements AND to ensure it overwrites a equivalent plot-feature
-    auto before = E(dssEle)->getFirstElementChildNamed(MBSIM%"frames");
-    if(auto prev = static_cast<DOMElement*>(before->getPreviousSibling()); prev && E(prev)->getTagName()==MBSIM%"frameOfReference")
-      before = prev;
-    dssEle->insertBefore( ele1, before );
-
     // disable initial projection if requested
     if(solverInitialProj->isChecked()) {
       auto ip = E(dssEle)->getFirstElementChildNamed(MBSIM%"initialProjection");
@@ -1756,7 +1746,7 @@ namespace MBSimGUI {
       ip->insertBefore(doc->createTextNode(X()%"0"), nullptr);
     }
 
-    // add the "Outdated" IvScreenAnnotation openmbv element
+    // add the "Outdated" IvScreenAnnotation openmbv element (add as last element in <MBSimEnvironment>/<openMBVObject>)
     auto envEle = E(dssEle)->getFirstElementChildNamed(MBSIM%"environments");
     auto mbsimEnvEle = E(envEle)->getFirstElementChildNamed(MBSIM%"MBSimEnvironment");
     if(!mbsimEnvEle) {
