@@ -119,6 +119,7 @@
                                 self.inputSL.valueChanged.connect(self.sliderChanged)
                             
                                 axes = plotWidget.figure.subplots()
+                                mbxmlutils.Qt.enableWheelZoom(axes) # enable mouse wheel zoom
                             
                                 self.data=axes.plot(self.X,numpy.zeros(self.X.shape))[0]
                                 axes.plot(splineIn["xx"],splineIn["yy"][1]["data"],marker="x",linestyle="")
@@ -171,8 +172,10 @@
 
                             # create a standard matplotlib figure
                             d=mbsimgui.StdMatplotlibDialog(layout="tight")
+                            d.getToolbar().pan() # enbale pan zoom at startup
                             ax=d.getFigure().subplots()
                             ax.plot([1,2,3,4],[5,4,7,2])
+                            mbxmlutils.Qt.enableWheelZoom(ax) # enable mouse wheel zoom
                             d.show()
 
                             mbxmlutils.Qt.blockUntilDialogsAreClosed(w, d)

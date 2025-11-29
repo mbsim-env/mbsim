@@ -389,8 +389,7 @@ namespace MBSimGUI {
     auto *actionTerminate = runBar->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"kill.svg").string())),"Terminate background tasks");
     runMenu->addAction(actionTerminate);
     connect(actionTerminate,&QAction::triggered,this,&MainWindow::terminate);
-    auto *actionKill = new QAction(Utils::QIconCached(QString::fromStdString((iconPath/"kill.svg").string())),"Kill background tasks");
-    runMenu->addAction(actionKill);
+    auto *actionKill = runMenu->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"kill.svg").string())),"Kill background tasks");
     connect(actionKill,&QAction::triggered,this,&MainWindow::kill);
     actionOpenMBV = runBar->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"openmbv.svg").string())),"OpenMBV");
     runMenu->addAction(actionOpenMBV);
@@ -498,66 +497,57 @@ namespace MBSimGUI {
     centralWidget->setLayout(mainlayout);
     mainlayout->addWidget(inlineOpenMBVMW);
 
-    // if simulation process has new error output call statusBar()->showMessage(...) but only every 250ms
-    connect(&processSimulate,&QProcess::readyReadStandardError,[this]() {
-      auto output=processSimulate.readAllStandardError();
-      if(!output.isEmpty())
-        updateStatusMessage(output);
-        });
-    // if refresh process has new error output call statusBar()->showMessage(...) but only every 250ms
-    connect(&processRefresh,&QProcess::readyReadStandardError,[this]() {
-      auto output=processRefresh.readAllStandardError();
-      if(!output.isEmpty())
-        updateStatusMessage(output);
-       });
+    for(auto *process : {&processSimulate, &processRefresh}) {
+      // if simulation process has new error output call statusBar()->showMessage(...) but only every 250ms
+      connect(process,&QProcess::readyReadStandardError,[this,process]() {
+        auto output=process->readAllStandardError();
+        if(!output.isEmpty())
+          updateStatusMessage(output);
+      });
+    }
 
     startProcessRefresh();
 
     if(!arg.contains("--autoExit")) { // normal run (no --autoExit) -> pass also the output of process/processRefresh to readyReadStandardOutput
       startProcessSimulate();
       processSimulateFinishedConnection=connect(&processSimulate,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
-          [this]() { startProcessSimulate(); });
+        this, &MainWindow::startProcessSimulate);
       processRefreshFinishedConnection=connect(&processRefresh,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
-          this, &MainWindow::startProcessRefresh);
-      connect(&processSimulate,&QProcess::readyReadStandardOutput,[this]() {
-        auto output=processSimulate.readAllStandardOutput();
-        if(!output.isEmpty())
-          updateEchoView(output);
-          });
-      connect(&processRefresh,&QProcess::readyReadStandardOutput,[this]() {
-        auto output=processRefresh.readAllStandardOutput();
-        if(!output.isEmpty())
-          updateEchoView(output);
-          });
+        this, &MainWindow::startProcessRefresh);
+      for(auto *process : {&processSimulate, &processRefresh}) {
+        connect(process,&QProcess::readyReadStandardOutput,[this,process]() {
+          auto output=process->readAllStandardOutput();
+          if(!output.isEmpty())
+            updateEchoView(output);
+        });
+      }
     }
     else { // --autoExit case
       startProcessSimulate(true);
-      // store all output of processRefresh in "allOutput" and ...
-      static QString allOutput;
-      connect(&processSimulate,&QProcess::readyReadStandardOutput,[this](){
-        allOutput+=processSimulate.readAllStandardOutput();
-        // ... if 'MBXMLUTILS_PREPROCESS_CTOR' is found in the output then mbsimxml has already started
-        // and we can now close the write stream to exit mbsimxml after the content is processed which will call
-        // QProcess::finished at the end
-        if(allOutput.contains("MBXMLUTILS_PREPROCESS_CTOR"))
-          processSimulate.closeWriteChannel();
-      });
-      connect(&processRefresh,&QProcess::readyReadStandardOutput,[this](){
-        allOutput+=processRefresh.readAllStandardOutput();
-        // ... if 'MBXMLUTILS_PREPROCESS_CTOR' is found in the output then mbsimxml has already started
-        // and we can now close the write stream to exit mbsimxml after the content is processed which will call
-        // QProcess::finished at the end
-        if(allOutput.contains("MBXMLUTILS_PREPROCESS_CTOR"))
-          processRefresh.closeWriteChannel();
-      });
+      // store all output of processSimulate/processRefresh in "allOutputSimulate/Refresh" and ...
+      static QString allOutputSimulate, allOutputRefresh;
+      for(auto &processAndOutput : {make_pair(&processSimulate, ref(allOutputSimulate)),
+                                    make_pair(&processRefresh, ref(allOutputRefresh))}) {
+        connect(processAndOutput.first,&QProcess::readyReadStandardOutput,[processAndOutput](){
+          processAndOutput.second+=processAndOutput.first->readAllStandardOutput();
+          // ... if 'MBXMLUTILS_PREPROCESS_CTOR' is found in the output then mbsimxml has already started
+          // and we can now close the write stream to exit mbsimxml after the content is processed which will call
+          // QProcess::finished at the end
+          if(processAndOutput.second.contains("MBXMLUTILS_PREPROCESS_CTOR"))
+            processAndOutput.first->closeWriteChannel();
+        });
+      }
       // if QProcess::finished gets called dump all output to cout and close MainWindow
       connect(&processRefresh,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
       [this](int exitCode, QProcess::ExitStatus exitStatus){
+        allOutputRefresh+=processRefresh.readAllStandardOutput();
+        cout<<allOutputRefresh.toStdString();
         if(exitCode!=0)
           setErrorOccured();
         connect(&processSimulate,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
         [this](int exitCode, QProcess::ExitStatus exitStatus){
-          cout<<allOutput.toStdString();
+          allOutputSimulate+=processSimulate.readAllStandardOutput();
+          cout<<allOutputSimulate.toStdString();
           if(exitCode!=0)
             setErrorOccured();
           close();
@@ -682,15 +672,13 @@ namespace MBSimGUI {
 
   MainWindow::~MainWindow() {
     disconnect(processRefreshFinishedConnection);
-    processRefresh.closeWriteChannel();
-    processRefresh.waitForFinished(-1);
-    if(processRefresh.exitStatus()!=QProcess::NormalExit || processRefresh.exitCode()!=0)
-      setErrorOccured();
     disconnect(processSimulateFinishedConnection);
-    processSimulate.closeWriteChannel();
-    processSimulate.waitForFinished(-1);
-    if(processSimulate.exitStatus()!=QProcess::NormalExit || processSimulate.exitCode()!=0)
-      setErrorOccured();
+    for(auto *process : {&processSimulate, &processRefresh}) {
+      process->closeWriteChannel();
+      process->waitForFinished(-1);
+      if(process->exitStatus()!=QProcess::NormalExit || process->exitCode()!=0)
+        setErrorOccured();
+    }
     if(lsa) delete lsa;
     if(st) delete st;
     centralWidget()->layout()->removeWidget(inlineOpenMBVMW);
@@ -1641,6 +1629,7 @@ namespace MBSimGUI {
     QStringList arg;
     arg.append("--stopafterfirststep");
     arg.append("--savestatetable");
+    arg.append("--skipplot");
 
     // we print everything except status messages to stdout
     arg.append("--stdout"); arg.append(R"#(info~<span class="MBSIMGUI_INFO">~</span>~HTML)#");
@@ -1697,17 +1686,6 @@ namespace MBSimGUI {
     // set output filename (for openmbv)
     E(dssEle)->setAttribute("name","MBS_tmp");
 
-    // disable plotting in DSS
-    DOMElement *ele1 = D(doc)->createElement( MBSIM%"plotFeatureRecursive" );
-    E(ele1)->setAttribute("value","plotRecursive");
-    ele1->insertBefore(doc->createTextNode(X()%project->getVarFalse().toStdString()), nullptr);
-    // add it as the last plotFeatureRecursive element to avoid that the XML tree get not changed regarding the xpath
-    // of existing elements AND to ensure it overwrites a equivalent plot-feature
-    auto before = E(dssEle)->getFirstElementChildNamed(MBSIM%"frames");
-    if(auto prev = static_cast<DOMElement*>(before->getPreviousSibling()); prev && E(prev)->getTagName()==MBSIM%"frameOfReference")
-      before = prev;
-    dssEle->insertBefore( ele1, before );
-
     // disable initial projection if requested
     if(solverInitialProj->isChecked()) {
       auto ip = E(dssEle)->getFirstElementChildNamed(MBSIM%"initialProjection");
@@ -1757,7 +1735,7 @@ namespace MBSimGUI {
       ip->insertBefore(doc->createTextNode(X()%"0"), nullptr);
     }
 
-    // add the "Outdated" IvScreenAnnotation openmbv element
+    // add the "Outdated" IvScreenAnnotation openmbv element (add as last element in <MBSimEnvironment>/<openMBVObject>)
     auto envEle = E(dssEle)->getFirstElementChildNamed(MBSIM%"environments");
     auto mbsimEnvEle = E(envEle)->getFirstElementChildNamed(MBSIM%"MBSimEnvironment");
     if(!mbsimEnvEle) {
@@ -1829,7 +1807,7 @@ DEF mbsimgui_outdated_switch Switch {
     // we print everything except status messages to stdout
     arg.append("--stdout"); arg.append(R"#(info~<span class="MBSIMGUI_INFO">~</span>~HTML)#");
     arg.append("--stdout"); arg.append(R"#(warn~<span class="MBSIMGUI_WARN">~</span>~HTML)#");
-    *debugStreamFlag=echoView->debugEnabled();
+    *debugStreamFlag=echoView->debugEnabled(); // processSimulate is restarted if debugEnabled changes
     if(*debugStreamFlag) {
       arg.append("--stdout"); arg.append(R"#(debug~<span class="MBSIMGUI_DEBUG">~</span>~HTML)#");
     }
@@ -3223,23 +3201,17 @@ DEF mbsimgui_outdated_switch Switch {
   void MainWindow::terminate() {
     echoView->addOutputText("<span class=\"MBSIMGUI_ERROR\">'Terminate background tasks' clicked</span>\n");
     echoView->updateOutput(true);
-    if(not processRefresh.state()==QProcess::NotRunning)
-      processRefresh.terminate();
-    if(not processSimulate.state()==QProcess::NotRunning)
-      processSimulate.terminate();
-    if(not processCreateFMU.state()==QProcess::NotRunning)
-      processCreateFMU.terminate();
+    for(auto *process : {&processSimulate, &processRefresh, &processCreateFMU})
+      if(process->state()!=QProcess::NotRunning)
+        process->terminate();
   }
 
   void MainWindow::kill() {
     echoView->addOutputText("<span class=\"MBSIMGUI_ERROR\">'Kill background tasks' clicked</span>\n");
     echoView->updateOutput(true);
-    if(not processRefresh.state()==QProcess::NotRunning)
-      processRefresh.kill();
-    if(not processSimulate.state()==QProcess::NotRunning)
-      processSimulate.kill();
-    if(not processCreateFMU.state()==QProcess::NotRunning)
-      processCreateFMU.kill();
+    for(auto *process : {&processSimulate, &processRefresh, &processCreateFMU})
+      if(process->state()!=QProcess::NotRunning)
+        process->kill();
   }
 
   void MainWindow::flexibleBodyTool() {

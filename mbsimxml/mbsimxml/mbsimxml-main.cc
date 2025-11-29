@@ -93,6 +93,7 @@ int main(int argc, char *argv[]) {
           <<"--donotintegrate         Stop after the initialization stage, do not integrate"<<endl
           <<"--savefinalstatevector   Save the state vector to the file \"statevector.asc\" after integration"<<endl
           <<"--savestatetable         Save the state table to the file \"statetable.asc\""<<endl
+          <<"--skipplot               Skip plotting (*.mbsh5 output)"<<endl
           <<"--stopafterfirststep     Stop after outputting the first step (usually at t=0)"<<endl
           <<"                         This generates a HDF5 output file with only one time serie"<<endl
           <<"--autoreload             Same as --stopafterfirststep but rerun mbsimxml each time"<<endl
@@ -220,6 +221,12 @@ int main(int argc, char *argv[]) {
       args.erase(i);
     }
 
+    bool skipplot=false;
+    if((i=std::find(args.begin(), args.end(), "--skipplot"))!=args.end()) {
+      skipplot=true;
+      args.erase(i);
+    }
+
     bool savestatevector=false;
     if((i=std::find(args.begin(), args.end(), "--savefinalstatevector"))!=args.end()) {
       savestatevector=true;
@@ -323,6 +330,7 @@ int main(int argc, char *argv[]) {
     int ret; // command return value
     bool runAgain=true; // always run the first time
     while(runAgain) {
+      Deprecated::clear(); // clear deprecated messages we what to see deprecated messages again for a new run of a model
       ret=0;
 
       vector<bfs::path> dependencies;
@@ -411,6 +419,9 @@ int main(int argc, char *argv[]) {
           e=E(e)->getFirstElementChildNamed(MBSIM%"DynamicSystemSolver");
           fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<"Instantiate DynamicSystemSolver"<<endl;
           auto dss=unique_ptr<DynamicSystemSolver>(ObjectFactory::createAndInit<DynamicSystemSolver>(e));
+
+          if(skipplot)
+            dss->setPlotFeatureRecursive(plotRecursive, false);
         
           // create object for Solver and check correct type
           fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<"Instantiate Solver"<<endl;
