@@ -526,14 +526,14 @@ namespace MBSimGUI {
       startProcessSimulate(true);
       // store all output of processSimulate/processRefresh in "allOutputSimulate/Refresh" and ...
       static QString allOutputSimulate, allOutputRefresh;
-      for(auto &processAndOutput : {make_pair(&processSimulate, ref(allOutputSimulate)),
-                                    make_pair(&processRefresh, ref(allOutputRefresh))}) {
-        connect(processAndOutput.first,&QProcess::readyReadStandardOutput,[processAndOutput](){
-          processAndOutput.second+=processAndOutput.first->readAllStandardOutput();
+      for(auto &processAndOutput : {make_pair(&processSimulate, &allOutputSimulate),
+                                    make_pair(&processRefresh, &allOutputRefresh)}) {
+        connect(processAndOutput.first,&QProcess::readyReadStandardOutput,[&processAndOutput](){
+          (*processAndOutput.second)+=processAndOutput.first->readAllStandardOutput();
           // ... if 'MBXMLUTILS_PREPROCESS_CTOR' is found in the output then mbsimxml has already started
           // and we can now close the write stream to exit mbsimxml after the content is processed which will call
           // QProcess::finished at the end
-          if(processAndOutput.second.contains("MBXMLUTILS_PREPROCESS_CTOR"))
+          if(processAndOutput.second->contains("MBXMLUTILS_PREPROCESS_CTOR"))
             processAndOutput.first->closeWriteChannel();
         });
       }
