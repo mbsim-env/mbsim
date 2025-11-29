@@ -526,7 +526,7 @@ namespace MBSimGUI {
       startProcessSimulate(true);
       // store all output of processSimulate/processRefresh in "allOutputSimulate/Refresh" and ...
       static QString allOutputSimulate, allOutputRefresh;
-      for(auto &processAndOutput : {make_pair(&processSimulate, &allOutputSimulate),
+      for(auto processAndOutput : {make_pair(&processSimulate, &allOutputSimulate),
                                     make_pair(&processRefresh, &allOutputRefresh)}) {
         connect(processAndOutput.first,&QProcess::readyReadStandardOutput,[&processAndOutput](){
           (*processAndOutput.second)+=processAndOutput.first->readAllStandardOutput();
