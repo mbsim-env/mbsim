@@ -524,26 +524,30 @@ namespace MBSimGUI {
     }
     else { // --autoExit case
       startProcessSimulate(true);
-      // store all output of processRefresh/processSimulate in "allOutput" and ...
-      static QString allOutput;
-      for(auto *process : {&processSimulate, &processRefresh}) {
-        connect(process,&QProcess::readyReadStandardOutput,[process](){
-          allOutput+=process->readAllStandardOutput();
+      // store all output of processSimulate/processRefresh in "allOutputSimulate/Refresh" and ...
+      static QString allOutputSimulate, allOutputRefresh;
+      for(auto &processAndOutput : {make_pair(&processSimulate, ref(allOutputSimulate)),
+                                    make_pair(&processRefresh, ref(allOutputRefresh))}) {
+        connect(processAndOutput.first,&QProcess::readyReadStandardOutput,[processAndOutput](){
+          processAndOutput.second+=processAndOutput.first->readAllStandardOutput();
           // ... if 'MBXMLUTILS_PREPROCESS_CTOR' is found in the output then mbsimxml has already started
           // and we can now close the write stream to exit mbsimxml after the content is processed which will call
           // QProcess::finished at the end
-          if(allOutput.contains("MBXMLUTILS_PREPROCESS_CTOR"))
-            process->closeWriteChannel();
+          if(processAndOutput.second.contains("MBXMLUTILS_PREPROCESS_CTOR"))
+            processAndOutput.first->closeWriteChannel();
         });
       }
       // if QProcess::finished gets called dump all output to cout and close MainWindow
       connect(&processRefresh,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
       [this](int exitCode, QProcess::ExitStatus exitStatus){
+        allOutputRefresh+=processRefresh.readAllStandardOutput();
+        cout<<allOutputRefresh.toStdString();
         if(exitCode!=0)
           setErrorOccured();
         connect(&processSimulate,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
         [this](int exitCode, QProcess::ExitStatus exitStatus){
-          cout<<allOutput.toStdString();
+          allOutputSimulate+=processSimulate.readAllStandardOutput();
+          cout<<allOutputSimulate.toStdString();
           if(exitCode!=0)
             setErrorOccured();
           close();
