@@ -155,7 +155,7 @@ Separator {{
     axis Z
     angle = Calculator {{
       a = USE speedoValue.value
-      expression "oa = {(-45-180-45)*math.pi/180/vEnd*vScale} * a + {(180+45)*math.pi/180}"
+      expression "oa = {(-45-180-45)*math.pi/180/r[-1]*vScale} * a + {(180+45)*math.pi/180}"
     }}.oa
   }}
   Coordinate3 {{
