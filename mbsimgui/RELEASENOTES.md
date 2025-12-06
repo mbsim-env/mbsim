@@ -64,6 +64,7 @@ hdf5serie
 OpenMBV
 -------
 - Allow to embed the ombvx file in the ombvh5 file. This way OpenMBV only need one input file and the ombvx file is even compressed.
+- Allow to repack a ombvx/ombvh5 file with/without embed of the ombvx file in the ombvh5 file.
 
 
 Release 10.4
