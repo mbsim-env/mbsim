@@ -90,7 +90,7 @@ namespace MBSimControl {
 	AIK = AIB*ABK;
 	cardan = MBSim::AIK2Cardan(AIK);
 
-        array<double,8> data;
+        array<OpenMBV::Float,8> data;
         data[0] = getTime();
         data[1] = rOQ(0);
         data[2] = rOQ(1);

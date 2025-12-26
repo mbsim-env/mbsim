@@ -134,7 +134,7 @@ namespace MBSim {
     if(plotFeature[openMBV]) {
       if(openMBVContactFrame[0]) {
         for(unsigned int i = 0; i < 2; i++) {
-          array<double,8> data;
+          array<OpenMBV::Float,8> data;
           data[0] = getTime();
           Vec3 pos = static_cast<SingleContact*>(link)->getContourFrame(i)->evalPosition();
           data[1] = pos(0);
@@ -152,7 +152,7 @@ namespace MBSim {
       if(ombvContact) {
         int off = ombvContact->getSideOfInteraction()==0?1:0;
         for(size_t i=0; i<contactArrow.size(); i++) {
-          array<double,8> data;
+          array<OpenMBV::Float,8> data;
           data[0] = getTime();
           Vec3 toPoint = static_cast<SingleContact*>(link)->getContourFrame(off+i)->evalPosition();
           data[1] = toPoint(0);
@@ -169,7 +169,7 @@ namespace MBSim {
       if(ombvFriction) {
         int off = ombvFriction->getSideOfInteraction()==0?1:0;
         for(size_t i=0; i<frictionArrow.size(); i++) {
-          array<double,8> data;
+          array<OpenMBV::Float,8> data;
           data[0] = getTime();
           Vec3 toPoint = static_cast<SingleContact*>(link)->getContourFrame(off+i)->evalPosition();
           data[1] = toPoint(0);

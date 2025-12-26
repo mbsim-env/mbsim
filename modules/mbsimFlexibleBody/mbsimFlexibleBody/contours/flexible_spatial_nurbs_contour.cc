@@ -378,7 +378,7 @@ namespace MBSimFlexibleBody {
   void FlexibleSpatialNurbsContour::plot() {
     if(plotFeature[openMBV] and openMBVNurbsSurface) {
       if(updSrfPos) updateSurfacePositions();
-      vector<double> data;
+      vector<OpenMBV::Float> data;
       data.push_back(getTime()); //time
       //Control-Point coordinates
       for(int j=0; j<srfPos.ctrlPnts().cols(); j++) {

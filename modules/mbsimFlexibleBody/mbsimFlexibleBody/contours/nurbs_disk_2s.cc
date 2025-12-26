@@ -216,7 +216,7 @@ namespace MBSimFlexibleBody {
 
   void NurbsDisk2s::plot() {
     if(plotFeature[openMBV] and openMBVNurbsDisk) {
-      vector<double> data;
+      vector<OpenMBV::Float> data;
       data.push_back(getTime()); //time
 
       Vec3 r = evalPosition();

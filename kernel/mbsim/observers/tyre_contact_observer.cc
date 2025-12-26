@@ -163,7 +163,7 @@ namespace MBSim {
     if(plotFeature[openMBV]) {
       if(openMBVContactFrame[0]) {
         for(unsigned int i = 0; i < 2; i++) {
-          array<double,8> data;
+          array<OpenMBV::Float,8> data;
           data[0] = getTime();
           Vec3 pos = static_cast<TyreContact*>(link)->getContourFrame(i)->evalPosition();
           data[1] = pos(0);
@@ -181,7 +181,7 @@ namespace MBSim {
       if(ombvNormalForce) {
         int off = ombvNormalForce->getSideOfInteraction()==0?1:0;
         for(size_t i=0; i<normalForceArrow.size(); i++) {
-          array<double,8> data;
+          array<OpenMBV::Float,8> data;
           data[0] = getTime();
           Vec3 toPoint = static_cast<TyreContact*>(link)->getContourFrame(off+i)->evalPosition();
           data[1] = toPoint(0);
@@ -198,7 +198,7 @@ namespace MBSim {
       if(ombvLongitudinalForce) {
         int off = ombvLongitudinalForce->getSideOfInteraction()==0?1:0;
         for(size_t i=0; i<longitudinalForceArrow.size(); i++) {
-          array<double,8> data;
+          array<OpenMBV::Float,8> data;
           data[0] = getTime();
           Vec3 toPoint = static_cast<TyreContact*>(link)->getContourFrame(off+i)->evalPosition();
           data[1] = toPoint(0);
@@ -215,7 +215,7 @@ namespace MBSim {
       if(ombvLateralForce) {
         int off = ombvLateralForce->getSideOfInteraction()==0?1:0;
         for(size_t i=0; i<lateralForceArrow.size(); i++) {
-          array<double,8> data;
+          array<OpenMBV::Float,8> data;
           data[0] = getTime();
           Vec3 toPoint = static_cast<TyreContact*>(link)->getContourFrame(off+i)->evalPosition();
           data[1] = toPoint(0);
@@ -232,7 +232,7 @@ namespace MBSim {
       if(ombvOverturningMoment) {
         int off = ombvOverturningMoment->getSideOfInteraction()==0?1:0;
         for(size_t i=0; i<overturningMomentArrow.size(); i++) {
-          array<double,8> data;
+          array<OpenMBV::Float,8> data;
           data[0] = getTime();
           Vec3 toPoint = static_cast<TyreContact*>(link)->getContourFrame(off+i)->evalPosition();
           data[1] = toPoint(0);
@@ -249,7 +249,7 @@ namespace MBSim {
       if(ombvRollingResistanceMoment) {
         int off = ombvRollingResistanceMoment->getSideOfInteraction()==0?1:0;
         for(size_t i=0; i<rollingResistanceMomentArrow.size(); i++) {
-          array<double,8> data;
+          array<OpenMBV::Float,8> data;
           data[0] = getTime();
           Vec3 toPoint = static_cast<TyreContact*>(link)->getContourFrame(off+i)->evalPosition();
           data[1] = toPoint(0);
@@ -266,7 +266,7 @@ namespace MBSim {
       if(ombvAligningMoment) {
         int off = ombvAligningMoment->getSideOfInteraction()==0?1:0;
         for(size_t i=0; i<aligningMomentArrow.size(); i++) {
-          array<double,8> data;
+          array<OpenMBV::Float,8> data;
           data[0] = getTime();
           Vec3 toPoint = static_cast<TyreContact*>(link)->getContourFrame(off+i)->evalPosition();
           data[1] = toPoint(0);

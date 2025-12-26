@@ -87,7 +87,7 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBand::plot() {
     if(plotFeature[openMBV] and openMBVSpineExtrusion) {
-      vector<double> data;
+      vector<OpenMBV::Float> data;
       data.push_back(getTime());
       double L = getEtaNodes()[getEtaNodes().size()-1];
       double ds = static_cast<FlexibleBody1s*>(parent)->getOpenStructure() ? L/(openMBVSpineExtrusion->getNumberOfSpinePoints()-1) : L/(openMBVSpineExtrusion->getNumberOfSpinePoints()-2);
