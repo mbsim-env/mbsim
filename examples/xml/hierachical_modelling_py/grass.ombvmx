@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<IvBody name="{name}" xmlns="http://www.mbsim-env.de/OpenMBV">
+  <initialTranslation>position</initialTranslation>
+  <initialRotation>rotation</initialRotation>
+  <ivContent>
+ret=rf'''#VRML V2.0 utf8
+Separator {{
+  ShaderProgram {{
+    shaderObject [
+      VertexShader {{
+        sourceType GLSL_PROGRAM
+        sourceProgram "
+          #version 130
+          
+          out vec3 vertexWorldPos;
+          out vec3 vertexWorldNormal;
+          
+          void main() {{
+            vertexWorldPos = gl_Vertex.xyz; // save pos
+            vertexWorldNormal   = gl_NormalMatrix * gl_Normal; // save normal
+            gl_Position = ftransform(); // do nothing else
+          }}
+        "
+      }}
+      FragmentShader {{
+        sourceType GLSL_PROGRAM
+        sourceProgram "
+          #version 130
+          
+          in vec3 vertexWorldPos;
+          in vec3 vertexWorldNormal;
+          
+          // hash a 2D point
+          vec2 hash(vec2 p) {{
+            p = vec2(dot(p, vec2(127.1, 311.7)),
+                     dot(p, vec2(269.5, 183.3)));
+            return -1.0 + 2.0 * fract(sin(p) * 43758.5453123);
+          }}
+          
+          // gradient noise (Perlin-style)
+          float gradientNoise(vec2 p) {{
+            vec2 i = floor(p);
+            vec2 f = fract(p);
+          
+            vec2 u = f * f * (3.0 - 2.0 * f);
+          
+            float a = dot(hash(i + vec2(0.0, 0.0)), f - vec2(0.0, 0.0));
+            float b = dot(hash(i + vec2(1.0, 0.0)), f - vec2(1.0, 0.0));
+            float c = dot(hash(i + vec2(0.0, 1.0)), f - vec2(0.0, 1.0));
+            float d = dot(hash(i + vec2(1.0, 1.0)), f - vec2(1.0, 1.0));
+          
+            return mix(mix(a, b, u.x), mix(c, d, u.x), u.y);
+          }}
+          
+          // Fractal Brownian Motion
+          float fbm(vec2 p) {{
+            float value = 0.0;
+            float amplitude = 0.5;
+          
+            for (int i = 0; i &lt; 6; i++) {{
+              value += amplitude * gradientNoise(p);
+              p *= 2.0;
+              amplitude *= 0.5;
+            }}
+            return value;
+          }}
+          
+          // Grass noise
+          float grassNoise(vec2 p) {{
+            // Stretch vertically to simulate blades
+            p.y *= 3.0;
+          
+            // Domain warp (clumping)
+            vec2 warp;
+            warp.x = fbm(p + vec2(5.2, 1.3));
+            warp.y = fbm(p + vec2(1.7, 9.2));
+          
+            p += warp * 0.4;
+          
+            // Fine detail
+            float base = fbm(p * 1.5);
+            float blades = abs(gradientNoise(p * 8.0));
+          
+            return mix(base, blades, 0.6);
+          }}
+          
+          void main() {{
+            vec2 uv = vertexWorldPos.xy * {1/scale};
+          
+            float n = grassNoise(uv);
+            n = clamp(n, 0.0, 1.0);
+          
+            // Grass/Ground color variation
+            float dot = dot(vertexWorldNormal, vec3(0, 0, 1));
+            vec3 color;
+            float transparency;
+            if(dot > 0) {{
+              // grass color
+              color.r = 0.1 + n * 0.15;
+              color.g = 0.35 + n * 0.55;
+              color.b = 0.1 + n * 0.15;
+                transparency = {1-transparency[0]};
+            }}
+            else {{
+              // ground color
+              dot *= -1;
+              color.r = 0.3 + n * 0.6;
+              color.g = 0.2 + n * 0.4;
+              color.b = 0;
+              transparency = {1-transparency[1]};
+            }}
+            color *= dot * 0.3 + 0.7;
+            gl_FragColor = vec4(color, transparency);
+          }}
+        "
+      }}
+    ]
+  }}
+  Material {{
+    transparency 0.5 # just a value > 0 to enable alpha-blending -> the transparency is set by the fragment shader
+  }}
+  ShapeHints {{
+    vertexOrdering CLOCKWISE
+    shapeType UNKNOWN_SHAPE_TYPE
+  }}
+  Coordinate3 {{
+    point [
+      -{hHalfSizeStr} -{vHalfSizeStr} 0,
+      -{hHalfSizeStr} +{vHalfSizeStr} 0,
+      +{hHalfSizeStr} -{vHalfSizeStr} 0,
+      +{hHalfSizeStr} +{vHalfSizeStr} 0,
+    ]
+  }}
+  QuadMesh {{
+    verticesPerRow 2
+    verticesPerColumn 2
+  }}
+}}
+'''
+  </ivContent>
+</IvBody>
