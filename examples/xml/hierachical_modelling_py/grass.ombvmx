@@ -3,6 +3,7 @@
   <initialTranslation>position</initialTranslation>
   <initialRotation>rotation</initialRotation>
   <ivContent>
+<![CDATA[
 ret=rf'''#VRML V2.0 utf8
 Separator {{
   ShaderProgram {{
@@ -57,7 +58,7 @@ Separator {{
             float value = 0.0;
             float amplitude = 0.5;
           
-            for (int i = 0; i &lt; 6; i++) {{
+            for (int i = 0; i < 6; i++) {{
               value += amplitude * gradientNoise(p);
               p *= 2.0;
               amplitude *= 0.5;
@@ -99,7 +100,7 @@ Separator {{
               color.r = 0.1 + n * 0.15;
               color.g = 0.35 + n * 0.55;
               color.b = 0.1 + n * 0.15;
-                transparency = {1-transparency[0]};
+              transparency = {1-transparency[0]};
             }}
             else {{
               // ground color
@@ -109,6 +110,13 @@ Separator {{
               color.b = 0;
               transparency = {1-transparency[1]};
             }}
+            color *= {brightness[0]};
+            vec2 uvGrid;
+            uvGrid.x = vertexWorldPos.x * {1/gridSize[0]};
+            uvGrid.y = vertexWorldPos.y * {1/gridSize[1]};
+            if({"mod(uvGrid.x, 2) < 1" if gridSize[0]>0 else "false"} ^^
+               {"mod(uvGrid.y, 2) < 1" if gridSize[1]>0 else "false"})
+              color *= {brightness[1]};
             color *= dot * 0.3 + 0.7;
             gl_FragColor = vec4(color, transparency);
           }}
@@ -125,10 +133,10 @@ Separator {{
   }}
   Coordinate3 {{
     point [
-      -{hHalfSizeStr} -{vHalfSizeStr} 0,
-      -{hHalfSizeStr} +{vHalfSizeStr} 0,
-      +{hHalfSizeStr} -{vHalfSizeStr} 0,
-      +{hHalfSizeStr} +{vHalfSizeStr} 0,
+      {size[0]} {size[2]} 0,
+      {size[0]} {size[3]} 0,
+      {size[1]} {size[2]} 0,
+      {size[1]} {size[3]} 0,
     ]
   }}
   QuadMesh {{
@@ -137,5 +145,6 @@ Separator {{
   }}
 }}
 '''
+]]>
   </ivContent>
 </IvBody>

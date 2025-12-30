@@ -5,23 +5,24 @@
     "grass"
   </stringParameter>
   <vectorParameter name="size">
-    <!-- the size of the grass in the local xy-plane, the local center is at 0,0,0 -->
-    [20, 10]
+    <!-- the size of the grass in the local xy-plane. [xFrom, xTo, yFrom, yTo] -->
+    [-6, 8, -5, 5]
   </vectorParameter>
-  <stringParameter name="hHalfSizeStr"><?MBSIMGUI_HIDEN?>
-    <!-- just a helper var to allow for delayed setting of the size using a ID if size is not used -->
-    str(size[0]/2)
-  </stringParameter>
-  <stringParameter name="vHalfSizeStr"><?MBSIMGUI_HIDEN?>
-    <!-- just a helper var to allow for delayed setting of the size using a ID if size is not used -->
-    str(size[1]/2)
-  </stringParameter>
+  <vectorParameter name="gridSize">
+    <!-- the size of the grid in the local xy-plane.
+         If negative no grid is used in this direction. -->
+    [5,2.5]
+  </vectorParameter>
   <scalarParameter name="scale">
     <!-- scaling of the grass patches -->
     1
   </scalarParameter>
+  <vectorParameter name="brightness">
+    <!-- the color brightness of the grid. -->
+    [1,0.8]
+  </vectorParameter>
   <vectorParameter name="position">
-    <!-- the position of the local center of the grass -->
+    <!-- the position of the local zero point -->
     [0, 0, -1]
   </vectorParameter>
   <vectorParameter name="rotation">
