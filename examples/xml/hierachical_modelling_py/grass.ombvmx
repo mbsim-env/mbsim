@@ -5,7 +5,7 @@
   <ivContent>
 <![CDATA[
 ret=rf'''#VRML V2.0 utf8
-Separator {{
+SepNoPick {{
   ShaderProgram {{
     shaderObject [
       VertexShader {{
