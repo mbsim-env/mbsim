@@ -125,11 +125,13 @@ SepNoPick {{
     ]
   }}
   Material {{
-    transparency 0.5 # just a value > 0 to enable alpha-blending -> the transparency is set by the fragment shader
+    transparency {0 if (transparency[0]==0 and transparency[1]==0) or
+                       (transparency[0]==0 and transparency[1]==1) or
+                       (transparency[0]==1 and transparency[1]==0) else 0.5}
   }}
   ShapeHints {{
-    vertexOrdering CLOCKWISE
-    shapeType UNKNOWN_SHAPE_TYPE
+    vertexOrdering { "COUNTERCLOCKWISE" if transparency[0]==0 and transparency[1]==1 else "CLOCKWISE" }
+    shapeType { "SOLID" if (transparency[0]==0 and transparency[1]==1) or (transparency[0]==1 and transparency[1]==0) else "UNKNOWN_SHAPE_TYPE" }
   }}
   Coordinate3 {{
     point [
