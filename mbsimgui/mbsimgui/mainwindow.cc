@@ -1009,6 +1009,17 @@ namespace MBSimGUI {
   }
 
   void MainWindow::showElementContextMenu(const QModelIndex &current) {
+    static QModelIndex lastCurrentIndex {};
+    if(QApplication::keyboardModifiers()==Qt::NoModifier &&
+       QApplication::mouseButtons()==Qt::LeftButton &&
+       current==lastCurrentIndex) {
+      elementView->setCurrentIndex(QModelIndex());
+      lastCurrentIndex = QModelIndex();
+      highlightObject("");
+      return;
+    }
+    lastCurrentIndex = current;
+
     if(QApplication::mouseButtons()==Qt::RightButton) {
       TreeItemData *itemData = static_cast<ElementTreeModel*>(elementView->model())->getItem(current)->getItemData();
       QMenu *menu = itemData->createContextMenu();
