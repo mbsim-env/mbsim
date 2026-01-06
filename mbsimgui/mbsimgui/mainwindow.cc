@@ -49,7 +49,6 @@
 #include "utils.h"
 #include "basicitemdata.h"
 #include <openmbv/mainwindow.h>
-#include <openmbvcppinterface/compoundrigidbody.h>
 #include <utime.h>
 #include <QMenu>
 #include <QMenuBar>
@@ -1894,25 +1893,17 @@ DEF mbsimgui_outdated_switch Switch {
   }
 
   void MainWindow::selectElement(const string& ID, OpenMBVGUI::Object *obj) {
-    if(!obj) {
+    static string lastID;
+    if(!obj || lastID == ID) {
       highlightObject("");
       elementView->selectionModel()->clearCurrentIndex();
+      inlineOpenMBVMW->getObjectList()->setCurrentItem(nullptr);
+      lastID = "";
       return;
     }
-    auto id=ID;
-    // if no ID is given (obj->getObject() has no ID set) and its a RigidBody inside of a CompoundRigidBody then use the ID of the parent CompoundRigidBody.
-    auto o=obj->getObject();
-    while(id.empty()) {
-      auto rb=dynamic_pointer_cast<OpenMBV::RigidBody>(o);
-      if(!rb)
-        break;
-      auto crb=rb->getCompound().lock();
-      if(!crb)
-        break;
-      id=crb->getID();
-      o=crb;
-    }
-    Element *element = idMap[id];
+    lastID = ID;
+
+    Element *element = idMap[ID];
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     if(element) elementView->selectionModel()->setCurrentIndex(model->findItem(element,project->getDynamicSystemSolver()->getModelIndex()),QItemSelectionModel::ClearAndSelect);
   }
