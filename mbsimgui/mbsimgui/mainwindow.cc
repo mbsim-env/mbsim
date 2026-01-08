@@ -3171,7 +3171,7 @@ DEF mbsimgui_outdated_switch Switch {
 
     settings.setValue("mainwindow/recentProjectFileList", files);
 
-    foreach(QWidget *widget, QApplication::topLevelWidgets()) {
+    for(auto widget : QApplication::topLevelWidgets()) {
       auto *mainWin = dynamic_cast<MainWindow*>(widget);
       if(mainWin)
         mainWin->updateRecentProjectFileActions();

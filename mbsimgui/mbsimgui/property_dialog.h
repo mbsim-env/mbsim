@@ -96,7 +96,7 @@ namespace MBSimGUI {
       QTabWidget *tabWidget;
       QDialogButtonBox *buttonBox;
       QPushButton *buttonResize;
-    signals:
+    Q_SIGNALS:
       void apply();
       void showXMLHelp();
   };

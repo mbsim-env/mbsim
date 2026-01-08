@@ -36,7 +36,7 @@ namespace MBSimGUI {
 
   bool MouseEvent::eventFilter(QObject *obj, QEvent *event) {
     if(event->type() == QEvent::MouseButtonPress) {
-      emit mouseButtonPressed();
+      Q_EMIT mouseButtonPressed();
       return true;
     }
     else
@@ -98,8 +98,8 @@ namespace MBSimGUI {
       widget->setVisible(active);
       connect(mouseEvent,&MouseEvent::mouseButtonPressed,this,[=]{
           setActive(not checked);
-          emit widgetChanged();
-          emit clicked(checked);
+          Q_EMIT widgetChanged();
+          Q_EMIT clicked(checked);
           });
     }
     else {
@@ -258,7 +258,7 @@ namespace MBSimGUI {
       widget->setContentsMargins(factory->getMargin(),0,0,0);
     layout->addWidget(widget, getStretchHint());
     connect(widget,&Widget::widgetChanged,this,&ChoiceWidget::widgetChanged);
-    emit widgetChanged();
+    Q_EMIT widgetChanged();
   }
 
   DOMElement* ChoiceWidget::initializeUsingXML(DOMElement *element) {
@@ -479,7 +479,7 @@ namespace MBSimGUI {
       list->setCurrentRow(0);
 
     if(emitSignals)
-      emit Widget::widgetChanged();
+      Q_EMIT Widget::widgetChanged();
   }
 
   void ListWidget::removeElements(int n) {
@@ -490,7 +490,7 @@ namespace MBSimGUI {
       delete widget;
       delete list->takeItem(N-j-1);
     }
-    emit Widget::widgetChanged();
+    Q_EMIT Widget::widgetChanged();
   }
 
   DOMElement* ListWidget::initializeUsingXML(DOMElement *element) {

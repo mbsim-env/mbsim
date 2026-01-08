@@ -164,7 +164,7 @@ namespace MBSimGUI {
       void setReadOnly(bool flag) override {widget->setReadOnly(flag);}
       bool validate(const std::vector<std::vector<QString>> &A) const override;
       void currentIndexChanged(int);
-    signals:
+    Q_SIGNALS:
       void sizeChanged(int);
   };
 
@@ -234,7 +234,7 @@ namespace MBSimGUI {
       void setReadOnly(bool flag) override {widget->setReadOnly(flag);}
       bool validate(const std::vector<std::vector<QString>> &A) const override;
       void currentIndexChanged(int);
-    signals:
+    Q_SIGNALS:
       void sizeChanged(int);
   };
 
@@ -258,7 +258,7 @@ namespace MBSimGUI {
       void setReadOnly(bool flag) override {widget->setReadOnly(flag);}
       bool validate(const std::vector<std::vector<QString>> &A) const override;
       void currentIndexChanged(int);
-    signals:
+    Q_SIGNALS:
       void sizeChanged(int);
   };
 
@@ -282,7 +282,7 @@ namespace MBSimGUI {
       bool validate(const std::vector<std::vector<QString>> &A) const override;
       void currentRowIndexChanged(int);
       void currentColIndexChanged(int);
-    signals:
+    Q_SIGNALS:
       void rowSizeChanged(int);
       void colSizeChanged(int);
   };
@@ -306,7 +306,7 @@ namespace MBSimGUI {
       void setReadOnly(bool flag) override {widget->setReadOnly(flag);}
       bool validate(const std::vector<std::vector<QString>> &A) const override;
       void currentIndexChanged(int);
-    signals:
+    Q_SIGNALS:
       void sizeChanged(int);
   };
 
@@ -348,7 +348,7 @@ namespace MBSimGUI {
       void setReadOnly(bool flag) override {widget->setReadOnly(flag);}
       bool validate(const std::vector<std::vector<QString>> &A) const override;
       void currentIndexChanged(int);
-    signals:
+    Q_SIGNALS:
       void sizeChanged(int);
   };
 

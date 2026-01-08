@@ -352,8 +352,8 @@ namespace MBSimGUI {
 
   void VecSizeVarWidget::currentIndexChanged(int size) {
     widget->resize_(size,1);
-    emit sizeChanged(size);
-    emit Widget::widgetChanged();
+    Q_EMIT sizeChanged(size);
+    Q_EMIT Widget::widgetChanged();
   }
 
   bool VecSizeVarWidget::validate(const vector<vector<QString>> &A) const {
@@ -585,8 +585,8 @@ namespace MBSimGUI {
 
   void MatColsVarWidget::currentIndexChanged(int cols) {
     widget->resize_(widget->rows(),cols);
-    emit sizeChanged(cols);
-    emit Widget::widgetChanged();
+    Q_EMIT sizeChanged(cols);
+    Q_EMIT Widget::widgetChanged();
   }
 
   bool MatColsVarWidget::validate(const vector<vector<QString>> &A) const {
@@ -635,8 +635,8 @@ namespace MBSimGUI {
 
   void MatRowsVarWidget::currentIndexChanged(int rows) {
     widget->resize_(rows,widget->cols());
-    emit sizeChanged(rows);
-    emit Widget::widgetChanged();
+    Q_EMIT sizeChanged(rows);
+    Q_EMIT Widget::widgetChanged();
   }
 
   bool MatRowsVarWidget::validate(const vector<vector<QString>> &A) const {
@@ -696,14 +696,14 @@ namespace MBSimGUI {
 
   void MatRowsColsVarWidget::currentRowIndexChanged(int rows) {
     widget->resize_(rows,widget->cols());
-    emit rowSizeChanged(rows);
-    emit Widget::widgetChanged();
+    Q_EMIT rowSizeChanged(rows);
+    Q_EMIT Widget::widgetChanged();
   }
 
   void MatRowsColsVarWidget::currentColIndexChanged(int cols) {
     widget->resize_(widget->rows(),cols);
-    emit colSizeChanged(cols);
-    emit Widget::widgetChanged();
+    Q_EMIT colSizeChanged(cols);
+    Q_EMIT Widget::widgetChanged();
   }
 
   bool MatRowsColsVarWidget::validate(const vector<vector<QString>> &A) const {
@@ -750,8 +750,8 @@ namespace MBSimGUI {
 
   void SqrMatSizeVarWidget::currentIndexChanged(int rows) {
     widget->resize_(rows,rows);
-    emit sizeChanged(rows);
-    emit Widget::widgetChanged();
+    Q_EMIT sizeChanged(rows);
+    Q_EMIT Widget::widgetChanged();
   }
 
   bool SqrMatSizeVarWidget::validate(const vector<vector<QString>> &A) const {
@@ -884,8 +884,8 @@ namespace MBSimGUI {
 
   void SymMatSizeVarWidget::currentIndexChanged(int rows) {
     widget->resize_(rows,rows);
-    emit sizeChanged(rows);
-    emit Widget::widgetChanged();
+    Q_EMIT sizeChanged(rows);
+    Q_EMIT Widget::widgetChanged();
   }
 
   bool SymMatSizeVarWidget::validate(const vector<vector<QString>> &A) const {

@@ -392,7 +392,7 @@ namespace MBSimGUI {
     add->setDisabled(getSize()>=spinBox->maximum());
     remove->setDisabled(getSize()<=spinBox->minimum());
     showBrowser();
-    emit widgetChanged();
+    Q_EMIT widgetChanged();
   }
 
   void BasicElementsOfReferenceWidget::showBrowser() {
@@ -429,7 +429,7 @@ namespace MBSimGUI {
     spinBox->setValue(tree->topLevelItemCount());
     add->setDisabled(getSize()>=spinBox->maximum());
     remove->setDisabled(getSize()<=spinBox->minimum());
-    emit widgetChanged();
+    Q_EMIT widgetChanged();
   }
 
   void BasicElementsOfReferenceWidget::changeNumberOfElements(int num) {
@@ -443,13 +443,13 @@ namespace MBSimGUI {
 	item->setFlags(item->flags() | Qt::ItemIsEditable);
 	tree->addTopLevelItem(item);
 	tree->setCurrentItem(item);
-	emit widgetChanged();
+	Q_EMIT widgetChanged();
       }
     }
     else if(n<0) {
       for(int i=0; i<-n; i++)
 	delete tree->takeTopLevelItem(tree->topLevelItemCount()-1);
-      emit widgetChanged();
+      Q_EMIT widgetChanged();
     }
     add->setDisabled(getSize()>=spinBox->maximum());
     remove->setDisabled(getSize()<=spinBox->minimum());
@@ -814,7 +814,7 @@ namespace MBSimGUI {
   void TextListWidget::removeItem() {
     tree->takeTopLevelItem(tree->indexOfTopLevelItem(tree->currentItem()));
     spinBox->setValue(tree->topLevelItemCount());
-    emit widgetChanged();
+    Q_EMIT widgetChanged();
   }
 
   void TextListWidget::changeNumberOfItems(int num) {
@@ -830,7 +830,7 @@ namespace MBSimGUI {
     else if(n<0) {
       for(int i=0; i<-n; i++)
        delete tree->takeTopLevelItem(tree->topLevelItemCount()-1);
-      emit widgetChanged();
+      Q_EMIT widgetChanged();
     }
   }
 
@@ -1327,7 +1327,7 @@ namespace MBSimGUI {
     if(item) {
       item->setText(0, dialog->getName());
       item->setText(1, dialog->getValue());
-      emit widgetChanged();
+      Q_EMIT widgetChanged();
     }
   }
 
@@ -1352,7 +1352,7 @@ namespace MBSimGUI {
   void StateWidget::removeState() {
     tree->takeTopLevelItem(tree->indexOfTopLevelItem(tree->currentItem()));
     spinBox->setValue(tree->topLevelItemCount());
-    emit widgetChanged();
+    Q_EMIT widgetChanged();
   }
 
   void StateWidget::changeNumberOfStates(int num) {
@@ -1368,7 +1368,7 @@ namespace MBSimGUI {
     else if(n<0) {
       for(int i=0; i<-n; i++)
        delete tree->takeTopLevelItem(tree->topLevelItemCount()-1);
-      emit widgetChanged();
+      Q_EMIT widgetChanged();
     }
   }
 

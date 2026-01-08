@@ -151,7 +151,7 @@ namespace MBSimGUI {
     }
 
     if(emitSignals)
-      emit Widget::widgetChanged();
+      Q_EMIT Widget::widgetChanged();
   }
 
   void ArrayWidget::removeElements(int n) {
@@ -161,7 +161,7 @@ namespace MBSimGUI {
       stackedWidget->removeWidget(widget);
       delete widget;
     }
-    emit Widget::widgetChanged();
+    Q_EMIT Widget::widgetChanged();
   }
 
   void ArrayWidget::updateTable() {
@@ -371,7 +371,7 @@ namespace MBSimGUI {
     }
 
     if(emitSignals)
-      emit Widget::widgetChanged();
+      Q_EMIT Widget::widgetChanged();
   }
 
   void TwoDimensionalArrayWidget::removeElements(int n) {
@@ -381,7 +381,7 @@ namespace MBSimGUI {
       stackedWidget->removeWidget(widget);
       delete widget;
     }
-    emit Widget::widgetChanged();
+    Q_EMIT Widget::widgetChanged();
   }
 
   void TwoDimensionalArrayWidget::updateTable() {
