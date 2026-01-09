@@ -487,9 +487,9 @@ int main(int argc, char *argv[]) {
         runAgain=true;
     }
     if(stdinReadThread.joinable()) {
-      if(dup2(stdinFDDup, 0)==-1) // revert the stdin FD duplicate (not needed by a nice cleanup)
-        throw runtime_error("Failed to re-duplicate the stdin FD.");
       stdinReadThread.join();// wait until the thread has finished
+      if(dup2(stdinFDDup, 0)==-1) // revert the stdin FD duplicate (not needed but a nice cleanup)
+        throw runtime_error("Failed to re-duplicate the stdin FD.");
     }
   
     return ret;
