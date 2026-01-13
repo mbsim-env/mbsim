@@ -43,6 +43,11 @@ namespace MBSimGUI {
       std::string ID;
       bool enabled{true};
       void emitDataChangedOnChildren();
+
+      // This function cyn be called by Unknown* class in its processIDAndHref member function.
+      // It will heuristically add OPENMBV_ID's to XML elements which looks like OpenMBV specific elements.
+      // This heuristic will not work if the XML element names does not follow a standard convention but it will not harm.
+      void processIDAndHrefOfUnknownElements(xercesc::DOMElement *element);
     public:
       Element();
       virtual QString getXMLName();

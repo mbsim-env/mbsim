@@ -38,6 +38,7 @@ namespace MBSimGUI {
     public:
       UnknownObject();
       PropertyDialog* createPropertyDialog() override { return new UnknownItemPropertyDialog(this); }
+      xercesc::DOMElement* processIDAndHref(xercesc::DOMElement *element) override;
   };
 
 }

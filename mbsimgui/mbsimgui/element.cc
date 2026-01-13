@@ -214,4 +214,23 @@ namespace MBSimGUI {
       }
   }
 
+  void Element::processIDAndHrefOfUnknownElements(DOMElement *element) {
+    function<void(DOMElement* ele)> walk;
+    walk = [this, &walk](DOMElement* ele) {
+      for(auto e=ele->getFirstElementChild(); e!=nullptr; e=e->getNextElementSibling()) {
+        const static string openMBVRigidBody("openMBVRigidBody");
+        if(E(e)->getTagName().second.substr(0, openMBVRigidBody.size())==openMBVRigidBody) {
+          auto ee = e->getFirstElementChild();
+          if(ee)
+            E(ee)->addProcessingInstructionChildNamed("OPENMBV_ID", getID());
+        }
+        const static string enableOpenMBV("enableOpenMBV");
+        if(E(e)->getTagName().second.substr(0, enableOpenMBV.size())==enableOpenMBV)
+          E(e)->addProcessingInstructionChildNamed("OPENMBV_ID", getID());
+        walk(e);
+      }
+    };
+    walk(element);
+  }
+
 }
