@@ -1233,26 +1233,39 @@ namespace MBSimGUI {
   }
 
   bool MainWindow::saveProject(const QString &fileName, bool modifyStatus) {
+    string err;
+    QString fn = fileName.isEmpty() ? projectFile : fileName;
     try {
-      serializer->writeToURI(doc.get(), X()%(fileName.isEmpty()?projectFile.toStdString():fileName.toStdString()));
+      serializer->writeToURI(doc.get(), X()%fn.toStdString());
       if(modifyStatus) setWindowModified(false);
       return true;
     }
     catch(const DOMException &ex) {
       mw->setErrorOccured();
-      mw->statusBar()->showMessage((X()%ex.getMessage()).c_str());
-      cerr << X()%ex.getMessage() << endl;
+      err = X()%ex.getMessage();
+      mw->statusBar()->showMessage(err.c_str());
+      cerr << err << endl;
     }
     catch(const std::exception &ex) {
       mw->setErrorOccured();
-      mw->statusBar()->showMessage(ex.what());
-      cerr << ex.what() << endl;
+      err = ex.what();
+      mw->statusBar()->showMessage(err.c_str());
+      cerr << err << endl;
     }
     catch(...) {
       mw->setErrorOccured();
-      mw->statusBar()->showMessage("Unknown exception");
-      cerr << "Unknown exception." << endl;
+      err = "Unknown error";
+      mw->statusBar()->showMessage(err.c_str());
+      cerr << err << endl;
     }
+    QMessageBox::warning(nullptr, "Saving Project Failed",
+      "Unable to save the project file\n"+
+      fn+"\n"
+      "(maybe due to file permission issues)\n"
+      "\n"
+      "Error message:\n"+
+      err.c_str()
+    );
     return false;
   }
 
@@ -3551,25 +3564,40 @@ DEF mbsimgui_outdated_switch Switch {
   }
 
   void MainWindow::saveReferencedFile(int i) {
+    string err;
+    QString fn = file[i]->getFileInfo().absoluteFilePath();
     try {
-      serializer->writeToURI(file[i]->getXMLDocument().get(), X()%file[i]->getFileInfo().absoluteFilePath().toStdString());
+      serializer->writeToURI(file[i]->getXMLDocument().get(), X()%fn.toStdString());
       file[i]->setModified(false);
+      return;
     }
     catch(const DOMException &ex) {
       mw->setErrorOccured();
-      mw->statusBar()->showMessage((X()%ex.getMessage()).c_str());
-      cerr << X()%ex.getMessage() << endl;
+      err = X()%ex.getMessage();
+      mw->statusBar()->showMessage(err.c_str());
+      cerr << err << endl;
     }
     catch(const std::exception &ex) {
       mw->setErrorOccured();
-      mw->statusBar()->showMessage(ex.what());
-      cerr << ex.what() << endl;
+      err = ex.what();
+      mw->statusBar()->showMessage(err.c_str());
+      cerr << err << endl;
     }
     catch(...) {
       mw->setErrorOccured();
-      mw->statusBar()->showMessage("Unknown exception");
-      cerr << "Unknown exception." << endl;
+      err = "Unknown exception";
+      mw->statusBar()->showMessage(err.c_str());
+      cerr << err << endl;
     }
+    QMessageBox::warning(nullptr, "Saving Referenced File Failed",
+      "Unable to save the file\n"+
+      fn+"\n"
+      "which is referenced by the project.\n"
+      "(maybe due to file permission issues)\n"
+      "\n"
+      "Error message:\n"+
+      err.c_str()
+    );
   }
 
   void MainWindow::convertDocument() {
