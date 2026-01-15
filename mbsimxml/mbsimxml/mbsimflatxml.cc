@@ -265,7 +265,8 @@ int MBSimXML::preInit(list<string> args, unique_ptr<DynamicSystemSolver>& dss, u
   return 0;
 }
 
-void MBSimXML::plotInitialState(const unique_ptr<Solver>& solver, const unique_ptr<DynamicSystemSolver>& dss) {
+void MBSimXML::plotInitialState(const unique_ptr<Solver>& solver) {
+  auto dss=solver->getSystem();
   if(solver->getInitialState().size()) {
     if(solver->getInitialState().size() != dss->getzSize()+dss->getisSize())
       throw runtime_error("Size of z0 does not match, must be " + to_string(dss->getzSize()+dss->getisSize()));
@@ -288,11 +289,11 @@ void MBSimXML::main(const unique_ptr<Solver>& solver, const unique_ptr<DynamicSy
       fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<flush<<skipws<<"<a name=\"MBSIM_SOLVER_START\"></a>"<<flush<<noskipws;
     if(savestatetable)
       dss->writeStateTable("statetable.asc");
+    solver->setSystem(dss.get());
     if(doNotIntegrate==false) {
       if(stopAfterFirstStep)
-        MBSimXML::plotInitialState(solver, dss);
+        MBSimXML::plotInitialState(solver);
       else {
-        solver->setSystem(dss.get());
         auto start=std::chrono::high_resolution_clock::now();
         solver->execute();
         auto end=std::chrono::high_resolution_clock::now();
@@ -311,9 +312,6 @@ void MBSimXML::main(const unique_ptr<Solver>& solver, const unique_ptr<DynamicSy
   }
   if(executePassed) // if execution passed run post-processing and throw on errors
     solver->postprocessing();
-
-  // post processing (run also in error case)
-  solver->postprocessing();
 
   if(doNotIntegrate==false) {
     // Remove the following block if --lastframe works in OpenMBV.
