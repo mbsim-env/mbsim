@@ -265,13 +265,6 @@ int MBSimXML::preInit(list<string> args, unique_ptr<DynamicSystemSolver>& dss, u
   return 0;
 }
 
-void MBSimXML::initDynamicSystemSolver(const list<string> &args, const unique_ptr<DynamicSystemSolver>& dss) {
-  if(find(args.begin(), args.end(), "--donotintegrate")!=args.end())
-    dss->setTruncateSimulationFiles(false);
-
-  dss->initialize();
-}
-
 void MBSimXML::plotInitialState(const unique_ptr<Solver>& solver, const unique_ptr<DynamicSystemSolver>& dss) {
   if(solver->getInitialState().size()) {
     if(solver->getInitialState().size() != dss->getzSize()+dss->getisSize())
@@ -289,37 +282,40 @@ void MBSimXML::plotInitialState(const unique_ptr<Solver>& solver, const unique_p
 }
 
 void MBSimXML::main(const unique_ptr<Solver>& solver, const unique_ptr<DynamicSystemSolver>& dss, bool doNotIntegrate, bool stopAfterFirstStep, bool savestatevector, bool savestatetable) {
-  if(MBXMLUtils::DOMEvalException::isHTMLOutputEnabled())
-    fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<flush<<skipws<<"<a name=\"MBSIM_SOLVER_START\"></a>"<<flush<<noskipws;
-  if(savestatetable)
-    dss->writeStateTable("statetable.asc");
-  if(doNotIntegrate==false) {
-    if(stopAfterFirstStep)
-      MBSimXML::plotInitialState(solver, dss);
-    else {
-      auto start=std::chrono::high_resolution_clock::now();
-      solver->setSystem(dss.get());
-      {
-        // run solver->execute and then run solver-postprocessing even if execute failded
-        bool executePassed=false;
-        try {
-          solver->execute();
-          executePassed=true;
-        }
-        catch(...) {
-          auto ex = current_exception();
-          try {
-            solver->postprocessing();
-          }
-          catch(...) {}
-          rethrow_exception(ex);
-        }
-        if(executePassed)
-          solver->postprocessing();
+  bool executePassed=false;
+  try {
+    if(MBXMLUtils::DOMEvalException::isHTMLOutputEnabled())
+      fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<flush<<skipws<<"<a name=\"MBSIM_SOLVER_START\"></a>"<<flush<<noskipws;
+    if(savestatetable)
+      dss->writeStateTable("statetable.asc");
+    if(doNotIntegrate==false) {
+      if(stopAfterFirstStep)
+        MBSimXML::plotInitialState(solver, dss);
+      else {
+        solver->setSystem(dss.get());
+        auto start=std::chrono::high_resolution_clock::now();
+        solver->execute();
+        auto end=std::chrono::high_resolution_clock::now();
+        fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<"Integration CPU times: "<<std::chrono::duration<double>(end-start).count()<<endl;
       }
-      auto end=std::chrono::high_resolution_clock::now();
-      fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<"Integration CPU times: "<<std::chrono::duration<double>(end-start).count()<<endl;
     }
+    executePassed=true;
+  }
+  catch(...) { // if execution failed run post-processing but skip errors and then throw the original error
+    auto ex = current_exception();
+    try {
+      solver->postprocessing();
+    }
+    catch(...) {}
+    rethrow_exception(ex);
+  }
+  if(executePassed) // if execution passed run post-processing and throw on errors
+    solver->postprocessing();
+
+  // post processing (run also in error case)
+  solver->postprocessing();
+
+  if(doNotIntegrate==false) {
     // Remove the following block if --lastframe works in OpenMBV.
     // If this is removed openmbv should be opened with the --lastframe option.
     // Currently we use this block if --stopafterfirststep is given to reload the XML/H5 file in OpenMBV again

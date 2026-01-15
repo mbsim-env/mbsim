@@ -18,7 +18,6 @@ namespace MBSim {
   class MBSimXML {
     public:
       static int preInit(std::list<std::string> args, std::unique_ptr<DynamicSystemSolver>& dss, std::unique_ptr<Solver>& solver);
-      static void initDynamicSystemSolver(const std::list<std::string> &args, const std::unique_ptr<DynamicSystemSolver>& dss);
       static void plotInitialState(const std::unique_ptr<Solver>& solver, const std::unique_ptr<DynamicSystemSolver>& dss);
       static void main(const std::unique_ptr<Solver>& solver, const std::unique_ptr<DynamicSystemSolver>& dss, bool doNotIntegrate, bool stopAfterFirstStep, bool savestatevector, bool savestatetable);
 

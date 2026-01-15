@@ -79,7 +79,9 @@ int main(int argc, char *argv[]) {
     unique_ptr<DynamicSystemSolver> dss;
   
     if(MBSimXML::preInit(args, dss, solver)!=0) return 0; 
-    MBSimXML::initDynamicSystemSolver(args, dss);
+    if(find(args.begin(), args.end(), "--donotintegrate")!=args.end())
+      dss->setTruncateSimulationFiles(false);
+    dss->initialize();
   
     MBSimXML::main(solver, dss, doNotIntegrate, stopAfterFirstStep, savestatevector, savestatetable);
   }
