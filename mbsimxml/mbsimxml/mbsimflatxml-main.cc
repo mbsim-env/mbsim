@@ -20,6 +20,7 @@
 
 using namespace std;
 using namespace MBSim;
+using namespace fmatvec;
 
 namespace MBSim {
   extern int baseIndexForPlot;
@@ -86,21 +87,21 @@ int main(int argc, char *argv[]) {
     MBSimXML::main(solver, dss, doNotIntegrate, stopAfterFirstStep, savestatevector, savestatetable);
   }
   catch(const MBSimError &e) {
-    // DOMEvalException is already passed thought escapeFunc -> skip escapeFunc (if enabled on the fmatvec::Atom streams) from duing another escaping
-    fmatvec::Atom::msgStatic(fmatvec::Atom::Error)<<flush<<skipws<<e.what()<<flush<<noskipws<<endl;
+    // DOMEvalException is already passed thought escapeFunc -> skip escapeFunc (if enabled on the Atom streams) from duing another escaping
+    Atom::msgStatic(Atom::Error)<<disableEscaping<<e.what()<<enableEscaping<<endl;
     return 1;
   }
   catch(const MBXMLUtils::DOMEvalException &e) {
-    // DOMEvalException is already passed thought escapeFunc -> skip escapeFunc (if enabled on the fmatvec::Atom streams) from duing another escaping
-    fmatvec::Atom::msgStatic(fmatvec::Atom::Error)<<flush<<skipws<<e.what()<<flush<<noskipws<<endl;
+    // DOMEvalException is already passed thought escapeFunc -> skip escapeFunc (if enabled on the Atom streams) from duing another escaping
+    Atom::msgStatic(Atom::Error)<<disableEscaping<<e.what()<<enableEscaping<<endl;
     return 1;
   }
   catch(const exception &e) {
-    fmatvec::Atom::msgStatic(fmatvec::Atom::Error)<<e.what()<<endl;
+    Atom::msgStatic(Atom::Error)<<e.what()<<endl;
     return 1;
   }
   catch(...) {
-    fmatvec::Atom::msgStatic(fmatvec::Atom::Error)<<"Unknown exception."<<endl;
+    Atom::msgStatic(Atom::Error)<<"Unknown exception."<<endl;
     return 1;
   }
 

@@ -35,6 +35,7 @@
 using namespace std;
 using namespace MBXMLUtils;
 using namespace MBSim;
+using namespace fmatvec;
 namespace bfs=boost::filesystem;
 
 int main(int argc, char *argv[]) {
@@ -417,14 +418,14 @@ int main(int argc, char *argv[]) {
           auto e=mainXMLDoc->getDocumentElement();
           // create object for DynamicSystemSolver and check correct type
           e=E(e)->getFirstElementChildNamed(MBSIM%"DynamicSystemSolver");
-          fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<"Instantiate DynamicSystemSolver"<<endl;
+          Atom::msgStatic(Atom::Info)<<"Instantiate DynamicSystemSolver"<<endl;
           auto dss=unique_ptr<DynamicSystemSolver>(ObjectFactory::createAndInit<DynamicSystemSolver>(e));
 
           if(skipplot)
             dss->setPlotFeatureRecursive(plotRecursive, false);
         
           // create object for Solver and check correct type
-          fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<"Instantiate Solver"<<endl;
+          Atom::msgStatic(Atom::Info)<<"Instantiate Solver"<<endl;
           auto solver=unique_ptr<Solver>(ObjectFactory::createAndInit<Solver>(e->getNextElementSibling()));
 
           // init dss
@@ -439,24 +440,24 @@ int main(int argc, char *argv[]) {
           dependencies = preprocess.getDependencies();
       }
       catch(const SilentError &) {
-        fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<flush<<skipws<<"Exception due to silent user requested exit."<<flush<<noskipws<<endl;
+        Atom::msgStatic(Atom::Info)<<disableEscaping<<"Exception due to silent user requested exit."<<enableEscaping<<endl;
       }
       catch(const MBSimError &ex) {
-        // DOMEvalException is already passed thought escapeFunc -> skip escapeFunc (if enabled on the fmatvec::Atom streams) from duing another escaping
-        fmatvec::Atom::msgStatic(fmatvec::Atom::Error)<<flush<<skipws<<ex.what()<<flush<<noskipws<<endl;
+        // DOMEvalException is already passed thought escapeFunc -> skip escapeFunc (if enabled on the Atom streams) from duing another escaping
+        Atom::msgStatic(Atom::Error)<<disableEscaping<<ex.what()<<enableEscaping<<endl;
         ret=1;
       }
       catch(const DOMEvalException &ex) {
-        // DOMEvalException is already passed thought escapeFunc -> skip escapeFunc (if enabled on the fmatvec::Atom streams) from duing another escaping
-        fmatvec::Atom::msgStatic(fmatvec::Atom::Error)<<flush<<skipws<<ex.what()<<flush<<noskipws<<endl;
+        // DOMEvalException is already passed thought escapeFunc -> skip escapeFunc (if enabled on the Atom streams) from duing another escaping
+        Atom::msgStatic(Atom::Error)<<disableEscaping<<ex.what()<<enableEscaping<<endl;
         ret=1;
       }
       catch(const exception &ex) {
-        fmatvec::Atom::msgStatic(fmatvec::Atom::Error)<<ex.what()<<endl;
+        Atom::msgStatic(Atom::Error)<<ex.what()<<endl;
         ret=1;
       }
       catch(...) {
-        fmatvec::Atom::msgStatic(fmatvec::Atom::Error)<<"Unknown exception"<<endl;
+        Atom::msgStatic(Atom::Error)<<"Unknown exception"<<endl;
         ret=1;
       }
 
@@ -495,21 +496,21 @@ int main(int argc, char *argv[]) {
     return ret;
   }
   catch(const MBSimError &e) {
-    // DOMEvalException is already passed thought escapeFunc -> skip escapeFunc (if enabled on the fmatvec::Atom streams) from duing another escaping
-    fmatvec::Atom::msgStatic(fmatvec::Atom::Error)<<flush<<skipws<<e.what()<<flush<<noskipws<<endl;
+    // DOMEvalException is already passed thought escapeFunc -> skip escapeFunc (if enabled on the Atom streams) from duing another escaping
+    Atom::msgStatic(Atom::Error)<<disableEscaping<<e.what()<<enableEscaping<<endl;
     return 1;
   }
   catch(const DOMEvalException &e) {
-    // DOMEvalException is already passed thought escapeFunc -> skip escapeFunc (if enabled on the fmatvec::Atom streams) from duing another escaping
-    fmatvec::Atom::msgStatic(fmatvec::Atom::Error)<<flush<<skipws<<e.what()<<flush<<noskipws<<endl;
+    // DOMEvalException is already passed thought escapeFunc -> skip escapeFunc (if enabled on the Atom streams) from duing another escaping
+    Atom::msgStatic(Atom::Error)<<disableEscaping<<e.what()<<enableEscaping<<endl;
     return 1;
   }
   catch(const exception &e) {
-    fmatvec::Atom::msgStatic(fmatvec::Atom::Error)<<e.what()<<endl;
+    Atom::msgStatic(Atom::Error)<<e.what()<<endl;
     return 1;
   }
   catch(...) {
-    fmatvec::Atom::msgStatic(fmatvec::Atom::Error)<<"Unknown exception"<<endl;
+    Atom::msgStatic(Atom::Error)<<"Unknown exception"<<endl;
     return 1;
   }
   return 0;
