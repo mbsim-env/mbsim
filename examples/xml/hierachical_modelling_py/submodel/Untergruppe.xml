@@ -58,6 +58,9 @@
           <relativeOrientation>mbxmlutils.rotateAboutX(0)</relativeOrientation>
         </FixedRelativeFrame>
         <pv:Embed href="../frame.xml"/>
+        <pv:Embed counterName="dummy" count="1-1">
+          <test/>
+        </pv:Embed>
       </frames>
       <contours/>
       <openMBVRigidBody>
