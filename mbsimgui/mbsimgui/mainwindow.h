@@ -87,6 +87,7 @@ namespace MBSimGUI {
   class LinearSystemAnalysisDialog;
   class FlexibleBodyTool;
   class StateTableDialog;
+  class DiagramDialog;
 
   class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -127,6 +128,7 @@ namespace MBSimGUI {
       LinearSystemAnalysisDialog *lsa{nullptr};
       FlexibleBodyTool *fbt{nullptr};
       StateTableDialog *st{nullptr};
+      DiagramDialog *diagram{nullptr};
       QString configPath;
       void initInlineOpenMBV();
       void dragEnterEvent(QDragEnterEvent *event) override;
@@ -169,6 +171,7 @@ namespace MBSimGUI {
       void h5plotserie();
       void linearSystemAnalysis();
       void showStateTable();
+      void showDiagram();
       void createFMU();
       void highlightElement(const QModelIndex &current);
       void showElementContextMenu(const QModelIndex &current);

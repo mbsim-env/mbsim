@@ -114,6 +114,9 @@ libmbsimgui_la_SOURCES = \
   spring_damper.cc \
   structure.cc \
   initial_condition.cc \
+  diagram_scene.cc \
+  diagram_item.cc \
+  diagram_arrow.cc \
   fbt_utils.cc \
   fbt_cms.cc \
   fbt_msm.cc \
@@ -231,6 +234,9 @@ mbsimguiinclude_HEADERS = analyzer.h \
   spring_damper.h \
   structure.h \
   initial_condition.h \
+  diagram_scene.h \
+  diagram_item.h \
+  diagram_arrow.h \
   treeitemdata.h \
   treeitem.h \
   treemodel.h \
@@ -313,7 +319,8 @@ dist_mbsimguiicon_DATA = icons/openmbv.svg \
   icons/skip-initial-proj.svg \
   icons/reload.svg \
   icons/auto-reload.svg \
-  icons/fbt.svg
+  icons/fbt.svg \
+  icons/model_diagram.svg
 
 # plugins
 pluginsiconenginesdir = @bindir@/iconengines

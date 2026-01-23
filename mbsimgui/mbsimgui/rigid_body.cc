@@ -24,6 +24,7 @@
 #include "contour.h"
 #include "group.h"
 #include "embed.h"
+#include "diagram_item.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -150,6 +151,25 @@ namespace MBSimGUI {
       frame[i]->updateValues();
     for(auto & i : contour)
       i->updateValues();
+  }
+
+  void RigidBody::createDiagramItem() {
+    Body::createDiagramItem();
+    updateDiagramItem();
+  }
+
+  void RigidBody::updateDiagramItem() {
+    Body::updateDiagramItem();
+    for(auto f : frame)
+      f->getDiagramItem()->setPen(QPen(Qt::black,1));
+    DiagramItem *item = getFrame(0)->getDiagramItem();
+    auto *e=MBXMLUtils::E(getXMLElement())->getFirstElementChildNamed(MBSIM%"frameForKinematics");
+    if(e) {
+      auto str = QString::fromStdString(MBXMLUtils::E(e)->getAttribute("ref"));
+      auto *ref = getFrame(str.mid(6, str.length()-7));
+      item = ref->getDiagramItem();
+    }
+    item->setPen(QPen(Qt::blue,1));
   }
 
 }

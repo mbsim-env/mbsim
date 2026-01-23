@@ -97,6 +97,10 @@ namespace MBSimGUI {
       void updateName();
       virtual void updateNames() { updateName(); }
       virtual void updateValues();
+      virtual void createDiagramItem() { }
+      virtual void updateDiagramItem() { }
+      virtual void createDiagramArrows() { }
+      virtual void updateDiagramArrows() { }
   };
 
 }

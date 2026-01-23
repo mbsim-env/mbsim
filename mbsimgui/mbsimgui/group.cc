@@ -30,6 +30,8 @@
 #include "utils.h"
 #include "embed.h"
 #include "mainwindow.h"
+#include "diagram_item.h"
+#include "diagram_arrow.h"
 #include "mbxmlutilshelper/dom.h"
 
 using namespace std;
@@ -62,6 +64,10 @@ namespace MBSimGUI {
       delete i;
     for(auto & i : observer)
       delete i;
+    if(diagramItem) {
+      diagramItem->removeDiagramArrows();
+      delete diagramItem;
+    }
   }
 
   void Group::addFrame(Frame* frame_) {
@@ -535,6 +541,72 @@ namespace MBSimGUI {
     for(auto & i : observer)
       i->updateStatus();
     emitDataChangedOnChildren();
+  }
+
+  void Group::createDiagramItem() {
+    QPolygonF polygon;
+    polygon << QPointF(-200, -200) << QPointF(200, -200) << QPointF(200, 200) << QPointF(-200, 200) << QPointF(-200, -200);
+    diagramItem = new DiagramItem(polygon,parent?parent->getDiagramItem():nullptr);
+    auto *text = new QGraphicsSimpleTextItem(getName(),diagramItem);
+    text->setPos(-10*text->text().length()/2,-200);
+    diagramItem->setBrush(Qt::white);
+    for(size_t i=0; i<frame.size(); i++) {
+      frame[i]->createDiagramItem();
+      frame[i]->getDiagramItem()->setPos(-190+int(i)*25,-170);
+    }
+    for(size_t i=0; i<contour.size(); i++) {
+      contour[i]->createDiagramItem();
+      contour[i]->getDiagramItem()->setPos(-175+int(i)*55,-125);
+    }
+    for(size_t i=0; i<group.size(); i++) {
+      group[i]->createDiagramItem();
+      group[i]->getDiagramItem()->setPos(300+int(i)*405,300);
+    }
+    for(size_t i=0; i<object.size(); i++) {
+      object[i]->createDiagramItem();
+      object[i]->getDiagramItem()->setPos(-150+int(i)*105,-40);
+    }
+    for(size_t i=0; i<link.size(); i++) {
+      link[i]->createDiagramItem();
+      link[i]->getDiagramItem()->setPos(-150+int(i)*105,70);
+    }
+    for(size_t i=0; i<constraint.size(); i++) {
+      constraint[i]->createDiagramItem();
+      constraint[i]->getDiagramItem()->setPos(-150+int(i)*105,180);
+    }
+    for(size_t i=0; i<observer.size(); i++) {
+      observer[i]->createDiagramItem();
+      observer[i]->getDiagramItem()->setPos(-150+int(i)*105,290);
+    }
+  }
+
+  void Group::createDiagramArrows() {
+    if(parent) {
+      DiagramItem *endItem = parent->getFrame(0)->getDiagramItem();
+      auto *e=E(getXMLElement())->getFirstElementChildNamed(MBSIM%"frameOfReference");
+      if(e) {
+        auto refStr = QString::fromStdString(E(e)->getAttribute("ref"));
+        auto *ref = getByPath<Element>(refStr);
+        endItem = ref->getDiagramItem();
+      }
+      DiagramArrow *arrow = new DiagramArrow(endItem, diagramItem, diagramItem);
+      arrow->updatePosition();
+    }
+
+    for(auto & i : frame)
+      i->createDiagramArrows();
+    for(auto & i : contour)
+      i->createDiagramArrows();
+    for(auto & i : group)
+      i->createDiagramArrows();
+    for(auto & i : object)
+      i->createDiagramArrows();
+    for(auto & i : link)
+      i->createDiagramArrows();
+    for(auto & i : constraint)
+      i->createDiagramArrows();
+    for(auto & i : observer)
+      i->createDiagramArrows();
   }
 
   UnknownGroup::UnknownGroup() {

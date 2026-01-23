@@ -55,6 +55,8 @@ namespace MBSimGUI {
   class XMLEditorWidget;
   class VariableWidget;
   class EmbedItemData;
+  class Project;
+  class DiagramScene;
 
   class EvalDialog : public QDialog {
     public:
@@ -367,6 +369,14 @@ namespace MBSimGUI {
     public:
       HiddenParErrorDialog(QWidget *parent, const QString &xpath, const QString &msg);
       static bool show;
+  };
+
+  class DiagramDialog : public QDialog {
+    public:
+      DiagramDialog(QWidget *parent);
+      void resetDiagramScene();
+    private:
+      DiagramScene *scene;
   };
 
 }

@@ -29,8 +29,10 @@ namespace MBSimGUI {
     MBSIMGUI_OBJECTFACTORY_CLASS(Object, Element, MBSIM%"Object", "Object");
     public:
       Object();
+      ~Object();
       PropertyDialog* createPropertyDialog() override { return new ObjectPropertyDialog(this); }
       QMenu* createContextMenu() override { return new ObjectContextMenu(this); }
+      void createDiagramItem() override;
   };
 
   class UnknownObject : public Object {

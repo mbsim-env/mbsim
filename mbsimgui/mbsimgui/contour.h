@@ -29,9 +29,11 @@ namespace MBSimGUI {
     MBSIMGUI_OBJECTFACTORY_CLASS(Contour, Element, MBSIM%"Contour", "Contour");
     public:
       Contour();
+      ~Contour();
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
       PropertyDialog* createPropertyDialog() override { return new ContourPropertyDialog(this); }
       QMenu* createContextMenu() override { return new ContourContextMenu(this); }
+      void createDiagramItem() override;
   };
 
   class UnknownContour : public Contour {
@@ -45,6 +47,7 @@ namespace MBSimGUI {
     MBSIMGUI_OBJECTFACTORY_CLASS(RigidContour, Contour, MBSIM%"RigidContour", "Rigid contour");
     public:
       PropertyDialog* createPropertyDialog() override { return new RigidContourPropertyDialog(this); }
+      void createDiagramArrows();
   };
 
   class Point : public RigidContour {

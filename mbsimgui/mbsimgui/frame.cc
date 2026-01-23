@@ -23,6 +23,7 @@
 #include <xercesc/dom/DOMDocument.hpp>
 #include "mainwindow.h"
 #include "parameter.h"
+#include "diagram_item.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -42,12 +43,29 @@ namespace MBSimGUI {
     parameterEmbedItem->setIcon(icon);
   }
 
+  Frame::~Frame() {
+    if(diagramItem) {
+      diagramItem->removeDiagramArrows();
+      delete diagramItem;
+    }
+  }
+
   DOMElement* Frame::processIDAndHref(DOMElement *element) {
     element = Element::processIDAndHref(element);
     DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(ELE)
       E(ELE)->addProcessingInstructionChildNamed("OPENMBV_ID", getID());
     return element;
+  }
+
+  void Frame::createDiagramItem() {
+    QPolygonF polygon;
+    polygon << QPointF(-10, -10) << QPointF(10, -10) << QPointF(10, 10) << QPointF(-10, 10) << QPointF(-10, -10);
+    diagramItem = new DiagramItem(polygon,parent->getDiagramItem());
+//    diagramItem->setPen(QPen(Qt::blue,1));
+    diagramItem->setBrush(Qt::white);
+    auto *text = new QGraphicsSimpleTextItem(getName(),diagramItem);
+//    text->setPos(-10*text->text().length()/2,-10);
   }
 
   InternalFrame::InternalFrame(const QString &name_, MBXMLUtils::FQN xmlFrameName_, const MBXMLUtils::FQN &plotFeatureType_) : xmlFrameName(std::move(xmlFrameName_)), plotFeatureType(plotFeatureType_) {

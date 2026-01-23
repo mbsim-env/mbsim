@@ -22,6 +22,8 @@
 #include "utils.h"
 #include "mainwindow.h"
 #include "parameter.h"
+#include "diagram_item.h"
+#include "diagram_arrow.h"
 #include <xercesc/dom/DOMDocument.hpp>
 
 using namespace std;
@@ -66,6 +68,13 @@ namespace MBSimGUI {
     parameterEmbedItem->setIcon(icon);
   }
 
+  Contour::~Contour() {
+    if(diagramItem) {
+      diagramItem->removeDiagramArrows();
+      delete diagramItem;
+    }
+  }
+
   DOMElement* Contour::processIDAndHref(DOMElement *element) {
     element = Element::processIDAndHref(element);
     DOMElement *ELE=E(element)->getFirstElementChildNamed(NamespaceURI(getXMLType().first)%"enableOpenMBV");
@@ -73,6 +82,30 @@ namespace MBSimGUI {
       E(ELE)->addProcessingInstructionChildNamed("OPENMBV_ID", getID());
     return element;
   }
+
+  void Contour::createDiagramItem() {
+    QPolygonF polygon;
+    QPainterPath path;
+    path.addEllipse(-25, -25, 50, 50);
+    polygon = path.toFillPolygon();
+    diagramItem = new DiagramItem(polygon,parent->getDiagramItem());
+    diagramItem->setBrush(Qt::white);
+    auto *text = new QGraphicsSimpleTextItem(getName(),diagramItem);
+    text->setPos(-4*text->text().length(),0);
+  }
+
+  void RigidContour::createDiagramArrows() {
+    DiagramItem *endItem = parent->getFrame(0)->getDiagramItem();
+    auto *e=E(getXMLElement())->getFirstElementChildNamed(MBSIM%"frameOfReference");
+    if(e) {
+      auto refStr = QString::fromStdString(E(e)->getAttribute("ref"));
+      auto *ref = getByPath<Element>(refStr);
+      endItem = ref->getDiagramItem();
+    }
+    DiagramArrow *arrow = new DiagramArrow(diagramItem, endItem, diagramItem);
+    arrow->updatePosition();
+  }
+
 
   UnknownContour::UnknownContour() {
     icon = QIcon(new OverlayIconEngine((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"contour.svg").string(),

@@ -41,6 +41,8 @@ namespace MBSimGUI {
       QMenu* createFrameContextMenu() override { return new FixedRelativeFramesContextMenu(this); }
       void updateNames() override;
       void updateValues() override;
+      void createDiagramItem() override;
+      void updateDiagramItem() override;
     protected:
       xercesc::DOMElement *frames, *contours;
   };

@@ -32,6 +32,7 @@
 #include "constraint.h"
 #include "observer.h"
 #include "mainwindow.h"
+#include "diagram_item.h"
 #include <xercesc/dom/DOMDocument.hpp>
 #include <xercesc/dom/DOMImplementation.hpp>
 #include <xercesc/dom/DOMLSSerializer.hpp>
@@ -213,5 +214,15 @@ namespace MBSimGUI {
         }
       }
   }
+
+  void Element::updateDiagramItem() {
+    static_cast<QGraphicsSimpleTextItem*>(diagramItem->childItems().first())->setText(getName());
+  }
+
+  void Element::updateDiagramArrows() {
+    diagramItem->removeDiagramArrows();
+    createDiagramArrows();
+  }
+
 
 }

@@ -23,6 +23,7 @@
 #include "utils.h"
 #include "mainwindow.h"
 #include "parameter.h"
+#include "diagram_item.h"
 
 using namespace std;
 
@@ -33,6 +34,22 @@ namespace MBSimGUI {
   Object::Object() {
     icon = Utils::QIconCached(QString::fromStdString((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"body.svg").string()));
     parameterEmbedItem->setIcon(icon);
+  }
+
+  Object::~Object() {
+    if(diagramItem) {
+      diagramItem->removeDiagramArrows();
+      delete diagramItem;
+    }
+  }
+
+  void Object::createDiagramItem() {
+    QPolygonF polygon;
+    polygon << QPointF(-50, -50) << QPointF(50, -50) << QPointF(50, 50) << QPointF(-50, 50) << QPointF(-50, -50);
+    diagramItem = new DiagramItem(polygon,parent->getDiagramItem());
+    diagramItem->setBrush(Qt::white);
+    auto *text = new QGraphicsSimpleTextItem(getName(),diagramItem);
+    text->setPos(-4*text->text().length(),-50);
   }
 
   UnknownObject::UnknownObject() {

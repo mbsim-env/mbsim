@@ -28,7 +28,9 @@ namespace MBSimGUI {
     MBSIMGUI_OBJECTFACTORY_CLASS(Link, Element, MBSIM%"Link", "Link");
     public:
       Link();
+      ~Link();
       QMenu* createContextMenu() override { return new LinkContextMenu(this); }
+      void createDiagramItem() override;
   };
 
   class UnknownLink : public Link {
@@ -44,6 +46,8 @@ namespace MBSimGUI {
 
   class FrameLink : public MechanicalLink {
     MBSIMGUI_OBJECTFACTORY_CLASS(FrameLink, MechanicalLink, MBSIM%"FrameLink", "Frame link");
+    public:
+      void createDiagramArrows() override;
   };
 
   class FixedFrameLink : public FrameLink {

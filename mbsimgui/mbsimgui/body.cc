@@ -23,6 +23,8 @@
 #include "contour.h"
 #include "utils.h"
 #include "mainwindow.h"
+#include "diagram_item.h"
+#include "diagram_arrow.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -132,6 +134,36 @@ namespace MBSimGUI {
     for(auto & i : contour)
       i->updateStatus();
     emitDataChangedOnChildren();
+  }
+
+  void Body::createDiagramItem() {
+    Object::createDiagramItem();
+    for(size_t i=0; i<frame.size(); i++) {
+      frame[i]->createDiagramItem();
+      frame[i]->getDiagramItem()->setPos(-40+int(i)*25,-20);
+    }
+    for(size_t i=0; i<contour.size(); i++) {
+      contour[i]->createDiagramItem();
+      contour[i]->getDiagramItem()->setPos(-25+int(i)*55,25);
+    }
+  }
+
+  void Body::createDiagramArrows() {
+    DiagramItem *refItem = parent->getFrame(0)->getDiagramItem();
+//    DiagramItem *refItem = parent->getDiagramItem();
+    auto *e=E(getXMLElement())->getFirstElementChildNamed(MBSIM%"frameOfReference");
+    if(e) {
+      auto refStr = QString::fromStdString(E(e)->getAttribute("ref"));
+      auto *ref = getByPath<Element>(refStr);
+      refItem = ref->getDiagramItem();
+//      refItem = ref->getParent()->getDiagramItem();
+    }
+    DiagramArrow *arrow = new DiagramArrow(refItem, diagramItem, diagramItem);
+    arrow->updatePosition();
+    for(auto & i : frame)
+      i->createDiagramArrows();
+    for(auto & i : contour)
+      i->createDiagramArrows();
   }
 
 }

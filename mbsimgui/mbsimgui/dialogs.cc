@@ -31,6 +31,7 @@
 #include "element_view.h"
 #include "treemodel.h"
 #include "treeitem.h"
+#include "diagram_scene.h"
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QDialogButtonBox>
@@ -45,6 +46,7 @@
 #include <QMessageBox>
 #include <QFileInfo>
 #include <QSettings>
+#include <QGraphicsView>
 #include <qwt_plot.h>
 #include <qwt_plot_canvas.h>
 #include <qwt_plot_curve.h>
@@ -1825,6 +1827,27 @@ namespace MBSimGUI {
     layout->addWidget(ok, 5);
     layout->setStretch(5,0);
     connect(ok, &QPushButton::clicked, [this](){ close(); });
+  }
+
+  DiagramDialog::DiagramDialog(QWidget *parent) : QDialog(parent) {
+    setWindowTitle("Block Diagram");
+    auto *layout = new QVBoxLayout;
+    setLayout(layout);
+    scene = new DiagramScene(this);
+    scene->setSceneRect(0, 0, 5000, 5000);
+    auto *view = new QGraphicsView(scene);
+    view->setRenderHint(QPainter::Antialiasing, true);
+    layout->addWidget(view);
+    QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
+    buttonBox->addButton(QDialogButtonBox::Ok);
+    layout->addWidget(buttonBox);
+  //  updateWidget();
+    connect(buttonBox, &QDialogButtonBox::accepted, this, &DiagramDialog::accept);
+    connect(this, &QDialog::finished, scene, &DiagramScene::savePos);
+  }
+
+  void DiagramDialog::resetDiagramScene() {
+    scene->reset();
   }
 
 }

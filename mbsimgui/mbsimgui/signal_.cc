@@ -20,8 +20,13 @@
 #include <config.h>
 #include "signal_.h"
 #include "objectfactory.h"
+#include "diagram_item.h"
+#include "diagram_arrow.h"
+#include <QPen>
 
 using namespace std;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSimGUI {
 
@@ -36,5 +41,24 @@ namespace MBSimGUI {
   MBSIMGUI_REGOBJECTFACTORY(Stop);
   MBSIMGUI_REGOBJECTFACTORY(Duration);
   MBSIMGUI_REGOBJECTFACTORY(StateMachine);
+
+  void Signal::createDiagramItem() {
+    Link::createDiagramItem();
+    diagramItem->setPen(QPen(Qt::blue,1));
+  }
+
+  void SignalOperation::createDiagramArrows() {
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"inputSignal");
+    while(E(e)->getTagName()==MBSIMCONTROL%"inputSignal") {
+      auto str = QString::fromStdString(MBXMLUtils::E(e)->getAttribute("ref"));
+      auto *ref = getByPath<Signal>(str);
+      auto *startItem = ref->getDiagramItem();
+      if(startItem) {
+        DiagramArrow *arrow = new DiagramArrow(startItem, diagramItem, diagramItem);
+        arrow->updatePosition();
+      }
+      e=e->getNextElementSibling();
+    }
+  }
 
 }

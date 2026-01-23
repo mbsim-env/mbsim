@@ -112,6 +112,8 @@ namespace MBSimGUI {
       QMenu* createFrameContextMenu() override { return new FixedRelativeFramesContextMenu(this); }
       QMenu* createContextMenu() override { return new GroupContextMenu(this); }
       void updateStatus() override;
+      void createDiagramItem() override;
+      void createDiagramArrows() override;
   };
 
   class UnknownGroup : public Group {

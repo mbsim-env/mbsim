@@ -29,7 +29,9 @@ namespace MBSimGUI {
     MBSIMGUI_OBJECTFACTORY_CLASS(Observer, Element, MBSIM%"Observer", "Observer");
     public:
       Observer();
+      ~Observer();
       QMenu* createContextMenu() override { return new ObserverContextMenu(this); }
+      void createDiagramItem() override;
   };
 
   class UnknownObserver : public Observer {

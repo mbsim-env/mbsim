@@ -1,6 +1,6 @@
 /*
     MBSimGUI - A fronted for MBSim.
-    Copyright (C) 2012 Martin Förg
+    Copyright (C) 2026 Martin Förg
 
   This library is free software; you can redistribute it and/or 
   modify it under the terms of the GNU Lesser General Public 
@@ -17,20 +17,22 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#ifndef _KINETIC_EXCITATION__H_
-#define _KINETIC_EXCITATION__H_
+#ifndef _DIAGRAM_SCENE__H_
+#define _DIAGRAM_SCENE__H_
 
-#include "link_.h"
-#include "link_property_dialog.h"
+#include <QWidget>
+#include <QGraphicsScene>
 
 namespace MBSimGUI {
 
-  class KineticExcitation : public FloatingFrameLink {
-    MBSIMGUI_OBJECTFACTORY_CLASS(KineticExcitation, FloatingFrameLink, MBSIM%"KineticExcitation", "Kinetic excitation");
+  class Project;
+  class Element;
+
+  class DiagramScene : public QGraphicsScene {
     public:
-      xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
-      PropertyDialog* createPropertyDialog() override { return new KineticExcitationPropertyDialog(this); }
-      void createDiagramArrows() override;
+      DiagramScene(QWidget *parent);
+      void reset();
+      void savePos();
   };
 
 }

@@ -23,7 +23,7 @@
 #include "utils.h"
 #include "mainwindow.h"
 #include "parameter.h"
-#include <xercesc/dom/DOMDocument.hpp>
+#include "diagram_item.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -46,6 +46,22 @@ namespace MBSimGUI {
   Observer::Observer() {
     icon = Utils::QIconCached(QString::fromStdString((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"observer.svg").string()));
     parameterEmbedItem->setIcon(icon);
+  }
+
+  Observer::~Observer() {
+    if(diagramItem) {
+      diagramItem->removeDiagramArrows();
+      delete diagramItem;
+    }
+  }
+
+  void Observer::createDiagramItem() {
+    QPolygonF polygon;
+    polygon << QPointF(-50, -50) << QPointF(50, -50) << QPointF(50, 50) << QPointF(-50, 50) << QPointF(-50, -50);
+    diagramItem = new DiagramItem(polygon,parent->getDiagramItem());
+    diagramItem->setBrush(Qt::white);
+    auto *text = new QGraphicsSimpleTextItem(getName(),diagramItem);
+    text->setPos(-4*text->text().length(),-50);
   }
 
   DOMElement* MechanicalLinkObserver::processIDAndHref(DOMElement *element) {

@@ -21,7 +21,8 @@
 #include "kinetic_excitation.h"
 #include <xercesc/dom/DOMDocument.hpp>
 #include "objectfactory.h"
-
+#include "diagram_item.h"
+#include "diagram_arrow.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -39,6 +40,26 @@ namespace MBSimGUI {
       E(ELE)->addProcessingInstructionChildNamed("OPENMBV_ID", getID());
 
     return element;
+  }
+
+  void KineticExcitation::createDiagramArrows() {
+    FloatingFrameLink::createDiagramArrows();
+    auto *e=E(getXMLElement())->getFirstElementChildNamed(MBSIM%"momentFunction");
+    if(e) {
+      auto *ele=E(e)->getFirstElementChildNamed(MBSIMCONTROL%"SignalFunction");
+      if(ele) {
+        auto *ret = E(ele)->getFirstElementChildNamed(MBSIMCONTROL%"returnSignal");
+        if(ret) {
+          auto str = QString::fromStdString(E(ret)->getAttribute("ref"));
+          auto *ref = getByPath<Element>(str.remove(0,3));
+          auto *startItem = ref->getDiagramItem();
+          if(startItem) {
+            DiagramArrow *arrow = new DiagramArrow(startItem, diagramItem, diagramItem);
+            arrow->updatePosition();
+          }
+        }
+      }
+    }
   }
 
 }

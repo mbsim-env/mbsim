@@ -22,6 +22,7 @@
 #include "utils.h"
 #include "mainwindow.h"
 #include "parameter.h"
+#include "diagram_item.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -41,6 +42,22 @@ namespace MBSimGUI {
   Constraint::Constraint() {
     icon = Utils::QIconCached(QString::fromStdString((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"constraint.svg").string()));
     parameterEmbedItem->setIcon(icon);
+  }
+
+  Constraint::~Constraint() {
+    if(diagramItem) {
+      diagramItem->removeDiagramArrows();
+      delete diagramItem;
+    }
+  }
+
+  void Constraint::createDiagramItem() {
+    QPolygonF polygon;
+    polygon << QPointF(-50, -50) << QPointF(50, -50) << QPointF(50, 50) << QPointF(-50, 50) << QPointF(-50, -50);
+    diagramItem = new DiagramItem(polygon,parent->getDiagramItem());
+    diagramItem->setBrush(Qt::white);
+    auto *text = new QGraphicsSimpleTextItem(getName(),diagramItem);
+    text->setPos(-4*text->text().length(),-50);
   }
 
   UnknownConstraint::UnknownConstraint() {

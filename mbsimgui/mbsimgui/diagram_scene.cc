@@ -1,6 +1,6 @@
 /*
-    MBSimGUI - A fronted for MBSim.
-    Copyright (C) 2012 Martin Förg
+   MBSimGUI - A fronted for MBSim.
+   Copyright (C) 2026 MBSim-Env
 
   This library is free software; you can redistribute it and/or 
   modify it under the terms of the GNU Lesser General Public 
@@ -15,24 +15,34 @@
   You should have received a copy of the GNU Lesser General Public 
   License along with this library; if not, write to the Free Software 
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
-*/
+   */
 
-#ifndef _KINETIC_EXCITATION__H_
-#define _KINETIC_EXCITATION__H_
+#include <config.h>
+#include "diagram_scene.h"
+#include "project.h"
+#include "dynamic_system_solver.h"
+#include "diagram_item.h"
+#include "mainwindow.h"
 
-#include "link_.h"
-#include "link_property_dialog.h"
+using namespace std;
 
 namespace MBSimGUI {
 
-  class KineticExcitation : public FloatingFrameLink {
-    MBSIMGUI_OBJECTFACTORY_CLASS(KineticExcitation, FloatingFrameLink, MBSIM%"KineticExcitation", "Kinetic excitation");
-    public:
-      xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
-      PropertyDialog* createPropertyDialog() override { return new KineticExcitationPropertyDialog(this); }
-      void createDiagramArrows() override;
-  };
+  extern MainWindow *mw;
+
+  DiagramScene::DiagramScene(QWidget *parent) : QGraphicsScene(parent) {
+    reset();
+  }
+
+  void DiagramScene::reset() {
+    auto *dss = mw->getProject()->getDynamicSystemSolver();
+    dss->createDiagramItem();
+    dss->getDiagramItem()->setPos(2500,2500);
+    addItem(dss->getDiagramItem());
+    dss->createDiagramArrows();
+  }
+
+  void DiagramScene::savePos() {
+  }
 
 }
-
-#endif

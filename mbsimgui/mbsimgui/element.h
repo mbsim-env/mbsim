@@ -24,6 +24,7 @@
 #include "element_property_dialog.h"
 #include "element_context_menu.h"
 #include "namespace.h"
+#include <QGraphicsItem>
 
 namespace MBSimGUI {
 
@@ -34,6 +35,8 @@ namespace MBSimGUI {
   class Link;
   class Constraint;
   class Observer;
+  class DiagramItem;
+  class DiagramScene;
 
   class Element : public EmbedItemData {
     MBSIMGUI_OBJECTFACTORY_CLASS(Element, EmbedItemData, MBSIM%"Element", "Element");
@@ -43,6 +46,7 @@ namespace MBSimGUI {
       std::string ID;
       bool enabled{true};
       void emitDataChangedOnChildren();
+      DiagramItem *diagramItem{nullptr};
     public:
       Element();
       virtual QString getXMLName();
@@ -110,6 +114,10 @@ namespace MBSimGUI {
       void updateStatus() override;
       EmbedItemData *getDedicatedItem() override { return dedicatedFileItem?(fileItem?this:parent->getDedicatedItem()):this; }
       void setParameterValue(const std::string &parName, const std::string &code);
+      DiagramItem *getDiagramItem() { return diagramItem; }
+      void setDiagramItem(DiagramItem *diagramItem_) { diagramItem = diagramItem_; }
+      void updateDiagramItem() override;
+      void updateDiagramArrows() override;
   };
 
   template<class T>

@@ -31,9 +31,11 @@ namespace MBSimGUI {
     MBSIMGUI_OBJECTFACTORY_CLASS(Frame, Element, MBSIM%"Frame", "Frame");
     public:
       Frame();
+      ~Frame();
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
       PropertyDialog* createPropertyDialog() override { return new FramePropertyDialog(this); }
       QMenu* createContextMenu() override { return new FrameContextMenu(this); }
+      void createDiagramItem() override;
   };
 
   class InternalFrame : public Frame {

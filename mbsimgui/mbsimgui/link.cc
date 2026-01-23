@@ -22,6 +22,8 @@
 #include "utils.h"
 #include "mainwindow.h"
 #include "parameter.h"
+#include "diagram_item.h"
+#include "diagram_arrow.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -36,10 +38,54 @@ namespace MBSimGUI {
     parameterEmbedItem->setIcon(icon);
   }
 
+  Link::~Link() {
+    if(diagramItem) {
+      diagramItem->removeDiagramArrows();
+      delete diagramItem;
+    }
+  }
+
+  void Link::createDiagramItem() {
+    QPolygonF polygon;
+    double size = 50;
+    QPainterPath path;
+            path.moveTo(50, 0);
+            path.arcTo(0, -50, 50, 50, 0, 90);
+            path.arcTo(-50, -50, 50, 50, 90, 90);
+            path.arcTo(-50, 0, 50, 50, 180, 90);
+            path.arcTo(0, 0, 50, 50, 270, 90);
+            polygon = path.toFillPolygon();
+    diagramItem = new DiagramItem(polygon,parent->getDiagramItem());
+    diagramItem->setBrush(Qt::white);
+    auto *text = new QGraphicsSimpleTextItem(getName(),diagramItem);
+    text->setPos(-4*text->text().length(),-size);
+  }
+
   UnknownLink::UnknownLink() {
     icon = QIcon(new OverlayIconEngine((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"link.svg").string(),
                                        (MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"unknownelement.svg").string()));
   }
 
-}
+  void FrameLink::createDiagramArrows() {
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"connect");
+    if(e) {
+       auto str = QString::fromStdString(MBXMLUtils::E(e)->getAttribute("ref1"));
+       Element *ref = parent->getFrame(0);
+       if(not str.isEmpty())
+         ref = getByPath<Element>(str);
+       auto *endItem = ref->getDiagramItem();
+       if(endItem) {
+         DiagramArrow *arrow = new DiagramArrow(endItem, diagramItem, diagramItem);
+         arrow->updatePosition();
+       }
+       str = QString::fromStdString(MBXMLUtils::E(e)->getAttribute("ref2"));
+       ref = getByPath<Element>(str);
+       endItem = ref->getDiagramItem();
+       if(endItem) {
+         DiagramArrow *arrow = new DiagramArrow(endItem, diagramItem, diagramItem);
+         arrow->updatePosition();
+       }
+    }
+  }
 
+}

@@ -27,6 +27,8 @@ namespace MBSimGUI {
 
   class Signal : public Link {
     MBSIMGUI_OBJECTFACTORY_CLASS(Signal, Link, MBSIMCONTROL%"Signal", "Signal");
+    public:
+      void createDiagramItem() override;
   };
 
   class Multiplexer : public Signal {
@@ -57,6 +59,7 @@ namespace MBSimGUI {
     MBSIMGUI_OBJECTFACTORY_CLASS(SignalOperation, Signal, MBSIMCONTROL%"SignalOperation", "Signal operation");
     public:
       PropertyDialog* createPropertyDialog() override { return new SignalOperationPropertyDialog(this); }
+      void createDiagramArrows() override;
   };
 
   class ExternSignalSource : public Signal {

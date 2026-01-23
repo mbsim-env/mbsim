@@ -48,6 +48,7 @@
 #include "file_editor.h"
 #include "utils.h"
 #include "basicitemdata.h"
+#include "diagram_item.h"
 #include <openmbv/mainwindow.h>
 #include <openmbvcppinterface/compoundrigidbody.h>
 #include <utime.h>
@@ -403,6 +404,9 @@ namespace MBSimGUI {
     auto *actionStateTable = runBar->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"state_table.svg").string())),"Show state table");
     runMenu->addAction(actionStateTable);
     connect(actionStateTable,&QAction::triggered,this,&MainWindow::showStateTable);
+    auto *actionShowDiagram = runBar->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"model_diagram.svg").string())),"Show diagram");
+    runMenu->addAction(actionShowDiagram);
+    connect(actionShowDiagram,&QAction::triggered,this,&MainWindow::showDiagram);
 
     QToolBar *miscBar = addToolBar("Misc Toolbar");
     miscBar->setObjectName("toolbar/misc");
@@ -1109,6 +1113,7 @@ namespace MBSimGUI {
       callViewAllAfterFileReloaded = true;
       updateParameterTreeAll(false);
       refresh();
+      if(diagram) diagram->resetDiagramScene();
     }
   }
 
@@ -1197,6 +1202,7 @@ namespace MBSimGUI {
       callViewAllAfterFileReloaded = true;
       updateParameterTreeAll(false);
       refresh();
+      if(diagram) diagram->resetDiagramScene();
     }
     else
       QMessageBox::warning(this, "Project load", "Project file " + fileName + " does not exist.");
@@ -1891,6 +1897,12 @@ DEF mbsimgui_outdated_switch Switch {
     }
   }
 
+  void MainWindow::showDiagram() {
+    if(not diagram)
+      diagram = new DiagramDialog(this);
+    diagram->show();
+  }
+
   void MainWindow::selectElement(const string& ID, OpenMBVGUI::Object *obj) {
     if(!obj) {
       highlightObject("");
@@ -2580,6 +2592,10 @@ DEF mbsimgui_outdated_switch Switch {
     updateReferences(parent);
     elementView->selectionModel()->setCurrentIndex(frame->getModelIndex(), QItemSelectionModel::ClearAndSelect);
     openElementEditor(false);
+    if(diagram) {
+      frame->createDiagramItem();
+      frame->getDiagramItem()->setPos(-150+25*(parent->getNumberOfFrames()-1),-170);
+    }
   }
 
   void MainWindow::addContour(Contour *contour, Element *parent) {
@@ -2591,6 +2607,10 @@ DEF mbsimgui_outdated_switch Switch {
     updateReferences(parent);
     elementView->selectionModel()->setCurrentIndex(contour->getModelIndex(), QItemSelectionModel::ClearAndSelect);
     openElementEditor(false);
+    if(diagram) {
+      contour->createDiagramItem();
+      contour->getDiagramItem()->setPos(-150+55*(parent->getNumberOfContours()-1),-125);
+    }
   }
 
   void MainWindow::addGroup(Group *group, Element *parent) {
@@ -2602,6 +2622,10 @@ DEF mbsimgui_outdated_switch Switch {
     updateReferences(parent);
     elementView->selectionModel()->setCurrentIndex(group->getModelIndex(), QItemSelectionModel::ClearAndSelect);
     openElementEditor(false);
+    if(diagram) {
+      group->createDiagramItem();
+      group->getDiagramItem()->setPos(300+405*(parent->getNumberOfGroups()-1),300);
+    }
   }
 
   void MainWindow::addObject(Object *object, Element *parent) {
@@ -2613,6 +2637,10 @@ DEF mbsimgui_outdated_switch Switch {
     updateReferences(parent);
     elementView->selectionModel()->setCurrentIndex(object->getModelIndex(), QItemSelectionModel::ClearAndSelect);
     openElementEditor(false);
+    if(diagram) {
+      object->createDiagramItem();
+      object->getDiagramItem()->setPos(-150+105*(parent->getNumberOfObjects()-1),-40);
+    }
   }
 
   void MainWindow::addLink(Link *link, Element *parent) {
@@ -2624,6 +2652,10 @@ DEF mbsimgui_outdated_switch Switch {
     updateReferences(parent);
     elementView->selectionModel()->setCurrentIndex(link->getModelIndex(), QItemSelectionModel::ClearAndSelect);
     openElementEditor(false);
+    if(diagram) {
+      link->createDiagramItem();
+      link->getDiagramItem()->setPos(-150+105*(parent->getNumberOfLinks()-1),70);
+    }
   }
 
   void MainWindow::addConstraint(Constraint *constraint, Element *parent) {
@@ -2635,6 +2667,10 @@ DEF mbsimgui_outdated_switch Switch {
     updateReferences(parent);
     elementView->selectionModel()->setCurrentIndex(constraint->getModelIndex(), QItemSelectionModel::ClearAndSelect);
     openElementEditor(false);
+    if(diagram) {
+      constraint->createDiagramItem();
+      constraint->getDiagramItem()->setPos(-150+105*(parent->getNumberOfConstraints()-1),180);
+    }
   }
 
   void MainWindow::addObserver(Observer *observer, Element *parent) {
@@ -2646,6 +2682,10 @@ DEF mbsimgui_outdated_switch Switch {
     updateReferences(parent);
     elementView->selectionModel()->setCurrentIndex(observer->getModelIndex(), QItemSelectionModel::ClearAndSelect);
     openElementEditor(false);
+    if(diagram) {
+      observer->createDiagramItem();
+      observer->getDiagramItem()->setPos(-150+105*(parent->getNumberOfObservers()-1),290);
+    }
   }
 
   void MainWindow::addParameter(Parameter *parameter, EmbedItemData *parent) {
@@ -3420,6 +3460,10 @@ DEF mbsimgui_outdated_switch Switch {
             editor->fromWidget();
 	    updateNames(element);
             if(getAutoRefresh()) refresh();
+            if(diagram) {
+              element->updateDiagramItem();
+              element->updateDiagramArrows();
+            }
           }
         });
         connect(editor,&ElementPropertyDialog::apply,this,[=](){
@@ -3434,6 +3478,10 @@ DEF mbsimgui_outdated_switch Switch {
 	  updateNames(element);
           if(getAutoRefresh()) refresh();
           editor->setCancel(true);
+          if(diagram) {
+            element->updateDiagramItem();
+            element->updateDiagramArrows();
+          }
         });
         connect(editor,&ElementPropertyDialog::showXMLHelp,[element](){
           // generate url for current element

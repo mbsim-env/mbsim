@@ -29,7 +29,9 @@ namespace MBSimGUI {
     MBSIMGUI_OBJECTFACTORY_CLASS(Constraint, Element, MBSIM%"Constraint", "Constraint");
     public:
       Constraint();
+      ~Constraint();
       QMenu* createContextMenu() override { return new ConstraintContextMenu(this); }
+      void createDiagramItem() override;
   };
 
   class UnknownConstraint : public Constraint {
