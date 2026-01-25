@@ -6,6 +6,15 @@
 <![CDATA[
 ret=rf'''#VRML V2.0 utf8
 SepNoPick {{
+  # These two materials are here to allow OpenMBV to adpat transparency values for highlighting.
+  # The values are passed to the shader and used there.
+  # The values are not used by Coin since the matrial is overwritten after ShaderProgram, see there.
+  DEF grass_transparency_top Material {{
+    transparency {transparency[0]}
+  }}
+  DEF grass_transparency_bottom Material {{
+    transparency {transparency[1]}
+  }}
   ShaderProgram {{
     shaderObject [
       VertexShader {{
@@ -30,6 +39,8 @@ SepNoPick {{
           
           in vec3 vertexWorldPos;
           in vec3 vertexWorldNormal;
+          uniform float transparency_top;
+          uniform float transparency_bottom;
           
           // hash a 2D point
           vec2 hash(vec2 p) {{
@@ -100,7 +111,7 @@ SepNoPick {{
               color.r = 0.1 + n * 0.15;
               color.g = 0.35 + n * 0.55;
               color.b = 0.1 + n * 0.15;
-              transparency = {1-transparency[0]};
+              transparency = 1-transparency_top;
             }}
             else {{
               // ground color
@@ -108,7 +119,7 @@ SepNoPick {{
               color.r = 0.3 + n * 0.6;
               color.g = 0.2 + n * 0.4;
               color.b = 0;
-              transparency = {1-transparency[1]};
+              transparency = 1-transparency_bottom;
             }}
             color *= {brightness[0]};
             vec2 uvGrid;
@@ -121,9 +132,21 @@ SepNoPick {{
             gl_FragColor = vec4(color, transparency);
           }}
         "
+        parameter [
+          ShaderParameter1f {{
+            name "transparency_top"
+            value = USE grass_transparency_top.transparency
+          }}
+          ShaderParameter1f {{
+            name "transparency_bottom"
+            value = USE grass_transparency_bottom.transparency
+          }}
+        ]
       }}
     ]
   }}
+  # dummy transparency just to enable/disable transparency at all in Coin dependent on transparency[0] and transparency[1]
+  # the transparency is manged by the fragment shader, see transparency_top and transparency_bottom
   Material {{
     transparency {0 if (transparency[0]==0 and transparency[1]==0) or
                        (transparency[0]==0 and transparency[1]==1) or
