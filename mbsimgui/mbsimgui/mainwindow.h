@@ -199,7 +199,7 @@ namespace MBSimGUI {
     Q_SIGNALS:
       void updateEchoView(const QByteArray &data);
       void updateStatusMessage(const QByteArray &data);
-    private slots:
+    private Q_SLOTS:
       void selectElement(const std::string& ID, OpenMBVGUI::Object *obj);
       void fileReloadedSlot();
       void abstractViewFilterOptionsChanged();
@@ -366,7 +366,7 @@ namespace MBSimGUI {
       // Creates a variable on the stack which's ctor saves the current mw->eval and instantiates a new
       // evaluator on mw->eval. The dtor restores the saved evaluator on mw->eval.
       // This must be used if for a short time, the lifetime of the stack variable, a new evaluator is needed while
-    public slots:
+    public Q_SLOTS:
       void openElementEditor(bool config=true);
 
   };

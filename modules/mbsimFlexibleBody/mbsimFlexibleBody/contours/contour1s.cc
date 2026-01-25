@@ -45,7 +45,7 @@ namespace MBSimFlexibleBody {
   void Contour1s::plot() {
     if(plotFeature[MBSim::openMBV] and openMBVSpineExtrusion) {
 
-      vector<double> data;
+      vector<OpenMBV::Float> data;
       data.push_back(getTime());
       double s = etaNodes[0];
       double ds = (etaNodes[etaNodes.size()-1] - etaNodes[0]) / (openMBVSpineExtrusion->getNumberOfSpinePoints() - 1);

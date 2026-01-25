@@ -165,9 +165,9 @@ namespace MBSimGUI {
   void Element::updateStatus() {
     enabled = (not parent or parent->getEnabled()) and isActive();
     if(getModelIndex().model()==mw->getElementView()->model())
-      emit mw->getElementView()->model()->dataChanged( getModelIndex(), getModelIndex(), { Qt::UserRole });
+      Q_EMIT mw->getElementView()->model()->dataChanged( getModelIndex(), getModelIndex(), { Qt::UserRole });
     if(getModelIndex().model()==mw->getParameterView()->model())
-      emit mw->getParameterView()->model()->dataChanged( getModelIndex(), getModelIndex(), { Qt::UserRole });
+      Q_EMIT mw->getParameterView()->model()->dataChanged( getModelIndex(), getModelIndex(), { Qt::UserRole });
   }
 
   void Element::emitDataChangedOnChildren() {
@@ -177,7 +177,7 @@ namespace MBSimGUI {
         auto containerIndex=getModelIndex().model()->index(row++,0,getModelIndex());
         if(!containerIndex.isValid())
           break;
-        emit mw->getElementView()->model()->dataChanged(containerIndex, containerIndex, { Qt::UserRole });
+        Q_EMIT mw->getElementView()->model()->dataChanged(containerIndex, containerIndex, { Qt::UserRole });
       }
     }
   }
@@ -224,5 +224,23 @@ namespace MBSimGUI {
     createDiagramArrows();
   }
 
+  void Element::processIDAndHrefOfUnknownElements(DOMElement *element) {
+    function<void(DOMElement* ele)> walk;
+    walk = [this, &walk](DOMElement* ele) {
+      for(auto e=ele->getFirstElementChild(); e!=nullptr; e=e->getNextElementSibling()) {
+        const static string openMBVRigidBody("openMBVRigidBody");
+        if(E(e)->getTagName().second.substr(0, openMBVRigidBody.size())==openMBVRigidBody) {
+          auto ee = e->getFirstElementChild();
+          if(ee)
+            E(ee)->addProcessingInstructionChildNamed("OPENMBV_ID", getID());
+        }
+        const static string enableOpenMBV("enableOpenMBV");
+        if(E(e)->getTagName().second.substr(0, enableOpenMBV.size())==enableOpenMBV)
+          E(e)->addProcessingInstructionChildNamed("OPENMBV_ID", getID());
+        walk(e);
+      }
+    };
+    walk(element);
+  }
 
 }

@@ -790,3 +790,29 @@
    fun:~MyTouchWidget
    fun:_ZN10OpenMBVGUI13MyTouchWidgetD0Ev
 }
+{
+   Coin
+   Memcheck:Addr8
+   obj:/usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+   obj:/usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+   obj:/usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+   obj:/usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+   obj:/usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+   fun:_ZN7SoState3popEv
+   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
+   fun:_ZN8SoAction8traverseEP6SoNode
+   fun:_ZN11SoChildList8traverseEP8SoActionii
+   fun:_ZN8SoSwitch8doActionEP8SoAction
+}
+{
+   Coin
+   Memcheck:Addr8
+   obj:/usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+   obj:/usr/lib/x86_64-linux-gnu/dri/swrast_dri.so
+   fun:_ZN15SoGLRenderCache5closeEv
+   fun:_ZN13SoGLCacheList5closeEP16SoGLRenderAction
+   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
+   fun:_ZN8SoAction8traverseEP6SoNode
+   fun:_ZN11SoChildList8traverseEP8SoActionii
+   fun:_ZN8SoSwitch8doActionEP8SoAction
+}

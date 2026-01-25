@@ -88,4 +88,11 @@ namespace MBSimGUI {
     }
   }
 
+  xercesc::DOMElement* UnknownLink::processIDAndHref(xercesc::DOMElement *element) {
+    auto ret = Link::processIDAndHref(element);
+    processIDAndHrefOfUnknownElements(element);
+    return ret;
+  }
+
 }
+

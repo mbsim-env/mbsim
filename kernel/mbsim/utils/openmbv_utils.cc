@@ -276,6 +276,7 @@ namespace MBSim {
       if(typeStr=="tube") type=OpenMBVCoilSpring::tube;
       else if(typeStr=="scaledTube") type=OpenMBVCoilSpring::scaledTube;
       else if(typeStr=="polyline") type=OpenMBVCoilSpring::polyline;
+      else if(typeStr=="tubeShader") type=OpenMBVCoilSpring::tubeShader;
     }
   }
 

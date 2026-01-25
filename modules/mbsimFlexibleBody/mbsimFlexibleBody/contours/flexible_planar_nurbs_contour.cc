@@ -287,7 +287,7 @@ namespace MBSimFlexibleBody {
   void FlexiblePlanarNurbsContour::plot() {
     if(plotFeature[openMBV] and openMBVNurbsCurve) {
       if(updCrvPos) updateCurvePositions();
-      vector<double> data;
+      vector<OpenMBV::Float> data;
       data.push_back(getTime()); //time
       //Control-Point coordinates
       for(int i=0; i<crvPos.ctrlPnts().rows(); i++) {

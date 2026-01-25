@@ -300,7 +300,7 @@ namespace MBSim {
 
   void RigidBody::plot() {
     if(plotFeature[ref(openMBV)] and openMBVBody) {
-      array<double,8> data;
+      array<OpenMBV::Float,8> data;
       data[0] = getTime();
       Vec3 WrOS=openMBVFrame->evalPosition();
       Vec3 cardan=AIK2Cardan(openMBVFrame->getOrientation());

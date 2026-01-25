@@ -40,7 +40,7 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody2s::plot() {
 //    if(plotFeature[openMBV] and openMBVBody) {
-//        vector<double> data;
+//        vector<OpenMBV::Float> data;
 //        data.push_back(getTime());
 //        double ds = openStructure ? L/(((OpenMBV::SpineExtrusion*)openMBVBody.get())->getNumberOfSpinePoints()-1) : L/(((OpenMBV::SpineExtrusion*)openMBVBody.get())->getNumberOfSpinePoints()-2);
 //        for(int i=0; i<((OpenMBV::SpineExtrusion*)openMBVBody.get())->getNumberOfSpinePoints(); i++) {

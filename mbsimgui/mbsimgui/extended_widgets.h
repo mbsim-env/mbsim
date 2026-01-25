@@ -39,7 +39,7 @@ namespace MBSimGUI {
       MouseEvent(QWidget* widget) : QObject(widget) { }
     protected:
       bool eventFilter(QObject *obj, QEvent *event) override;
-    signals:
+    Q_SIGNALS:
       void mouseButtonPressed();
   };
 
@@ -70,7 +70,7 @@ namespace MBSimGUI {
       void setComment(const QString &comment);
       void editComment();
 
-    signals:
+    Q_SIGNALS:
       void clicked(bool);
 
     private:
@@ -118,7 +118,7 @@ namespace MBSimGUI {
       WidgetFactory *factory;
       int mode;
 
-    signals:
+    Q_SIGNALS:
       void comboChanged(int);
 
     private:

@@ -120,9 +120,9 @@ namespace MBSimGUI {
     MBSIMGUI_OBJECTFACTORY_CLASS(UnknownGroup, Group, MBSIM%"UnknownGroup_dummy", "Unknown group");
     public:
       UnknownGroup();
-      xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override { return Element::processIDAndHref(element); }
       void create() override { return Element::create(); }
       PropertyDialog* createPropertyDialog() override { return new UnknownItemPropertyDialog(this); }
+      xercesc::DOMElement* processIDAndHref(xercesc::DOMElement *element) override;
   };
 
 }

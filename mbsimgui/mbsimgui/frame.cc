@@ -94,9 +94,21 @@ namespace MBSimGUI {
                                        (MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"unknownelement.svg").string()));
   }
 
+  xercesc::DOMElement* UnknownFixedRelativeFrame::processIDAndHref(xercesc::DOMElement *element) {
+    auto ret = FixedRelativeFrame::processIDAndHref(element);
+    processIDAndHrefOfUnknownElements(element);
+    return ret;
+  }
+
   UnknownNodeFrame::UnknownNodeFrame() {
     icon = QIcon(new OverlayIconEngine((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"frame.svg").string(),
                                        (MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"unknownelement.svg").string()));
+  }
+
+  xercesc::DOMElement* UnknownNodeFrame::processIDAndHref(xercesc::DOMElement *element) {
+    auto ret = NodeFrame::processIDAndHref(element);
+    processIDAndHrefOfUnknownElements(element);
+    return ret;
   }
 
 }

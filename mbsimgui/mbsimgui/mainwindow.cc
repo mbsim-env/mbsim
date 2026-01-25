@@ -50,7 +50,6 @@
 #include "basicitemdata.h"
 #include "diagram_item.h"
 #include <openmbv/mainwindow.h>
-#include <openmbvcppinterface/compoundrigidbody.h>
 #include <utime.h>
 #include <QMenu>
 #include <QMenuBar>
@@ -501,66 +500,59 @@ namespace MBSimGUI {
     centralWidget->setLayout(mainlayout);
     mainlayout->addWidget(inlineOpenMBVMW);
 
-    // if simulation process has new error output call statusBar()->showMessage(...) but only every 250ms
-    connect(&processSimulate,&QProcess::readyReadStandardError,[this]() {
-      auto output=processSimulate.readAllStandardError();
-      if(!output.isEmpty())
-        updateStatusMessage(output);
-        });
-    // if refresh process has new error output call statusBar()->showMessage(...) but only every 250ms
-    connect(&processRefresh,&QProcess::readyReadStandardError,[this]() {
-      auto output=processRefresh.readAllStandardError();
-      if(!output.isEmpty())
-        updateStatusMessage(output);
-       });
+    for(auto *process : {&processSimulate, &processRefresh}) {
+      // if simulation process has new error output call statusBar()->showMessage(...) but only every 250ms
+      connect(process,&QProcess::readyReadStandardError,[this,process]() {
+        auto output=process->readAllStandardError();
+        if(!output.isEmpty())
+          updateStatusMessage(output);
+      });
+    }
 
     startProcessRefresh();
 
     if(!arg.contains("--autoExit")) { // normal run (no --autoExit) -> pass also the output of process/processRefresh to readyReadStandardOutput
       startProcessSimulate();
       processSimulateFinishedConnection=connect(&processSimulate,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
-          [this]() { startProcessSimulate(); });
+        this, &MainWindow::startProcessSimulate);
       processRefreshFinishedConnection=connect(&processRefresh,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
-          this, &MainWindow::startProcessRefresh);
-      connect(&processSimulate,&QProcess::readyReadStandardOutput,[this]() {
-        auto output=processSimulate.readAllStandardOutput();
-        if(!output.isEmpty())
-          updateEchoView(output);
-          });
-      connect(&processRefresh,&QProcess::readyReadStandardOutput,[this]() {
-        auto output=processRefresh.readAllStandardOutput();
-        if(!output.isEmpty())
-          updateEchoView(output);
-          });
+        this, &MainWindow::startProcessRefresh);
+      for(auto *process : {&processSimulate, &processRefresh}) {
+        connect(process,&QProcess::readyReadStandardOutput,[this,process]() {
+          auto output=process->readAllStandardOutput();
+          if(!output.isEmpty())
+            updateEchoView(output);
+        });
+      }
     }
     else { // --autoExit case
       startProcessSimulate(true);
-      // store all output of processRefresh in "allOutput" and ...
-      static QString allOutput;
-      connect(&processSimulate,&QProcess::readyReadStandardOutput,[this](){
-        allOutput+=processSimulate.readAllStandardOutput();
-        // ... if 'MBXMLUTILS_PREPROCESS_CTOR' is found in the output then mbsimxml has already started
-        // and we can now close the write stream to exit mbsimxml after the content is processed which will call
-        // QProcess::finished at the end
-        if(allOutput.contains("MBXMLUTILS_PREPROCESS_CTOR"))
-          processSimulate.closeWriteChannel();
-      });
-      connect(&processRefresh,&QProcess::readyReadStandardOutput,[this](){
-        allOutput+=processRefresh.readAllStandardOutput();
-        // ... if 'MBXMLUTILS_PREPROCESS_CTOR' is found in the output then mbsimxml has already started
-        // and we can now close the write stream to exit mbsimxml after the content is processed which will call
-        // QProcess::finished at the end
-        if(allOutput.contains("MBXMLUTILS_PREPROCESS_CTOR"))
-          processRefresh.closeWriteChannel();
-      });
+      // store all output of processSimulate/processRefresh in "allOutputSimulate/Refresh" and ...
+      static QString allOutputSimulate, allOutputRefresh;
+      for(auto &[process,allOutput] : initializer_list<pair<QProcess&,QString&>>{{processSimulate, allOutputSimulate},
+                                                                                 {processRefresh, allOutputRefresh}}) {
+        auto &process_=process;
+        auto &allOutput_=allOutput;
+        connect(&process,&QProcess::readyReadStandardOutput,[&process_,&allOutput_](){
+          allOutput_+=process_.readAllStandardOutput();
+          // ... if 'MBXMLUTILS_PREPROCESS_CTOR' is found in the allOutput then mbsimxml has already started
+          // and we can now close the write stream to exit mbsimxml after the content is processed which will call
+          // QProcess::finished at the end
+          if(allOutput_.contains("MBXMLUTILS_PREPROCESS_CTOR"))
+            process_.closeWriteChannel();
+        });
+      }
       // if QProcess::finished gets called dump all output to cout and close MainWindow
       connect(&processRefresh,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
       [this](int exitCode, QProcess::ExitStatus exitStatus){
+        allOutputRefresh+=processRefresh.readAllStandardOutput();
+        cout<<allOutputRefresh.toStdString();
         if(exitCode!=0)
           setErrorOccured();
         connect(&processSimulate,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
         [this](int exitCode, QProcess::ExitStatus exitStatus){
-          cout<<allOutput.toStdString();
+          allOutputSimulate+=processSimulate.readAllStandardOutput();
+          cout<<allOutputSimulate.toStdString();
           if(exitCode!=0)
             setErrorOccured();
           close();
@@ -685,15 +677,13 @@ namespace MBSimGUI {
 
   MainWindow::~MainWindow() {
     disconnect(processRefreshFinishedConnection);
-    processRefresh.closeWriteChannel();
-    processRefresh.waitForFinished(-1);
-    if(processRefresh.exitStatus()!=QProcess::NormalExit || processRefresh.exitCode()!=0)
-      setErrorOccured();
     disconnect(processSimulateFinishedConnection);
-    processSimulate.closeWriteChannel();
-    processSimulate.waitForFinished(-1);
-    if(processSimulate.exitStatus()!=QProcess::NormalExit || processSimulate.exitCode()!=0)
-      setErrorOccured();
+    for(auto *process : {&processSimulate, &processRefresh}) {
+      process->closeWriteChannel();
+      process->waitForFinished(-1);
+      if(process->exitStatus()!=QProcess::NormalExit || process->exitCode()!=0)
+        setErrorOccured();
+    }
     if(lsa) delete lsa;
     if(st) delete st;
     centralWidget()->layout()->removeWidget(inlineOpenMBVMW);
@@ -1022,6 +1012,17 @@ namespace MBSimGUI {
   }
 
   void MainWindow::showElementContextMenu(const QModelIndex &current) {
+    static QModelIndex lastCurrentIndex {};
+    if(QApplication::keyboardModifiers()==Qt::NoModifier &&
+       QApplication::mouseButtons()==Qt::LeftButton &&
+       current==lastCurrentIndex) {
+      elementView->setCurrentIndex(QModelIndex());
+      lastCurrentIndex = QModelIndex();
+      highlightObject("");
+      return;
+    }
+    lastCurrentIndex = current;
+
     if(QApplication::mouseButtons()==Qt::RightButton) {
       TreeItemData *itemData = static_cast<ElementTreeModel*>(elementView->model())->getItem(current)->getItemData();
       QMenu *menu = itemData->createContextMenu();
@@ -1238,26 +1239,39 @@ namespace MBSimGUI {
   }
 
   bool MainWindow::saveProject(const QString &fileName, bool modifyStatus) {
+    string err;
+    QString fn = fileName.isEmpty() ? projectFile : fileName;
     try {
-      serializer->writeToURI(doc.get(), X()%(fileName.isEmpty()?projectFile.toStdString():fileName.toStdString()));
+      serializer->writeToURI(doc.get(), X()%fn.toStdString());
       if(modifyStatus) setWindowModified(false);
       return true;
     }
     catch(const DOMException &ex) {
       mw->setErrorOccured();
-      mw->statusBar()->showMessage((X()%ex.getMessage()).c_str());
-      cerr << X()%ex.getMessage() << endl;
+      err = X()%ex.getMessage();
+      mw->statusBar()->showMessage(err.c_str());
+      cerr << err << endl;
     }
     catch(const std::exception &ex) {
       mw->setErrorOccured();
-      mw->statusBar()->showMessage(ex.what());
-      cerr << ex.what() << endl;
+      err = ex.what();
+      mw->statusBar()->showMessage(err.c_str());
+      cerr << err << endl;
     }
     catch(...) {
       mw->setErrorOccured();
-      mw->statusBar()->showMessage("Unknown exception");
-      cerr << "Unknown exception." << endl;
+      err = "Unknown error";
+      mw->statusBar()->showMessage(err.c_str());
+      cerr << err << endl;
     }
+    QMessageBox::warning(nullptr, "Saving Project Failed",
+      "Unable to save the project file\n"+
+      fn+"\n"
+      "(maybe due to file permission issues)\n"
+      "\n"
+      "Error message:\n"+
+      err.c_str()
+    );
     return false;
   }
 
@@ -1824,7 +1838,7 @@ DEF mbsimgui_outdated_switch Switch {
     // we print everything except status messages to stdout
     arg.append("--stdout"); arg.append(R"#(info~<span class="MBSIMGUI_INFO">~</span>~HTML)#");
     arg.append("--stdout"); arg.append(R"#(warn~<span class="MBSIMGUI_WARN">~</span>~HTML)#");
-    *debugStreamFlag=echoView->debugEnabled();
+    *debugStreamFlag=echoView->debugEnabled(); // processSimulate is restarted if debugEnabled changes
     if(*debugStreamFlag) {
       arg.append("--stdout"); arg.append(R"#(debug~<span class="MBSIMGUI_DEBUG">~</span>~HTML)#");
     }
@@ -1904,25 +1918,17 @@ DEF mbsimgui_outdated_switch Switch {
   }
 
   void MainWindow::selectElement(const string& ID, OpenMBVGUI::Object *obj) {
-    if(!obj) {
+    static string lastID;
+    if(!obj || lastID == ID) {
       highlightObject("");
       elementView->selectionModel()->clearCurrentIndex();
+      inlineOpenMBVMW->getObjectList()->setCurrentItem(nullptr);
+      lastID = "";
       return;
     }
-    auto id=ID;
-    // if no ID is given (obj->getObject() has no ID set) and its a RigidBody inside of a CompoundRigidBody then use the ID of the parent CompoundRigidBody.
-    auto o=obj->getObject();
-    while(id.empty()) {
-      auto rb=dynamic_pointer_cast<OpenMBV::RigidBody>(o);
-      if(!rb)
-        break;
-      auto crb=rb->getCompound().lock();
-      if(!crb)
-        break;
-      id=crb->getID();
-      o=crb;
-    }
-    Element *element = idMap[id];
+    lastID = ID;
+
+    Element *element = idMap[ID];
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     if(element) elementView->selectionModel()->setCurrentIndex(model->findItem(element,project->getDynamicSystemSolver()->getModelIndex()),QItemSelectionModel::ClearAndSelect);
   }
@@ -3218,7 +3224,7 @@ DEF mbsimgui_outdated_switch Switch {
 
     settings.setValue("mainwindow/recentProjectFileList", files);
 
-    foreach(QWidget *widget, QApplication::topLevelWidgets()) {
+    for(auto widget : QApplication::topLevelWidgets()) {
       auto *mainWin = dynamic_cast<MainWindow*>(widget);
       if(mainWin)
         mainWin->updateRecentProjectFileActions();
@@ -3252,23 +3258,17 @@ DEF mbsimgui_outdated_switch Switch {
   void MainWindow::terminate() {
     echoView->addOutputText("<span class=\"MBSIMGUI_ERROR\">'Terminate background tasks' clicked</span>\n");
     echoView->updateOutput(true);
-    if(not processRefresh.state()==QProcess::NotRunning)
-      processRefresh.terminate();
-    if(not processSimulate.state()==QProcess::NotRunning)
-      processSimulate.terminate();
-    if(not processCreateFMU.state()==QProcess::NotRunning)
-      processCreateFMU.terminate();
+    for(auto *process : {&processSimulate, &processRefresh, &processCreateFMU})
+      if(process->state()!=QProcess::NotRunning)
+        process->terminate();
   }
 
   void MainWindow::kill() {
     echoView->addOutputText("<span class=\"MBSIMGUI_ERROR\">'Kill background tasks' clicked</span>\n");
     echoView->updateOutput(true);
-    if(not processRefresh.state()==QProcess::NotRunning)
-      processRefresh.kill();
-    if(not processSimulate.state()==QProcess::NotRunning)
-      processSimulate.kill();
-    if(not processCreateFMU.state()==QProcess::NotRunning)
-      processCreateFMU.kill();
+    for(auto *process : {&processSimulate, &processRefresh, &processCreateFMU})
+      if(process->state()!=QProcess::NotRunning)
+        process->kill();
   }
 
   void MainWindow::flexibleBodyTool() {
@@ -3612,25 +3612,40 @@ DEF mbsimgui_outdated_switch Switch {
   }
 
   void MainWindow::saveReferencedFile(int i) {
+    string err;
+    QString fn = file[i]->getFileInfo().absoluteFilePath();
     try {
-      serializer->writeToURI(file[i]->getXMLDocument().get(), X()%file[i]->getFileInfo().absoluteFilePath().toStdString());
+      serializer->writeToURI(file[i]->getXMLDocument().get(), X()%fn.toStdString());
       file[i]->setModified(false);
+      return;
     }
     catch(const DOMException &ex) {
       mw->setErrorOccured();
-      mw->statusBar()->showMessage((X()%ex.getMessage()).c_str());
-      cerr << X()%ex.getMessage() << endl;
+      err = X()%ex.getMessage();
+      mw->statusBar()->showMessage(err.c_str());
+      cerr << err << endl;
     }
     catch(const std::exception &ex) {
       mw->setErrorOccured();
-      mw->statusBar()->showMessage(ex.what());
-      cerr << ex.what() << endl;
+      err = ex.what();
+      mw->statusBar()->showMessage(err.c_str());
+      cerr << err << endl;
     }
     catch(...) {
       mw->setErrorOccured();
-      mw->statusBar()->showMessage("Unknown exception");
-      cerr << "Unknown exception." << endl;
+      err = "Unknown exception";
+      mw->statusBar()->showMessage(err.c_str());
+      cerr << err << endl;
     }
+    QMessageBox::warning(nullptr, "Saving Referenced File Failed",
+      "Unable to save the file\n"+
+      fn+"\n"
+      "which is referenced by the project.\n"
+      "(maybe due to file permission issues)\n"
+      "\n"
+      "Error message:\n"+
+      err.c_str()
+    );
   }
 
   void MainWindow::convertDocument() {

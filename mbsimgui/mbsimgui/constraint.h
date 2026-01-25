@@ -39,6 +39,7 @@ namespace MBSimGUI {
     public:
       UnknownConstraint();
       PropertyDialog* createPropertyDialog() override { return new UnknownItemPropertyDialog(this); }
+      xercesc::DOMElement* processIDAndHref(xercesc::DOMElement *element) override;
   };
 
   class MechanicalConstraint : public Constraint {

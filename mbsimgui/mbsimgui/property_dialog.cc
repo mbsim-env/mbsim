@@ -76,11 +76,11 @@ namespace MBSimGUI {
     if(button == buttonBox->button(QDialogButtonBox::Ok))
       accept();
     else if(button == buttonBox->button(QDialogButtonBox::Apply))
-      emit apply();
+      Q_EMIT apply();
     else if(button == buttonBox->button(QDialogButtonBox::Cancel))
       reject();
     else if(button == buttonBox->button(QDialogButtonBox::Help)) {
-      emit showXMLHelp();
+      Q_EMIT showXMLHelp();
     }
   }
 
@@ -131,6 +131,7 @@ namespace MBSimGUI {
   }
 
   EmbedItemPropertyDialog::EmbedItemPropertyDialog(const QString &title, EmbedItemData *item_) : PropertyDialog(title), item(item_), npl(mw->eval) {
+    mw->setCurrentlyEditedItem(item);
     mw->updateParameters(item);
   }
 
@@ -143,7 +144,6 @@ namespace MBSimGUI {
   }
 
   void EmbedItemPropertyDialog::showEvent(QShowEvent *ev) {
-    mw->setCurrentlyEditedItem(item);
     PropertyDialog::showEvent(ev);
   }
 

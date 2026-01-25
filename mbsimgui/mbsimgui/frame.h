@@ -64,6 +64,7 @@ namespace MBSimGUI {
     public:
       UnknownFixedRelativeFrame();
       PropertyDialog* createPropertyDialog() override { return new UnknownItemPropertyDialog(this); }
+      xercesc::DOMElement* processIDAndHref(xercesc::DOMElement *element) override;
   };
 
   class NodeFrame : public Frame {
@@ -77,6 +78,7 @@ namespace MBSimGUI {
     public:
       UnknownNodeFrame();
       PropertyDialog* createPropertyDialog() override { return new UnknownItemPropertyDialog(this); }
+      xercesc::DOMElement* processIDAndHref(xercesc::DOMElement *element) override;
   };
 
   class InterfaceNodeFrame : public NodeFrame {

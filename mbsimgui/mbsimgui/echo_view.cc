@@ -408,6 +408,7 @@ R"+(</pre>
 
   void EchoView::updateDebug() {
     mw->restartProcessRefresh(); // needed to update the --stdout debug~... argument of the refresh mbsimxml process
+    mw->restartProcessSimulate(); // needed to update the --stdout debug~... argument of the refresh mbsimxml process
     if(enableDebug->isChecked()) {
       showDebug->setDisabled(false);
       showDebug->setChecked(true);

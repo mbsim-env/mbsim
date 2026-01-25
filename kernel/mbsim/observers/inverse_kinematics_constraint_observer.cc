@@ -107,7 +107,7 @@ namespace MBSim {
     if(plotFeature[openMBV]) {
       if(ombv) {
         for(size_t i=0; i<openMBVForce.size(); i++) {
-          array<double,8> data;
+          array<OpenMBV::Float,8> data;
           data[0] = getTime();
           Vec3 toPoint=constraint->getMechanicalLink(i)->getPointOfApplication(0)->evalPosition();
           data[1] = toPoint(0);
@@ -121,7 +121,7 @@ namespace MBSim {
           openMBVForce[i]->append(data);
         }
         for(size_t i=0; i<openMBVMoment.size(); i++) {
-          array<double,8> data;
+          array<OpenMBV::Float,8> data;
           data[0] = getTime();
           Vec3 toPoint=constraint->getMechanicalLink(i)->getPointOfApplication(0)->evalPosition();
           data[1] = toPoint(0);

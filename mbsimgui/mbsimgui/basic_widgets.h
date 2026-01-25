@@ -206,7 +206,7 @@ namespace MBSimGUI {
       bool quote;
       QFileDialog::Options options;
 
-    signals:
+    Q_SIGNALS:
       void valueChanged(const QString&);
   };
 
@@ -230,7 +230,7 @@ namespace MBSimGUI {
     protected:
       QSpinBox *value;
 
-    signals:
+    Q_SIGNALS:
       void valueChanged(int);
   };
 

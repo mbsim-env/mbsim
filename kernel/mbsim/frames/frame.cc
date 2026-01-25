@@ -72,7 +72,7 @@ namespace MBSim {
 	Element::plot(evalAngularAcceleration());
     }
     if(plotFeature[openMBV] and openMBVFrame) {
-      array<double,8> data;
+      array<OpenMBV::Float,8> data;
       data[0] = getTime();
       data[1] = evalPosition()(0);
       data[2] = getPosition()(1);

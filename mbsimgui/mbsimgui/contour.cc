@@ -112,4 +112,10 @@ namespace MBSimGUI {
                                        (MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"unknownelement.svg").string()));
   }
 
+  xercesc::DOMElement* UnknownContour::processIDAndHref(xercesc::DOMElement *element) {
+    auto ret = Contour::processIDAndHref(element);
+    processIDAndHrefOfUnknownElements(element);
+    return ret;
+  }
+
 }
