@@ -65,7 +65,7 @@ namespace MBSimGUI {
 //    diagramItem->setPen(QPen(Qt::blue,1));
     diagramItem->setBrush(Qt::white);
     auto *text = new QGraphicsSimpleTextItem(getName(),diagramItem);
-//    text->setPos(-10*text->text().length()/2,-10);
+    text->setPos(0,0);
   }
 
   InternalFrame::InternalFrame(const QString &name_, MBXMLUtils::FQN xmlFrameName_, const MBXMLUtils::FQN &plotFeatureType_) : xmlFrameName(std::move(xmlFrameName_)), plotFeatureType(plotFeatureType_) {
