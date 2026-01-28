@@ -39,11 +39,11 @@ namespace MBSimControl {
   }
 
   void TyreContactSensor::init(InitStage stage, const InitConfigSet &config) {
-    if (stage==resolveStringRef) {
-      if (not contactString.empty())
+    if(stage==resolveStringRef) {
+      if(not contactString.empty())
         setTyreContact(getByPath<TyreContact>(contactString));
       if(not contact)
-        throwError("Tyre contact is not given!");
+        throwError("(TyreContactSensor::init): tyre contact is not given!");
     }
     Sensor::init(stage, config);
   }

@@ -34,7 +34,7 @@ namespace MBSimControl {
     ObjectSensor::init(stage, config);
     if(stage==resolveStringRef) {
       if(not dynamic_cast<RigidBody*>(object))
-        throwError("Object is not a rigid body!");
+        throwError("(RigidBodySensor::init): object is not a rigid body!");
     }
   }
 

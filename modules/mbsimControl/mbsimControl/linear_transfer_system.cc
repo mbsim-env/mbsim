@@ -67,7 +67,7 @@ namespace MBSimControl {
       if(not inputSignalString.empty())
         setInputSignal(getByPath<Signal>(inputSignalString));
       if(not inputSignal)
-        throwError("(LinearTransferSystem::init): input signal must be given");
+        throwError("(LinearTransferSystem::init): input signal must be given.");
     }
     else if(stage==preInit) {
       if(not C())
@@ -88,15 +88,15 @@ namespace MBSimControl {
         return str.str();
       };
       if(A.size() != C.cols())
-        throwError("Size of system matrix must be equal to number of columns of output matrix: "+dumpSize());
+        throwError("(LinearTransferSystem::init): size of system matrix must be equal to number of columns of output matrix: "+dumpSize());
       if(B.rows() != C.cols())
-        throwError("Number of rows of input matrix must be equal to number of columns of output matrix: "+dumpSize());
+        throwError("(LinearTransferSystem::init): number of rows of input matrix must be equal to number of columns of output matrix: "+dumpSize());
       if(B.cols() != inputSignal->getSignalSize())
-        throwError("Number of columns of input matrix must be equal to input signal size: "+dumpSize());
+        throwError("(LinearTransferSystem::init): number of columns of input matrix must be equal to input signal size: "+dumpSize());
       if(D.rows() != C.rows())
-        throwError("Number of rows of feedthrough matrix must be equal to number of rows of output matrix: "+dumpSize());
+        throwError("(LinearTransferSystem::init): number of rows of feedthrough matrix must be equal to number of rows of output matrix: "+dumpSize());
       if(D.cols() != inputSignal->getSignalSize())
-        throwError("Number of columns of feedthrough matrix must be equal to input signal size: "+dumpSize());
+        throwError("(LinearTransferSystem::init): number of columns of feedthrough matrix must be equal to input signal size: "+dumpSize());
     }
     Signal::init(stage, config);
   }

@@ -41,7 +41,7 @@ namespace MBSimControl {
       if(not saved_signal.empty())
         setSignal(getByPath<Signal>(saved_signal));
       if(not signal)
-        throwError("Signal is not given!");
+        throwError("(SignalObserver::init): signal is not given!");
       if(not saved_position.empty())
         setPosition(getByPath<Signal>(saved_position));
       Observer::init(stage, config);
