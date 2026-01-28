@@ -761,11 +761,11 @@ namespace MBSimGUI {
     layout->addWidget(mck);
     ts = new ExtWidget("Turn slip",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"turnSlip");
     layout->addWidget(ts);
-    p = new ExtWidget("Inflation pressure",new ChoiceWidget(new ScalarWidgetFactory("",vector<QStringList>(4,pressureUnits()),vector<int>(4,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"inflationPressure");
+    p = new ExtWidget("Inflation pressure",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(4,pressureUnits()),vector<int>(4,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"inflationPressure");
     layout->addWidget(p);
-    cz = new ExtWidget("Vertical stiffness",new ChoiceWidget(new ScalarWidgetFactory("",vector<QStringList>(2,stiffnessUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"verticalStiffness");
+    cz = new ExtWidget("Vertical stiffness",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,stiffnessUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"verticalStiffness");
     layout->addWidget(cz);
-    dz = new ExtWidget("Vertical damping",new ChoiceWidget(new ScalarWidgetFactory("",vector<QStringList>(2,dampingUnits()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"verticalDamping");
+    dz = new ExtWidget("Vertical damping",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,dampingUnits()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"verticalDamping");
     layout->addWidget(dz);
     six = new ExtWidget("Relaxation length for longitudinal slip",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"relaxationLengthForLongitudinalSlip");
     layout->addWidget(six);
@@ -777,100 +777,26 @@ namespace MBSimGUI {
     layout->addWidget(sfFx);
     sfFy = new ExtWidget("Scale factor for lateral force",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"scaleFactorForLateralForce");
     layout->addWidget(sfFy);
-    sfMx = new ExtWidget("Scale factor for overturning moment",new ChoiceWidget(new ScalarWidgetFactory("",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"scaleFactorForOverturningMoment");
+    sfMx = new ExtWidget("Scale factor for overturning moment",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"scaleFactorForOverturningMoment");
     layout->addWidget(sfMx);
-    sfMy = new ExtWidget("Scale factor for rolling resistance moment",new ChoiceWidget(new ScalarWidgetFactory("",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"scaleFactorRollingResistanceMoment");
+    sfMy = new ExtWidget("Scale factor for rolling resistance moment",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"scaleFactorRollingResistanceMoment");
     layout->addWidget(sfMy);
     sfMz = new ExtWidget("Scale factor for aligning moment",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"scaleFactorForAligningMoment");
     layout->addWidget(sfMz);
-    sfs = new ExtWidget("Scale factor for moment arm of longitudinal force",new ChoiceWidget(new ScalarWidgetFactory("",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"scaleFactorForMomentArmOfLongitudinalForce");
+    sfs = new ExtWidget("Scale factor for moment arm of longitudinal force",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"scaleFactorForMomentArmOfLongitudinalForce");
     layout->addWidget(sfs);
-    sfmux = new ExtWidget("Scale factor for longitudinal fricition coefficient",new ChoiceWidget(new ScalarWidgetFactory("",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"scaleFactorForLongitudinalFricitionCoefficient");
+    sfmux = new ExtWidget("Scale factor for longitudinal fricition coefficient",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"scaleFactorForLongitudinalFricitionCoefficient");
     layout->addWidget(sfmux);
-    sfmuy = new ExtWidget("Scale factor for lateral fricition coefficient",new ChoiceWidget(new ScalarWidgetFactory("",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"scaleFactorForLateralFricitionCoefficient");
+    sfmuy = new ExtWidget("Scale factor for lateral fricition coefficient",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"scaleFactorForLateralFricitionCoefficient");
     layout->addWidget(sfmuy);
     sfkx = new ExtWidget("Scale factor for longitudinal slip stiffness",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"scaleFactorForLongitudinalSlipStiffness");
     layout->addWidget(sfkx);
     sfky = new ExtWidget("Scale factor for cornering stiffness",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"scaleFactorForCorneringStiffness");
     layout->addWidget(sfky);
-    sfkg = new ExtWidget("Scale factor for lateral force camber stiffness",new ChoiceWidget(new ScalarWidgetFactory("",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"scaleFactorForLateralForceCamberStiffness");
+    sfkg = new ExtWidget("Scale factor for lateral force camber stiffness",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"scaleFactorForLateralForceCamberStiffness");
     layout->addWidget(sfkg);
-    sfkm = new ExtWidget("Scale factor for aligning moment camber stiffness",new ChoiceWidget(new ScalarWidgetFactory("",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"scaleFactorForAligningMomentCamberStiffness");
+    sfkm = new ExtWidget("Scale factor for aligning moment camber stiffness",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"scaleFactorForAligningMomentCamberStiffness");
     layout->addWidget(sfkm);
-    connect(inputDataFile->getWidget<FileWidget>(),&FileWidget::valueChanged,this,&MagicFormula62Widget::inputFileChanged);
-  }
-
-  void MagicFormula62Widget::inputFileChanged(const QString &fileName) {
-    auto inputFile = QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(fileName.toStdString(),mw->getProject()->getXMLElement())));
-    inputFile = inputFile.mid(1,inputFile.size()-2);
-    QFile data(inputFile);
-    if(data.open(QFile::ReadOnly)) {
-      QTextStream fstr(&data);
-      QString str, value;
-      do {
-	auto line = fstr.readLine();
-	if(line.contains("INFLPRES")) {
-	  QTextStream sstr(&line);
-	  sstr >> str >> str >> value;
-	  p->getFirstWidget<VariableWidget>()->setDefaultValue(value);
-	}
-	else if(line.contains("VERTICAL_STIFFNESS")) {
-	  QTextStream sstr(&line);
-	  sstr >> str >> str >> value;
-	  cz->getFirstWidget<VariableWidget>()->setDefaultValue(value);
-	}
-	else if(line.contains("VERTICAL_DAMPING")) {
-	  QTextStream sstr(&line);
-	  sstr >> str >> str >> value;
-	  dz->getFirstWidget<VariableWidget>()->setDefaultValue(value);
-	}
-	else if(line.contains("LMX")) {
-	  QTextStream sstr(&line);
-	  sstr >> str >> str >> value;
-	  sfMx->getFirstWidget<VariableWidget>()->setDefaultValue(value);
-	}
-	else if(line.contains("LMY")) {
-	  QTextStream sstr(&line);
-	  sstr >> str >> str >> value;
-	  sfMy->getFirstWidget<VariableWidget>()->setDefaultValue(value);
-	}
-	else if(line.contains("LS")) {
-	  QTextStream sstr(&line);
-	  sstr >> str >> str >> value;
-	  sfs->getFirstWidget<VariableWidget>()->setDefaultValue(value);
-	}
-	else if(line.contains("LMUX")) {
-	  QTextStream sstr(&line);
-	  sstr >> str >> str >> value;
-	  sfmux->getFirstWidget<VariableWidget>()->setDefaultValue(value);
-	}
-	else if(line.contains("LMUY")) {
-	  QTextStream sstr(&line);
-	  sstr >> str >> str >> value;
-	  sfmuy->getFirstWidget<VariableWidget>()->setDefaultValue(value);
-	}
-	else if(line.contains("LKX")) {
-	  QTextStream sstr(&line);
-	  sstr >> str >> str >> value;
-	  sfkx->getFirstWidget<VariableWidget>()->setDefaultValue(value);
-	}
-	else if(line.contains("LKYC")) {
-	  QTextStream sstr(&line);
-	  sstr >> str >> str >> value;
-	  sfkg->getFirstWidget<VariableWidget>()->setDefaultValue(value);
-	}
-	else if(line.contains("LKY")) {
-	  QTextStream sstr(&line);
-	  sstr >> str >> str >> value;
-	  sfky->getFirstWidget<VariableWidget>()->setDefaultValue(value);
-	}
-	else if(line.contains("LKZC")) {
-	  QTextStream sstr(&line);
-	  sstr >> str >> str >> value;
-	  sfkm->getFirstWidget<VariableWidget>()->setDefaultValue(value);
-	}
-      } while(not fstr.atEnd());
-    }
   }
 
   DOMElement* MagicFormula62Widget::initializeUsingXML(DOMElement *element) {
@@ -899,7 +825,6 @@ namespace MBSimGUI {
     sfky->initializeUsingXML(element);
     sfkg->initializeUsingXML(element);
     sfkm->initializeUsingXML(element);
-    inputFileChanged(inputDataFile->getWidget<FileWidget>()->getFile());
     return element;
   }
 
