@@ -83,7 +83,7 @@ namespace MBSimControl {
 
     if(fex.size()) {
       if(not Amp)
-	throwError(string("(LinearSystemAnalyzer::execute): excitation amplitude function must be defined"));
+	throwError(string("(LinearSystemAnalyzer::execute): excitation amplitude function must be defined."));
       else if(Amp->getRetSize().first!=nsource)
 	throwError(string("(LinearSystemAnalyzer::execute): size of excitation amplitude function does not match, must be ") + to_string(nsource) +
 	    ", but is " + to_string(Amp->getRetSize().first) + ".");

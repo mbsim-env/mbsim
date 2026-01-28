@@ -38,7 +38,7 @@ namespace MBSimControl {
       if(not signalString.empty())
         setSignal(getByPath<Signal>(signalString));
       if(not signal)
-        throwError("Signal is not given!");
+        throwError("(ExternSignalSink::init): Signal is not given!");
       Signal::init(stage, config);
     }
     else

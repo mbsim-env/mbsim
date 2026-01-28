@@ -38,11 +38,11 @@ namespace MBSimControl {
   }
 
   void ConstraintSensor::init(InitStage stage, const InitConfigSet &config) {
-    if (stage==resolveStringRef) {
-      if (not constraintString.empty())
+    if(stage==resolveStringRef) {
+      if(not constraintString.empty())
         setConstraint(getByPath<Constraint>(constraintString));
       if(not constraint)
-        throwError("Constraint is not given!");
+        throwError("(ConstraintSensor::init): constraint is not given!");
       Sensor::init(stage, config);
     }
     else
@@ -53,7 +53,7 @@ namespace MBSimControl {
     ConstraintSensor::init(stage, config);
     if(stage==resolveStringRef) {
       if(not dynamic_cast<MechanicalConstraint*>(constraint))
-        throwError("Constraint is not a mechanichal constraint!");
+        throwError("(MechanicalConstraint::init): constraint is not a mechanichal constraint!");
     }
   }
 

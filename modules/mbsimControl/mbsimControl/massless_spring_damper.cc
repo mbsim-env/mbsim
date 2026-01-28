@@ -52,41 +52,41 @@ namespace MBSimControl {
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"dampingCoefficient");
     setDampingCoefficient(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"negativeDampingCoefficient");
-    if (e)
+    if(e)
       setNegativeDampingCoefficient(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"frictionForce");
-    if (e)
+    if(e)
       setFrictionForce(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"negativeFrictionForce");
-    if (e)
+    if(e)
       setNegativeFrictionForce(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"minimalPositionValue");
-    if (e)
+    if(e)
       setMinimumPositionValue(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"maximalPositionValue");
-    if (e)
+    if(e)
       setMaximumPositionValue(E(e)->getText<double>());
   }
 
   void MasslessSpringDamper::updatexd() {
     const double F=(inputSignal->evalSignal())(0);
     double h=F+F0-c*x(0);
-    if (h<0) {
-      if (x(0)<xMin)
+    if(h<0) {
+      if(x(0)<xMin)
         xd(0)=0;
       else {
         h+=FFricNeg;
-        if (h>0)
+        if(h>0)
           h=0;
         xd(0)=h/dNeg;
       }
     }
     else {
-      if (x(0)>xMax)
+      if(x(0)>xMax)
         xd(0)=0;
       else {
         h-=FFricPos;
-        if (h<0)
+        if(h<0)
           h=0;
         xd(0)=h/dPos;
       }
@@ -95,14 +95,14 @@ namespace MBSimControl {
     /*
      *const double F=(inputSignal->getSignal())(0);
      *const double h=F+F0-c*x(0);
-     *if (h<0) {
-     *  if (x(0)<xMin)
+     *if(h<0) {
+     *  if(x(0)<xMin)
      *    xd(0)=0;
      *  else
      *    xd(0)=h/dNeg;
      *}
      *else {
-     *  if (x(0)>xMax)
+     *  if(x(0)>xMax)
      *    xd(0)=0;
      *  else
      *    xd(0)=h/dPos;
@@ -112,28 +112,28 @@ namespace MBSimControl {
   }
 
   void MasslessSpringDamper::init(InitStage stage, const InitConfigSet &config) {
-    if (stage==resolveStringRef) {
-      if (not inputSignalString.empty())
+    if(stage==resolveStringRef) {
+      if(not inputSignalString.empty())
         setInputSignal(getByPath<Signal>(inputSignalString));
     }
-    else if (stage==unknownStage)
+    else if(stage==unknownStage)
       x.resize(xSize, INIT, 0);
-//    else if (stage==plotting) {
+//    else if(stage==plotting) {
 //      if(getPlotFeature(plotRecursive)) {
-//        if (getPlotFeature(globalPosition)) {
+//        if(getPlotFeature(globalPosition)) {
 //          plotColumns.push_back("Position");
 //          plotColumns.push_back("Velocity");
 //        }
 //      }
 //    }
-    else if (stage==unknownStage) {
+    else if(stage==unknownStage) {
       assert(dPos>epsroot);
-      if (fabs(dNeg)<epsroot)
+      if(fabs(dNeg)<epsroot)
         dNeg=dPos;
       assert(dNeg>epsroot);
 
       assert(!(FFricPos<0));
-      if (fabs(FFricNeg) > (1./epsroot-1))
+      if(fabs(FFricNeg) > (1./epsroot-1))
         FFricNeg=FFricPos;
       assert(!(FFricNeg<0));
     }
@@ -142,7 +142,7 @@ namespace MBSimControl {
 
   void MasslessSpringDamper::plot() {
 //    if(getPlotFeature(plotRecursive)) {
-//      if (getPlotFeature(globalPosition)) {
+//      if(getPlotFeature(globalPosition)) {
 //        plotVector.push_back(x(0));
 //        plotVector.push_back(xdLocal);
 //      }
