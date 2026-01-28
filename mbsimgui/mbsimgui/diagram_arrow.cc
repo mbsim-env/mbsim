@@ -17,6 +17,8 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
+#define _USE_MATH_DEFINES
+#include <config.h>
 #include "diagram_arrow.h"
 #include "diagram_item.h"
 #include <QPainter>
