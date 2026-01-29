@@ -171,6 +171,11 @@ namespace MBSimFlexibleBody {
     if(stage==resolveStringRef) {
       if(inputDataFile.empty()) 
 	throwError("(ExternalFlexibleFfrBody::init): Input data file must be defined.");
+      auto info = H5Fis_hdf5(inputDataFile.c_str());
+      if(info == -1)
+	throwError("(ExternalFlexibleFfrBody::init): Input data file does not exist.");
+      else if(info == 0)
+	throwError("(ExternalFlexibleFfrBody::init): Input data file is not an hdf5 file.");
       importData();
     }
     else if(stage==plotting) {
@@ -192,7 +197,7 @@ namespace MBSimFlexibleBody {
 
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"inputDataFileName");
     string str = X()%E(e)->getFirstTextChild()->getData();
-    setInputDataFile(E(e)->convertPath(str.substr(1,str.length()-2)).string());
+    if(str != "''") setInputDataFile(E(e)->convertPath(str.substr(1,str.length()-2)).string());
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"enableOpenMBV");
     if(e) {
       ombvBody = make_shared<OpenMBVExternalFlexibleFfrBody>();
