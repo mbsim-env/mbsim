@@ -801,9 +801,7 @@ namespace MBSimGUI {
 
   DOMElement* MagicFormula62Widget::initializeUsingXML(DOMElement *element) {
     TyreModelWidget::initializeUsingXML(element);
-    inputDataFile->getWidget<FileWidget>()->blockSignals(true);
     inputDataFile->initializeUsingXML(element);
-    inputDataFile->getWidget<FileWidget>()->blockSignals(false);
     tyreSide->initializeUsingXML(element);
     mck->initializeUsingXML(element);
     ts->initializeUsingXML(element);
