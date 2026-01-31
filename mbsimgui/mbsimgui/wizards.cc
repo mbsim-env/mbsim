@@ -779,9 +779,12 @@ namespace MBSimGUI {
   }
 
   void FlexibleBodyTool::save() {
-    QString inputFile = getInputDataFile();
+    auto inputFile = getInputDataFile();
     inputFile = inputFile.mid(1,inputFile.size()-2);
-    QString file=QFileDialog::getSaveFileName(this, "Save finite elements input data file", QFileInfo(mw->getProjectFilePath()).absolutePath()+"/"+QFileInfo(inputFile).baseName()+".xml", "XML files (*.xml)");
+    auto projectPath = mw->getProjectPath();
+    if(not projectPath.isEmpty())
+      projectPath += "/";
+    QString file=QFileDialog::getSaveFileName(this, "Save finite elements input data file", projectPath+QFileInfo(inputFile).baseName()+".xml", "XML files (*.xml)");
     if(not(file.isEmpty())) {
       file = file.endsWith(".xml")?file:file+".xml";
       auto doc = mw->mbxmlparserNoVal->createDocument();
