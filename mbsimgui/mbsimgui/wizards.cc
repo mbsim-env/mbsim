@@ -663,6 +663,8 @@ namespace MBSimGUI {
   }
 
   void Wizard::showEvent(QShowEvent *event) {
+    mw->setCurrentlyEditedItem(mw->getProject()->getDynamicSystemSolver());
+    mw->updateParameters(mw->getProject());
     QSettings settings;
     restoreGeometry(settings.value("wizard/geometry").toByteArray());
     QWizard::showEvent(event);
@@ -705,32 +707,6 @@ namespace MBSimGUI {
   }
 
   void FlexibleBodyTool::create() {
-    if(hasVisitedPage(PageExtFE)) {
-      extfe();
-      if(hasVisitedPage(PageCMS))
-	cms();
-      else if(hasVisitedPage(PageModeShapes))
-	msm();
-      ombv();
-      lma();
-    }
-    else if(hasVisitedPage(PageCalculix)) {
-      calculix();
-      lma();
-    }
-    else if(hasVisitedPage(PageFlexibleBeam)) {
-      beam();
-      cms();
-      fma();
-    }
-    else if(hasVisitedPage(PageFiniteElements)) {
-      fe();
-      cms();
-      fma();
-    }
-    damp();
-    exp();
-
     m = 0;
     rdm.init(0);
     rrdm.init(0);
@@ -769,6 +745,37 @@ namespace MBSimGUI {
       delete i;
     type.clear();
     links.clear();
+    try {
+      if(hasVisitedPage(PageExtFE)) {
+        extfe();
+        if(hasVisitedPage(PageCMS))
+          cms();
+        else if(hasVisitedPage(PageModeShapes))
+          msm();
+        ombv();
+        lma();
+      }
+      else if(hasVisitedPage(PageCalculix)) {
+        calculix();
+        lma();
+      }
+      else if(hasVisitedPage(PageFlexibleBeam)) {
+        beam();
+        cms();
+        fma();
+      }
+      else if(hasVisitedPage(PageFiniteElements)) {
+        fe();
+        cms();
+        fma();
+      }
+      damp();
+      exp();
+    }
+    catch (std::exception& e)
+    {
+      QMessageBox::critical(this, "Flexible body tool", e.what());
+    }
   }
 
   void FlexibleBodyTool::save() {
