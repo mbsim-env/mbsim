@@ -133,7 +133,7 @@ namespace MBSimGUI {
     }
 
     if(bnodes.size() != dof.size())
-      runtime_error("(FlexibleBodyTool::init): number of boundary nodes (" + to_string(bnodes.size()) + ") must equal number of degrees of freedom (" + to_string(dof.size()) + ")");
+      throw runtime_error("Number of boundary nodes (" + to_string(bnodes.size()) + ") must equal number of degrees of freedom (" + to_string(dof.size()) + ")");
 
     int nN = r.size();
     int nen = net + ner;
@@ -317,6 +317,10 @@ namespace MBSimGUI {
 	  Ui.set(iN,IJ,Q);
 	  Ui.set(iH,IJ,D);
 	  Ui.set(iX,IJ,MatV(iX.size(),ni));
+          if(not Mm.size()) {
+            delete Krhs.Ip();
+            delete Krhs.Jp();
+          }
 	}
 	else {
 	  Ui.resize(Ks.size(),ni,NONINIT);
@@ -445,6 +449,10 @@ namespace MBSimGUI {
     if(not Mm.size()) {
       delete Krns.Ip();
       delete Krns.Jp();
+    }
+    if(Krcs.Ip()) {
+      delete Krcs.Ip();
+      delete Krcs.Jp();
     }
 
     if(Ui.cols()+Un.cols()) {

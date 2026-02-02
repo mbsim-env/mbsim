@@ -307,12 +307,17 @@ void MBSimXML::main(const unique_ptr<Solver>& solver, const unique_ptr<DynamicSy
     auto ex = current_exception();
     try {
       solver->postprocessing();
+      if(savestatevector)
+        dss->writez("statevector.asc", false);
     }
     catch(...) {}
     rethrow_exception(ex);
   }
-  if(executePassed) // if execution passed run post-processing and throw on errors
+  if(executePassed) { // if execution passed run post-processing and throw on errors
     solver->postprocessing();
+    if(savestatevector)
+      dss->writez("statevector.asc", false);
+  }
 
   if(doNotIntegrate==false) {
     // Remove the following block if --lastframe works in OpenMBV.
@@ -327,8 +332,6 @@ void MBSimXML::main(const unique_ptr<Solver>& solver, const unique_ptr<DynamicSy
       boost::myfilesystem::last_write_time((dss->getName()+".ombvh5" ).c_str(), time);
     }
   }
-  if(savestatevector)
-    dss->writez("statevector.asc", false);
   if(MBXMLUtils::DOMEvalException::isHTMLOutputEnabled())
     Atom::msgStatic(Atom::Info)<<disableEscaping<<"<a name=\"MBSIM_SOLVER_END\"></a>"<<enableEscaping;
 }

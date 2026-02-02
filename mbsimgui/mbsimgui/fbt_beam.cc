@@ -21,6 +21,7 @@
 #include "wizards.h"
 #include "variable_widgets.h"
 #include "extended_widgets.h"
+#include <QMessageBox>
 
 using namespace std;
 using namespace fmatvec;
@@ -81,6 +82,11 @@ namespace MBSimGUI {
     if(benz)
       gar = nee++;
     int ng = nN*nen;
+
+    if(nN<2)
+      throw runtime_error("Number of nodes must be greater than one.");
+    if(not nen)
+      throw runtime_error("No load case selected.");
 
     vector<Mat3xV> rPdme(3,Mat3xV(nee));
     vector<vector<SqrMatV>> PPdme(3,vector<SqrMatV>(3,SqrMatV(nee)));
@@ -471,7 +477,6 @@ namespace MBSimGUI {
     links.resize(nN);
     for(int i=0; i<nN-1; i++)
       links[i][i+1] = 1;
-
   }
 
 }
