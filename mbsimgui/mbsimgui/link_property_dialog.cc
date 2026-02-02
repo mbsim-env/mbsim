@@ -233,7 +233,7 @@ namespace MBSimGUI {
 
   DirectionalSpringDamperPropertyDialog::DirectionalSpringDamperPropertyDialog(Element *springDamper) : FloatingFrameLinkPropertyDialog(springDamper) {
 
-    forceDirection = new ExtWidget("Force direction",new ChoiceWidget(new VecWidgetFactory(3),QBoxLayout::RightToLeft,5),true,false,MBSIM%"forceDirection");
+    forceDirection = new ExtWidget("Force direction",new ChoiceWidget(new VecWidgetFactory(3),QBoxLayout::RightToLeft,5),false,false,MBSIM%"forceDirection");
     addToTab("Kinetics",forceDirection);
 
     forceFunction = new ExtWidget("Force function",new ChoiceWidget(new SpringDamperWidgetFactory(springDamper,false,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"forceFunction");
