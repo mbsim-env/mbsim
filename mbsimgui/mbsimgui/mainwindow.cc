@@ -3109,6 +3109,7 @@ DEF mbsimgui_outdated_switch Switch {
           model->updateParameterItem(parent->getParameterEmbedItem());
           updateParameterReferences(parent);
           if(getAutoRefresh()) refresh();
+          updateParameterTreeAll();
         }
       });
       connect(editor,&ElementPropertyDialog::apply,this,[=](){
@@ -3122,6 +3123,7 @@ DEF mbsimgui_outdated_switch Switch {
         model->updateParameterItem(parent->getParameterEmbedItem());
         updateParameterReferences(parent);
         if(getAutoRefresh()) refresh();
+        updateParameterTreeAll();
       });
     }
   }
@@ -3474,6 +3476,7 @@ DEF mbsimgui_outdated_switch Switch {
 	    updateValues(parameter->getParent());
             MainWindow::updateNameOfCorrespondingElementAndItsChilds(parameter->getParent()->getModelIndex());
             if(getAutoRefresh()) refresh();
+            updateParameterTreeAll();
             if(getStatusUpdate()) parameter->getParent()->updateStatus();
           }
         });
@@ -3489,6 +3492,7 @@ DEF mbsimgui_outdated_switch Switch {
 	  updateValues(parameter->getParent());
           MainWindow::updateNameOfCorrespondingElementAndItsChilds(parameter->getParent()->getModelIndex());
           if(getAutoRefresh()) refresh();
+          updateParameterTreeAll();
           editor->setCancel(true);
 	  if(getStatusUpdate()) parameter->getParent()->updateStatus();
         });
