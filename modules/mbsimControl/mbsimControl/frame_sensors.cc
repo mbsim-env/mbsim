@@ -44,7 +44,7 @@ namespace MBSimControl {
       if(not saved_frame.empty())
         setFrame(getByPath<Frame>(saved_frame));
       if(not frame)
-        throwError("Frame is not given!");
+        throwError("(FrameSensor::init): frame is not given!");
       if(not saved_outputFrame.empty())
         setOutputFrame(getByPath<Frame>(saved_outputFrame));
       if(not outputFrame)

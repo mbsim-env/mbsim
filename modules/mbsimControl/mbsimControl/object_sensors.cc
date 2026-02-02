@@ -36,11 +36,11 @@ namespace MBSimControl {
   }
 
   void ObjectSensor::init(InitStage stage, const InitConfigSet &config) {
-    if (stage==resolveStringRef) {
-      if (not objectString.empty())
+    if(stage==resolveStringRef) {
+      if(not objectString.empty())
         setObject(getByPath<Object>(objectString));
       if(not object)
-        throwError("Object is not given!");
+        throwError("(ObjectSensor::init): object is not given!");
    }
     Sensor::init(stage, config);
   }

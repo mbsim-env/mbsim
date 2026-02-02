@@ -41,15 +41,16 @@ namespace MBSimControl {
 
   void Stop::init(InitStage stage, const InitConfigSet &config) {
     if(stage==resolveStringRef) {
-      setInputSignal(getByPath<Signal>(signalString));
+      if(not signalString.empty())
+        setInputSignal(getByPath<Signal>(signalString));
       if(not signal)
-        throwError("Input signal is not given!");
+        throwError("(Stop::init): input signal is not given!");
     }
     else if(stage==preInit) {
       if(s0.size()==0)
 	s0.resize(signal->getSignalSize());
       if(signal->getSignalSize() != s0.size())
-        throwError("Size of threshold must be equal to size of input signal!");
+        throwError("(Stop::init): size of threshold must be equal to size of input signal!");
     }
     Signal::init(stage, config);
   }
@@ -67,7 +68,7 @@ namespace MBSimControl {
     if(j==5) {
       for(int i=0; i<jsv.size(); i++) {
         if(jsv(i))
-          throwError("Stop");;
+          throwError("(Stop::checkActive): stop!");;
       }
     }
   }

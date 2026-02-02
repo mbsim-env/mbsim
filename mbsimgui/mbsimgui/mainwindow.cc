@@ -2213,7 +2213,7 @@ DEF mbsimgui_outdated_switch Switch {
       model->createParameterItem(parameter->getParent()->getParameter(i),parentIndex);
     parameterView->setCurrentIndex(parameter->getParent()->getParameter(j)->getModelIndex());
     updateParameterReferences(parameter->getParent());
-    refresh();
+    if(getAutoRefresh()) refresh();
   }
 
   void MainWindow::moveFrame(bool up) {
@@ -2238,7 +2238,7 @@ DEF mbsimgui_outdated_switch Switch {
       model->createFrameItem(frame->getParent()->getFrame(i),parentIndex);
     elementView->setCurrentIndex(frame->getParent()->getFrame(j)->getModelIndex());
     updateReferences(frame->getParent());
-    refresh();
+    if(getAutoRefresh()) refresh();
   }
 
   void MainWindow::moveContour(bool up) {
@@ -2263,7 +2263,7 @@ DEF mbsimgui_outdated_switch Switch {
       model->createContourItem(contour->getParent()->getContour(i),parentIndex);
     elementView->setCurrentIndex(contour->getParent()->getContour(j)->getModelIndex());
     updateReferences(contour->getParent());
-    refresh();
+    if(getAutoRefresh()) refresh();
   }
 
   void MainWindow::moveGroup(bool up) {
@@ -2288,7 +2288,7 @@ DEF mbsimgui_outdated_switch Switch {
       model->createGroupItem(group->getParent()->getGroup(i),parentIndex);
     elementView->setCurrentIndex(group->getParent()->getGroup(j)->getModelIndex());
     updateReferences(group->getParent());
-    refresh();
+    if(getAutoRefresh()) refresh();
   }
 
   void MainWindow::moveObject(bool up) {
@@ -2313,7 +2313,7 @@ DEF mbsimgui_outdated_switch Switch {
       model->createObjectItem(object->getParent()->getObject(i),parentIndex);
     elementView->setCurrentIndex(object->getParent()->getObject(j)->getModelIndex());
     updateReferences(object->getParent());
-    refresh();
+    if(getAutoRefresh()) refresh();
   }
 
   void MainWindow::moveLink(bool up) {
@@ -2338,7 +2338,7 @@ DEF mbsimgui_outdated_switch Switch {
       model->createLinkItem(link->getParent()->getLink(i),parentIndex);
     elementView->setCurrentIndex(link->getParent()->getLink(j)->getModelIndex());
     updateReferences(link->getParent());
-    refresh();
+    if(getAutoRefresh()) refresh();
   }
 
   void MainWindow::moveConstraint(bool up) {
@@ -2363,7 +2363,7 @@ DEF mbsimgui_outdated_switch Switch {
       model->createConstraintItem(constraint->getParent()->getConstraint(i),parentIndex);
     elementView->setCurrentIndex(constraint->getParent()->getConstraint(j)->getModelIndex());
     updateReferences(constraint->getParent());
-    refresh();
+    if(getAutoRefresh()) refresh();
   }
 
   void MainWindow::moveObserver(bool up) {
@@ -2388,7 +2388,7 @@ DEF mbsimgui_outdated_switch Switch {
       model->createObserverItem(observer->getParent()->getObserver(i),parentIndex);
     elementView->setCurrentIndex(observer->getParent()->getObserver(j)->getModelIndex());
     updateReferences(observer->getParent());
-    refresh();
+    if(getAutoRefresh()) refresh();
   }
 
   void MainWindow::exportElement(const QString &title) {

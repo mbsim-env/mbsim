@@ -148,7 +148,6 @@ namespace MBSimGUI {
   }
 
   void EmbedItemPropertyDialog::hideEvent(QHideEvent *ev) {
-    mw->setCurrentlyEditedItem(nullptr);
     PropertyDialog::hideEvent(ev);
   }
 

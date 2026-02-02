@@ -258,10 +258,10 @@ namespace MBSimFMI {
     // save the current dir and change to outputDir -> MBSim will create output files in the current dir
     // this must be done before the dss is initialized since dss->initialize creates files in the current dir)
     msg(Debug)<<"Write MBSim output files to "<<predefinedParameterStruct.outputDir<<endl;
-    path savedCurDir=current_path();
+    path savedCurDir=MBXMLUtils::current_path();
     // restore current dir on scope exit
-    BOOST_SCOPE_EXIT((&savedCurDir)) { current_path(savedCurDir); } BOOST_SCOPE_EXIT_END
-    current_path(predefinedParameterStruct.outputDir);
+    BOOST_SCOPE_EXIT((&savedCurDir)) { MBXMLUtils::current_path(savedCurDir); } BOOST_SCOPE_EXIT_END
+    MBXMLUtils::current_path(predefinedParameterStruct.outputDir);
 
     // initialize dss (must be done before addModelInputOutputs because references in MBSim may be resolved for this;
     // must be done after the current dir is set (temporarily) to the output dir)

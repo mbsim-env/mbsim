@@ -46,7 +46,7 @@ namespace MBSimControl {
       for(auto & i : signalString)
         addInputSignal(getByPath<Signal>(i));
       if(signal.empty())
-        throwError("No input signal is given!");
+        throwError("(Multiplexer::init): no input signal is given!");
     }
     Signal::init(stage, config);
   }
@@ -108,8 +108,8 @@ namespace MBSimControl {
   }
 
   void SignalTimeDiscretization::init(InitStage stage, const InitConfigSet &config) {
-    if (stage==resolveStringRef) {
-      if (not signalString.empty())
+    if(stage==resolveStringRef) {
+      if(not signalString.empty())
         setInputSignal(getByPath<Signal>(signalString));
       if(not s)
         throwError("Input signal is not given!");
@@ -120,7 +120,7 @@ namespace MBSimControl {
   }
 
   void SignalTimeDiscretization::updateSignal() {
-    if (fabs(tOld-getTime())>epsroot) {
+    if(fabs(tOld-getTime())>epsroot) {
       Signal::s=s->evalSignal();
       tOld=getTime();
     }

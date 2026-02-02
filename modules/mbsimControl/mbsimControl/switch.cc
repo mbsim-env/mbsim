@@ -47,21 +47,24 @@ namespace MBSimControl {
 
   void Switch::init(InitStage stage, const InitConfigSet &config) {
     if(stage==resolveStringRef) {
-      setFirstDataInputSignal(getByPath<Signal>(dataSignalString1));
-      setSecondDataInputSignal(getByPath<Signal>(dataSignalString2));
-      setControlInputSignal(getByPath<Signal>(controlSignalString));
+      if(not dataSignalString1.empty())
+        setFirstDataInputSignal(getByPath<Signal>(dataSignalString1));
+      if(not dataSignalString2.empty())
+        setSecondDataInputSignal(getByPath<Signal>(dataSignalString2));
+      if(not controlSignalString.empty())
+        setControlInputSignal(getByPath<Signal>(controlSignalString));
       if(not dataSignal1)
-        throwError("First data input signal is not given!");
+        throwError("(Switch::init): first data input signal is not given!");
       if(not dataSignal2)
-        throwError("Second data input signal is not given!");
+        throwError("(Switch::init): second data input signal is not given!");
       if(not controlSignal)
-        throwError("Control input signal is not given!");
+        throwError("(Switch::init): control input signal is not given!");
     }
     else if(stage==preInit) {
       if(dataSignal1->getSignalSize() != dataSignal2->getSignalSize())
-        throwError("Size of first data input signal must be equal to size of second data input signal");
+        throwError("(Switch::init): size of first data input signal must be equal to size of second data input signal.");
       if(controlSignal->getSignalSize() != 1)
-        throwError("Size of control input signal must be equal to 1");
+        throwError("(Switch::init): size of control input signal must be equal to 1.");
     }
     Signal::init(stage, config);
   }

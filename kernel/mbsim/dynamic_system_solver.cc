@@ -308,7 +308,7 @@ namespace MBSim {
       LaParent.resize(getlaSize());
       rFactorParent.resize(getlaSize());
       sParent.resize(getlaSize());
-      if (impactSolver == rootfinding)
+      if (contactSolver == rootfinding or impactSolver == rootfinding)
         resParent.resize(getlaSize());
       curisParent.resize(getisSize());
       nextisParent.resize(getisSize());
@@ -370,7 +370,7 @@ namespace MBSim {
       updateWInverseKineticsRef(WInverseKineticsParent);
       updatebInverseKineticsRef(bInverseKineticsParent);
 
-      if (impactSolver == rootfinding)
+      if (contactSolver == rootfinding or impactSolver == rootfinding)
         updateresRef(resParent);
       updaterFactorRef(rFactorParent);
 

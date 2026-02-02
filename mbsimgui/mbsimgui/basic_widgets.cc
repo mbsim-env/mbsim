@@ -899,7 +899,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  BasicConnectElementsWidget::BasicConnectElementsWidget(const vector<BasicElementOfReferenceWidget*> widget_, const vector<QString> &name) : widget(widget_) {
+  BasicConnectElementsWidget::BasicConnectElementsWidget(const vector<BasicElementOfReferenceWidget*> widget_, const vector<QString> &name) : widget(widget_), def(widget_.size()) {
 
     auto *layout = new QVBoxLayout;
     layout->setMargin(0);
@@ -927,7 +927,7 @@ namespace MBSimGUI {
         xmlName += toStr(int(i+1));
       if(E(element)->hasAttribute(xmlName))
         widget[i]->setElement(QString::fromStdString(E(element)->getAttribute(xmlName)));
-      else if(def.isEmpty())
+      else if(def[i].isEmpty())
         return nullptr;
     }
     return element;
@@ -938,7 +938,7 @@ namespace MBSimGUI {
       string xmlName = "ref";
       if(widget.size()>1)
         xmlName += toStr(int(i+1));
-      if(i>0 or widget[i]->getElement()!=def)
+      if(def[i].isEmpty() or widget[i]->getElement()!=def[i])
         E(static_cast<DOMElement*>(parent))->setAttribute(xmlName, widget[i]->getElement().toStdString());
     }
     return nullptr;

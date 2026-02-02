@@ -422,14 +422,14 @@ namespace MBSim {
       } while(not file.eof());
     }
     else
-      throw runtime_error("(MagicFormula62::init): Input data file does not exist.");
+      throwError("(MagicFormula62::init): Input data file does not exist.");
     file.close();
   }
 
   void MagicFormula62::init(InitStage stage, const InitConfigSet &config) {
     if(stage==resolveStringRef) {
       if(inputDataFile.empty()) 
-	throw runtime_error("(MagicFormula62::init): input data file must be defined.");
+	throwError("(MagicFormula62::init): input data file must be defined.");
       importData();
     }
     if(stage==preInit) {
@@ -523,7 +523,7 @@ namespace MBSim {
     DOMElement* e;
     e=E(element)->getFirstElementChildNamed(MBSIM%"inputDataFileName");
     string str = X()%E(e)->getFirstTextChild()->getData();
-    setInputDataFile(E(e)->convertPath(str.substr(1,str.length()-2)).string());
+    if(str != "''") setInputDataFile(E(e)->convertPath(str.substr(1,str.length()-2)).string());
     e=E(element)->getFirstElementChildNamed(MBSIM%"tyreSide");
     if(e) {
       string tyreSideStr=string(X()%E(e)->getFirstTextChild()->getData()).substr(1,string(X()%E(e)->getFirstTextChild()->getData()).length()-2);
