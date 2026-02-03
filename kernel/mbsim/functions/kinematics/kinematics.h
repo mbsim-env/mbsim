@@ -36,6 +36,7 @@
 #include "mbsim/functions/kinematics/rotation_about_axes_xy.h"
 #include "mbsim/functions/kinematics/rotation_about_axes_yz.h"
 #include "mbsim/functions/kinematics/rotation_about_axes_xz.h"
+#include "mbsim/functions/kinematics/rotation_about_axes_zy.h"
 #include "mbsim/functions/kinematics/rotation_about_axes_xyz.h"
 #include "mbsim/functions/kinematics/rotation_about_axes_zxz.h"
 #include "mbsim/functions/kinematics/rotation_about_axes_zyx.h"
