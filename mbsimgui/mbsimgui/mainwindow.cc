@@ -140,7 +140,7 @@ namespace MBSimGUI {
       putenv(ERROROUTPUT);
     }
 
-    serializer->getDomConfig()->setParameter(X()%"format-pretty-print", true);
+    serializer->getDomConfig()->setParameter(u"format-pretty-print", true);
 
     mw = this;
 
@@ -1757,7 +1757,7 @@ namespace MBSimGUI {
         ip = D(doc)->createElement( MBSIM%"initialProjection" );
         dssEle->insertBefore(ip, preEle->getNextElementSibling());
       }
-      ip->insertBefore(doc->createTextNode(X()%"0"), nullptr);
+      ip->insertBefore(doc->createTextNode(u"0"), nullptr);
     }
 
     // add the "Outdated" IvScreenAnnotation openmbv element (add as last element in <MBSimEnvironment>/<openMBVObject>)
@@ -2748,7 +2748,7 @@ DEF mbsimgui_outdated_switch Switch {
     if(parent->getParameterFileItem()) {
       for(int i=n-1; i>=0; i--)
         parent->removeParameter(parent->getParameter(i));
-      parent->getEmbedXMLElement()->removeAttribute(X()%"parameterHref");
+      parent->getEmbedXMLElement()->removeAttribute(u"parameterHref");
       parent->setParameterFileItem(nullptr);
     }
     else {
@@ -3109,6 +3109,7 @@ DEF mbsimgui_outdated_switch Switch {
           model->updateParameterItem(parent->getParameterEmbedItem());
           updateParameterReferences(parent);
           if(getAutoRefresh()) refresh();
+          updateParameterTreeAll();
         }
       });
       connect(editor,&ElementPropertyDialog::apply,this,[=](){
@@ -3122,6 +3123,7 @@ DEF mbsimgui_outdated_switch Switch {
         model->updateParameterItem(parent->getParameterEmbedItem());
         updateParameterReferences(parent);
         if(getAutoRefresh()) refresh();
+        updateParameterTreeAll();
       });
     }
   }
@@ -3474,6 +3476,7 @@ DEF mbsimgui_outdated_switch Switch {
 	    updateValues(parameter->getParent());
             MainWindow::updateNameOfCorrespondingElementAndItsChilds(parameter->getParent()->getModelIndex());
             if(getAutoRefresh()) refresh();
+            updateParameterTreeAll();
             if(getStatusUpdate()) parameter->getParent()->updateStatus();
           }
         });
@@ -3489,6 +3492,7 @@ DEF mbsimgui_outdated_switch Switch {
 	  updateValues(parameter->getParent());
           MainWindow::updateNameOfCorrespondingElementAndItsChilds(parameter->getParent()->getModelIndex());
           if(getAutoRefresh()) refresh();
+          updateParameterTreeAll();
           editor->setCancel(true);
 	  if(getStatusUpdate()) parameter->getParent()->updateStatus();
         });
@@ -3608,19 +3612,19 @@ DEF mbsimgui_outdated_switch Switch {
         statusBar()->showMessage("Unable to load or parse XML file: "+file);
         return;
       }
-      DOMNodeList* list = doc->getElementsByTagName(X()%"naturalModeScaleFactor");
+      DOMNodeList* list = doc->getElementsByTagName(u"naturalModeScaleFactor");
       for(size_t j=0; j<list->getLength(); j++)
-	doc->renameNode(list->item(j),X()%MBSIMCONTROL.getNamespaceURI(),X()%"normalModeScaleFactor");
-      list = doc->getElementsByTagName(X()%"naturalModeScale");
+	doc->renameNode(list->item(j),X()%MBSIMCONTROL.getNamespaceURI(),u"normalModeScaleFactor");
+      list = doc->getElementsByTagName(u"naturalModeScale");
       for(size_t j=0; j<list->getLength(); j++)
-	doc->renameNode(list->item(j),X()%MBSIMCONTROL.getNamespaceURI(),X()%"normalModeScale");
-      list = doc->getElementsByTagName(X()%"visualizeNaturalModeShapes");
+	doc->renameNode(list->item(j),X()%MBSIMCONTROL.getNamespaceURI(),u"normalModeScale");
+      list = doc->getElementsByTagName(u"visualizeNaturalModeShapes");
       for(size_t j=0; j<list->getLength(); j++)
-	doc->renameNode(list->item(j),X()%MBSIMCONTROL.getNamespaceURI(),X()%"visualizeNormalModes");
-      list = doc->getElementsByTagName(X()%"SymbolicFunction");
+	doc->renameNode(list->item(j),X()%MBSIMCONTROL.getNamespaceURI(),u"visualizeNormalModes");
+      list = doc->getElementsByTagName(u"SymbolicFunction");
       for(size_t j=0; j<list->getLength(); j++) {
 	if(not E(static_cast<DOMElement*>(list->item(j)))->getFirstElementChildNamed(MBSIM%"definition")) {
-	  auto *node = doc->renameNode(list->item(j),X()%MBSIM.getNamespaceURI(),X()%"definition");
+	  auto *node = doc->renameNode(list->item(j),X()%MBSIM.getNamespaceURI(),u"definition");
 	  DOMElement *ele = D(doc)->createElement(MBSIM%"SymbolicFunction");
 	  node->getParentNode()->insertBefore(ele,node);
 	  ele->insertBefore(node,nullptr);

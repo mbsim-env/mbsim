@@ -77,58 +77,59 @@ int main(int argc, char *argv[]) {
        std::find(args.begin(), args.end(), "-h")!=args.end() ||
        std::find(args.begin(), args.end(), "--help")!=args.end() ||
        std::find(args.begin(), args.end(), "-?")!=args.end()) {
-      cout<<"Usage: mbsimxml [--onlypreprocess|--donotintegrate|--stopafterfirststep|"<<endl
-          <<"                 --autoreload [ms]|--dumpXMLCatalog <file>] [--savefinalstatevector]"<<endl
-          <<"                [--modulePath <dir> [--modulePath <dir> ...]]"<<endl
-          <<"                [--stdout <msg> [--stdout <msg> ...]] [--stderr <msg> [--stderr <msg> ...]]"<<endl
-          <<"                [<paramname>=<value> [<paramname>=<value> ...]]"<<endl
-          <<"                [-C <dir/file>|--CC] [--onlyLatestStdin] <mbsimprjfile>|-"<<endl
-          <<""<<endl
-          <<"Copyright (C) 2004-2009 MBSim Development Team"<<endl
-          <<"This is free software; see the source for copying conditions. There is NO"<<endl
-          <<"warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."<<endl
-          <<""<<endl
-          <<"Licensed under the GNU Lesser General Public License (LGPL)"<<endl
-          <<""<<endl
-          <<"--onlypreprocess         Stop after the preprocessing stage"<<endl
-          <<"--donotintegrate         Stop after the initialization stage, do not integrate"<<endl
-          <<"--savefinalstatevector   Save the state vector to the file \"statevector.asc\" after integration"<<endl
-          <<"--savestatetable         Save the state table to the file \"statetable.asc\""<<endl
-          <<"--skipplot               Skip plotting (*.mbsh5 output)"<<endl
-          <<"--stopafterfirststep     Stop after outputting the first step (usually at t=0)"<<endl
-          <<"                         This generates a HDF5 output file with only one time serie"<<endl
-          <<"--autoreload             Same as --stopafterfirststep but rerun mbsimxml each time"<<endl
-          <<"                         a input file is newer than the output file."<<endl
-          <<"                         Checked every ms. Ignored if '-' is given."<<endl
-          <<"--dumpXMLCatalog <file>  Dump a XML catalog for all schemas including MBSim modules to file and exit"<<endl
-          <<"--modulePath <dir>       Add <dir> to MBSim module serach path. The central MBSim installation"<<endl
-          <<"                         module dir and the current dir is always included."<<endl
-          <<"                         Also added are all directories listed in the file"<<endl
-          <<"                         Linux: $XDG_CONFIG_HOME/mbsim-env/mbsimxml.modulepath"<<endl
-          <<"                         Windows: %APPDATA%\\mbsim-env\\mbsimxml.modulepath"<<endl
-          <<"                         This file contains one directory per line."<<endl
-          <<"<paramname>=<value>      Override the MBSimProject parameter named <paramname> with <value>."<<endl
-          <<"                         <value> is evaluated using the evaluator defined in MBSimProject"<<endl
-          <<"--stdout <msg>           Print on stdout messages of type <msg>."<<endl
-          <<"                         <msg> may be info~<pre>~<post>, warn~<pre>~<post>, debug~<pre>~<post>"<<endl
-          <<"                         error~<pre>~<post>~ or depr~<pre>~<post>~."<<endl
-          <<"                         Each message is prefixed/postfixed with <pre>/<post>."<<endl
-          <<"                         --stdout may be specified multiple times."<<endl
-          <<"--stderr <msg>           Analog to --stdout but prints to stderr."<<endl
-          <<"-C <dir/file>            Change current to dir to <dir>/dir of <file> first."<<endl
-          <<"                         All arguments are still relative to the original current dir."<<endl
-          <<"--CC                     Change current dir to dir of <mbsimprjfile> first. Ignored if '-' is given."<<endl
-          <<"                         All arguments are still relative to the original current dir."<<endl
-          <<"<mbsimprjfile>           Use <mbsimprjfile> as mbsim xml project file (write output to current working dir)"<<endl
-          <<"                         Must be the last argument!"<<endl
-          <<"-                        Read project file from stdin, which must end with a null-char, and process it."<<endl
-          <<"                         Then the next project file is read or the program ends if EOF is reached."<<endl
-          <<"                         If the input contains relative references to other files then the root element of the input"<<endl
-          <<"                         must be tagged using a 'MBXMLUtils_OriginalFilename' XML-Processing-Instruction element."<<endl
-          <<"                         Must be the last argument!"<<endl
-          <<"--onlyLatestStdin        If '-' and --onlyLatestStdin is used, inputs on stdin are skipped if already"<<endl
-          <<"                         a newer input is waiting on the input buffer and the currently running input"<<endl
-          <<"                         is interrupted silently before starting the new input."<<endl;
+      cout<<"Usage: mbsimxml [--onlypreprocess|--donotintegrate|--stopafterfirststep|\n"
+          <<"                 --autoreload [ms]|--dumpXMLCatalog <file>] [--savefinalstatevector]\n"
+          <<"                [--modulePath <dir> [--modulePath <dir> ...]]\n"
+          <<"                [--stdout <msg> [--stdout <msg> ...]] [--stderr <msg> [--stderr <msg> ...]]\n"
+          <<"                [<paramname>=<value> [<paramname>=<value> ...]]\n"
+          <<"                [-C <dir/file>|--CC] [--onlyLatestStdin] <mbsimprjfile>|-\n"
+          <<"\n"
+          <<"Copyright (C) 2004-2009 MBSim Development Team\n"
+          <<"This is free software; see the source for copying conditions. There is NO\n"
+          <<"warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n"
+          <<"\n"
+          <<"Licensed under the GNU Lesser General Public License (LGPL)\n"
+          <<"\n"
+          <<"--onlypreprocess         Stop after the preprocessing stage\n"
+          <<"--donotintegrate         Stop after the initialization stage, do not integrate\n"
+          <<"--savefinalstatevector   Save the state vector to the file \"statevector.asc\" after integration\n"
+          <<"--savestatetable         Save the state table to the file \"statetable.asc\"\n"
+          <<"--skipplot               Skip plotting (*.mbsh5 output)\n"
+          <<"--stopafterfirststep     Stop after outputting the first step (usually at t=0)\n"
+          <<"                         This generates a HDF5 output file with only one time serie\n"
+          <<"--autoreload             Same as --stopafterfirststep but rerun mbsimxml each time\n"
+          <<"                         a input file is newer than the output file.\n"
+          <<"                         Checked every ms. Ignored if '-' is given.\n"
+          <<"--dumpXMLCatalog <file>  Dump a XML catalog for all schemas including MBSim modules to file and exit\n"
+          <<"--modulePath <dir>       Add <dir> to MBSim module serach path. The central MBSim installation\n"
+          <<"                         module dir and the current dir is always included.\n"
+          <<"                         Also added are all directories listed in the file\n"
+          <<"                         Linux: $XDG_CONFIG_HOME/mbsim-env/mbsimxml.modulepath\n"
+          <<"                         Windows: %APPDATA%\\mbsim-env\\mbsimxml.modulepath\n"
+          <<"                         This file contains one directory per line.\n"
+          <<"<paramname>=<value>      Override the MBSimProject parameter named <paramname> with <value>.\n"
+          <<"                         <value> is evaluated using the evaluator defined in MBSimProject and is not allowed\n"
+          <<"                         to depend on any other paramname given on command line or the model-file\n"
+          <<"--stdout <msg>           Print on stdout messages of type <msg>.\n"
+          <<"                         <msg> may be info~<pre>~<post>, warn~<pre>~<post>, debug~<pre>~<post>\n"
+          <<"                         error~<pre>~<post>~ or depr~<pre>~<post>~.\n"
+          <<"                         Each message is prefixed/postfixed with <pre>/<post>.\n"
+          <<"                         --stdout may be specified multiple times.\n"
+          <<"--stderr <msg>           Analog to --stdout but prints to stderr.\n"
+          <<"-C <dir/file>            Change current to dir to <dir>/dir of <file> first.\n"
+          <<"                         All arguments are still relative to the original current dir.\n"
+          <<"--CC                     Change current dir to dir of <mbsimprjfile> first. Ignored if '-' is given.\n"
+          <<"                         All arguments are still relative to the original current dir.\n"
+          <<"<mbsimprjfile>           Use <mbsimprjfile> as mbsim xml project file (write output to current working dir)\n"
+          <<"                         Must be the last argument!\n"
+          <<"-                        Read project file from stdin, which must end with a null-char, and process it.\n"
+          <<"                         Then the next project file is read or the program ends if EOF is reached.\n"
+          <<"                         If the input contains relative references to other files then the root element of the input\n"
+          <<"                         must be tagged using a 'MBXMLUtils_OriginalFilename' XML-Processing-Instruction element.\n"
+          <<"                         Must be the last argument!\n"
+          <<"--onlyLatestStdin        If '-' and --onlyLatestStdin is used, inputs on stdin are skipped if already\n"
+          <<"                         a newer input is waiting on the input buffer and the currently running input\n"
+          <<"                         is interrupted silently before starting the new input.\n";
       return 0;
     }
 
@@ -408,7 +409,6 @@ int main(int argc, char *argv[]) {
           auto pos = pa.find('=');
           (*param)[pa.substr(0, pos)]=eval->eval(pa.substr(pos+1));
         }
-        auto overrideParam(*param);
         preprocess.setParam(param);
 
         // validate the project file with mbsimxml.xsd
