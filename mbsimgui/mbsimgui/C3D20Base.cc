@@ -108,6 +108,32 @@ namespace MBSimGUI {
     dNdq_[19][1] = &C3D20Base::dN20dy;
     dNdq_[19][2] = &C3D20Base::dN20dz;
 
+    NA_[0] = &C3D20Base::NA1;
+    NA_[1] = &C3D20Base::NA2;
+    NA_[2] = &C3D20Base::NA3;
+    NA_[3] = &C3D20Base::NA4;
+    NA_[4] = &C3D20Base::NA5;
+    NA_[5] = &C3D20Base::NA6;
+    NA_[6] = &C3D20Base::NA7;
+    NA_[7] = &C3D20Base::NA8;
+
+    dNAdq_[0][0] = &C3D20Base::dNA1dx;
+    dNAdq_[0][1] = &C3D20Base::dNA1dy;
+    dNAdq_[1][0] = &C3D20Base::dNA2dx;
+    dNAdq_[1][1] = &C3D20Base::dNA2dy;
+    dNAdq_[2][0] = &C3D20Base::dNA3dx;
+    dNAdq_[2][1] = &C3D20Base::dNA3dy;
+    dNAdq_[3][0] = &C3D20Base::dNA4dx;
+    dNAdq_[3][1] = &C3D20Base::dNA4dy;
+    dNAdq_[4][0] = &C3D20Base::dNA5dx;
+    dNAdq_[4][1] = &C3D20Base::dNA5dy;
+    dNAdq_[5][0] = &C3D20Base::dNA6dx;
+    dNAdq_[5][1] = &C3D20Base::dNA6dy;
+    dNAdq_[6][0] = &C3D20Base::dNA7dx;
+    dNAdq_[6][1] = &C3D20Base::dNA7dy;
+    dNAdq_[7][0] = &C3D20Base::dNA8dx;
+    dNAdq_[7][1] = &C3D20Base::dNA8dy;
+
     rN[0](0)  = -1; rN[0](1)  = -1; rN[0](2)  = -1;
     rN[1](0)  =  1; rN[1](1)  = -1; rN[1](2)  = -1;
     rN[2](0)  =  1; rN[2](1)  =  1; rN[2](2)  = -1;
@@ -136,6 +162,13 @@ namespace MBSimGUI {
     indices[3][0] = 2; indices[3][1] = 3; indices[3][2] = 7; indices[3][3] = 6;
     indices[4][0] = 4; indices[4][1] = 7; indices[4][2] = 3; indices[4][3] = 0;
     indices[5][0] = 0; indices[5][1] = 1; indices[5][2] = 5; indices[5][3] = 4;
+
+    fI[0][0] = 4; fI[0][1] = 3; fI[0][2] = 2; fI[0][3] = 1; fI[0][4] = 11; fI[0][5] = 10; fI[0][6] =  9; fI[0][7] = 12;
+    fI[1][0] = 5; fI[1][1] = 6; fI[1][2] = 7; fI[1][3] = 8; fI[1][4] = 13; fI[1][5] = 14; fI[1][6] = 15; fI[1][7] = 16;
+    fI[2][0] = 1; fI[2][1] = 2; fI[2][2] = 6; fI[2][3] = 5; fI[2][4] =  9; fI[2][5] = 18; fI[2][6] = 13; fI[2][7] = 17;
+    fI[3][0] = 2; fI[3][1] = 3; fI[3][2] = 7; fI[3][3] = 6; fI[3][4] = 10; fI[3][5] = 19; fI[3][6] = 14; fI[3][7] = 18;
+    fI[4][0] = 3; fI[4][1] = 4; fI[4][2] = 8; fI[4][3] = 7; fI[4][4] = 11; fI[4][5] = 20; fI[4][6] = 15; fI[4][7] = 19;
+    fI[5][0] = 4; fI[5][1] = 1; fI[5][2] = 5; fI[5][3] = 8; fI[5][4] = 12; fI[5][5] = 17; fI[5][6] = 16; fI[5][7] = 20;
   }
 
 }

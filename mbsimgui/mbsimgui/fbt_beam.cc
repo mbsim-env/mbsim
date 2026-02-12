@@ -21,6 +21,7 @@
 #include "wizards.h"
 #include "variable_widgets.h"
 #include "extended_widgets.h"
+#include "special_widgets.h"
 #include <QMessageBox>
 
 using namespace std;
@@ -414,6 +415,51 @@ namespace MBSimGUI {
 	  PPdm2m[1][i*nen+j][i*nen+k] += PPdme[0][2].e(j,k);
 	  PPdm2m[2][i*nen+j][i*nen+k] += PPdme[1][2].e(j,k);
 	}
+      }
+    }
+
+    auto *list = page<DistributedLoadsPage>(PageDL)->dloads->getWidget<ListWidget>();
+    vector<vector<int>> ele(list->getSize());
+    vector<int> snn(list->getSize());
+    for(int i=0; i<list->getSize(); i++) {
+      ele[i] = list->getWidget<DistributedLoadsWidget>(i)->getElements();
+      snn[i] = list->getWidget<DistributedLoadsWidget>(i)->getSingleNodeNumber();
+    }
+
+    if(ele.size()) {
+      Mat3xV pdle(nee);
+      if(ten) {
+        pdle(x,ul) = D/2;
+        pdle(x,ur) = D/2;
+      }
+      if(benz) {
+        pdle(y,vl) = D/2;
+        pdle(y,gal) = pow(D,2)/12;
+        pdle(y,vr) = D/2;
+        pdle(y,gar) = -pow(D,2)/12;
+      }
+      if(beny) {
+        pdle(z,wl) = D/2;
+        pdle(z,bel) = -pow(D,2)/12;
+        pdle(z,wr) = D/2;
+        pdle(z,ber) = pow(D,2)/12;
+      }
+
+      Vec3 rdl;
+      double ldl = 0;
+      Mat3xV pdl(ng);
+      for(size_t i=0; i<ele.size(); i++) {
+        for(size_t j=0; j<ele[i].size(); j++) {
+          int k = ele[i][j]-1;
+          RangeV J(k*nen,k*nen+nee-1);
+          pdl.add(I,J,pdle);
+          rdl(0) += pow(D,2)*(0.5+k);
+          ldl += D;
+        }
+        singleNodeNumbers.push_back(snn[i]>-1?snn[i]:nodeNumbers.size()+1+singleNodeNumbers.size());
+        rif.push_back(rdl/ldl);
+        Phiif.push_back(pdl/ldl);
+        Psiif.push_back(Mat3xV(ng));
       }
     }
 

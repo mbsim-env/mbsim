@@ -45,8 +45,8 @@ namespace MBSimGUI {
       BoundaryConditionWidget(QWidget *parent);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
-      ExtWidget* getNodes() { return nodes; }
-      ExtWidget* getDof() { return dof; }
+      std::vector<int> getNodes() const;
+      std::vector<int> getDof() const;
     private:
       ExtWidget *nodes, *dof;
   };
@@ -104,6 +104,26 @@ namespace MBSimGUI {
       QWidget *parent;
   };
 
+  class DistributedLoadsWidget : public Widget {
+    public:
+      DistributedLoadsWidget(QWidget *parent);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
+      std::vector<int> getElements() const;
+      int getFaceNumber() const;
+      int getSingleNodeNumber() const;
+    private:
+      ExtWidget *elements, *fn, *snn;
+  };
+
+  class DistributedLoadsWidgetFactory : public WidgetFactory {
+    public:
+      DistributedLoadsWidgetFactory(QWidget *parent_) : parent(parent_) { }
+      Widget* createWidget(int i=0) override;
+      MBXMLUtils::FQN getXMLName(int i=0) const override { return MBSIMFLEX%"elementNumbers"; }
+    protected:
+      QWidget *parent;
+  };
 }
 
 #endif

@@ -75,15 +75,8 @@ namespace MBSimGUI {
     vector<vector<int>> dof(list->getSize());;
     vector<vector<int>> bnodes(list->getSize());
     for(int i=0; i<list->getSize(); i++) {
-      auto *bcw = list->getWidget<BoundaryConditionWidget>(i);
-      auto mat = bcw->getNodes()->getFirstWidget<VariableWidget>()->getEvalMat();
-      bnodes[i].resize(mat.size());
-      for(size_t j=0; j<mat.size(); j++)
-	bnodes[i][j] = mat[j][0].toInt();
-      mat = bcw->getDof()->getFirstWidget<VariableWidget>()->getEvalMat();
-      dof[i].resize(mat.size());
-      for(size_t j=0; j<mat.size(); j++)
-	dof[i][j] = mat[j][0].toInt()-1;
+      bnodes[i] = list->getWidget<BoundaryConditionWidget>(i)->getNodes();
+      dof[i] = list->getWidget<BoundaryConditionWidget>(i)->getDof();
     }
 
     FlexibleBodyTool::TypeOfConstraint typeOfConstraint = FlexibleBodyTool::distributing;

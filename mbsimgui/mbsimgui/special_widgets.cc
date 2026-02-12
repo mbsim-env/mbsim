@@ -98,6 +98,24 @@ namespace MBSimGUI {
 //    layout->addWidget(dof);
   }
 
+ vector<int> BoundaryConditionWidget::getNodes() const {
+    vector<int> bcn;
+    auto mat = nodes->getFirstWidget<VariableWidget>()->getEvalMat();
+    bcn.resize(mat.size());
+    for(size_t i=0; i<mat.size(); i++)
+      bcn[i] = mat[i][0].toInt();
+    return bcn;
+  }
+
+ vector<int> BoundaryConditionWidget::getDof() const {
+    vector<int> bcd;
+    auto mat = dof->getFirstWidget<VariableWidget>()->getEvalMat();
+    bcd.resize(mat.size());
+    for(size_t i=0; i<mat.size(); i++)
+      bcd[i] = mat[i][0].toInt()-1;
+    return bcd;
+  }
+
   DOMElement* BoundaryConditionWidget::initializeUsingXML(DOMElement *element) {
     nodes->getWidget<ChoiceWidget>()->initializeUsingXML(element);
     element = element->getNextElementSibling();
@@ -256,7 +274,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* CMSDataWidget::initializeUsingXML(DOMElement *element) {
-    nodes->getWidget<VariableWidget>()->initializeUsingXML(element);
+    nodes->getWidget<Widget>()->initializeUsingXML(element);
     element = element->getNextElementSibling();
     if(E(element)->getTagName()==MBSIMFLEX%"weightingFactorsForInterfaceNodes") {
       weights->setActive(true);
@@ -288,7 +306,7 @@ namespace MBSimGUI {
 
   DOMElement* CMSDataWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     DOMElement *ele = D(parent->getOwnerDocument())->createElement(MBSIMFLEX%"interfaceNodeNumbers");
-    nodes->getWidget<VariableWidget>()->writeXMLFile(ele);
+    nodes->getWidget<Widget>()->writeXMLFile(ele);
     parent->insertBefore(ele,ref);
     if(weights->isActive()) {
       ele = D(parent->getOwnerDocument())->createElement(MBSIMFLEX%"weightingFactorsForInterfaceNodes");
@@ -320,6 +338,85 @@ namespace MBSimGUI {
 
   Widget* CMSDataWidgetFactory::createWidget(int i) {
     return new CMSDataWidget(parent);
+  }
+
+  DistributedLoadsWidget::DistributedLoadsWidget(QWidget *parent) : Widget(parent) {
+    auto *layout = new QVBoxLayout;
+    layout->setMargin(0);
+    setLayout(layout);
+
+    elements = new ExtWidget("Element numbers",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"elementNumbers");
+    layout->addWidget(elements);
+
+    fn = new ExtWidget("Face number",new ChoiceWidget(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"faceNumber");
+    layout->addWidget(fn);
+
+    snn = new ExtWidget("Single interface node number",new ChoiceWidget(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"singleInterfaceNodeNumber");
+    layout->addWidget(snn);
+  }
+
+ vector<int> DistributedLoadsWidget::getElements() const {
+    vector<int> ele;
+    auto mat = elements->getFirstWidget<VariableWidget>()->getEvalMat();
+    ele.resize(mat.size());
+    for(size_t i=0; i<mat.size(); i++)
+      ele[i] = mat[i][0].toInt();
+    return ele;
+  }
+
+  int DistributedLoadsWidget::getFaceNumber() const {
+    if(fn->isActive()) {
+      auto mat = fn->getFirstWidget<VariableWidget>()->getEvalMat();
+      return mat[0][0].toInt();
+    }
+    else
+      return 1;
+  }
+
+  int DistributedLoadsWidget::getSingleNodeNumber() const {
+    if(snn->isActive()) {
+      auto mat = snn->getFirstWidget<VariableWidget>()->getEvalMat();
+      return mat[0][0].toInt();
+    }
+    else
+      return -1;
+  }
+
+  DOMElement* DistributedLoadsWidget::initializeUsingXML(DOMElement *element) {
+    elements->getWidget<Widget>()->initializeUsingXML(element);
+    element = element->getNextElementSibling();
+    if(E(element)->getTagName()==MBSIMFLEX%"faceNumber") {
+      fn->setActive(true);
+      fn->getWidget<Widget>()->initializeUsingXML(element);
+      element = element->getNextElementSibling();
+    }
+    if(E(element)->getTagName()==MBSIMFLEX%"singleInterfaceNodeNumber") {
+      snn->setActive(true);
+      snn->getWidget<Widget>()->initializeUsingXML(element);
+      element = element->getNextElementSibling();
+    }
+    return element;
+  }
+
+  DOMElement* DistributedLoadsWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMElement *ele = D(parent->getOwnerDocument())->createElement(MBSIMFLEX%"elementNumbers");
+    elements->getWidget<Widget>()->writeXMLFile(ele);
+    parent->insertBefore(ele,ref);
+    if(fn->isActive()) {
+      ele = D(parent->getOwnerDocument())->createElement(MBSIMFLEX%"faceNumber");
+      fn->getWidget<Widget>()->writeXMLFile(ele);
+      parent->insertBefore(ele,ref);
+    }
+    if(snn->isActive()) {
+      ele = D(parent->getOwnerDocument())->createElement(MBSIMFLEX%"singleInterfaceNodeNumber");
+      snn->getWidget<Widget>()->writeXMLFile(ele);
+      parent->insertBefore(ele,ref);
+    }
+    return nullptr;
+  }
+
+  Widget* DistributedLoadsWidgetFactory::createWidget(int i) {
+    return new DistributedLoadsWidget(parent);
   }
 
 }

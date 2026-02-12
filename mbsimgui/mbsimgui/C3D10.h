@@ -36,14 +36,28 @@ namespace MBSimGUI {
 	return (this->*dNdq_[i][j])(x,y,z);
       }
 
+      double NA(int i, double x, double y) const override {
+        std::runtime_error("Distributed loads not yet implemented for C3D10.");
+      }
+
+      double dNAdq(int i, int j, double x, double y) const override {
+        std::runtime_error("Distributed loads not yet implemented for C3D10.");
+      }
+
       int getNumberOfNodes() const override { return 10; }
+      int getNumberOf2DNodes() const override { std::runtime_error("Distributed loads not yet implemented for C3D10."); }
       int getNumberOfIntegrationPoints() const override { return 4; }
+      int getNumberOf2DIntegrationPoints() const override { std::runtime_error("Distributed loads not yet implemented for C3D10."); }
       int getNumberOfExtrapolationPoints() const override { return 4; }
       const fmatvec::Vec3& getNaturalCoordinates(int i) const override { return rN[i]; }
       const fmatvec::Vec3& getIntegrationPoint(int i) const override { return rI[i]; }
+      const fmatvec::Vec2& get2DIntegrationPoint(int i) const override { std::runtime_error("Distributed loads not yet implemented for C3D10."); }
       double getWeight(int i) const override { return wI[i]; }
+      double get2DWeight(int i) const override { std::runtime_error("Distributed loads not yet implemented for C3D10."); }
       double getExtrapolationCoefficient(int i, int j) const override { return A[i][j]; }
       int getExtrapolationIndex(int i, int j) const override { return B[i][j]; }
+      int getNumberOfFaces() const override { std::runtime_error("Distributed loads not yet implemented for C3D10."); }
+      int getNodeNumberOnFace(int i, int j) const { std::runtime_error("Distributed loads not yet implemented for C3D10."); }
 
     private:
       fmatvec::Vec3 rN[10], rI[4];

@@ -29,14 +29,22 @@ namespace MBSimGUI {
       virtual ~FiniteElementType() = default;
       virtual double N(int i, double x, double y, double z) const = 0;
       virtual double dNdq(int i, int j, double x, double y, double z) const = 0;
+      virtual double NA(int i, double x, double y) const = 0;
+      virtual double dNAdq(int i, int j, double x, double y) const = 0;
       virtual int getNumberOfNodes() const = 0;
+      virtual int getNumberOf2DNodes() const = 0;
       virtual int getNumberOfIntegrationPoints() const = 0;
+      virtual int getNumberOf2DIntegrationPoints() const = 0;
       virtual int getNumberOfExtrapolationPoints() const = 0;
       virtual const fmatvec::Vec3& getNaturalCoordinates(int i) const = 0;
       virtual const fmatvec::Vec3& getIntegrationPoint(int i) const = 0;
+      virtual const fmatvec::Vec2& get2DIntegrationPoint(int i) const = 0;
       virtual double getWeight(int i) const = 0;
+      virtual double get2DWeight(int i) const = 0;
       virtual double getExtrapolationCoefficient(int i, int j) const = 0;
       virtual int getExtrapolationIndex(int i, int j) const = 0;
+      virtual int getNumberOfFaces() const = 0;
+      virtual int getNodeNumberOnFace(int i, int j) const = 0;
       const std::vector<std::vector<int>>& getOmbvIndices() const { return indices; }
     protected:
       std::vector<std::vector<int>> indices;

@@ -264,7 +264,7 @@ namespace MBSimGUI {
   }
 
   int FlexibleBeamPage::nextId() const {
-    return FlexibleBodyTool::PageBC;
+    return FlexibleBodyTool::PageDL;
   }
 
   DOMElement* FlexibleBeamPage::initializeUsingXML(DOMElement *element) {
@@ -335,7 +335,7 @@ namespace MBSimGUI {
   }
 
   int FiniteElementsPage::nextId() const {
-    return FlexibleBodyTool::PageBC;
+    return FlexibleBodyTool::PageDL;
   }
 
   DOMElement* FiniteElementsPage::initializeUsingXML(DOMElement *element) {
@@ -662,6 +662,44 @@ namespace MBSimGUI {
     return nullptr;
   }
 
+  DistributedLoadsPage::DistributedLoadsPage(QWidget *parent) : WizardPage(parent) {
+    setTitle("Distributed loads");
+
+    auto *mainlayout = new QVBoxLayout;
+    setLayout(mainlayout);
+
+    auto label = new QLabel("Define the distributed loads.");
+    mainlayout->addWidget(label);
+
+    auto *tab = new QScrollArea;
+    tab->setWidgetResizable(true);
+    QWidget *box = new QWidget;
+    auto *layout = new QVBoxLayout;
+    box->setLayout(layout);
+    tab->setWidget(box);
+
+    mainlayout->addWidget(tab);
+
+    dloads = new ExtWidget("Distributed load",new ListWidget(new DistributedLoadsWidgetFactory(this),"Distributed load",0,3,false,0),false,false,"");
+    layout->addWidget(dloads);
+
+    layout->addStretch(1);
+  }
+
+  int DistributedLoadsPage::nextId() const {
+    return FlexibleBodyTool::PageBC;
+  }
+
+  DOMElement* DistributedLoadsPage::initializeUsingXML(DOMElement *element) {
+    dloads->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* DistributedLoadsPage::writeXMLFile(DOMNode *element, DOMNode *ref) {
+    dloads->writeXMLFile(element);
+    return nullptr;
+  }
+
   void Wizard::showEvent(QShowEvent *event) {
     mw->setCurrentlyEditedItem(mw->getProject()->getDynamicSystemSolver());
     mw->updateParameters(mw->getProject());
@@ -690,6 +728,7 @@ namespace MBSimGUI {
     setPage(PageRRBM, new RemoveRigidBodyModesPage(this));
     setPage(PageOMBV, new OpenMBVPage(this));
     setPage(PageDamp, new DampingPage(this));
+    setPage(PageDL, new DistributedLoadsPage(this));
     setPage(PageLast, new LastPage(this));
     setButtonText(QWizard::CustomButton1, "&Load");
     setOption(QWizard::HaveCustomButton1, true);
