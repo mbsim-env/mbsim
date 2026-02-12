@@ -50,7 +50,7 @@ namespace MBSim {
       if(not saved_body.empty())
         setRigidBody(getByPath<RigidBody>(saved_body));
       if(not body)
-        throwError("Rigid body is not given!");
+        throwError("(RigidBodyObserver::init()): Rigid body is not given!");
       if(not saved_frameOfReference.empty())
         setFrameOfReference(getByPath<Frame>(saved_frameOfReference));
       if(not frameOfReference)
