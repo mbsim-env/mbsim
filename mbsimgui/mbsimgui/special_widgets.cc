@@ -88,7 +88,7 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    nodes = new ExtWidget("Boundary node numbers",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"boundaryNodeNumbers");
+    nodes = new ExtWidget("Boundary condition node numbers",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"boundaryConditionNodeNumbers");
     layout->addWidget(nodes);
 
     dof = new ExtWidget("Constrained degrees of freedom",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"constrainedDegreesOfFreedom");
@@ -125,7 +125,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* BoundaryConditionWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    DOMElement *ele = D(parent->getOwnerDocument())->createElement(MBSIMFLEX%"boundaryNodeNumbers");
+    DOMElement *ele = D(parent->getOwnerDocument())->createElement(MBSIMFLEX%"boundaryConditionNodeNumbers");
     nodes->getWidget<ChoiceWidget>()->writeXMLFile(ele);
     parent->insertBefore(ele,ref);
     ele = D(parent->getOwnerDocument())->createElement(MBSIMFLEX%"constrainedDegreesOfFreedom");
@@ -340,18 +340,75 @@ namespace MBSimGUI {
     return new CMSDataWidget(parent);
   }
 
+  ConcentratedLoadsWidget::ConcentratedLoadsWidget(QWidget *parent) : Widget(parent) {
+    auto *layout = new QVBoxLayout;
+    layout->setMargin(0);
+    setLayout(layout);
+
+    nodes = new ExtWidget("Concentrated load node numbers",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"concentratedLoadNodeNumbers");
+    layout->addWidget(nodes);
+
+    snn = new ExtWidget("Single concentrated load node number",new ChoiceWidget(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"singleConcentratedLoadNodeNumber");
+    layout->addWidget(snn);
+  }
+
+ vector<int> ConcentratedLoadsWidget::getNodes() const {
+    vector<int> ele;
+    auto mat = nodes->getFirstWidget<VariableWidget>()->getEvalMat();
+    ele.resize(mat.size());
+    for(size_t i=0; i<mat.size(); i++)
+      ele[i] = mat[i][0].toInt();
+    return ele;
+  }
+
+  int ConcentratedLoadsWidget::getSingleNodeNumber() const {
+    if(snn->isActive()) {
+      auto mat = snn->getFirstWidget<VariableWidget>()->getEvalMat();
+      return mat[0][0].toInt();
+    }
+    else
+      return -1;
+  }
+
+  DOMElement* ConcentratedLoadsWidget::initializeUsingXML(DOMElement *element) {
+    nodes->getWidget<Widget>()->initializeUsingXML(element);
+    element = element->getNextElementSibling();
+    if(E(element)->getTagName()==MBSIMFLEX%"singleConcentratedLoadNodeNumber") {
+      snn->setActive(true);
+      snn->getWidget<Widget>()->initializeUsingXML(element);
+      element = element->getNextElementSibling();
+    }
+    return element;
+  }
+
+  DOMElement* ConcentratedLoadsWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMElement *ele = D(parent->getOwnerDocument())->createElement(MBSIMFLEX%"concentratedLoadNodeNumbers");
+    nodes->getWidget<Widget>()->writeXMLFile(ele);
+    parent->insertBefore(ele,ref);
+    if(snn->isActive()) {
+      ele = D(parent->getOwnerDocument())->createElement(MBSIMFLEX%"singleConcentratedLoadNodeNumber");
+      snn->getWidget<Widget>()->writeXMLFile(ele);
+      parent->insertBefore(ele,ref);
+    }
+    return nullptr;
+  }
+
+  Widget* ConcentratedLoadsWidgetFactory::createWidget(int i) {
+    return new ConcentratedLoadsWidget(parent);
+  }
+
   DistributedLoadsWidget::DistributedLoadsWidget(QWidget *parent) : Widget(parent) {
     auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
-    elements = new ExtWidget("Element numbers",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"elementNumbers");
+    elements = new ExtWidget("DistributedL load element numbers",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"distributedLoadElementNumbers");
     layout->addWidget(elements);
 
-    fn = new ExtWidget("Face number",new ChoiceWidget(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"faceNumber");
+    fn = new ExtWidget("DistributedL load face number",new ChoiceWidget(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"distributedLoadFaceNumber");
     layout->addWidget(fn);
 
-    snn = new ExtWidget("Single interface node number",new ChoiceWidget(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"singleInterfaceNodeNumber");
+    snn = new ExtWidget("Single distributed load node number",new ChoiceWidget(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"singleDistributedLoadNodeNumber");
     layout->addWidget(snn);
   }
 
@@ -383,14 +440,15 @@ namespace MBSimGUI {
   }
 
   DOMElement* DistributedLoadsWidget::initializeUsingXML(DOMElement *element) {
-    elements->getWidget<Widget>()->initializeUsingXML(element);
+    if(E(element)->getTagName()==MBSIMFLEX%"distributedLoadElementNumbers")
+      elements->getWidget<Widget>()->initializeUsingXML(element);
     element = element->getNextElementSibling();
-    if(E(element)->getTagName()==MBSIMFLEX%"faceNumber") {
+    if(E(element)->getTagName()==MBSIMFLEX%"distributedLoadFaceNumber") {
       fn->setActive(true);
       fn->getWidget<Widget>()->initializeUsingXML(element);
       element = element->getNextElementSibling();
     }
-    if(E(element)->getTagName()==MBSIMFLEX%"singleInterfaceNodeNumber") {
+    if(E(element)->getTagName()==MBSIMFLEX%"singleDistributedLoadNodeNumber") {
       snn->setActive(true);
       snn->getWidget<Widget>()->initializeUsingXML(element);
       element = element->getNextElementSibling();
@@ -399,16 +457,16 @@ namespace MBSimGUI {
   }
 
   DOMElement* DistributedLoadsWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    DOMElement *ele = D(parent->getOwnerDocument())->createElement(MBSIMFLEX%"elementNumbers");
+    DOMElement *ele = D(parent->getOwnerDocument())->createElement(MBSIMFLEX%"distributedLoadElementNumbers");
     elements->getWidget<Widget>()->writeXMLFile(ele);
     parent->insertBefore(ele,ref);
     if(fn->isActive()) {
-      ele = D(parent->getOwnerDocument())->createElement(MBSIMFLEX%"faceNumber");
+      ele = D(parent->getOwnerDocument())->createElement(MBSIMFLEX%"distributedLoadFaceNumber");
       fn->getWidget<Widget>()->writeXMLFile(ele);
       parent->insertBefore(ele,ref);
     }
     if(snn->isActive()) {
-      ele = D(parent->getOwnerDocument())->createElement(MBSIMFLEX%"singleInterfaceNodeNumber");
+      ele = D(parent->getOwnerDocument())->createElement(MBSIMFLEX%"singleDistributedLoadNodeNumber");
       snn->getWidget<Widget>()->writeXMLFile(ele);
       parent->insertBefore(ele,ref);
     }

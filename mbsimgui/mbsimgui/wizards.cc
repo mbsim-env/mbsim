@@ -264,7 +264,7 @@ namespace MBSimGUI {
   }
 
   int FlexibleBeamPage::nextId() const {
-    return FlexibleBodyTool::PageDL;
+    return FlexibleBodyTool::PageLoads;
   }
 
   DOMElement* FlexibleBeamPage::initializeUsingXML(DOMElement *element) {
@@ -335,7 +335,7 @@ namespace MBSimGUI {
   }
 
   int FiniteElementsPage::nextId() const {
-    return FlexibleBodyTool::PageDL;
+    return FlexibleBodyTool::PageLoads;
   }
 
   DOMElement* FiniteElementsPage::initializeUsingXML(DOMElement *element) {
@@ -662,13 +662,13 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  DistributedLoadsPage::DistributedLoadsPage(QWidget *parent) : WizardPage(parent) {
-    setTitle("Distributed loads");
+  LoadsPage::LoadsPage(QWidget *parent) : WizardPage(parent) {
+    setTitle("Loads");
 
     auto *mainlayout = new QVBoxLayout;
     setLayout(mainlayout);
 
-    auto label = new QLabel("Define the distributed loads.");
+    auto label = new QLabel("Define the loads.");
     mainlayout->addWidget(label);
 
     auto *tab = new QScrollArea;
@@ -680,22 +680,27 @@ namespace MBSimGUI {
 
     mainlayout->addWidget(tab);
 
+    cloads = new ExtWidget("Concentrated load",new ListWidget(new ConcentratedLoadsWidgetFactory(this),"Concentrated load",0,3,false,0),false,false,"");
+    layout->addWidget(cloads);
+
     dloads = new ExtWidget("Distributed load",new ListWidget(new DistributedLoadsWidgetFactory(this),"Distributed load",0,3,false,0),false,false,"");
     layout->addWidget(dloads);
 
     layout->addStretch(1);
   }
 
-  int DistributedLoadsPage::nextId() const {
+  int LoadsPage::nextId() const {
     return FlexibleBodyTool::PageBC;
   }
 
-  DOMElement* DistributedLoadsPage::initializeUsingXML(DOMElement *element) {
+  DOMElement* LoadsPage::initializeUsingXML(DOMElement *element) {
+    cloads->initializeUsingXML(element);
     dloads->initializeUsingXML(element);
     return element;
   }
 
-  DOMElement* DistributedLoadsPage::writeXMLFile(DOMNode *element, DOMNode *ref) {
+  DOMElement* LoadsPage::writeXMLFile(DOMNode *element, DOMNode *ref) {
+    cloads->writeXMLFile(element);
     dloads->writeXMLFile(element);
     return nullptr;
   }
@@ -728,7 +733,7 @@ namespace MBSimGUI {
     setPage(PageRRBM, new RemoveRigidBodyModesPage(this));
     setPage(PageOMBV, new OpenMBVPage(this));
     setPage(PageDamp, new DampingPage(this));
-    setPage(PageDL, new DistributedLoadsPage(this));
+    setPage(PageLoads, new LoadsPage(this));
     setPage(PageLast, new LastPage(this));
     setButtonText(QWizard::CustomButton1, "&Load");
     setOption(QWizard::HaveCustomButton1, true);

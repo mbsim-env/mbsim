@@ -390,21 +390,48 @@ namespace MBSimGUI {
       }
     }
 
-    auto *listdl = page<DistributedLoadsPage>(PageDL)->dloads->getWidget<ListWidget>();
-    vector<vector<int>> eledl(listdl->getSize());
-    vector<int> snn(listdl->getSize());
-    for(int i=0; i<listdl->getSize(); i++) {
-      eledl[i] = listdl->getWidget<DistributedLoadsWidget>(i)->getElements();
-      snn[i] = listdl->getWidget<DistributedLoadsWidget>(i)->getSingleNodeNumber();
+    auto *listcl = page<LoadsPage>(PageLoads)->cloads->getWidget<ListWidget>();
+    if(listcl->getSize()) {
+      vector<vector<int>> nodescl(listcl->getSize());
+      vector<int> snn(listcl->getSize());
+      for(int i=0; i<listcl->getSize(); i++) {
+        nodescl[i] = listcl->getWidget<ConcentratedLoadsWidget>(i)->getNodes();
+        snn[i] = listcl->getWidget<ConcentratedLoadsWidget>(i)->getSingleNodeNumber();
+      }
+      Vec3 rdn(NONINIT);
+      Mat3xV Fdn(ng,NONINIT);
+      for(size_t k=0; k<nodescl.size(); k++) {
+        rdn.init(0);
+        Fdn.init(0);
+        for(int ee=0; ee<nodescl[k].size(); ee++) {
+          int u = nodeTable[nodescl[k][ee]];
+          rdn += this->r[u];
+          for(int ii=0; ii<3; ii++)
+            Fdn(ii,u*3+ii) += 1;
+        }
+        singleNodeNumbers.push_back(snn[k]>-1?snn[k]:nodeNumbers.size()+1+singleNodeNumbers.size());
+        rif.push_back(rdn/double(nodescl[k].size()));
+        Phiif.push_back(Fdn/double(nodescl[k].size()));
+        Psiif.push_back(Mat3xV(ng));
+      }
     }
-    if(eledl.size()) {
-      int fI = 2-1;
 
+    auto *listdl = page<LoadsPage>(PageLoads)->dloads->getWidget<ListWidget>();
+    if(listdl->getSize()) {
+      vector<vector<int>> eledl(listdl->getSize());
+      vector<int> fn(listdl->getSize());
+      vector<int> snn(listdl->getSize());
+      for(int i=0; i<listdl->getSize(); i++) {
+        eledl[i] = listdl->getWidget<DistributedLoadsWidget>(i)->getElements();
+        fn[i] = listdl->getWidget<DistributedLoadsWidget>(i)->getFaceNumber();
+        snn[i] = listdl->getWidget<DistributedLoadsWidget>(i)->getSingleNodeNumber();
+      }
       Mat3x2 JA(NONINIT);
       Vec3 r(NONINIT), rdA(NONINIT), xsj(NONINIT);
       Mat3xV pdA(ng,NONINIT);
       double A;
       for(size_t k=0; k<eledl.size(); k++) {
+        int fi = fn[k]-1;
         FiniteElementType *typei = type[k];
         int npe = typei->getNumberOf2DNodes();
         vector<Vec3> P(npe,Vec3(NONINIT));
@@ -426,7 +453,7 @@ namespace MBSimGUI {
             JA.init(0);
             r.init(0);
             for(int ll=0; ll<npe; ll++) {
-              int nof = typei->getNodeNumberOnFace(fI,ll);
+              int nof = typei->getNodeNumberOnFace(fi,ll);
               int nn = eleRow(nof-1);
               r0 = this->r[nodeTable[nn]];
               N_[ll] = typei->NA(ll,x,y);
@@ -447,7 +474,7 @@ namespace MBSimGUI {
             }
           }
           for(int i=0; i<npe; i++) {
-            int nof = typei->getNodeNumberOnFace(fI,i);
+            int nof = typei->getNodeNumberOnFace(fi,i);
             int nn = eleRow(nof-1);
             int u = nodeTable[nn];
             for(int ii=0; ii<3; ii++)

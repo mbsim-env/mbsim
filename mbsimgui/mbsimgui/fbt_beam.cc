@@ -418,15 +418,43 @@ namespace MBSimGUI {
       }
     }
 
-    auto *list = page<DistributedLoadsPage>(PageDL)->dloads->getWidget<ListWidget>();
-    vector<vector<int>> ele(list->getSize());
-    vector<int> snn(list->getSize());
-    for(int i=0; i<list->getSize(); i++) {
-      ele[i] = list->getWidget<DistributedLoadsWidget>(i)->getElements();
-      snn[i] = list->getWidget<DistributedLoadsWidget>(i)->getSingleNodeNumber();
+    auto *listcl = page<LoadsPage>(PageLoads)->cloads->getWidget<ListWidget>();
+    if(listcl->getSize()) {
+      vector<vector<int>> nodescl(listcl->getSize());
+      vector<int> snn(listcl->getSize());
+      for(int i=0; i<listcl->getSize(); i++) {
+        nodescl[i] = listcl->getWidget<ConcentratedLoadsWidget>(i)->getNodes();
+        snn[i] = listcl->getWidget<ConcentratedLoadsWidget>(i)->getSingleNodeNumber();
+      }
+      Vec3 rdn(NONINIT);
+      Mat3xV Fdn(ng,NONINIT);
+      for(size_t k=0; k<nodescl.size(); k++) {
+        rdn.init(0);
+        Fdn.init(0);
+        for(int ee=0; ee<nodescl[k].size(); ee++) {
+          rdn(0) += ee*D;
+          if(ten)
+            Fdn(x,ee*nee/2+ul) += 1;
+          if(benz)
+            Fdn(y,ee*nee/2+vl) += 1;
+          if(beny)
+            Fdn(z,ee*nee/2+wl) += 1;
+        }
+        singleNodeNumbers.push_back(snn[k]>-1?snn[k]:nodeNumbers.size()+1+singleNodeNumbers.size());
+        rif.push_back(rdn/double(nodescl[k].size()));
+        Phiif.push_back(Fdn/double(nodescl[k].size()));
+        Psiif.push_back(Mat3xV(ng));
+      }
     }
 
-    if(ele.size()) {
+    auto *listdl = page<LoadsPage>(PageLoads)->dloads->getWidget<ListWidget>();
+    if(listdl->getSize()) {
+      vector<vector<int>> ele(listdl->getSize());
+      vector<int> snn(listcl->getSize());
+      for(int i=0; i<listdl->getSize(); i++) {
+        ele[i] = listdl->getWidget<DistributedLoadsWidget>(i)->getElements();
+        snn[i] = listdl->getWidget<DistributedLoadsWidget>(i)->getSingleNodeNumber();
+      }
       Mat3xV pdle(nee);
       if(ten) {
         pdle(x,ul) = D/2;

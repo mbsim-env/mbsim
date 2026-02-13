@@ -55,7 +55,7 @@ namespace MBSimGUI {
     public:
       BoundaryConditionWidgetFactory(QWidget *parent_) : parent(parent_) { }
       Widget* createWidget(int i=0) override;
-      MBXMLUtils::FQN getXMLName(int i=0) const override { return MBSIMFLEX%"boundaryNodeNumbers"; }
+      MBXMLUtils::FQN getXMLName(int i=0) const override { return MBSIMFLEX%"boundaryConditionNodeNumbers"; }
     protected:
       QWidget *parent;
   };
@@ -104,6 +104,26 @@ namespace MBSimGUI {
       QWidget *parent;
   };
 
+  class ConcentratedLoadsWidget : public Widget {
+    public:
+      ConcentratedLoadsWidget(QWidget *parent);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
+      std::vector<int> getNodes() const;
+      int getSingleNodeNumber() const;
+    private:
+      ExtWidget *nodes, *snn;
+  };
+
+  class ConcentratedLoadsWidgetFactory : public WidgetFactory {
+    public:
+      ConcentratedLoadsWidgetFactory(QWidget *parent_) : parent(parent_) { }
+      Widget* createWidget(int i=0) override;
+      MBXMLUtils::FQN getXMLName(int i=0) const override { return MBSIMFLEX%"concentratedLoadNodeNumbers"; }
+    protected:
+      QWidget *parent;
+  };
+
   class DistributedLoadsWidget : public Widget {
     public:
       DistributedLoadsWidget(QWidget *parent);
@@ -120,7 +140,7 @@ namespace MBSimGUI {
     public:
       DistributedLoadsWidgetFactory(QWidget *parent_) : parent(parent_) { }
       Widget* createWidget(int i=0) override;
-      MBXMLUtils::FQN getXMLName(int i=0) const override { return MBSIMFLEX%"elementNumbers"; }
+      MBXMLUtils::FQN getXMLName(int i=0) const override { return MBSIMFLEX%"distributedLoadElementNumbers"; }
     protected:
       QWidget *parent;
   };
