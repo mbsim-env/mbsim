@@ -3303,20 +3303,7 @@ DEF mbsimgui_outdated_switch Switch {
   }
 
   void MainWindow::updateEchoViewSlot(const QByteArray &data) {
-    if(processSimulate.isOpen())
-      // if a process (simulation) is running just add the new output
-      echoView->addOutputText(data.constData());
-    else {
-      // if no process (simulation) is running and MBXMLUTILS_PREPROCESS_CTOR was found -> skip the output before MBXMLUTILS_PREPROCESS_CTOR
-      // (this is used to avoid the message about exiting the last existing mbsimxml run)
-      auto idx=data.lastIndexOf("<a name=\"MBXMLUTILS_PREPROCESS_CTOR\"></a>");
-      if(idx==-1)
-        echoView->addOutputText(data.constData());
-      else {
-        clearEchoView("");
-        echoView->addOutputText(data.constData()+idx);
-      }
-    }
+    echoView->addOutputText(data.constData());
 
     static qint64 last=0;
     static QTimer singleShot;

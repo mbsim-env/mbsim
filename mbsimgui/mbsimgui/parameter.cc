@@ -94,7 +94,6 @@ namespace MBSimGUI {
             hidden=mw->eval->cast<int>(mw->eval->eval(X()%pi->getData(), getXMLElement()));
           }
           catch(std::exception &ex) {
-            Atom::msgStatic(Atom::Error)<<disableEscaping<<ex.what()<<enableEscaping<<endl;
             auto msg = dynamic_cast<DOMEvalException*>(&ex) ? static_cast<DOMEvalException&>(ex).getMessage() : ex.what();
             mw->statusBar()->showMessage(("Unable to evaluate hidden flag: " + msg).c_str());
             cerr << "Enable to evaluate hidden flag: " << ex.what() << endl;
@@ -107,7 +106,6 @@ namespace MBSimGUI {
             mw->setErrorOccured();
           }
           catch(...) {
-            Atom::msgStatic(Atom::Error)<<"Unknown exception"<<endl;
             mw->statusBar()->showMessage("Unknown exception");
             cerr << "Unknown exception" << endl;
             if(!mw->getErrorOccured()) {
