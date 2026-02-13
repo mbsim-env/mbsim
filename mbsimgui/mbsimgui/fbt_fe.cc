@@ -456,9 +456,9 @@ namespace MBSimGUI {
               int nof = typei->getNodeNumberOnFace(fi,ll);
               int nn = eleRow(nof-1);
               r0 = this->r[nodeTable[nn]];
-              N_[ll] = typei->NA(ll,x,y);
+              N_[ll] = typei->NA(fi,ll,x,y);
               for(int mm=0; mm<2; mm++)
-                dN_[ll](mm) = typei->dNAdq(ll,mm,x,y);
+                dN_[ll](mm) = typei->dNAdq(fi,ll,mm,x,y);
               JA += r0*dN_[ll].T();
               r += N_[ll]*r0;
             }

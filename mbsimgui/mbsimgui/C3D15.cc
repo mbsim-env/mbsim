@@ -88,6 +88,52 @@ namespace MBSimGUI {
     dNdq_[14][1] = &C3D15::dN15dy;
     dNdq_[14][2] = &C3D15::dN15dz;
 
+    NA_[0][0] = &C3D15::NA1a;
+    NA_[0][1] = &C3D15::NA2a;
+    NA_[0][2] = &C3D15::NA3a;
+    NA_[0][3] = &C3D15::NA4a;
+    NA_[0][4] = &C3D15::NA5a;
+    NA_[0][5] = &C3D15::NA6a;
+
+    dNAdq_[0][0][0] = &C3D15::dNA1dxa;
+    dNAdq_[0][0][1] = &C3D15::dNA1dya;
+    dNAdq_[0][1][0] = &C3D15::dNA2dxa;
+    dNAdq_[0][1][1] = &C3D15::dNA2dya;
+    dNAdq_[0][2][0] = &C3D15::dNA3dxa;
+    dNAdq_[0][2][1] = &C3D15::dNA3dya;
+    dNAdq_[0][3][0] = &C3D15::dNA4dxa;
+    dNAdq_[0][3][1] = &C3D15::dNA4dya;
+    dNAdq_[0][4][0] = &C3D15::dNA5dxa;
+    dNAdq_[0][4][1] = &C3D15::dNA5dya;
+    dNAdq_[0][5][0] = &C3D15::dNA6dxa;
+    dNAdq_[0][5][1] = &C3D15::dNA6dya;
+
+    NA_[1][0] = &C3D15::NA1b;
+    NA_[1][1] = &C3D15::NA2b;
+    NA_[1][2] = &C3D15::NA3b;
+    NA_[1][3] = &C3D15::NA4b;
+    NA_[1][4] = &C3D15::NA5b;
+    NA_[1][5] = &C3D15::NA6b;
+    NA_[1][6] = &C3D15::NA7b;
+    NA_[1][7] = &C3D15::NA8b;
+
+    dNAdq_[1][0][0] = &C3D15::dNA1dxb;
+    dNAdq_[1][0][1] = &C3D15::dNA1dyb;
+    dNAdq_[1][1][0] = &C3D15::dNA2dxb;
+    dNAdq_[1][1][1] = &C3D15::dNA2dyb;
+    dNAdq_[1][2][0] = &C3D15::dNA3dxb;
+    dNAdq_[1][2][1] = &C3D15::dNA3dyb;
+    dNAdq_[1][3][0] = &C3D15::dNA4dxb;
+    dNAdq_[1][3][1] = &C3D15::dNA4dyb;
+    dNAdq_[1][4][0] = &C3D15::dNA5dxb;
+    dNAdq_[1][4][1] = &C3D15::dNA5dyb;
+    dNAdq_[1][5][0] = &C3D15::dNA6dxb;
+    dNAdq_[1][5][1] = &C3D15::dNA6dyb;
+    dNAdq_[1][6][0] = &C3D15::dNA7dxb;
+    dNAdq_[1][6][1] = &C3D15::dNA7dyb;
+    dNAdq_[1][7][0] = &C3D15::dNA8dxb;
+    dNAdq_[1][7][1] = &C3D15::dNA8dyb;
+
     rN[0](0) = 0;   rN[0](1) = 0;   rN[0](2) = 0;
     rN[1](0) = 1;   rN[1](1) = 0;   rN[1](2) = 0;
     rN[2](0) = 0;   rN[2](1) = 1;   rN[2](2) = 0;

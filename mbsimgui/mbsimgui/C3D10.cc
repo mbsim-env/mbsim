@@ -68,6 +68,26 @@ namespace MBSimGUI {
     dNdq_[9][1] = &C3D10::dN10dy;
     dNdq_[9][2] = &C3D10::dN10dz;
 
+    NA_[0] = &C3D10::NA1;
+    NA_[1] = &C3D10::NA2;
+    NA_[2] = &C3D10::NA3;
+    NA_[3] = &C3D10::NA4;
+    NA_[4] = &C3D10::NA5;
+    NA_[5] = &C3D10::NA6;
+
+    dNAdq_[0][0] = &C3D10::dNA1dx;
+    dNAdq_[0][1] = &C3D10::dNA1dy;
+    dNAdq_[1][0] = &C3D10::dNA2dx;
+    dNAdq_[1][1] = &C3D10::dNA2dy;
+    dNAdq_[2][0] = &C3D10::dNA3dx;
+    dNAdq_[2][1] = &C3D10::dNA3dy;
+    dNAdq_[3][0] = &C3D10::dNA4dx;
+    dNAdq_[3][1] = &C3D10::dNA4dy;
+    dNAdq_[4][0] = &C3D10::dNA5dx;
+    dNAdq_[4][1] = &C3D10::dNA5dy;
+    dNAdq_[5][0] = &C3D10::dNA6dx;
+    dNAdq_[5][1] = &C3D10::dNA6dy;
+
     rN[0](0) = 0;   rN[0](1) = 0;   rN[0](2) = 0;
     rN[1](0) = 1;   rN[1](1) = 0;   rN[1](2) = 0;
     rN[2](0) = 0;   rN[2](1) = 1;   rN[2](2) = 0;

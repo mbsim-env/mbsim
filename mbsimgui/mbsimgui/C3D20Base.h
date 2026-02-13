@@ -36,11 +36,11 @@ namespace MBSimGUI {
 	return (this->*dNdq_[i][j])(x,y,z);
       }
 
-      double NA(int i, double x, double y) const override {
+      double NA(int face, int i, double x, double y) const override {
 	return (this->*NA_[i])(x,y);
       }
 
-      double dNAdq(int i, int j, double x, double y) const override {
+      double dNAdq(int face, int i, int j, double x, double y) const override {
 	return (this->*dNAdq_[i][j])(x,y);
       }
 

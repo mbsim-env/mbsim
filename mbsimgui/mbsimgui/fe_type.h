@@ -29,8 +29,8 @@ namespace MBSimGUI {
       virtual ~FiniteElementType() = default;
       virtual double N(int i, double x, double y, double z) const = 0;
       virtual double dNdq(int i, int j, double x, double y, double z) const = 0;
-      virtual double NA(int i, double x, double y) const = 0;
-      virtual double dNAdq(int i, int j, double x, double y) const = 0;
+      virtual double NA(int face, int i, double x, double y) const = 0;
+      virtual double dNAdq(int face, int i, int j, double x, double y) const = 0;
       virtual int getNumberOfNodes() const = 0;
       virtual int getNumberOf2DNodes(int face) const = 0;
       virtual int getNumberOfIntegrationPoints() const = 0;

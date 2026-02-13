@@ -36,12 +36,12 @@ namespace MBSimGUI {
 	return (this->*dNdq_[i][j])(x,y,z);
       }
 
-      double NA(int i, double x, double y) const override {
-        std::runtime_error("Distributed loads not yet implemented for C3D10."); return 0;
+      double NA(int face, int i, double x, double y) const override {
+	return (this->*NA_[i])(x,y);
       }
 
-      double dNAdq(int i, int j, double x, double y) const override {
-        std::runtime_error("Distributed loads not yet implemented for C3D10."); return 0;
+      double dNAdq(int face, int i, int j, double x, double y) const override {
+	return (this->*dNAdq_[i][j])(x,y);
       }
 
       int getNumberOfNodes() const override { return 10; }
@@ -67,6 +67,8 @@ namespace MBSimGUI {
       int B[6][2];
       double (C3D10::*N_[10])(double x, double y, double z) const;
       double (C3D10::*dNdq_[10][3])(double x, double y, double z) const;
+      double (C3D10::*NA_[6])(double x, double y) const;
+      double (C3D10::*dNAdq_[6][2])(double x, double y) const;
       int fI[4][6];
 
       double N1(double x, double y, double z) const {
@@ -78,7 +80,7 @@ namespace MBSimGUI {
       }
 
       double N3(double x, double y, double z) const {
-	return y*(2*y-1);
+return y*(2*y-1);
       }
 
       double N4(double x, double y, double z) const {
@@ -227,6 +229,78 @@ namespace MBSimGUI {
 
       double dN10dz(double x, double y, double z) const {
 	return 4*y;
+      }
+
+      double NA1(double x, double y) const {
+        return 2*(0.5-x-y)*(1-x-y);
+      }
+
+      double NA2(double x, double y) const {
+        return x*(2*x-1);
+      }
+
+      double NA3(double x, double y) const {
+        return y*(2*y-1);
+      }
+
+      double NA4(double x, double y) const {
+        return 4*x*(1-x-y);
+      }
+
+      double NA5(double x, double y) const {
+        return 4*x*y;
+      }
+
+      double NA6(double x, double y) const {
+        return 4*y*(1-x-y);
+      }
+
+      double dNA1dx(double x, double y) const {
+        return 4*(x+y)-3;
+      }
+
+      double dNA1dy(double x, double y) const {
+        return 4*(x+y)-3;
+      }
+
+      double dNA2dx(double x, double y) const {
+        return 4*x-1;
+      }
+
+      double dNA2dy(double x, double y) const {
+        return 0;
+      }
+
+      double dNA3dx(double x, double y) const {
+        return 0;
+      }
+
+      double dNA3dy(double x, double y) const {
+        return 4*y-1;
+      }
+
+      double dNA4dx(double x, double y) const {
+        return 4*(1-x-y-x);
+      }
+
+      double dNA4dy(double x, double y) const {
+        return -4*x;
+      }
+
+      double dNA5dx(double x, double y) const {
+        return 4*y;
+      }
+
+      double dNA5dy(double x, double y) const {
+        return 4*x;
+      }
+
+      double dNA6dx(double x, double y) const {
+        return -4*y;
+      }
+
+      double dNA6dy(double x, double y) const {
+        return 4*(1-x-y-y);
       }
   };
 
