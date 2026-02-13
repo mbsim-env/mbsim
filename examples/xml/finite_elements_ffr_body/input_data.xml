@@ -13,8 +13,8 @@
 
   <elements>"elements.asc"</elements>
 
-  <boundaryNodeNumbers>[97; 96; 95; 94; 93; 20; 19; 18; 17; 16; 15; 14; 13; 12; 11; 10; 9 ; 4 ; 3 ; 2 ; 1]
-</boundaryNodeNumbers>
+  <boundaryConditionNodeNumbers>[97; 96; 95; 94; 93; 20; 19; 18; 17; 16; 15; 14; 13; 12; 11; 10; 9 ; 4 ; 3 ; 2 ; 1]
+</boundaryConditionNodeNumbers>
 
   <constrainedDegreesOfFreedom>[1;2;3]</constrainedDegreesOfFreedom>
 

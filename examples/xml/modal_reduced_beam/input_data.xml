@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <InputData xmlns="http://www.mbsim-env.de/MBSimFlexibleBody">
 
-  <numberOfNodes>9</numberOfNodes>
+  <numberOfNodes>21</numberOfNodes>
 
   <length unit="m">0.3</length>
 
-  <crossSectionArea unit="m^2">0.008*0.008</crossSectionArea>
+  <crossSectionArea unit="m^2">0.008*0.005</crossSectionArea>
 
   <momentOfInertia>
     <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-      <ele>1/12*0.008^3*0.008</ele>
-      <ele>1/12*0.008*0.008^3</ele>
+      <ele>1/12*0.008*0.005^3</ele>
+      <ele>1/12*0.005*0.008^3</ele>
       <ele>0</ele>
     </xmlVector>
   </momentOfInertia>
@@ -21,7 +21,7 @@
 
   <tension>false</tension>
 
-  <bendingAboutYAxis>false</bendingAboutYAxis>
+  <bendingAboutYAxis>true</bendingAboutYAxis>
 
   <bendingAboutZAxis>true</bendingAboutZAxis>
 
@@ -30,15 +30,18 @@
   <boundaryConditionNodeNumbers>
     <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
       <ele>1</ele>
-      <ele>9</ele>
+      <ele>21</ele>
     </xmlVector>
   </boundaryConditionNodeNumbers>
 
-  <constrainedDegreesOfFreedom>
+  <degreesOfFreedom>[1;2]</degreesOfFreedom>
+
+  <normalModeNumbers>
     <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
       <ele>1</ele>
+      <ele>2</ele>
     </xmlVector>
-  </constrainedDegreesOfFreedom>
+  </normalModeNumbers>
 
   <inputDataFileName>"input_data.h5"</inputDataFileName>
 
