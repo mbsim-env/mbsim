@@ -433,7 +433,7 @@ namespace MBSimGUI {
       for(size_t k=0; k<eledl.size(); k++) {
         int fi = fn[k]-1;
         FiniteElementType *typei = type[k];
-        int npe = typei->getNumberOf2DNodes();
+        int npe = typei->getNumberOf2DNodes(fi);
         vector<Vec3> P(npe,Vec3(NONINIT));
         double N_[npe];
         Vec2 dN_[npe];
@@ -446,10 +446,10 @@ namespace MBSimGUI {
           auto eleRow = ele[eSet].row(eInd);
           for(int i=0; i<npe; i++)
             P[i].init(0);
-          for(int ii=0; ii<typei->getNumberOf2DIntegrationPoints(); ii++) {
-            x = typei->get2DIntegrationPoint(ii)(0);
-            y = typei->get2DIntegrationPoint(ii)(1);
-            wijk = typei->get2DWeight(ii);
+          for(int ii=0; ii<typei->getNumberOf2DIntegrationPoints(fi); ii++) {
+            x = typei->get2DIntegrationPoint(fi,ii)(0);
+            y = typei->get2DIntegrationPoint(fi,ii)(1);
+            wijk = typei->get2DWeight(fi,ii);
             JA.init(0);
             r.init(0);
             for(int ll=0; ll<npe; ll++) {

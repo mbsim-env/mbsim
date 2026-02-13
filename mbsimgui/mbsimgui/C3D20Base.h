@@ -45,7 +45,7 @@ namespace MBSimGUI {
       }
 
       int getNumberOfNodes() const override { return 20; }
-      int getNumberOf2DNodes() const override { return 8; }
+      int getNumberOf2DNodes(int face) const override { return 8; }
       const fmatvec::Vec3& getNaturalCoordinates(int i) const override { return rN[i]; }
       int getNumberOfFaces() const override { return 6; }
       int getNodeNumberOnFace(int i, int j) const { return fI[i][j]; }

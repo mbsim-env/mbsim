@@ -37,35 +37,37 @@ namespace MBSimGUI {
       }
 
       double NA(int i, double x, double y) const override {
-        std::runtime_error("Distributed loads not yet implemented for C3D15.");
+        std::runtime_error("Distributed loads not yet implemented for C3D15."); return 0;
       }
 
       double dNAdq(int i, int j, double x, double y) const override {
-        std::runtime_error("Distributed loads not yet implemented for C3D15.");
+        std::runtime_error("Distributed loads not yet implemented for C3D15."); return 0;
       }
 
       int getNumberOfNodes() const override { return 15; }
-      int getNumberOf2DNodes() const override { std::runtime_error("Distributed loads not yet implemented for C3D15."); }
+      int getNumberOf2DNodes(int face) const override { return face<2?6:8; }
       int getNumberOfIntegrationPoints() const override { return 9; }
-      int getNumberOf2DIntegrationPoints() const override { std::runtime_error("Distributed loads not yet implemented for C3D15."); }
+      int getNumberOf2DIntegrationPoints(int face) const override { return face<2?3:4; }
       int getNumberOfExtrapolationPoints() const override { return 6; }
       const fmatvec::Vec3& getNaturalCoordinates(int i) const override { return rN[i]; }
       const fmatvec::Vec3& getIntegrationPoint(int i) const override { return rI[i]; }
-      const fmatvec::Vec2& get2DIntegrationPoint(int i) const override { std::runtime_error("Distributed loads not yet implemented for C3D15."); }
+      const fmatvec::Vec2& get2DIntegrationPoint(int face, int i) const override { return face<2?rAI[0][i]:rAI[1][i]; }
       double getWeight(int i) const override { return wI[i]; }
-      double get2DWeight(int i) const override { std::runtime_error("Distributed loads not yet implemented for C3D15."); }
+      double get2DWeight(int face, int i) const override { return face<2?wAI[0][i]:wAI[1][i]; }
       double getExtrapolationCoefficient(int i, int j) const override { return A[i][j]; }
       int getExtrapolationIndex(int i, int j) const override { return B[i][j]; }
-      int getNumberOfFaces() const override { std::runtime_error("Distributed loads not yet implemented for C3D10."); }
-      int getNodeNumberOnFace(int i, int j) const { std::runtime_error("Distributed loads not yet implemented for C3D10."); }
+      int getNumberOfFaces() const override { return 5; }
+      int getNodeNumberOnFace(int i, int j) const { return fI[i][j]; }
 
     private:
       fmatvec::Vec3 rN[15], rI[9];
-      double wI[9];
+      fmatvec::Vec2 rAI[2][4];
+      double wI[9], wAI[2][4];
       double A[9][6];
       int B[9][2];
       double (C3D15::*N_[15])(double x, double y, double z) const;
       double (C3D15::*dNdq_[15][3])(double x, double y, double z) const;
+      int fI[5][8];
 
       double N1(double x, double y, double z) const {
 	return 0.5*((1-x-y)*(2*(1-x-y)-1)*(1-z)-(1-x-y)*(1-z*z));
