@@ -126,7 +126,8 @@ namespace MBSimGUI {
             return getByPath<T>(path.mid(1), false); // ... we are at top and call getByPath again with the leading "/" removed (call relative to top)
         }
         else if (path.mid(0, 3) == "../") // if relative path to parent ...
-          return parent->getByPath<T>(path.mid(3), false); // ... call getByPath of the parent with the leading "../" removed
+          if(parent) // .. and a parent exists ...
+            return parent->getByPath<T>(path.mid(3), false); // ... call getByPath of the parent with the leading "../" removed
         else { // if relative path to a child ...
           // extract the first path and all other paths (rest)
           size_t idx=path.indexOf('/');
