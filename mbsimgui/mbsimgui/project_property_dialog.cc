@@ -40,6 +40,13 @@ namespace MBSimGUI {
     for(auto &x : Evaluator::evaluators)
       list.emplace_back(x.c_str());
     evalSelect = new ExtWidget("Evaluator",new TextChoiceWidget(list,project->getDefaultEvaluator()),true,false,PV%"evaluator");
+
+    // changing the evaluator is quite tricky:
+    // - if the model already contains evaluator code this will fail with a changed evaluator
+    // - switching the evaluator is complicated (or partially impossible) regarding DLL/so loading inside the same process
+    // -> do not allow to change the evaluator in mbsimgui
+    evalSelect->setDisabled(true);
+
     addToTab("General",evalSelect);
     addTab("Comment");
     comment = new CommentWidget;
@@ -59,10 +66,13 @@ namespace MBSimGUI {
     comment->writeXMLFile(item->getXMLElement(),ref);
     item->updateName();
     evalSelect->writeXMLFile(item->getXMLElement(),item->getXMLElement()->getFirstElementChild());
+
+    // we do not need to check here for changed evaluator since we disallow changing the evaluator in the Project
+    // property dialog, see above.
     if(evalSelect->isActive())
-      static_cast<Project*>(item)->setEvaluator(evalSelect->getWidget<TextChoiceWidget>()->getText().toStdString());
+      static_cast<Project*>(item)->setEvaluator(Eval::createEvaluator(evalSelect->getWidget<TextChoiceWidget>()->getText().toStdString()));
     else
-      static_cast<Project*>(item)->setEvaluator(Evaluator::defaultEvaluator);
+      static_cast<Project*>(item)->setEvaluator(Eval::createEvaluator(Evaluator::defaultEvaluator));
     return nullptr;
   }
 

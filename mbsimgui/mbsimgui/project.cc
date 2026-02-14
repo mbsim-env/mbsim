@@ -78,11 +78,11 @@ namespace MBSimGUI {
     EmbedItemData::create();
     DOMElement *ele = element->getFirstElementChild();
     if(E(ele)->getTagName()==PV%"evaluator") {
-      setEvaluator(X()%E(ele)->getFirstTextChild()->getData());
+      setEvaluator(Eval::createEvaluator(X()%E(ele)->getFirstTextChild()->getData()));
       ele = ele->getNextElementSibling();
     }
     else
-      setEvaluator(Evaluator::defaultEvaluator);
+      setEvaluator(Eval::createEvaluator(Evaluator::defaultEvaluator));
     setDynamicSystemSolver(Embed<DynamicSystemSolver>::create(ele,this));
     dss->create();
     ele = ele->getNextElementSibling();
@@ -124,9 +124,9 @@ namespace MBSimGUI {
     return getEmbedXMLElement();
   }
 
-  void Project::setEvaluator(const std::string &evaluator_) {
-    evaluator = evaluator_;
-    mw->eval = MBXMLUtils::Eval::createEvaluator(evaluator);
+  void Project::setEvaluator(const std::shared_ptr<Eval> &eval) {
+    evaluator = eval->getName();
+    mw->eval = eval;
     auto code=Evaluator::getInitCode(evaluator);
     if(!code.second.empty())
       mw->eval->addImport(code.second, nullptr, code.first);

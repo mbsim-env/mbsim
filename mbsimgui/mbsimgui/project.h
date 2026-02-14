@@ -42,7 +42,7 @@ namespace MBSimGUI {
     public:
       Project();
       ~Project() override;
-      virtual void removeXMLElements();
+      void removeXMLElements() override;
       virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
       void create() override;
       ProjectPropertyDialog* createPropertyDialog() override { return new ProjectPropertyDialog(this); }
@@ -54,7 +54,7 @@ namespace MBSimGUI {
       Solver* getSolver() const { return solver; }
       xercesc::DOMElement* createEmbedXMLElement() override;
       void maybeRemoveEmbedXMLElement() override;
-      void setEvaluator(const std::string &evaluator_);
+      void setEvaluator(const std::shared_ptr<MBXMLUtils::Eval> &eval);
       const std::string& getEvaluator() { return evaluator; }
       void setDefaultEvaluator(int index) { defaultEvaluator = index; }
       int getDefaultEvaluator() const { return defaultEvaluator; }

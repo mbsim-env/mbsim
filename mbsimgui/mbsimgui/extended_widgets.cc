@@ -97,10 +97,12 @@ namespace MBSimGUI {
       expandableWidget->setToolTip("Click to define or remove this property");
       widget->setVisible(active);
       connect(mouseEvent,&MouseEvent::mouseButtonPressed,this,[=]{
-          setActive(not checked);
-          Q_EMIT widgetChanged();
-          Q_EMIT clicked(checked);
-          });
+        if(!isEnabled()) // if the element is disable do nothing
+          return;
+        setActive(not checked);
+        Q_EMIT widgetChanged();
+        Q_EMIT clicked(checked);
+      });
     }
     else {
       auto *hboxw = new QWidget;

@@ -1065,6 +1065,26 @@ namespace MBSimGUI {
   }
 
   void MainWindow::newProject() {
+    QSettings settings;
+    shared_ptr<Eval> eval;
+    auto defaultEvalName = Evaluator::evaluators[settings.value("mainwindow/options/defaultevaluator", 0).toInt()];
+    try {
+      eval = Eval::createEvaluator(defaultEvalName);
+    }
+    catch(exception &ex) {
+      QMessageBox::critical(this, "New project", (
+        "MBSimGUI needs to be restarted to create a new project with the 'Default evaluator' '"+defaultEvalName+"'.\n"
+        "\n"+
+        "(the 'Default evaluator' can be changed in 'File/Settings/Default evaluator')\n"+
+        "\n"+
+        "See below why this restart is needed:\n"+
+        "\n"+
+        "\n"+
+        ex.what()
+      ).c_str());
+      return;
+    }
+
     if(maybeSave()) {
       undos.clear();
       actionUndo->setDisabled(true);
@@ -1098,8 +1118,7 @@ namespace MBSimGUI {
       doc = mbxmlparserNoVal->createDocument();
 
       project = new Project;
-      QSettings settings;
-      project->setEvaluator(Evaluator::evaluators[settings.value("mainwindow/options/defaultevaluator", 0).toInt()]);
+      project->setEvaluator(eval);
       project->createXMLElement(doc.get());
       E(doc->getDocumentElement())->setOriginalFilename(NO_FILENANE_PATH+NO_FILENAME);
 
@@ -1173,6 +1192,54 @@ namespace MBSimGUI {
         return;
       }
 
+      auto newProject = Embed<Project>::create(doc->getDocumentElement(),nullptr);
+      
+      // check if the new evaluator can be loaded (if it works it creates a evaluator which is deleted again
+      // but this is OK since the expensive part is evaluator initialization not creation and initialization will happen anyway)
+      DOMElement *ele = newProject->getXMLElement()->getFirstElementChild();
+      string newEvalName;
+      if(E(ele)->getTagName()==PV%"evaluator")
+        newEvalName = X()%E(ele)->getFirstTextChild()->getData();
+      else
+        newEvalName = Evaluator::defaultEvaluator;
+      try {
+        Eval::createEvaluator(newEvalName); // just a dummy call to detect exceptions in createEvaluator early
+      }
+      catch(exception &ex) {
+        delete newProject;
+        QSettings settings;
+        auto defaultEvalName = Evaluator::evaluators[settings.value("mainwindow/options/defaultevaluator", 0).toInt()];
+        if(defaultEvalName == newEvalName) {
+          QMessageBox::critical(this, "Load project", (
+            "MBSimGUI needs to be restarted to load this project which uses the evaluator '" + newEvalName + "'.\n"
+            "Either, start MBSimGUI directly with this project, or start a empty MBSimGUI and then load this project again.\n"
+            "\n"
+            "See below why this restart is needed:\n"
+            "\n"
+            "\n"+
+            ex.what()
+          ).c_str(), QMessageBox::Ok);
+        }
+        else {
+          auto button = QMessageBox::critical(this, "Load project", (
+            "MBSimGUI needs to be restarted to load this project which uses the evaluator '" + newEvalName + "'.\n"
+            "Either, start MBSimGUI directly with this project, or switch the 'Default evaluator' to '"+newEvalName+
+            "' now and start a empty MBSimGUI and then load this project again.\n"
+            "Click the 'Apply' button to switch the 'Default evaluator' now to '"+newEvalName+"'.\n"
+            "\n"
+            "See below why this restart is needed:\n"
+            "\n"
+            "\n"+
+            ex.what()
+          ).c_str(), QMessageBox::Ok | QMessageBox::Apply);
+          if(button == QMessageBox::Apply) {
+            auto idx = std::distance(Evaluator::evaluators.begin(), std::find(Evaluator::evaluators.begin(), Evaluator::evaluators.end(), newEvalName));
+            settings.setValue("mainwindow/options/defaultevaluator", static_cast<int>(idx));
+          }
+        }
+        return;
+      }
+
       auto *pmodel = static_cast<ParameterTreeModel*>(parameterView->model());
       pmodel->removeRows(pmodel->index(0,0).row(), pmodel->rowCount(QModelIndex()), QModelIndex());
 
@@ -1188,7 +1255,7 @@ namespace MBSimGUI {
       idMap.clear();
       IDcounter = 0;
 
-      project=Embed<Project>::create(doc->getDocumentElement(),nullptr);
+      project = newProject;
       project->create();
 
       model->createProjectItem(project);
