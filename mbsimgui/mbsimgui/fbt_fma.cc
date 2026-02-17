@@ -36,6 +36,10 @@ namespace MBSimGUI {
     for(size_t i=0; i<nN; i++)
       Phi[i] = Phis[i]*U;
 
+    int nloads = page<LoadsPage>(PageLoads)->cloads->getWidget<ListWidget>()->getSize() + page<LoadsPage>(PageLoads)->dloads->getWidget<ListWidget>()->getSize();
+    for(int i=0; i<nloads; i++)
+      Phiif[i] <<= Phiif[i]*U;
+
     createSingleInterfaceNodes();
 
     if(Psis.size()) {

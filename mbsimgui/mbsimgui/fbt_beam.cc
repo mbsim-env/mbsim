@@ -21,6 +21,8 @@
 #include "wizards.h"
 #include "variable_widgets.h"
 #include "extended_widgets.h"
+#include "special_widgets.h"
+#include <QMessageBox>
 
 using namespace std;
 using namespace fmatvec;
@@ -81,6 +83,11 @@ namespace MBSimGUI {
     if(benz)
       gar = nee++;
     int ng = nN*nen;
+
+    if(nN<2)
+      throw runtime_error("Number of nodes must be greater than one.");
+    if(not nen)
+      throw runtime_error("No load case selected.");
 
     vector<Mat3xV> rPdme(3,Mat3xV(nee));
     vector<vector<SqrMatV>> PPdme(3,vector<SqrMatV>(3,SqrMatV(nee)));
@@ -411,6 +418,79 @@ namespace MBSimGUI {
       }
     }
 
+    auto *listcl = page<LoadsPage>(PageLoads)->cloads->getWidget<ListWidget>();
+    if(listcl->getSize()) {
+      vector<vector<int>> nodescl(listcl->getSize());
+      vector<int> snn(listcl->getSize());
+      for(int i=0; i<listcl->getSize(); i++) {
+        nodescl[i] = listcl->getWidget<ConcentratedLoadsWidget>(i)->getNodes();
+        snn[i] = listcl->getWidget<ConcentratedLoadsWidget>(i)->getSingleNodeNumber();
+      }
+      Vec3 rdn(NONINIT);
+      Mat3xV Fdn(ng,NONINIT);
+      for(size_t k=0; k<nodescl.size(); k++) {
+        rdn.init(0);
+        Fdn.init(0);
+        for(int ee=0; ee<nodescl[k].size(); ee++) {
+          rdn(0) += ee*D;
+          if(ten)
+            Fdn(x,ee*nee/2+ul) += 1;
+          if(benz)
+            Fdn(y,ee*nee/2+vl) += 1;
+          if(beny)
+            Fdn(z,ee*nee/2+wl) += 1;
+        }
+        singleNodeNumbers.push_back(snn[k]>-1?snn[k]:nodeNumbers.size()+1+singleNodeNumbers.size());
+        rif.push_back(rdn/double(nodescl[k].size()));
+        Phiif.push_back(Fdn/double(nodescl[k].size()));
+        Psiif.push_back(Mat3xV(ng));
+      }
+    }
+
+    auto *listdl = page<LoadsPage>(PageLoads)->dloads->getWidget<ListWidget>();
+    if(listdl->getSize()) {
+      vector<vector<int>> ele(listdl->getSize());
+      vector<int> snn(listcl->getSize());
+      for(int i=0; i<listdl->getSize(); i++) {
+        ele[i] = listdl->getWidget<DistributedLoadsWidget>(i)->getElements();
+        snn[i] = listdl->getWidget<DistributedLoadsWidget>(i)->getSingleNodeNumber();
+      }
+      Mat3xV pdle(nee);
+      if(ten) {
+        pdle(x,ul) = D/2;
+        pdle(x,ur) = D/2;
+      }
+      if(benz) {
+        pdle(y,vl) = D/2;
+        pdle(y,gal) = pow(D,2)/12;
+        pdle(y,vr) = D/2;
+        pdle(y,gar) = -pow(D,2)/12;
+      }
+      if(beny) {
+        pdle(z,wl) = D/2;
+        pdle(z,bel) = -pow(D,2)/12;
+        pdle(z,wr) = D/2;
+        pdle(z,ber) = pow(D,2)/12;
+      }
+
+      Vec3 rdl;
+      double ldl = 0;
+      Mat3xV pdl(ng);
+      for(size_t i=0; i<ele.size(); i++) {
+        for(size_t j=0; j<ele[i].size(); j++) {
+          int k = ele[i][j]-1;
+          RangeV J(k*nen,k*nen+nee-1);
+          pdl.add(I,J,pdle);
+          rdl(0) += pow(D,2)*(0.5+k);
+          ldl += D;
+        }
+        singleNodeNumbers.push_back(snn[i]>-1?snn[i]:nodeNumbers.size()+1+singleNodeNumbers.size());
+        rif.push_back(rdl/ldl);
+        Phiif.push_back(pdl/ldl);
+        Psiif.push_back(Mat3xV(ng));
+      }
+    }
+
     r.resize(nN);
     vector<vector<map<int,double>>> Phim(nN,vector<map<int,double>>(3));
     vector<vector<map<int,double>>> Psim(nN,vector<map<int,double>>(3));
@@ -471,7 +551,6 @@ namespace MBSimGUI {
     links.resize(nN);
     for(int i=0; i<nN-1; i++)
       links[i][i+1] = 1;
-
   }
 
 }

@@ -624,6 +624,8 @@ namespace MBSim {
 
       void plot() override;
 
+      void postprocessing() override;
+
       void addEnvironment(Environment* env);
 
       /** Get the Environment of type Env.
@@ -967,7 +969,7 @@ namespace MBSim {
       std::vector<std::unique_ptr<Environment>> environments;
       MBSimEnvironment *mbsimEnvironment = nullptr;
 
-      bool firstPlot { true };
+      size_t plottedRows { 0 };
 
       std::unique_ptr<MultiDimNewtonMethod> nonlinearConstraintNewtonSolver;
       std::unique_ptr<ConstraintResiduum> constraintResiduum;

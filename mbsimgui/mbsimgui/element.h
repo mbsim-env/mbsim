@@ -43,6 +43,11 @@ namespace MBSimGUI {
       std::string ID;
       bool enabled{true};
       void emitDataChangedOnChildren();
+
+      // This function cyn be called by Unknown* class in its processIDAndHref member function.
+      // It will heuristically add OPENMBV_ID's to XML elements which looks like OpenMBV specific elements.
+      // This heuristic will not work if the XML element names does not follow a standard convention but it will not harm.
+      void processIDAndHrefOfUnknownElements(xercesc::DOMElement *element);
     public:
       Element();
       virtual QString getXMLName();
@@ -120,8 +125,12 @@ namespace MBSimGUI {
           else // .. and no parent exits ...
             return getByPath<T>(path.mid(1), false); // ... we are at top and call getByPath again with the leading "/" removed (call relative to top)
         }
-        else if (path.mid(0, 3) == "../") // if relative path to parent ...
-          return parent->getByPath<T>(path.mid(3), false); // ... call getByPath of the parent with the leading "../" removed
+        else if(path.mid(0, 3) == "../") { // if relative path to parent ...
+          if(parent) // .. and a parent exists ...
+            return parent->getByPath<T>(path.mid(3), false); // ... call getByPath of the parent with the leading "../" removed
+          else // .. and no parent exits ...
+            return nullptr;
+        }
         else { // if relative path to a child ...
           // extract the first path and all other paths (rest)
           size_t idx=path.indexOf('/');

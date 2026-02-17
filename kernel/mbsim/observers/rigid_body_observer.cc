@@ -50,7 +50,7 @@ namespace MBSim {
       if(not saved_body.empty())
         setRigidBody(getByPath<RigidBody>(saved_body));
       if(not body)
-        throwError("Rigid body is not given!");
+        throwError("(RigidBodyObserver::init()): Rigid body is not given!");
       if(not saved_frameOfReference.empty())
         setFrameOfReference(getByPath<Frame>(saved_frameOfReference));
       if(not frameOfReference)
@@ -224,7 +224,7 @@ namespace MBSim {
     }
     if(plotFeature[openMBV]) {
       if(FWeight) {
-        array<double,8> data;
+        array<OpenMBV::Float,8> data;
         data[0] = getTime();
         Vec3 G = body->getMass()*ds->getMBSimEnvironment()->getAccelerationOfGravity();
         data[1] = rOS(0);
@@ -239,7 +239,7 @@ namespace MBSim {
       if(ombvForce) {
         int off = ombvForce->getSideOfInteraction()==0?1:0;
         for(size_t i=0; i<FArrow.size(); i++) {
-          array<double,8> data;
+          array<OpenMBV::Float,8> data;
           data[0] = getTime();
           Vec3 toPoint=body->getJoint()->getPointOfApplication(off+i)->evalPosition();
           data[1] = toPoint(0);
@@ -256,7 +256,7 @@ namespace MBSim {
       if(ombvMoment) {
         int off = ombvMoment->getSideOfInteraction()==0?1:0;
         for(size_t i=0; i<MArrow.size(); i++) {
-          array<double,8> data;
+          array<OpenMBV::Float,8> data;
           data[0] = getTime();
           Vec3 toPoint=body->getJoint()->getPointOfApplication(off+i)->evalPosition();
           data[1] = toPoint(0);
@@ -271,7 +271,7 @@ namespace MBSim {
         }
       }
       if(openMBVAxisOfRotation) {
-        array<double,8> data;
+        array<OpenMBV::Float,8> data;
         data[0] = getTime();
         data[1] = r(0);
         data[2] = r(1);
@@ -283,7 +283,7 @@ namespace MBSim {
         openMBVAxisOfRotation->append(data);
       }
       if(openMBVMomentum) {
-        array<double,8> data;
+        array<OpenMBV::Float,8> data;
         data[0] = getTime();
         data[1] = rOS(0);
         data[2] = rOS(1);
@@ -295,7 +295,7 @@ namespace MBSim {
         openMBVMomentum->append(data);
       }
       if(openMBVAngularMomentum) {
-        array<double,8> data;
+        array<OpenMBV::Float,8> data;
         data[0] = getTime();
         data[1] = rOR(0);
         data[2] = rOR(1);
@@ -307,7 +307,7 @@ namespace MBSim {
         openMBVAngularMomentum->append(data);
       }
       if(openMBVDerivativeOfMomentum) {
-        array<double,8> data;
+        array<OpenMBV::Float,8> data;
         data[0] = getTime();
         data[1] = rOS(0);
         data[2] = rOS(1);
@@ -319,7 +319,7 @@ namespace MBSim {
         openMBVDerivativeOfMomentum->append(data);
       }
       if(openMBVDerivativeOfAngularMomentum) {
-        array<double,8> data;
+        array<OpenMBV::Float,8> data;
         data[0] = getTime();
         data[1] = rOR(0);
         data[2] = rOR(1);

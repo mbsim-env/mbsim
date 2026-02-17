@@ -39,7 +39,7 @@ namespace MBSimControl {
       if(not saved_signal.empty())
         setSignal(getByPath<Signal>(saved_signal));
       if(not signal)
-        throwError("Signal is not given!");
+        throwError("(SignalSensor::init): signal is not given!");
     }
     Sensor::init(stage, config);
   }

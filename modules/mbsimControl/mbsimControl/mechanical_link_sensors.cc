@@ -33,7 +33,7 @@ namespace MBSimControl {
     LinkSensor::init(stage, config);
     if(stage==resolveStringRef) {
       if(not dynamic_cast<MechanicalLink*>(link))
-        throwError("Link is not a mechanichal link!");
+        throwError("(MechanicalLinkSensor::init): link is not a mechanichal link!");
     }
   }
 

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<Parameter xmlns="http://www.mbsim-env.de/MBXMLUtils">
+  <stringParameter name="name">
+    <!-- the element name -->
+    "grass"
+  </stringParameter>
+  <vectorParameter name="size">
+    <!-- the size of the grass in the local xy-plane. [xFrom, xTo, yFrom, yTo] -->
+    [-6, 8, -5, 5]
+  </vectorParameter>
+  <vectorParameter name="gridSize">
+    <!-- the size of the grid in the local xy-plane.
+         If negative no grid is used in this direction. -->
+    [5,2.5]
+  </vectorParameter>
+  <scalarParameter name="scale">
+    <!-- scaling of the grass patches -->
+    1
+  </scalarParameter>
+  <vectorParameter name="brightness">
+    <!-- the color brightness of the grid. -->
+    [1,0.8]
+  </vectorParameter>
+  <vectorParameter name="position">
+    <!-- the position of the local zero point -->
+    [0, 0, -1]
+  </vectorParameter>
+  <vectorParameter name="rotation">
+    <!-- the rotation of the local xy-plane of the grass (given as cardan angles) -->
+    [0, 0, 0]
+  </vectorParameter>
+  <vectorParameter name="transparency">
+    <!-- the transparency of grass (when view is from z+) and the ground (when the view is from z-) -->
+    [0, 0.5]
+  </vectorParameter>
+</Parameter>

@@ -14,40 +14,18 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: markus.ms.schneider@gmail.com
+ * Contact: martin.o.foerg@gmail.com
  */
 
 #include <config.h>
-#include "mbsimControl/signal_.h"
-#include "mbsimControl/extern_signal_source.h"
-#include "mbsim/utils/utils.h"
-#include "mbsim/dynamic_system.h"
+#include "mbsim/functions/kinematics/rotation_about_axes_zy.h"
 
 using namespace std;
+using namespace MBXMLUtils;
 using namespace fmatvec;
-using namespace MBSim;
 
-namespace MBSimControl {
+namespace MBSim {
 
-  const PlotFeatureEnum signal;
-
-  MBSIM_OBJECTFACTORY_REGISTERENUM(MBSim::PlotFeatureEnum, MBSIMCONTROL, signal)
-
-  void Signal::init(InitStage stage, const InitConfigSet &config) {
-    if(stage==plotting) {
-      if(plotFeature[plotRecursive] and plotFeature[signal])
-	addToPlot("signal",getSignalSize());
-    }
-    else if(stage==unknownStage) {
-      s.resize(getSignalSize(),NONINIT);
-    }
-    Link::init(stage, config);
-  }
-
-  void Signal::plot() {
-    if(plotFeature[plotRecursive] and plotFeature[signal])
-      Element::plot(evalSignal());
-    Link::plot();
-  }
+  MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, RotationAboutAxesZY<VecV>)
 
 }

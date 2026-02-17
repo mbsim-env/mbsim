@@ -13,7 +13,7 @@
 
   <elements>"elements.asc"</elements>
 
-  <boundaryNodeNumbers> [181, 182, 183, 184, 185, 186, 187, 188, 189, 601, 602, 603, 604, 609, 610, 611 ,612, 616, 617, 619, 620]'</boundaryNodeNumbers>
+  <boundaryConditionNodeNumbers> [181, 182, 183, 184, 185, 186, 187, 188, 189, 601, 602, 603, 604, 609, 610, 611 ,612, 616, 617, 619, 620]'</boundaryConditionNodeNumbers>
 
   <constrainedDegreesOfFreedom>
     <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">

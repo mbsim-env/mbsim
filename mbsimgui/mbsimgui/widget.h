@@ -100,7 +100,7 @@ namespace MBSimGUI {
       virtual Widget* getWidgetVirtual() const { return nullptr; }
       virtual Widget* getWidgetVirtual(int i) const { return nullptr; }
 
-    signals:
+    Q_SIGNALS:
       void widgetChanged();
   };
 

@@ -35,21 +35,21 @@ namespace MBSimControl {
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"contact");
     contactString=E(e)->getAttribute("ref");
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"singleContactNumber");
-    if (e) setSingleContactNumber(E(e)->getText<Index>()-1);
+    if(e) setSingleContactNumber(E(e)->getText<Index>()-1);
   }
 
   void ContactSensor::init(InitStage stage, const InitConfigSet &config) {
-    if (stage==resolveStringRef) {
-      if (not contactString.empty())
+    if(stage==resolveStringRef) {
+      if(not contactString.empty())
         setContact(getByPath<Contact>(contactString));
       if(not contact)
-        throwError("Contact is not given!");
+        throwError("(ContactSensor::init): contact is not given!");
       Sensor::init(stage, config);
     }
-    else if (stage==unknownStage) {
+    else if(stage==unknownStage) {
       Sensor::init(stage, config);
       if(i<0 or i>=int(static_cast<Contact*>(contact)->getSubcontacts().size()))
-        throwError("Single contact number out of range!");
+        throwError("(ContactSensor::init): single contact number out of range!");
     }
     else
       Sensor::init(stage, config);

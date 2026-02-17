@@ -186,7 +186,8 @@ namespace MBSim {
       enum Type {
         tube,
         scaledTube,
-        polyline
+        polyline,
+        tubeShader,
       };
       enum ColorRepresentation {
         none=0,
@@ -197,7 +198,7 @@ namespace MBSim {
       };
     protected:
       double r, cr, sf, n, l;
-      OpenMBVCoilSpring::Type type;
+      OpenMBVCoilSpring::Type type { tube };
     public:
       OpenMBVCoilSpring(double r_=1, double cr_=-1, double sf_=1, double n_=3, double l_=-1, OpenMBVCoilSpring::Type type_=OpenMBVCoilSpring::tube, unsigned int cR=0, double minCol=0, double maxCol=1, const fmatvec::Vec3 &dc=fmatvec::Vec3(std::vector<double>{-1,1,1}), double tp=0, double ps=0, double lw=0);
       void initializeUsingXML(xercesc::DOMElement *element);

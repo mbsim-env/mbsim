@@ -233,7 +233,7 @@ namespace MBSimGUI {
 
   DirectionalSpringDamperPropertyDialog::DirectionalSpringDamperPropertyDialog(Element *springDamper) : FloatingFrameLinkPropertyDialog(springDamper) {
 
-    forceDirection = new ExtWidget("Force direction",new ChoiceWidget(new VecWidgetFactory(3),QBoxLayout::RightToLeft,5),true,false,MBSIM%"forceDirection");
+    forceDirection = new ExtWidget("Force direction",new ChoiceWidget(new VecWidgetFactory(3),QBoxLayout::RightToLeft,5),false,false,MBSIM%"forceDirection");
     addToTab("Kinetics",forceDirection);
 
     forceFunction = new ExtWidget("Force function",new ChoiceWidget(new SpringDamperWidgetFactory(springDamper,false,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"forceFunction");
@@ -266,10 +266,10 @@ namespace MBSimGUI {
 
   IsotropicRotationalSpringDamperPropertyDialog::IsotropicRotationalSpringDamperPropertyDialog(Element *springDamper) : FixedFrameLinkPropertyDialog(springDamper) {
 
-    elasticMomentFunction = new ExtWidget("Elastic moment function",new ChoiceWidget(new Function1ArgWidgetFactory(springDamper,"phi",1,FunctionWidget::varVec,1,FunctionWidget::fixedVec,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"elasticMomentFunction");
+    elasticMomentFunction = new ExtWidget("Elastic moment function",new ChoiceWidget(new Function1ArgWidgetFactory(springDamper,"phi",1,FunctionWidget::scalar,1,FunctionWidget::scalar,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"elasticMomentFunction");
     addToTab("Kinetics", elasticMomentFunction);
 
-    dissipativeMomentFunction = new ExtWidget("Dissipative moment function",new ChoiceWidget(new Function1ArgWidgetFactory(springDamper,"phid",1,FunctionWidget::varVec,1,FunctionWidget::fixedVec,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"dissipativeMomentFunction");
+    dissipativeMomentFunction = new ExtWidget("Dissipative moment function",new ChoiceWidget(new Function1ArgWidgetFactory(springDamper,"phid",1,FunctionWidget::scalar,1,FunctionWidget::scalar,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"dissipativeMomentFunction");
     addToTab("Kinetics", dissipativeMomentFunction);
   }
 

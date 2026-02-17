@@ -37,6 +37,7 @@ namespace MBSimGUI {
     public:
       UnknownObserver();
       PropertyDialog* createPropertyDialog() override { return new UnknownItemPropertyDialog(this); }
+      xercesc::DOMElement* processIDAndHref(xercesc::DOMElement *element) override;
   };
 
   class MechanicalLinkObserver : public Observer {

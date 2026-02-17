@@ -86,7 +86,7 @@ namespace MBSim {
 
         WrOFromPoint = C.evalPosition();
         WrOToPoint   = frame[1]->evalPosition();
-        array<double,8> data;
+        array<OpenMBV::Float,8> data;
         data[0] = getTime();
         data[1] = WrOFromPoint(0);
         data[2] = WrOFromPoint(1);

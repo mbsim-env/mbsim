@@ -20,6 +20,7 @@ using namespace std;
 using namespace MBXMLUtils;
 using namespace xercesc;
 using namespace PythonCpp;
+using namespace fmatvec;
 
 namespace {
 
@@ -116,14 +117,14 @@ set<boost::filesystem::path> MBSimXML::loadModules(const set<boost::filesystem::
   for(auto stage: {SearchPath, Loading})
     for(auto &dir: allSearchDirs) {
       if(stage==SearchPath)
-        fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<"Searching for MBSimXML plugins in directory: "<<dir<<endl;
+        Atom::msgStatic(Atom::Info)<<"Searching for MBSimXML plugins in directory: "<<dir<<endl;
       for(boost::filesystem::directory_iterator it=boost::filesystem::directory_iterator(dir);
           it!=boost::filesystem::directory_iterator(); it++) {
         string path=it->path().string();
         if(path.length()<=string(".mbsimmodule.xml").length()) continue;
         if(path.substr(path.length()-string(".mbsimmodule.xml").length())!=".mbsimmodule.xml") continue;
         if(stage==SearchPath)
-          fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<" - load library for "<<it->path().filename().string()<<endl;
+          Atom::msgStatic(Atom::Info)<<" - load library for "<<it->path().filename().string()<<endl;
         std::shared_ptr<DOMDocument> doc=parser->parse(*it, nullptr, false);
         if(E(doc->getDocumentElement())->getTagName()!=MBSIMMODULE%"MBSimModule")
           throw runtime_error("The root element MBSim module XML file must be {"+MBSIMMODULE.getNamespaceURI()+"}MBSimModule");
@@ -239,7 +240,7 @@ int MBSimXML::preInit(list<string> args, unique_ptr<DynamicSystemSolver>& dss, u
     return x.size()>0 ? x[0]!='-' : false;
   });
   shared_ptr<DOMParser> parser=DOMParser::create();
-  fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<"Load and parse file "<<*fileIt<<": XML input file."<<endl;
+  Atom::msgStatic(Atom::Info)<<"Load and parse file "<<*fileIt<<": XML input file."<<endl;
   shared_ptr<DOMDocument> doc=parser->parse(*fileIt, nullptr, false);
   DOMElement *e=doc->getDocumentElement();
 
@@ -255,29 +256,23 @@ int MBSimXML::preInit(list<string> args, unique_ptr<DynamicSystemSolver>& dss, u
 
   // create object for DynamicSystemSolver and check correct type
   e=E(e)->getFirstElementChildNamed(MBSIM%"DynamicSystemSolver");
-  fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<"Instantiate DynamicSystemSolver"<<endl;
+  Atom::msgStatic(Atom::Info)<<"Instantiate DynamicSystemSolver"<<endl;
   dss.reset(ObjectFactory::createAndInit<DynamicSystemSolver>(e));
 
   // create object for Solver and check correct type
-  fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<"Instantiate Solver"<<endl;
+  Atom::msgStatic(Atom::Info)<<"Instantiate Solver"<<endl;
   solver.reset(ObjectFactory::createAndInit<Solver>(e->getNextElementSibling()));
 
   return 0;
 }
 
-void MBSimXML::initDynamicSystemSolver(const list<string> &args, const unique_ptr<DynamicSystemSolver>& dss) {
-  if(find(args.begin(), args.end(), "--donotintegrate")!=args.end())
-    dss->setTruncateSimulationFiles(false);
-
-  dss->initialize();
-}
-
-void MBSimXML::plotInitialState(const unique_ptr<Solver>& solver, const unique_ptr<DynamicSystemSolver>& dss) {
+void MBSimXML::plotInitialState(const unique_ptr<Solver>& solver) {
+  auto dss=solver->getSystem();
   if(solver->getInitialState().size()) {
     if(solver->getInitialState().size() != dss->getzSize()+dss->getisSize())
       throw runtime_error("Size of z0 does not match, must be " + to_string(dss->getzSize()+dss->getisSize()));
-    dss->setState(solver->getInitialState()(fmatvec::RangeV(0,dss->getzSize()-1)));
-    dss->setInternalState(solver->getInitialState()(fmatvec::RangeV(dss->getzSize(),solver->getInitialState().size()-1)));
+    dss->setState(solver->getInitialState()(RangeV(0,dss->getzSize()-1)));
+    dss->setInternalState(solver->getInitialState()(RangeV(dss->getzSize(),solver->getInitialState().size()-1)));
   }
   else
     dss->evalz0();
@@ -289,37 +284,42 @@ void MBSimXML::plotInitialState(const unique_ptr<Solver>& solver, const unique_p
 }
 
 void MBSimXML::main(const unique_ptr<Solver>& solver, const unique_ptr<DynamicSystemSolver>& dss, bool doNotIntegrate, bool stopAfterFirstStep, bool savestatevector, bool savestatetable) {
-  if(MBXMLUtils::DOMEvalException::isHTMLOutputEnabled())
-    fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<flush<<skipws<<"<a name=\"MBSIM_SOLVER_START\"></a>"<<flush<<noskipws;
-  if(savestatetable)
-    dss->writeStateTable("statetable.asc");
-  if(doNotIntegrate==false) {
-    if(stopAfterFirstStep)
-      MBSimXML::plotInitialState(solver, dss);
-    else {
-      auto start=std::chrono::high_resolution_clock::now();
-      solver->setSystem(dss.get());
-      {
-        // run solver->execute and then run solver-postprocessing even if execute failded
-        bool executePassed=false;
-        try {
-          solver->execute();
-          executePassed=true;
-        }
-        catch(...) {
-          auto ex = current_exception();
-          try {
-            solver->postprocessing();
-          }
-          catch(...) {}
-          rethrow_exception(ex);
-        }
-        if(executePassed)
-          solver->postprocessing();
+  bool executePassed=false;
+  try {
+    if(MBXMLUtils::DOMEvalException::isHTMLOutputEnabled())
+      Atom::msgStatic(Atom::Info)<<disableEscaping<<"<a name=\"MBSIM_SOLVER_START\"></a>"<<enableEscaping;
+    if(savestatetable)
+      dss->writeStateTable("statetable.asc");
+    solver->setSystem(dss.get());
+    if(doNotIntegrate==false) {
+      if(stopAfterFirstStep)
+        MBSimXML::plotInitialState(solver);
+      else {
+        auto start=std::chrono::high_resolution_clock::now();
+        solver->execute();
+        auto end=std::chrono::high_resolution_clock::now();
+        Atom::msgStatic(Atom::Info)<<"Integration CPU times: "<<std::chrono::duration<double>(end-start).count()<<endl;
       }
-      auto end=std::chrono::high_resolution_clock::now();
-      fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<"Integration CPU times: "<<std::chrono::duration<double>(end-start).count()<<endl;
     }
+    executePassed=true;
+  }
+  catch(...) { // if execution failed run post-processing but skip errors and then throw the original error
+    auto ex = current_exception();
+    try {
+      solver->postprocessing();
+      if(savestatevector)
+        dss->writez("statevector.asc", false);
+    }
+    catch(...) {}
+    rethrow_exception(ex);
+  }
+  if(executePassed) { // if execution passed run post-processing and throw on errors
+    solver->postprocessing();
+    if(savestatevector)
+      dss->writez("statevector.asc", false);
+  }
+
+  if(doNotIntegrate==false) {
     // Remove the following block if --lastframe works in OpenMBV.
     // If this is removed openmbv should be opened with the --lastframe option.
     // Currently we use this block if --stopafterfirststep is given to reload the XML/H5 file in OpenMBV again
@@ -332,10 +332,8 @@ void MBSimXML::main(const unique_ptr<Solver>& solver, const unique_ptr<DynamicSy
       boost::myfilesystem::last_write_time((dss->getName()+".ombvh5" ).c_str(), time);
     }
   }
-  if(savestatevector)
-    dss->writez("statevector.asc", false);
   if(MBXMLUtils::DOMEvalException::isHTMLOutputEnabled())
-    fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<flush<<skipws<<"<a name=\"MBSIM_SOLVER_END\"></a>"<<flush<<noskipws;
+    Atom::msgStatic(Atom::Info)<<disableEscaping<<"<a name=\"MBSIM_SOLVER_END\"></a>"<<enableEscaping;
 }
 
 }

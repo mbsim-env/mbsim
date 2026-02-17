@@ -242,7 +242,7 @@ namespace MBSimHydraulics {
 	Element::plot(QHyd*hydEnv->getSpecificMass()*60.);
       }
       if(plotFeature[openMBV] and openMBVSphere) {
-        array<double,8> data;
+        array<OpenMBV::Float,8> data;
         data[0] = getTime();
         data[1] = WrON(0);
         data[2] = WrON(1);

@@ -49,7 +49,6 @@
 #include "utils.h"
 #include "basicitemdata.h"
 #include <openmbv/mainwindow.h>
-#include <openmbvcppinterface/compoundrigidbody.h>
 #include <utime.h>
 #include <QMenu>
 #include <QMenuBar>
@@ -141,7 +140,7 @@ namespace MBSimGUI {
       putenv(ERROROUTPUT);
     }
 
-    serializer->getDomConfig()->setParameter(X()%"format-pretty-print", true);
+    serializer->getDomConfig()->setParameter(u"format-pretty-print", true);
 
     mw = this;
 
@@ -1009,6 +1008,17 @@ namespace MBSimGUI {
   }
 
   void MainWindow::showElementContextMenu(const QModelIndex &current) {
+    static QModelIndex lastCurrentIndex {};
+    if(QApplication::keyboardModifiers()==Qt::NoModifier &&
+       QApplication::mouseButtons()==Qt::LeftButton &&
+       current==lastCurrentIndex) {
+      elementView->setCurrentIndex(QModelIndex());
+      lastCurrentIndex = QModelIndex();
+      highlightObject("");
+      return;
+    }
+    lastCurrentIndex = current;
+
     if(QApplication::mouseButtons()==Qt::RightButton) {
       TreeItemData *itemData = static_cast<ElementTreeModel*>(elementView->model())->getItem(current)->getItemData();
       QMenu *menu = itemData->createContextMenu();
@@ -1055,6 +1065,26 @@ namespace MBSimGUI {
   }
 
   void MainWindow::newProject() {
+    QSettings settings;
+    shared_ptr<Eval> eval;
+    auto defaultEvalName = Evaluator::evaluators[settings.value("mainwindow/options/defaultevaluator", 0).toInt()];
+    try {
+      eval = Eval::createEvaluator(defaultEvalName);
+    }
+    catch(exception &ex) {
+      QMessageBox::critical(this, "New project", (
+        "MBSimGUI needs to be restarted to create a new project with the 'Default evaluator' '"+defaultEvalName+"'.\n"
+        "\n"+
+        "(the 'Default evaluator' can be changed in 'File/Settings/Default evaluator')\n"+
+        "\n"+
+        "See below why this restart is needed:\n"+
+        "\n"+
+        "\n"+
+        ex.what()
+      ).c_str());
+      return;
+    }
+
     if(maybeSave()) {
       undos.clear();
       actionUndo->setDisabled(true);
@@ -1088,8 +1118,7 @@ namespace MBSimGUI {
       doc = mbxmlparserNoVal->createDocument();
 
       project = new Project;
-      QSettings settings;
-      project->setEvaluator(Evaluator::evaluators[settings.value("mainwindow/options/defaultevaluator", 0).toInt()]);
+      project->setEvaluator(eval);
       project->createXMLElement(doc.get());
       E(doc->getDocumentElement())->setOriginalFilename(NO_FILENANE_PATH+NO_FILENAME);
 
@@ -1163,6 +1192,54 @@ namespace MBSimGUI {
         return;
       }
 
+      auto newProject = Embed<Project>::create(doc->getDocumentElement(),nullptr);
+      
+      // check if the new evaluator can be loaded (if it works it creates a evaluator which is deleted again
+      // but this is OK since the expensive part is evaluator initialization not creation and initialization will happen anyway)
+      DOMElement *ele = newProject->getXMLElement()->getFirstElementChild();
+      string newEvalName;
+      if(E(ele)->getTagName()==PV%"evaluator")
+        newEvalName = X()%E(ele)->getFirstTextChild()->getData();
+      else
+        newEvalName = Evaluator::defaultEvaluator;
+      try {
+        Eval::createEvaluator(newEvalName); // just a dummy call to detect exceptions in createEvaluator early
+      }
+      catch(exception &ex) {
+        delete newProject;
+        QSettings settings;
+        auto defaultEvalName = Evaluator::evaluators[settings.value("mainwindow/options/defaultevaluator", 0).toInt()];
+        if(defaultEvalName == newEvalName) {
+          QMessageBox::critical(this, "Load project", (
+            "MBSimGUI needs to be restarted to load this project which uses the evaluator '" + newEvalName + "'.\n"
+            "Either, start MBSimGUI directly with this project, or start a empty MBSimGUI and then load this project again.\n"
+            "\n"
+            "See below why this restart is needed:\n"
+            "\n"
+            "\n"+
+            ex.what()
+          ).c_str(), QMessageBox::Ok);
+        }
+        else {
+          auto button = QMessageBox::critical(this, "Load project", (
+            "MBSimGUI needs to be restarted to load this project which uses the evaluator '" + newEvalName + "'.\n"
+            "Either, start MBSimGUI directly with this project, or switch the 'Default evaluator' to '"+newEvalName+
+            "' now and start a empty MBSimGUI and then load this project again.\n"
+            "Click the 'Apply' button to switch the 'Default evaluator' now to '"+newEvalName+"'.\n"
+            "\n"
+            "See below why this restart is needed:\n"
+            "\n"
+            "\n"+
+            ex.what()
+          ).c_str(), QMessageBox::Ok | QMessageBox::Apply);
+          if(button == QMessageBox::Apply) {
+            auto idx = std::distance(Evaluator::evaluators.begin(), std::find(Evaluator::evaluators.begin(), Evaluator::evaluators.end(), newEvalName));
+            settings.setValue("mainwindow/options/defaultevaluator", static_cast<int>(idx));
+          }
+        }
+        return;
+      }
+
       auto *pmodel = static_cast<ParameterTreeModel*>(parameterView->model());
       pmodel->removeRows(pmodel->index(0,0).row(), pmodel->rowCount(QModelIndex()), QModelIndex());
 
@@ -1178,7 +1255,7 @@ namespace MBSimGUI {
       idMap.clear();
       IDcounter = 0;
 
-      project=Embed<Project>::create(doc->getDocumentElement(),nullptr);
+      project = newProject;
       project->create();
 
       model->createProjectItem(project);
@@ -1223,26 +1300,39 @@ namespace MBSimGUI {
   }
 
   bool MainWindow::saveProject(const QString &fileName, bool modifyStatus) {
+    string err;
+    QString fn = fileName.isEmpty() ? projectFile : fileName;
     try {
-      serializer->writeToURI(doc.get(), X()%(fileName.isEmpty()?projectFile.toStdString():fileName.toStdString()));
+      serializer->writeToURI(doc.get(), X()%fn.toStdString());
       if(modifyStatus) setWindowModified(false);
       return true;
     }
     catch(const DOMException &ex) {
       mw->setErrorOccured();
-      mw->statusBar()->showMessage((X()%ex.getMessage()).c_str());
-      cerr << X()%ex.getMessage() << endl;
+      err = X()%ex.getMessage();
+      mw->statusBar()->showMessage(err.c_str());
+      cerr << err << endl;
     }
     catch(const std::exception &ex) {
       mw->setErrorOccured();
-      mw->statusBar()->showMessage(ex.what());
-      cerr << ex.what() << endl;
+      err = ex.what();
+      mw->statusBar()->showMessage(err.c_str());
+      cerr << err << endl;
     }
     catch(...) {
       mw->setErrorOccured();
-      mw->statusBar()->showMessage("Unknown exception");
-      cerr << "Unknown exception." << endl;
+      err = "Unknown error";
+      mw->statusBar()->showMessage(err.c_str());
+      cerr << err << endl;
     }
+    QMessageBox::warning(nullptr, "Saving Project Failed",
+      "Unable to save the project file\n"+
+      fn+"\n"
+      "(maybe due to file permission issues)\n"
+      "\n"
+      "Error message:\n"+
+      err.c_str()
+    );
     return false;
   }
 
@@ -1734,7 +1824,7 @@ namespace MBSimGUI {
         ip = D(doc)->createElement( MBSIM%"initialProjection" );
         dssEle->insertBefore(ip, preEle->getNextElementSibling());
       }
-      ip->insertBefore(doc->createTextNode(X()%"0"), nullptr);
+      ip->insertBefore(doc->createTextNode(u"0"), nullptr);
     }
 
     // add the "Outdated" IvScreenAnnotation openmbv element (add as last element in <MBSimEnvironment>/<openMBVObject>)
@@ -1883,25 +1973,17 @@ DEF mbsimgui_outdated_switch Switch {
   }
 
   void MainWindow::selectElement(const string& ID, OpenMBVGUI::Object *obj) {
-    if(!obj) {
+    static string lastID;
+    if(!obj || lastID == ID) {
       highlightObject("");
       elementView->selectionModel()->clearCurrentIndex();
+      inlineOpenMBVMW->getObjectList()->setCurrentItem(nullptr);
+      lastID = "";
       return;
     }
-    auto id=ID;
-    // if no ID is given (obj->getObject() has no ID set) and its a RigidBody inside of a CompoundRigidBody then use the ID of the parent CompoundRigidBody.
-    auto o=obj->getObject();
-    while(id.empty()) {
-      auto rb=dynamic_pointer_cast<OpenMBV::RigidBody>(o);
-      if(!rb)
-        break;
-      auto crb=rb->getCompound().lock();
-      if(!crb)
-        break;
-      id=crb->getID();
-      o=crb;
-    }
-    Element *element = idMap[id];
+    lastID = ID;
+
+    Element *element = idMap[ID];
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     if(element) elementView->selectionModel()->setCurrentIndex(model->findItem(element,project->getDynamicSystemSolver()->getModelIndex()),QItemSelectionModel::ClearAndSelect);
   }
@@ -2198,7 +2280,7 @@ DEF mbsimgui_outdated_switch Switch {
       model->createParameterItem(parameter->getParent()->getParameter(i),parentIndex);
     parameterView->setCurrentIndex(parameter->getParent()->getParameter(j)->getModelIndex());
     updateParameterReferences(parameter->getParent());
-    refresh();
+    if(getAutoRefresh()) refresh();
   }
 
   void MainWindow::moveFrame(bool up) {
@@ -2223,7 +2305,7 @@ DEF mbsimgui_outdated_switch Switch {
       model->createFrameItem(frame->getParent()->getFrame(i),parentIndex);
     elementView->setCurrentIndex(frame->getParent()->getFrame(j)->getModelIndex());
     updateReferences(frame->getParent());
-    refresh();
+    if(getAutoRefresh()) refresh();
   }
 
   void MainWindow::moveContour(bool up) {
@@ -2248,7 +2330,7 @@ DEF mbsimgui_outdated_switch Switch {
       model->createContourItem(contour->getParent()->getContour(i),parentIndex);
     elementView->setCurrentIndex(contour->getParent()->getContour(j)->getModelIndex());
     updateReferences(contour->getParent());
-    refresh();
+    if(getAutoRefresh()) refresh();
   }
 
   void MainWindow::moveGroup(bool up) {
@@ -2273,7 +2355,7 @@ DEF mbsimgui_outdated_switch Switch {
       model->createGroupItem(group->getParent()->getGroup(i),parentIndex);
     elementView->setCurrentIndex(group->getParent()->getGroup(j)->getModelIndex());
     updateReferences(group->getParent());
-    refresh();
+    if(getAutoRefresh()) refresh();
   }
 
   void MainWindow::moveObject(bool up) {
@@ -2298,7 +2380,7 @@ DEF mbsimgui_outdated_switch Switch {
       model->createObjectItem(object->getParent()->getObject(i),parentIndex);
     elementView->setCurrentIndex(object->getParent()->getObject(j)->getModelIndex());
     updateReferences(object->getParent());
-    refresh();
+    if(getAutoRefresh()) refresh();
   }
 
   void MainWindow::moveLink(bool up) {
@@ -2323,7 +2405,7 @@ DEF mbsimgui_outdated_switch Switch {
       model->createLinkItem(link->getParent()->getLink(i),parentIndex);
     elementView->setCurrentIndex(link->getParent()->getLink(j)->getModelIndex());
     updateReferences(link->getParent());
-    refresh();
+    if(getAutoRefresh()) refresh();
   }
 
   void MainWindow::moveConstraint(bool up) {
@@ -2348,7 +2430,7 @@ DEF mbsimgui_outdated_switch Switch {
       model->createConstraintItem(constraint->getParent()->getConstraint(i),parentIndex);
     elementView->setCurrentIndex(constraint->getParent()->getConstraint(j)->getModelIndex());
     updateReferences(constraint->getParent());
-    refresh();
+    if(getAutoRefresh()) refresh();
   }
 
   void MainWindow::moveObserver(bool up) {
@@ -2373,7 +2455,7 @@ DEF mbsimgui_outdated_switch Switch {
       model->createObserverItem(observer->getParent()->getObserver(i),parentIndex);
     elementView->setCurrentIndex(observer->getParent()->getObserver(j)->getModelIndex());
     updateReferences(observer->getParent());
-    refresh();
+    if(getAutoRefresh()) refresh();
   }
 
   void MainWindow::exportElement(const QString &title) {
@@ -2733,7 +2815,7 @@ DEF mbsimgui_outdated_switch Switch {
     if(parent->getParameterFileItem()) {
       for(int i=n-1; i>=0; i--)
         parent->removeParameter(parent->getParameter(i));
-      parent->getEmbedXMLElement()->removeAttribute(X()%"parameterHref");
+      parent->getEmbedXMLElement()->removeAttribute(u"parameterHref");
       parent->setParameterFileItem(nullptr);
     }
     else {
@@ -3094,6 +3176,7 @@ DEF mbsimgui_outdated_switch Switch {
           model->updateParameterItem(parent->getParameterEmbedItem());
           updateParameterReferences(parent);
           if(getAutoRefresh()) refresh();
+          updateParameterTreeAll();
         }
       });
       connect(editor,&ElementPropertyDialog::apply,this,[=](){
@@ -3107,6 +3190,7 @@ DEF mbsimgui_outdated_switch Switch {
         model->updateParameterItem(parent->getParameterEmbedItem());
         updateParameterReferences(parent);
         if(getAutoRefresh()) refresh();
+        updateParameterTreeAll();
       });
     }
   }
@@ -3169,7 +3253,7 @@ DEF mbsimgui_outdated_switch Switch {
 
     settings.setValue("mainwindow/recentProjectFileList", files);
 
-    foreach(QWidget *widget, QApplication::topLevelWidgets()) {
+    for(auto widget : QApplication::topLevelWidgets()) {
       auto *mainWin = dynamic_cast<MainWindow*>(widget);
       if(mainWin)
         mainWin->updateRecentProjectFileActions();
@@ -3286,20 +3370,7 @@ DEF mbsimgui_outdated_switch Switch {
   }
 
   void MainWindow::updateEchoViewSlot(const QByteArray &data) {
-    if(processSimulate.isOpen())
-      // if a process (simulation) is running just add the new output
-      echoView->addOutputText(data.constData());
-    else {
-      // if no process (simulation) is running and MBXMLUTILS_PREPROCESS_CTOR was found -> skip the output before MBXMLUTILS_PREPROCESS_CTOR
-      // (this is used to avoid the message about exiting the last existing mbsimxml run)
-      auto idx=data.lastIndexOf("<a name=\"MBXMLUTILS_PREPROCESS_CTOR\"></a>");
-      if(idx==-1)
-        echoView->addOutputText(data.constData());
-      else {
-        clearEchoView("");
-        echoView->addOutputText(data.constData()+idx);
-      }
-    }
+    echoView->addOutputText(data.constData());
 
     static qint64 last=0;
     static QTimer singleShot;
@@ -3459,6 +3530,7 @@ DEF mbsimgui_outdated_switch Switch {
 	    updateValues(parameter->getParent());
             MainWindow::updateNameOfCorrespondingElementAndItsChilds(parameter->getParent()->getModelIndex());
             if(getAutoRefresh()) refresh();
+            updateParameterTreeAll();
             if(getStatusUpdate()) parameter->getParent()->updateStatus();
           }
         });
@@ -3474,6 +3546,7 @@ DEF mbsimgui_outdated_switch Switch {
 	  updateValues(parameter->getParent());
           MainWindow::updateNameOfCorrespondingElementAndItsChilds(parameter->getParent()->getModelIndex());
           if(getAutoRefresh()) refresh();
+          updateParameterTreeAll();
           editor->setCancel(true);
 	  if(getStatusUpdate()) parameter->getParent()->updateStatus();
         });
@@ -3549,25 +3622,40 @@ DEF mbsimgui_outdated_switch Switch {
   }
 
   void MainWindow::saveReferencedFile(int i) {
+    string err;
+    QString fn = file[i]->getFileInfo().absoluteFilePath();
     try {
-      serializer->writeToURI(file[i]->getXMLDocument().get(), X()%file[i]->getFileInfo().absoluteFilePath().toStdString());
+      serializer->writeToURI(file[i]->getXMLDocument().get(), X()%fn.toStdString());
       file[i]->setModified(false);
+      return;
     }
     catch(const DOMException &ex) {
       mw->setErrorOccured();
-      mw->statusBar()->showMessage((X()%ex.getMessage()).c_str());
-      cerr << X()%ex.getMessage() << endl;
+      err = X()%ex.getMessage();
+      mw->statusBar()->showMessage(err.c_str());
+      cerr << err << endl;
     }
     catch(const std::exception &ex) {
       mw->setErrorOccured();
-      mw->statusBar()->showMessage(ex.what());
-      cerr << ex.what() << endl;
+      err = ex.what();
+      mw->statusBar()->showMessage(err.c_str());
+      cerr << err << endl;
     }
     catch(...) {
       mw->setErrorOccured();
-      mw->statusBar()->showMessage("Unknown exception");
-      cerr << "Unknown exception." << endl;
+      err = "Unknown exception";
+      mw->statusBar()->showMessage(err.c_str());
+      cerr << err << endl;
     }
+    QMessageBox::warning(nullptr, "Saving Referenced File Failed",
+      "Unable to save the file\n"+
+      fn+"\n"
+      "which is referenced by the project.\n"
+      "(maybe due to file permission issues)\n"
+      "\n"
+      "Error message:\n"+
+      err.c_str()
+    );
   }
 
   void MainWindow::convertDocument() {
@@ -3578,19 +3666,19 @@ DEF mbsimgui_outdated_switch Switch {
         statusBar()->showMessage("Unable to load or parse XML file: "+file);
         return;
       }
-      DOMNodeList* list = doc->getElementsByTagName(X()%"naturalModeScaleFactor");
+      DOMNodeList* list = doc->getElementsByTagName(u"naturalModeScaleFactor");
       for(size_t j=0; j<list->getLength(); j++)
-	doc->renameNode(list->item(j),X()%MBSIMCONTROL.getNamespaceURI(),X()%"normalModeScaleFactor");
-      list = doc->getElementsByTagName(X()%"naturalModeScale");
+	doc->renameNode(list->item(j),X()%MBSIMCONTROL.getNamespaceURI(),u"normalModeScaleFactor");
+      list = doc->getElementsByTagName(u"naturalModeScale");
       for(size_t j=0; j<list->getLength(); j++)
-	doc->renameNode(list->item(j),X()%MBSIMCONTROL.getNamespaceURI(),X()%"normalModeScale");
-      list = doc->getElementsByTagName(X()%"visualizeNaturalModeShapes");
+	doc->renameNode(list->item(j),X()%MBSIMCONTROL.getNamespaceURI(),u"normalModeScale");
+      list = doc->getElementsByTagName(u"visualizeNaturalModeShapes");
       for(size_t j=0; j<list->getLength(); j++)
-	doc->renameNode(list->item(j),X()%MBSIMCONTROL.getNamespaceURI(),X()%"visualizeNormalModes");
-      list = doc->getElementsByTagName(X()%"SymbolicFunction");
+	doc->renameNode(list->item(j),X()%MBSIMCONTROL.getNamespaceURI(),u"visualizeNormalModes");
+      list = doc->getElementsByTagName(u"SymbolicFunction");
       for(size_t j=0; j<list->getLength(); j++) {
 	if(not E(static_cast<DOMElement*>(list->item(j)))->getFirstElementChildNamed(MBSIM%"definition")) {
-	  auto *node = doc->renameNode(list->item(j),X()%MBSIM.getNamespaceURI(),X()%"definition");
+	  auto *node = doc->renameNode(list->item(j),X()%MBSIM.getNamespaceURI(),u"definition");
 	  DOMElement *ele = D(doc)->createElement(MBSIM%"SymbolicFunction");
 	  node->getParentNode()->insertBefore(ele,node);
 	  ele->insertBefore(node,nullptr);

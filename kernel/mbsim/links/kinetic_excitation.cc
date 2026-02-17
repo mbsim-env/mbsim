@@ -102,7 +102,7 @@ namespace MBSim {
       if(openMBVForce.size()) {
         int off = ombvArrow->getSideOfInteraction()==0?getNumberOfForces()/2:0;
         for(size_t i=0; i<openMBVForce.size(); i++) {
-          array<double,8> data;
+          array<OpenMBV::Float,8> data;
           data[0] = getTime();
           Vec3 toPoint=getPointOfApplication(off+i)->evalPosition();
           data[1] = toPoint(0);
@@ -119,7 +119,7 @@ namespace MBSim {
       if(openMBVMoment.size()) {
         int off = ombvArrow->getSideOfInteraction()==0?getNumberOfForces()/2:0;
         for(size_t i=0; i<openMBVMoment.size(); i++) {
-          array<double,8> data;
+          array<OpenMBV::Float,8> data;
           data[0] = getTime();
           Vec3 toPoint=getPointOfApplication(off+i)->evalPosition();
           data[1] = toPoint(0);

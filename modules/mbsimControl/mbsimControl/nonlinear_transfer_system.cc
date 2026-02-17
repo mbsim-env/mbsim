@@ -58,20 +58,20 @@ namespace MBSimControl {
       if(not inputSignalString.empty())
         setInputSignal(getByPath<Signal>(inputSignalString));
       if(not inputSignal)
-        throwError("(NonlinearTransferSystem::init): input signal must be given");
+        throwError("(NonlinearTransferSystem::init): input signal must be given.");
     }
     else if(stage==preInit) {
       if(not F->getRetSize().first)
-        throwError("Size of system function must be at least 1");
+        throwError("(NonlinearTransferSystem::init): size of system function must be at least 1.");
       if(F->getArg1Size() != F->getRetSize().first)
-        throwError("Size of first argument of system function must be equal to size of system function");
+        throwError("(NonlinearTransferSystem::init): size of first argument of system function must be equal to size of system function.");
       if(F->getArg2Size() != inputSignal->getSignalSize())
-        throwError("Size of second argument of system function must be equal to input signal size");
+        throwError("(NonlinearTransferSystem::init): size of second argument of system function must be equal to input signal size.");
       if(H) {
         if(H->getArg1Size() != F->getRetSize().first)
-          throwError("Size of first argument of output function must be equal to size of system function");
+          throwError("(NonlinearTransferSystem::init): size of first argument of output function must be equal to size of system function.");
         if(H->getArg2Size() != inputSignal->getSignalSize())
-          throwError("Size of second argument of output function must be equal to input signal size");
+          throwError("(NonlinearTransferSystem::init): size of second argument of output function must be equal to input signal size.");
       }
     }
     Signal::init(stage, config);

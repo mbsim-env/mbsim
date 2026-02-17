@@ -85,7 +85,7 @@ namespace MBSimFlexibleBody {
 
   void NodesContour::plot() {
     if(plotFeature[openMBV] and openMBVBody) {
-      vector<double> data;
+      vector<OpenMBV::Float> data;
       data.push_back(getTime());
       for(int i=0; i<openMBVBody->getNumberOfVertexPositions(); i++) {
         const Vec3 &WrOP = static_cast<NodeBasedBody*>(parent)->evalNodalPosition(nodes(i));

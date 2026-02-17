@@ -15,6 +15,7 @@ libkinematics_la_SOURCES = translation_along_x_axis.cc\
 			   rotation_about_axes_xy.cc\
 			   rotation_about_axes_yz.cc\
 			   rotation_about_axes_xz.cc\
+			   rotation_about_axes_zy.cc\
 			   rotation_about_axes_xyz.cc\
 			   rotation_about_axes_zxz.cc\
 			   rotation_about_axes_zyx.cc
@@ -41,6 +42,7 @@ kinematicsinclude_HEADERS = kinematics.h\
 			    rotation_about_axes_xy.h\
 			    rotation_about_axes_yz.h\
 			    rotation_about_axes_xz.h\
+			    rotation_about_axes_zy.h\
 			    rotation_about_axes_xyz.h\
 			    rotation_about_axes_zxz.h\
 			    rotation_about_axes_zyx.h\

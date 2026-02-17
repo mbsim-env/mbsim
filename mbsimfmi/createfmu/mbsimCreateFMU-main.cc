@@ -272,13 +272,13 @@ int main(int argc, char *argv[]) {
         // copy dependencies
         cout<<"Copy dependent files of the original XML model file to FMU."<<endl;
         for(auto & dependency : dependencies)
-          if(!is_directory(dependency)) {
+          if(!MBXMLUtils::is_directory(dependency)) {
             if(dependency.is_absolute())
               throw runtime_error("A XML model file with parameters may only reference files by a relative path.\n"
                                   "However the model references the absolute file '"+dependency.string()+"'.\n"+
                                   "Use the --noparam options OR rework the model to not contain any absolute file path.");
             cout<<"."<<flush;
-            fmuFile.add(path("resources")/"model"/current_path().relative_path()/dependency, dependency);
+            fmuFile.add(path("resources")/"model"/MBXMLUtils::current_path().relative_path()/dependency, dependency);
           }
         cout<<endl;
       }
@@ -496,7 +496,7 @@ int main(int argc, char *argv[]) {
         size_t depth=distance(schemaDir.begin(), schemaDir.end());
         for(recursive_directory_iterator srcIt=recursive_directory_iterator(schemaDir);
             srcIt!=recursive_directory_iterator(); ++srcIt) {
-          if(is_directory(*srcIt)) // skip directories
+          if(MBXMLUtils::is_directory(*srcIt)) // skip directories
             continue;
           path::iterator dstIt=srcIt->path().begin();
           for(int i=0; i<depth; ++i) ++dstIt;
@@ -515,7 +515,7 @@ int main(int argc, char *argv[]) {
         map<path, pair<path, bool> > &files=eval->requiredFiles();
         cout<<"Copy files required by the evaluator and dependencies to FMU."<<endl;
         string evalFile="libmbxmlutils-eval-global-"+evalName+SHEXT;
-        if(!exists(installPath/LIBDIR/evalFile))
+        if(!MBXMLUtils::exists(installPath/LIBDIR/evalFile))
           evalFile="libmbxmlutils-eval-"+evalName+SHEXT;
         copyShLibToFMU(parserNoneVali, fmuFile, path("resources")/"local"/LIBDIR/evalFile,
                        path("resources")/"local"/LIBDIR, installPath/LIBDIR/evalFile);
@@ -607,14 +607,14 @@ namespace {
     // copy src to FMU
     cout<<"."<<flush;
     fmuFile.add(dst, src);
-    if(exists(addDebugExtension(src)))
+    if(MBXMLUtils::exists(addDebugExtension(src)))
       fmuFile.add(addDebugExtension(dst), addDebugExtension(src));
 
     // check if *.deplibs file exits
     path depFile=src.parent_path()/(src.filename().string()+".deplibs");
-    if(!exists(depFile)) {
+    if(!MBXMLUtils::exists(depFile)) {
       depFile=installPath/"share"/"deplibs"/(src.filename().string()+".deplibs");
-      if(!exists(depFile)) {
+      if(!MBXMLUtils::exists(depFile)) {
         fmatvec::Atom::msgStatic(fmatvec::Atom::Warn)<<"No *.deplibs file found for library '"<<src<<"'."<<endl<<"Some dependent libraries may be missing in the FMU."<<endl;
         return;
       }
@@ -627,20 +627,20 @@ namespace {
 
       // check for file in reldir and copy it to FMU
       path reldir=E(e)->getAttribute("reldir");
-      if(exists(installPath/reldir/file)) {
+      if(MBXMLUtils::exists(installPath/reldir/file)) {
         cout<<"."<<flush;
         fmuFile.add(depdstdir/file, installPath/reldir/file);
-        if(exists(addDebugExtension(installPath/reldir/file)))
+        if(MBXMLUtils::exists(addDebugExtension(installPath/reldir/file)))
           fmuFile.add(addDebugExtension(depdstdir/file), addDebugExtension(installPath/reldir/file));
         continue;
       }
 
       // check for file in orgdir and copy it to FMU
       path orgdir=E(e)->getAttribute("orgdir");
-      if(exists(orgdir/file)) {
+      if(MBXMLUtils::exists(orgdir/file)) {
         cout<<"."<<flush;
         fmuFile.add(depdstdir/file, orgdir/file);
-        if(exists(addDebugExtension(orgdir/file)))
+        if(MBXMLUtils::exists(addDebugExtension(orgdir/file)))
           fmuFile.add(addDebugExtension(depdstdir/file), addDebugExtension(orgdir/file));
         continue;
       }

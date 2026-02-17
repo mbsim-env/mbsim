@@ -42,6 +42,7 @@ namespace MBSimGUI {
   extern MainWindow *mw;
 
   ParameterPropertyDialog::ParameterPropertyDialog(Parameter *parameter_) : PropertyDialog("Parameter Properties"), parameter(parameter_), name(nullptr), npl(mw->eval) {
+    mw->setCurrentlyEditedItem(parameter);
     mw->updateParameters(parameter->getParent(), parameter, false);
 
     addTab("General");
@@ -113,12 +114,10 @@ namespace MBSimGUI {
   }
 
   void ParameterPropertyDialog::showEvent(QShowEvent *ev) {
-    mw->setCurrentlyEditedItem(parameter);
     PropertyDialog::showEvent(ev);
   }
 
   void ParameterPropertyDialog::hideEvent(QHideEvent *ev) {
-    mw->setCurrentlyEditedItem(nullptr);
     PropertyDialog::hideEvent(ev);
   }
 

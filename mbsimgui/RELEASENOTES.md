@@ -53,6 +53,7 @@ MBSimGUI
 H5Plotserie
 -----------
 - A mouse alt-left-click now replaces the x-axis of all curves of the current windows with the selection one.
+- Added file drop event (move files from file-explorer to H5PlotSerie window)
 
 hdf5serie
 ---------
@@ -64,6 +65,22 @@ hdf5serie
 OpenMBV
 -------
 - Allow to embed the ombvx file in the ombvh5 file. This way OpenMBV only need one input file and the ombvx file is even compressed.
+- Allow to repack a ombvx/ombvh5 file with/without embed of the ombvx file in the ombvh5 file.
+- Extended SpineExtrusion with new mode cardanWrtWorld which defines the cross-section orientation wrt World by cardan angles
+- Extended SpineExtrusion with new mode cardanWrtWorldShader which equals cardanWrtWorld but much better performance using GPU shaders
+- New highlight mode: make all none highlighted objects transparent
+- Improved performance (FPS) for CoilSpring with type==tube
+- Extended CoilSpring with new mode tubeShader which equals tube but much better performance using GPU shaders
+- Added new object DynamicIvBody which is equal to IvBody but has access to a user defined HDF5 data row.
+- Make the frame number and time accessible from iv=wrl files
+- Added a string-formatter Coin-Engine
+- Improved the performance for several flag changes of object like enable/disable, show outline, ...
+- Use float on HDF5 files since OpenGL used float only.
+- MBSim examples contains now a GPU shader example which emulates grass using gradient noise and domain wrapping
+
+fmatvec
+-------
+- make the fmatvec message streams thread-safe
 
 
 Release 10.4

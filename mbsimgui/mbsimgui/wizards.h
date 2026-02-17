@@ -189,6 +189,28 @@ namespace MBSimGUI {
       ExtWidget *mDamp, *pDamp;
   };
 
+  class ConcentratedLoadsPage : public WizardPage {
+    friend class FlexibleBodyTool;
+    public:
+      ConcentratedLoadsPage(QWidget *parent);
+      int nextId() const override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    private:
+      ExtWidget *cloads;
+  };
+
+  class LoadsPage : public WizardPage {
+    friend class FlexibleBodyTool;
+    public:
+      LoadsPage(QWidget *parent);
+      int nextId() const override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    private:
+      ExtWidget *cloads, *dloads;
+  };
+
   class Wizard : public QWizard {
     public:
       Wizard(QWidget *parent=nullptr) : QWizard(parent) { }
@@ -233,6 +255,7 @@ namespace MBSimGUI {
 	PageRRBM,
 	PageOMBV,
 	PageDamp,
+	PageLoads,
        	PageLast,
       };
       void create();

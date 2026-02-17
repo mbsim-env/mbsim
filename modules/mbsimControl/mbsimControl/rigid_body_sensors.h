@@ -45,6 +45,7 @@ namespace MBSimControl {
       void setJointForceNumber(int i_) { i = i_; }
       int getSignalSize() const override { return 3; }
       void updateSignal() override;
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
       void initializeUsingXML(xercesc::DOMElement *element) override;
     protected:
       MBSim::Index i{0};
@@ -60,6 +61,7 @@ namespace MBSimControl {
       void setJointMomentNumber(int i_) { i = i_; }
       int getSignalSize() const override { return 3; }
       void updateSignal() override;
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
       void initializeUsingXML(xercesc::DOMElement *element) override;
     protected:
       MBSim::Index i{0};

@@ -392,7 +392,7 @@ namespace MBSimGUI {
     add->setDisabled(getSize()>=spinBox->maximum());
     remove->setDisabled(getSize()<=spinBox->minimum());
     showBrowser();
-    emit widgetChanged();
+    Q_EMIT widgetChanged();
   }
 
   void BasicElementsOfReferenceWidget::showBrowser() {
@@ -429,7 +429,7 @@ namespace MBSimGUI {
     spinBox->setValue(tree->topLevelItemCount());
     add->setDisabled(getSize()>=spinBox->maximum());
     remove->setDisabled(getSize()<=spinBox->minimum());
-    emit widgetChanged();
+    Q_EMIT widgetChanged();
   }
 
   void BasicElementsOfReferenceWidget::changeNumberOfElements(int num) {
@@ -443,13 +443,13 @@ namespace MBSimGUI {
 	item->setFlags(item->flags() | Qt::ItemIsEditable);
 	tree->addTopLevelItem(item);
 	tree->setCurrentItem(item);
-	emit widgetChanged();
+	Q_EMIT widgetChanged();
       }
     }
     else if(n<0) {
       for(int i=0; i<-n; i++)
 	delete tree->takeTopLevelItem(tree->topLevelItemCount()-1);
-      emit widgetChanged();
+      Q_EMIT widgetChanged();
     }
     add->setDisabled(getSize()>=spinBox->maximum());
     remove->setDisabled(getSize()<=spinBox->minimum());
@@ -814,7 +814,7 @@ namespace MBSimGUI {
   void TextListWidget::removeItem() {
     tree->takeTopLevelItem(tree->indexOfTopLevelItem(tree->currentItem()));
     spinBox->setValue(tree->topLevelItemCount());
-    emit widgetChanged();
+    Q_EMIT widgetChanged();
   }
 
   void TextListWidget::changeNumberOfItems(int num) {
@@ -830,7 +830,7 @@ namespace MBSimGUI {
     else if(n<0) {
       for(int i=0; i<-n; i++)
        delete tree->takeTopLevelItem(tree->topLevelItemCount()-1);
-      emit widgetChanged();
+      Q_EMIT widgetChanged();
     }
   }
 
@@ -899,7 +899,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  BasicConnectElementsWidget::BasicConnectElementsWidget(const vector<BasicElementOfReferenceWidget*> widget_, const vector<QString> &name) : widget(widget_) {
+  BasicConnectElementsWidget::BasicConnectElementsWidget(const vector<BasicElementOfReferenceWidget*> widget_, const vector<QString> &name) : widget(widget_), def(widget_.size()) {
 
     auto *layout = new QVBoxLayout;
     layout->setMargin(0);
@@ -927,7 +927,7 @@ namespace MBSimGUI {
         xmlName += toStr(int(i+1));
       if(E(element)->hasAttribute(xmlName))
         widget[i]->setElement(QString::fromStdString(E(element)->getAttribute(xmlName)));
-      else if(def.isEmpty())
+      else if(def[i].isEmpty())
         return nullptr;
     }
     return element;
@@ -938,7 +938,7 @@ namespace MBSimGUI {
       string xmlName = "ref";
       if(widget.size()>1)
         xmlName += toStr(int(i+1));
-      if(i>0 or widget[i]->getElement()!=def)
+      if(def[i].isEmpty() or widget[i]->getElement()!=def[i])
         E(static_cast<DOMElement*>(parent))->setAttribute(xmlName, widget[i]->getElement().toStdString());
     }
     return nullptr;
@@ -1327,7 +1327,7 @@ namespace MBSimGUI {
     if(item) {
       item->setText(0, dialog->getName());
       item->setText(1, dialog->getValue());
-      emit widgetChanged();
+      Q_EMIT widgetChanged();
     }
   }
 
@@ -1352,7 +1352,7 @@ namespace MBSimGUI {
   void StateWidget::removeState() {
     tree->takeTopLevelItem(tree->indexOfTopLevelItem(tree->currentItem()));
     spinBox->setValue(tree->topLevelItemCount());
-    emit widgetChanged();
+    Q_EMIT widgetChanged();
   }
 
   void StateWidget::changeNumberOfStates(int num) {
@@ -1368,7 +1368,7 @@ namespace MBSimGUI {
     else if(n<0) {
       for(int i=0; i<-n; i++)
        delete tree->takeTopLevelItem(tree->topLevelItemCount()-1);
-      emit widgetChanged();
+      Q_EMIT widgetChanged();
     }
   }
 
@@ -1707,7 +1707,7 @@ namespace MBSimGUI {
       auto *n = name->item(i);
       auto *c = static_cast<QPlainTextEdit*>(code->widget(i));
 
-      DOMProcessingInstruction *pi=doc->createProcessingInstruction(X()%"MBSIMGUI_CONTEXT_ACTION",
+      DOMProcessingInstruction *pi=doc->createProcessingInstruction(u"MBSIMGUI_CONTEXT_ACTION",
         X()%("name=\""+n->text().toStdString()+"\" "+c->toPlainText().toStdString()));
       parent->insertBefore(pi, nullptr);
     }

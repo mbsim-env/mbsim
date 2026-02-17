@@ -36,13 +36,27 @@ namespace MBSimGUI {
 	return (this->*dNdq_[i][j])(x,y,z);
       }
 
+      double NA(int face, int i, double x, double y) const override {
+	return (this->*NA_[i])(x,y);
+      }
+
+      double dNAdq(int face, int i, int j, double x, double y) const override {
+	return (this->*dNAdq_[i][j])(x,y);
+      }
+
       int getNumberOfNodes() const override { return 20; }
+      int getNumberOf2DNodes(int face) const override { return 8; }
       const fmatvec::Vec3& getNaturalCoordinates(int i) const override { return rN[i]; }
+      int getNumberOfFaces() const override { return 6; }
+      int getNodeNumberOnFace(int i, int j) const { return fI[i][j]; }
 
     private:
       fmatvec::Vec3 rN[20];
       double (C3D20Base::*N_[20])(double x, double y, double z) const;
       double (C3D20Base::*dNdq_[20][3])(double x, double y, double z) const;
+      double (C3D20Base::*NA_[8])(double x, double y) const;
+      double (C3D20Base::*dNAdq_[8][2])(double x, double y) const;
+      int fI[6][8];
 
       double N1(double x, double y, double z) const {
 	return 1./8*(1-x)*(1-y)*(1-z)*(-x-y-z-2);
@@ -284,6 +298,80 @@ namespace MBSimGUI {
       double dN20dz(double x, double y, double z) const {
 	return -1./2*z*(1-x)*(1+y);
       }
+
+      double NA1(double x, double y) const {
+        return 1./4*(1-x)*(1-y)*(-x-y-1);
+      }
+      double NA2(double x, double y) const {
+        return 1./4*(1+x)*(1-y)*(x-y-1);
+      }
+      double NA3(double x, double y) const {
+        return 1./4*(1+x)*(1+y)*(x+y-1);
+      }
+      double NA4(double x, double y) const {
+        return 1./4*(1-x)*(1+y)*(-x+y-1);
+      }
+      double NA5(double x, double y) const {
+        return 1./2*(1+x)*(1-x)*(1-y);
+      }
+      double NA6(double x, double y) const {
+        return 1./2*(1+x)*(1+y)*(1-y);
+      }
+      double NA7(double x, double y) const {
+        return 1./2*(1+x)*(1-x)*(1+y);
+      }
+      double NA8(double x, double y) const {
+        return 1./2*(1-x)*(1+y)*(1-y);
+      }
+      double dNA1dx(double x, double y) const {
+        return 1./4*(1-y)*(2*x+y);
+      }
+      double dNA1dy(double x, double y) const {
+        return 1./4*(1-x)*(x+2*y);
+      }
+      double dNA2dx(double x, double y) const {
+        return 1./4*(1-y)*(2*x-y);
+      }
+      double dNA2dy(double x, double y) const {
+        return 1./4*(1+x)*(-x+2*y);
+      }
+      double dNA3dx(double x, double y) const {
+        return 1./4*(1+y)*(2*x+y);
+      }
+      double dNA3dy(double x, double y) const {
+        return 1./4*(1+x)*(x+2*y);
+      }
+      double dNA4dx(double x, double y) const {
+        return 1./4*(1+y)*(2*x-y);
+      }
+      double dNA4dy(double x, double y) const {
+        return 1./4*(1-x)*(-x+2*y);
+      }
+      double dNA5dx(double x, double y) const {
+        return -(1-y)*x;
+      }
+      double dNA5dy(double x, double y) const {
+        return -1./2*(1+x)*(1-x);
+      }
+      double dNA6dx(double x, double y) const {
+        return 1./2*(1+y)*(1-y);
+      }
+      double dNA6dy(double x, double y) const {
+        return -(1+x)*y;
+      }
+      double dNA7dx(double x, double y) const {
+        return -(1+y)*x;
+      }
+      double dNA7dy(double x, double y) const {
+        return 1./2*(1+x)*(1-x);
+      }
+      double dNA8dx(double x, double y) const {
+        return -1./2*(1+y)*(1-y);
+      }
+      double dNA8dy(double x, double y) const {
+        return -(1-x)*y;
+      }
+
   };
 
 }

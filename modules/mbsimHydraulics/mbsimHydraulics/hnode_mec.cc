@@ -337,7 +337,7 @@ namespace MBSimHydraulics {
       WrON/=double(nTrans+nRot);
       if (openMBVArrows.size()) {
         for (unsigned int i=0; i<nTrans; i++) {
-          array<double,8> data;
+          array<OpenMBV::Float,8> data;
           Vec toPoint=connectedTransFrames[i].frame->evalPosition();
           Vec dir=(
               connectedTransFrames[i].frame->evalOrientation() *
@@ -355,7 +355,7 @@ namespace MBSimHydraulics {
           openMBVArrows[i]->append(data);
         }
         for (unsigned int i=0; i<nRot; i++) {
-          array<double,8> data;
+          array<OpenMBV::Float,8> data;
           Vec toPoint=connectedRotFrames[i].frame->evalPosition();
           Vec dir=(
               connectedRotFrames[i].frame->evalOrientation() *

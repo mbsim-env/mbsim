@@ -35,6 +35,7 @@
 using namespace std;
 using namespace MBXMLUtils;
 using namespace xercesc;
+using namespace fmatvec;
 
 namespace MBSimGUI {
 
@@ -93,7 +94,6 @@ namespace MBSimGUI {
             hidden=mw->eval->cast<int>(mw->eval->eval(X()%pi->getData(), getXMLElement()));
           }
           catch(std::exception &ex) {
-            fmatvec::Atom::msgStatic(fmatvec::Atom::Error)<<std::flush<<std::skipws<<ex.what()<<std::flush<<std::noskipws<<endl;
             auto msg = dynamic_cast<DOMEvalException*>(&ex) ? static_cast<DOMEvalException&>(ex).getMessage() : ex.what();
             mw->statusBar()->showMessage(("Unable to evaluate hidden flag: " + msg).c_str());
             cerr << "Enable to evaluate hidden flag: " << ex.what() << endl;
@@ -106,7 +106,6 @@ namespace MBSimGUI {
             mw->setErrorOccured();
           }
           catch(...) {
-            fmatvec::Atom::msgStatic(fmatvec::Atom::Error)<<"Unknown exception"<<endl;
             mw->statusBar()->showMessage("Unknown exception");
             cerr << "Unknown exception" << endl;
             if(!mw->getErrorOccured()) {

@@ -39,6 +39,7 @@
 #include <xercesc/dom/DOMProcessingInstruction.hpp>
 
 using namespace std;
+using namespace fmatvec;
 
 namespace MBSimGUI {
 
@@ -341,10 +342,10 @@ namespace MBSimGUI {
                 parameterLevels = mw->updateParameters(eleOrPar);
               auto [counterName, values]=MainWindow::evaluateForAllArrayPattern(parameterLevels, ca.second,
                 eleOrPar->getXMLElement(), true, true, false, true, [eleOrPar, ca](const std::vector<std::string>& counterNames, const std::vector<int> &counts) {
-                  fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<std::endl<<"Running context action '"<<ca.first<<"' with ";
+                  Atom::msgStatic(Atom::Info)<<std::endl<<"Running context action '"<<ca.first<<"' with ";
                   for(size_t i=0; i<counterNames.size(); ++i)
-                    fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<(i!=0?", ":"")<<counterNames[i]<<"="<<counts[i];
-                  fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<":"<<std::endl;
+                    Atom::msgStatic(Atom::Info)<<(i!=0?", ":"")<<counterNames[i]<<"="<<counts[i];
+                  Atom::msgStatic(Atom::Info)<<":"<<std::endl;
                   mw->updateEchoView("");
                   std::string code;
                   std::string codeVar;
@@ -363,16 +364,16 @@ namespace MBSimGUI {
               mw->updateEchoView("");
             }
             catch(const MBXMLUtils::DOMEvalException &ex) {
-              // DOMEvalException is already passed thought escapeFunc -> skip escapeFunc (if enabled on the fmatvec::Atom streams) from duing another escaping
-              fmatvec::Atom::msgStatic(fmatvec::Atom::Error)<<std::flush<<std::skipws<<ex.what()<<std::flush<<std::noskipws<<std::endl;
+              // DOMEvalException is already passed thought escapeFunc -> skip escapeFunc (if enabled on the Atom streams) from duing another escaping
+              Atom::msgStatic(Atom::Error)<<disableEscaping<<ex.what()<<enableEscaping<<std::endl;
               mw->updateEchoView("");
             }
             catch(const std::exception &ex) {
-              fmatvec::Atom::msgStatic(fmatvec::Atom::Error)<<ex.what()<<std::endl;
+              Atom::msgStatic(Atom::Error)<<ex.what()<<std::endl;
               mw->updateEchoView("");
             }
             catch(...) {
-              fmatvec::Atom::msgStatic(fmatvec::Atom::Error)<<"Unknown exception"<<std::endl;
+              Atom::msgStatic(Atom::Error)<<"Unknown exception"<<std::endl;
               mw->updateEchoView("");
             }
           });

@@ -66,7 +66,7 @@ namespace MBSimGUI {
       }
     }
     else
-      runtime_error("lumped mass approach not available");
+      throw runtime_error("Lumped mass approach is not available.");
 
     Pdm.resize(nM);
     rPdm.resize(3,Mat3xV(nM));
@@ -88,7 +88,7 @@ namespace MBSimGUI {
     else {
       // compute reduced mass matrix
       if(not PPdms[0].rows())
-	runtime_error("full mass approach not available");
+	throw runtime_error("Full mass approach is not available.");
       PPdm[0][0] = JTMJ(PPdms[0],U);
     }
   }

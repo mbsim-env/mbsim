@@ -58,7 +58,7 @@ namespace MBSimControl {
       if(not stateMachine)
         throwError("(StateMachineSensor::init): state machine is not given!");
       if(selection==unknownSelection)
-	throwError("(StateMachineSensor::init): selection unknown");
+	throwError("(StateMachineSensor::init): selection unknown!");
     }
     Sensor::init(stage, config);
   }

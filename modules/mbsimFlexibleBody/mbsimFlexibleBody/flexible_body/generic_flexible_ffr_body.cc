@@ -486,7 +486,7 @@ namespace MBSimFlexibleBody {
       }
     }
     if(plotFeature[ref(openMBV)] and openMBVBody) {
-      vector<double> data;
+      vector<OpenMBV::Float> data;
       data.push_back(getTime());
       for(size_t i=0; i<visuNodes.size(); i++) {
         const Vec3 &WrOP = evalNodalPosition(visuNodes[i]);

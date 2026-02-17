@@ -44,7 +44,7 @@ namespace MBSimControl {
       if(not inputSignalString.empty())
 	setInputSignal(getByPath<Signal>(inputSignalString));
       if(not inputSignal)
-        throwError("Control input signal is not given!");
+        throwError("(Duration::init): control input signal is not given!");
     }
     Signal::init(stage, config);
   }

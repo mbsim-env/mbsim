@@ -21,6 +21,7 @@
 #include "mbsimControl/rigid_body_sensors.h"
 #include "mbsim/objects/rigid_body.h"
 #include "mbsim/links/joint.h"
+#include "mbsim/dynamic_system_solver.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -34,7 +35,7 @@ namespace MBSimControl {
     ObjectSensor::init(stage, config);
     if(stage==resolveStringRef) {
       if(not dynamic_cast<RigidBody*>(object))
-        throwError("Object is not a rigid body!");
+        throwError("(RigidBodySensor::init): object is not a rigid body!");
     }
   }
 
@@ -43,6 +44,14 @@ namespace MBSimControl {
   void RigidBodyJointForceSensor::updateSignal() {
     s = static_cast<RigidBody*>(object)->getJoint()->evalForce(i);
     upds = false;
+  }
+
+  void RigidBodyJointForceSensor::init(InitStage stage, const InitConfigSet &config) {
+    RigidBodySensor::init(stage, config);
+    if(stage==unknownStage) {
+      if(not getDynamicSystemSolver()->getInverseKinetics())
+        throwError("(RigidBodyJointForceSensor::init()): inverse kinetics not enabled");
+    }
   }
 
   void RigidBodyJointForceSensor::initializeUsingXML(DOMElement * element) {
@@ -56,6 +65,14 @@ namespace MBSimControl {
   void RigidBodyJointMomentSensor::updateSignal() {
     s = static_cast<RigidBody*>(object)->getJoint()->evalMoment(i);
     upds = false;
+  }
+
+  void RigidBodyJointMomentSensor::init(InitStage stage, const InitConfigSet &config) {
+    RigidBodySensor::init(stage, config);
+    if(stage==unknownStage) {
+      if(not getDynamicSystemSolver()->getInverseKinetics())
+        throwError("(RigidBodyJointMomentSensor::init()): inverse kinetics not enabled");
+    }
   }
 
   void RigidBodyJointMomentSensor::initializeUsingXML(DOMElement * element) {

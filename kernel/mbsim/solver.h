@@ -89,7 +89,7 @@ namespace MBSim {
       /**
        * \brief dynamic system
        */
-      MBSim::DynamicSystemSolver* system;
+      MBSim::DynamicSystemSolver* system { nullptr };
 
 #ifndef SWIG
       //! Special XML helper variable.

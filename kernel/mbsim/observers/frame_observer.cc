@@ -125,7 +125,7 @@ namespace MBSim {
     }
     if(plotFeature[openMBV]) {
       if(openMBVPosition) {
-        array<double,8> data;
+        array<OpenMBV::Float,8> data;
         data[0] = getTime();
         data[1] = 0;
         data[2] = 0;
@@ -138,7 +138,7 @@ namespace MBSim {
         openMBVPosition->append(data);
       }
       if(openMBVVelocity) {
-        array<double,8> data;
+        array<OpenMBV::Float,8> data;
         data[0] = getTime();
         Vec3 r = frame->evalPosition();
         data[1] = r(0);
@@ -152,7 +152,7 @@ namespace MBSim {
         openMBVVelocity->append(data);
       }
       if(openMBVAngularVelocity) {
-        array<double,8> data;
+        array<OpenMBV::Float,8> data;
         data[0] = getTime();
         Vec3 r = frame->evalPosition();
         data[1] = r(0);
@@ -166,7 +166,7 @@ namespace MBSim {
         openMBVAngularVelocity->append(data);
       }
       if(openMBVAcceleration) {
-        array<double,8> data;
+        array<OpenMBV::Float,8> data;
         data[0] = getTime();
         Vec3 r = frame->evalPosition();
         data[1] = r(0);
@@ -180,7 +180,7 @@ namespace MBSim {
         openMBVAcceleration->append(data);
       }
       if(openMBVAngularAcceleration) {
-        array<double,8> data;
+        array<OpenMBV::Float,8> data;
         data[0] = getTime();
         Vec3 r = frame->evalPosition();
         data[1] = r(0);

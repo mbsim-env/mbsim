@@ -220,7 +220,7 @@ namespace MBSim {
 
   void RigidContour::plot() {
     if(plotFeature[openMBV] && openMBVRigidBody) {
-      array<double,8> data;
+      array<OpenMBV::Float,8> data;
       data[0] = getTime();
       data[1] = R->evalPosition()(0);
       data[2] = R->getPosition()(1);

@@ -38,6 +38,9 @@ namespace MBSimGUI {
     if(!str.empty())
       R <<= readMat(str);
 
+    int max = 0;
+    vector<VecVI> eleNum;
+
     auto *list = page<FiniteElementsPage>(PageFiniteElements)->elements->getWidget<ListWidget>();
     for(int i=0; i<list->getSize(); i++) {
       auto type_ = list->getWidget<FiniteElementsDataWidget>(i)->getType().toStdString();
@@ -54,12 +57,22 @@ namespace MBSimGUI {
       str = list->getWidget<FiniteElementsDataWidget>(i)->getElementsFile().toStdString();
       if(!str.empty()) {
 	auto ele_ = readMat(str);
-	if(ele_.cols()==npe)
+	if(ele_.cols()==npe) {
+          eleNum.emplace_back(VecV(ele_.rows(),NONINIT));
+          for(int i=0; i<ele_.rows(); i++)
+            eleNum[eleNum.size()-1](i) = max+i+1;
 	  ele.emplace_back(ele_);
-	else if(ele_.cols()==npe+1)
+          max += ele_.rows();
+        } else if(ele_.cols()==npe+1) {
 	  ele.emplace_back(ele_(RangeV(0,ele_.rows()-1),RangeV(1,ele_.cols()-1)));
+          eleNum.emplace_back(ele_.col(0));
+          for(int i=0; i<ele_.rows(); i++) {
+            if(ele_(i,0)>max)
+              max = ele_(i,0);
+          }
+        }
 	else
-	  throw std::runtime_error("FlexibleBodyTool::fe failed with id=5");
+	  throw std::runtime_error("Number of columns in element file does not match.");
       }
     }
 
@@ -69,7 +82,15 @@ namespace MBSimGUI {
 
     auto rho = page<FiniteElementsPage>(PageFiniteElements)->rho->getFirstWidget<VariableWidget>()->getEvalMat()[0][0].toDouble();
 
-    int max = 0;
+    vector<vector<int>> elementTable(max+1,vector<int>(2));
+    for(size_t i=0; i<eleNum.size(); i++) {
+      for(int j=0; j<eleNum[i].size(); j++) {
+        elementTable[eleNum[i](j)][0] = i;
+        elementTable[eleNum[i](j)][1] = j;
+      }
+    }
+
+    max = 0;
     if(R.cols()==3)
       max = R.rows();
     else if(R.cols()==4) {
@@ -78,6 +99,8 @@ namespace MBSimGUI {
 	  max = R(i,0);
       }
     }
+    else
+      throw std::runtime_error("Number of rows in element file does not match.");
 
     int nE = 0;
     nodeCount.resize(max+1);
@@ -364,6 +387,104 @@ namespace MBSimGUI {
 	    }
 	  }
 	}
+      }
+    }
+
+    auto *listcl = page<LoadsPage>(PageLoads)->cloads->getWidget<ListWidget>();
+    if(listcl->getSize()) {
+      vector<vector<int>> nodescl(listcl->getSize());
+      vector<int> snn(listcl->getSize());
+      for(int i=0; i<listcl->getSize(); i++) {
+        nodescl[i] = listcl->getWidget<ConcentratedLoadsWidget>(i)->getNodes();
+        snn[i] = listcl->getWidget<ConcentratedLoadsWidget>(i)->getSingleNodeNumber();
+      }
+      Vec3 rdn(NONINIT);
+      Mat3xV Fdn(ng,NONINIT);
+      for(size_t k=0; k<nodescl.size(); k++) {
+        rdn.init(0);
+        Fdn.init(0);
+        for(int ee=0; ee<nodescl[k].size(); ee++) {
+          int u = nodeTable[nodescl[k][ee]];
+          rdn += this->r[u];
+          for(int ii=0; ii<3; ii++)
+            Fdn(ii,u*3+ii) += 1;
+        }
+        singleNodeNumbers.push_back(snn[k]>-1?snn[k]:nodeNumbers.size()+1+singleNodeNumbers.size());
+        rif.push_back(rdn/double(nodescl[k].size()));
+        Phiif.push_back(Fdn/double(nodescl[k].size()));
+        Psiif.push_back(Mat3xV(ng));
+      }
+    }
+
+    auto *listdl = page<LoadsPage>(PageLoads)->dloads->getWidget<ListWidget>();
+    if(listdl->getSize()) {
+      vector<vector<int>> eledl(listdl->getSize());
+      vector<int> fn(listdl->getSize());
+      vector<int> snn(listdl->getSize());
+      for(int i=0; i<listdl->getSize(); i++) {
+        eledl[i] = listdl->getWidget<DistributedLoadsWidget>(i)->getElements();
+        fn[i] = listdl->getWidget<DistributedLoadsWidget>(i)->getFaceNumber();
+        snn[i] = listdl->getWidget<DistributedLoadsWidget>(i)->getSingleNodeNumber();
+      }
+      Mat3x2 JA(NONINIT);
+      Vec3 r(NONINIT), rdA(NONINIT), xsj(NONINIT);
+      Mat3xV pdA(ng,NONINIT);
+      double A;
+      for(size_t k=0; k<eledl.size(); k++) {
+        int fi = fn[k]-1;
+        FiniteElementType *typei = type[k];
+        int npe = typei->getNumberOf2DNodes(fi);
+        vector<Vec3> P(npe,Vec3(NONINIT));
+        double N_[npe];
+        Vec2 dN_[npe];
+        rdA.init(0);
+        pdA.init(0);
+        A = 0;
+        for(int ee=0; ee<eledl[k].size(); ee++) {
+          auto eSet = elementTable[eledl[k][ee]][0];
+          auto eInd = elementTable[eledl[k][ee]][1];
+          auto eleRow = ele[eSet].row(eInd);
+          for(int i=0; i<npe; i++)
+            P[i].init(0);
+          for(int ii=0; ii<typei->getNumberOf2DIntegrationPoints(fi); ii++) {
+            x = typei->get2DIntegrationPoint(fi,ii)(0);
+            y = typei->get2DIntegrationPoint(fi,ii)(1);
+            wijk = typei->get2DWeight(fi,ii);
+            JA.init(0);
+            r.init(0);
+            for(int ll=0; ll<npe; ll++) {
+              int nof = typei->getNodeNumberOnFace(fi,ll);
+              int nn = eleRow(nof-1);
+              r0 = this->r[nodeTable[nn]];
+              N_[ll] = typei->NA(fi,ll,x,y);
+              for(int mm=0; mm<2; mm++)
+                dN_[ll](mm) = typei->dNAdq(fi,ll,mm,x,y);
+              JA += r0*dN_[ll].T();
+              r += N_[ll]*r0;
+            }
+            xsj(0)=JA(1,0)*JA(2,1)-JA(2,0)*JA(1,1);
+            xsj(1)=JA(0,1)*JA(2,0)-JA(2,1)*JA(0,0);
+            xsj(2)=JA(0,0)*JA(1,1)-JA(1,0)*JA(0,1);
+            double dA = nrm2(xsj)*wijk;
+            rdA += dA*r;
+            A += dA;
+            for(int i=0; i<npe; i++) {
+              Ni_ = N_[i];
+              P[i] += (N_[i]*wijk)*xsj;
+            }
+          }
+          for(int i=0; i<npe; i++) {
+            int nof = typei->getNodeNumberOnFace(fi,i);
+            int nn = eleRow(nof-1);
+            int u = nodeTable[nn];
+            for(int ii=0; ii<3; ii++)
+              pdA(ii,u*3+ii) += P[i](ii);
+          }
+        }
+        singleNodeNumbers.push_back(snn[k]>-1?snn[k]:nodeNumbers.size()+1+singleNodeNumbers.size());
+        rif.push_back(rdA/A);
+        Phiif.push_back(pdA/A);
+        Psiif.push_back(Mat3xV(ng));
       }
     }
   }

@@ -206,7 +206,7 @@ namespace MBSimGUI {
       bool quote;
       QFileDialog::Options options;
 
-    signals:
+    Q_SIGNALS:
       void valueChanged(const QString&);
   };
 
@@ -230,7 +230,7 @@ namespace MBSimGUI {
     protected:
       QSpinBox *value;
 
-    signals:
+    Q_SIGNALS:
       void valueChanged(int);
   };
 
@@ -318,14 +318,14 @@ namespace MBSimGUI {
     public:
       BasicConnectElementsWidget(const std::vector<BasicElementOfReferenceWidget*> widget_, const std::vector<QString> &name);
 
-      void setDefaultElement(const QString &def_) { def = def_; widget[0]->setDefaultElement(def); }
+      void setDefaultElement(const QString &def_, int i=0) { def[i] = def_; widget[i]->setDefaultElement(def_); }
       void updateWidget() override;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
 
     protected:
       std::vector<BasicElementOfReferenceWidget*> widget;
-      QString def;
+      std::vector<QString> def;
   };
 
   template <class T1, class T2=T1>

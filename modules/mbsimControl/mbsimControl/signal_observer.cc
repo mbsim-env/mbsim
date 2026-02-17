@@ -41,7 +41,7 @@ namespace MBSimControl {
       if(not saved_signal.empty())
         setSignal(getByPath<Signal>(saved_signal));
       if(not signal)
-        throwError("Signal is not given!");
+        throwError("(SignalObserver::init): signal is not given!");
       if(not saved_position.empty())
         setPosition(getByPath<Signal>(saved_position));
       Observer::init(stage, config);
@@ -78,7 +78,7 @@ namespace MBSimControl {
       Vec3 r(INIT, 0.0);
       if(position) r = position->evalSignal();
       if(openMBVArrow) {
-        array<double,8> data;
+        array<OpenMBV::Float,8> data;
         data[0] = getTime();
         data[1] = r(0);
         data[2] = r(1);
@@ -90,7 +90,7 @@ namespace MBSimControl {
         openMBVArrow->append(data);
       }
       if(openMBVIvScreenAnnotation && !openMBVIvScreenAnnotation->getEnvironment()) {
-        vector<double> data(1+s.size());
+        vector<OpenMBV::Float> data(1+s.size());
         data[0] = getTime();
         for(int i = 0; i < s.size(); ++i)
           data[i+1] = s(i);

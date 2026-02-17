@@ -308,7 +308,7 @@ namespace MBSim {
       LaParent.resize(getlaSize());
       rFactorParent.resize(getlaSize());
       sParent.resize(getlaSize());
-      if (impactSolver == rootfinding)
+      if (contactSolver == rootfinding or impactSolver == rootfinding)
         resParent.resize(getlaSize());
       curisParent.resize(getisSize());
       nextisParent.resize(getisSize());
@@ -370,7 +370,7 @@ namespace MBSim {
       updateWInverseKineticsRef(WInverseKineticsParent);
       updatebInverseKineticsRef(bInverseKineticsParent);
 
-      if (impactSolver == rootfinding)
+      if (contactSolver == rootfinding or impactSolver == rootfinding)
         updateresRef(resParent);
       updaterFactorRef(rFactorParent);
 
@@ -451,7 +451,7 @@ namespace MBSim {
       Group::init(stage, config);
     }
     else if (stage == plotting) {
-      firstPlot=true;
+      plottedRows = 0;
 
       // We do not use getPath here since separateFilePerGroup is only allowed per Group and all parents of Group's
       // are also Group's (DynamicSystem's) -> Skip the Group[...] for each sub path.
@@ -1783,18 +1783,30 @@ namespace MBSim {
     useSmoothSolver = not(useConstraintSolverForPlot);
     if (inverseKinetics) updatelaInverseKinetics();
     Group::plot();
-    if(firstPlot) {
+    if(plottedRows==0) {
       // we enable SWMR after the frist plot to ensure that readers see at least the initial plot step
-      firstPlot=false;
       if(hdf5File)
         hdf5File->enableSWMR();
-      if(openMBVGrp)
+      if(openMBVGrp) {
+        openMBVGrp->setRowSize(1);
         openMBVGrp->enableSWMR();
+      }
     }
+    plottedRows++;
     if(hdf5File)
       hdf5File->flushIfRequested();
-    if(openMBVGrp)
-      openMBVGrp->flushIfRequested();
+    if(openMBVGrp) {
+      openMBVGrp->flushIfRequested([this](auto grp) {
+        // if a flush happens then this function is called
+        grp->setRowSize(plottedRows);
+      });
+    }
+  }
+
+  void DynamicSystemSolver::postprocessing() {
+    openMBVGrp->flush();
+    openMBVGrp->setRowSize(plottedRows);
+    Group::postprocessing();
   }
 
   const Vec& DynamicSystemSolver::evalsv() {

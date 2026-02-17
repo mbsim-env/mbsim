@@ -264,7 +264,7 @@ namespace MBSimGUI {
   }
 
   int FlexibleBeamPage::nextId() const {
-    return FlexibleBodyTool::PageBC;
+    return FlexibleBodyTool::PageLoads;
   }
 
   DOMElement* FlexibleBeamPage::initializeUsingXML(DOMElement *element) {
@@ -335,7 +335,7 @@ namespace MBSimGUI {
   }
 
   int FiniteElementsPage::nextId() const {
-    return FlexibleBodyTool::PageBC;
+    return FlexibleBodyTool::PageLoads;
   }
 
   DOMElement* FiniteElementsPage::initializeUsingXML(DOMElement *element) {
@@ -662,7 +662,52 @@ namespace MBSimGUI {
     return nullptr;
   }
 
+  LoadsPage::LoadsPage(QWidget *parent) : WizardPage(parent) {
+    setTitle("Loads");
+
+    auto *mainlayout = new QVBoxLayout;
+    setLayout(mainlayout);
+
+    auto label = new QLabel("Define the loads.");
+    mainlayout->addWidget(label);
+
+    auto *tab = new QScrollArea;
+    tab->setWidgetResizable(true);
+    QWidget *box = new QWidget;
+    auto *layout = new QVBoxLayout;
+    box->setLayout(layout);
+    tab->setWidget(box);
+
+    mainlayout->addWidget(tab);
+
+    cloads = new ExtWidget("Concentrated load",new ListWidget(new ConcentratedLoadsWidgetFactory(this),"Concentrated load",0,3,false,0),false,false,"");
+    layout->addWidget(cloads);
+
+    dloads = new ExtWidget("Distributed load",new ListWidget(new DistributedLoadsWidgetFactory(this),"Distributed load",0,3,false,0),false,false,"");
+    layout->addWidget(dloads);
+
+    layout->addStretch(1);
+  }
+
+  int LoadsPage::nextId() const {
+    return FlexibleBodyTool::PageBC;
+  }
+
+  DOMElement* LoadsPage::initializeUsingXML(DOMElement *element) {
+    cloads->initializeUsingXML(element);
+    dloads->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* LoadsPage::writeXMLFile(DOMNode *element, DOMNode *ref) {
+    cloads->writeXMLFile(element);
+    dloads->writeXMLFile(element);
+    return nullptr;
+  }
+
   void Wizard::showEvent(QShowEvent *event) {
+    mw->setCurrentlyEditedItem(mw->getProject()->getDynamicSystemSolver());
+    mw->updateParameters(mw->getProject());
     QSettings settings;
     restoreGeometry(settings.value("wizard/geometry").toByteArray());
     QWizard::showEvent(event);
@@ -688,6 +733,7 @@ namespace MBSimGUI {
     setPage(PageRRBM, new RemoveRigidBodyModesPage(this));
     setPage(PageOMBV, new OpenMBVPage(this));
     setPage(PageDamp, new DampingPage(this));
+    setPage(PageLoads, new LoadsPage(this));
     setPage(PageLast, new LastPage(this));
     setButtonText(QWizard::CustomButton1, "&Load");
     setOption(QWizard::HaveCustomButton1, true);
@@ -705,32 +751,6 @@ namespace MBSimGUI {
   }
 
   void FlexibleBodyTool::create() {
-    if(hasVisitedPage(PageExtFE)) {
-      extfe();
-      if(hasVisitedPage(PageCMS))
-	cms();
-      else if(hasVisitedPage(PageModeShapes))
-	msm();
-      ombv();
-      lma();
-    }
-    else if(hasVisitedPage(PageCalculix)) {
-      calculix();
-      lma();
-    }
-    else if(hasVisitedPage(PageFlexibleBeam)) {
-      beam();
-      cms();
-      fma();
-    }
-    else if(hasVisitedPage(PageFiniteElements)) {
-      fe();
-      cms();
-      fma();
-    }
-    damp();
-    exp();
-
     m = 0;
     rdm.init(0);
     rrdm.init(0);
@@ -769,12 +789,46 @@ namespace MBSimGUI {
       delete i;
     type.clear();
     links.clear();
+    try {
+      if(hasVisitedPage(PageExtFE)) {
+        extfe();
+        if(hasVisitedPage(PageCMS))
+          cms();
+        else if(hasVisitedPage(PageModeShapes))
+          msm();
+        ombv();
+        lma();
+      }
+      else if(hasVisitedPage(PageCalculix)) {
+        calculix();
+        lma();
+      }
+      else if(hasVisitedPage(PageFlexibleBeam)) {
+        beam();
+        cms();
+        fma();
+      }
+      else if(hasVisitedPage(PageFiniteElements)) {
+        fe();
+        cms();
+        fma();
+      }
+      damp();
+      exp();
+    }
+    catch (std::exception& e)
+    {
+      QMessageBox::critical(this, "Flexible body tool", e.what());
+    }
   }
 
   void FlexibleBodyTool::save() {
-    QString inputFile = getInputDataFile();
+    auto inputFile = getInputDataFile();
     inputFile = inputFile.mid(1,inputFile.size()-2);
-    QString file=QFileDialog::getSaveFileName(this, "Save finite elements input data file", QFileInfo(mw->getProjectFilePath()).absolutePath()+"/"+QFileInfo(inputFile).baseName()+".xml", "XML files (*.xml)");
+    auto projectPath = mw->getProjectPath();
+    if(not projectPath.isEmpty())
+      projectPath += "/";
+    QString file=QFileDialog::getSaveFileName(this, "Save finite elements input data file", projectPath+QFileInfo(inputFile).baseName()+".xml", "XML files (*.xml)");
     if(not(file.isEmpty())) {
       file = file.endsWith(".xml")?file:file+".xml";
       auto doc = mw->mbxmlparserNoVal->createDocument();
