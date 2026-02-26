@@ -510,7 +510,7 @@ namespace MBSimGUI {
     if(!arg.contains("--autoExit")) { // normal run (no --autoExit) -> pass also the output of process/processRefresh to readyReadStandardOutput
       startProcessSimulate();
       processSimulateFinishedConnection=connect(&processSimulate,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
-        this, &MainWindow::startProcessSimulate);
+        [this](){ startProcessSimulate(false); });
       processRefreshFinishedConnection=connect(&processRefresh,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
         this, &MainWindow::startProcessRefresh);
       for(auto *process : {&processSimulate, &processRefresh}) {
