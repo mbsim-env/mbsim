@@ -120,7 +120,9 @@ namespace MBSimGUI {
       doc->removeChild(getXMLElement());
       doc->insertBefore(getEmbedXMLElement(),nullptr);
       getEmbedXMLElement()->insertBefore(getXMLElement(),nullptr);
-    }
+      E(getEmbedXMLElement())->addEmbedData("MBXMLUtils_OriginalFilename", E(getXMLElement())->getOriginalFilename().string());
+      getXMLElement()->setUserData(u"http://www.mbsim-env.de/dom/MBXMLUtils/embedData", nullptr, nullptr);
+   }
     return getEmbedXMLElement();
   }
 
@@ -144,6 +146,7 @@ namespace MBSimGUI {
       if(not E(embed)->hasAttribute("count") and not E(embed)->hasAttribute("counterName") and
          not E(embed)->hasAttribute("href") and not E(embed)->hasAttribute("parameterHref") and
          not E(embed)->hasAttribute("onlyif")) {
+        E(element)->addEmbedData("MBXMLUtils_OriginalFilename", E(embed)->getOriginalFilename().string());
         DOMDocument *doc=element->getOwnerDocument();
         doc->removeChild(embed);
         doc->insertBefore(element,nullptr);
