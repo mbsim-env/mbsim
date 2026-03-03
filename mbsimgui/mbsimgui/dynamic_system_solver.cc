@@ -82,12 +82,14 @@ namespace MBSimGUI {
     element = Group::processIDAndHref(element);
     auto *env = E(element)->getFirstElementChildNamed(MBSIM%"environments");
     auto *mbsimenv = E(env)->getFirstElementChildNamed(MBSIM%"MBSimEnvironment");
-    auto ombvobj=E(mbsimenv)->getFirstElementChildNamed(MBSIM%"openMBVObject");
-    if(ombvobj) {
-      auto *ele = ombvobj->getFirstElementChild();
-      while(ele) {
-        E(ele)->addProcessingInstructionChildNamed("OPENMBV_ID", getID());
-        ele=ele->getNextElementSibling();
+    if(mbsimenv) {
+      auto ombvobj=E(mbsimenv)->getFirstElementChildNamed(MBSIM%"openMBVObject");
+      if(ombvobj) {
+        auto *ele = ombvobj->getFirstElementChild();
+        while(ele) {
+          E(ele)->addProcessingInstructionChildNamed("OPENMBV_ID", getID());
+          ele=ele->getNextElementSibling();
+        }
       }
     }
     return element;
