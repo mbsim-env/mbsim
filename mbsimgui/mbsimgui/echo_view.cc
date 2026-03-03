@@ -278,7 +278,10 @@ R"+(</pre>
     std::shared_ptr<xercesc::DOMDocument> doc;
     if(QFileInfo(mw->getProjectFile()).absoluteFilePath()==link.path()) {
       doc = mw->getProjectDocument();
-      rootIndex = mw->getProject()->getModelIndex();
+      if(QUrlQuery(link).queryItemValue("xpath").contains("{http://www.mbsim-env.de/MBXMLUtils}Parameter"))
+        rootIndex = mw->getProject()->getParameterEmbedItem()->getModelIndex();
+      else
+        rootIndex = mw->getProject()->getModelIndex();
     }
     else
       for(auto fileItemData : mw->getFile()) {
