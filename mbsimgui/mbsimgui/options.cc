@@ -128,7 +128,7 @@ namespace MBSimGUI {
     mbsimxmlGroupLayout->addWidget(modulePath);
 
     layout->addWidget(buttonBox);
-    setWindowTitle("Options");
+    setWindowTitle("Settings");
   }
 
   void OptionsDialog::autoSaveChanged(int state) {
