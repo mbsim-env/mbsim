@@ -206,7 +206,6 @@ namespace MBSimGUI {
       ~MainWindow() override;
       const std::vector<FileItemData*> getFile() const { return file; }
       std::shared_ptr<xercesc::DOMDocument> getProjectDocument() const { return doc; }
-      void setWindowModified(bool mod);
       std::shared_ptr<MBXMLUtils::DOMParser> mbxmlparser;
       std::shared_ptr<MBXMLUtils::DOMParser> mbxmlparserNoVal;
       std::shared_ptr<MBXMLUtils::Eval> eval;

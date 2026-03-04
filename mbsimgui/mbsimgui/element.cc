@@ -189,11 +189,6 @@ namespace MBSimGUI {
         auto parameter=parent->getParameter(j);
         if(parameter->getName().toStdString()==parName) {
           // pre set parameter value
-          auto* fileItem = parameter->getParent()->getDedicatedParameterFileItem();
-          if(fileItem)
-            fileItem->setModified(true);
-          else
-	    mw->setWindowModified(true);
           mw->updateUndos();
 
           // set parameter value

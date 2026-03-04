@@ -95,12 +95,14 @@ namespace bfs=boost::filesystem;
 
 namespace MBSimGUI {
 
+
   MainWindow *mw;
 
   const string NO_FILENAME("{no filename}");
   const string NO_FILENANE_PATH(boost::filesystem::current_path().string()+"/");
 
   static int currentModelID = 0;
+  static int sizeOfUndosSinceLastSave = 0;
 
   MainWindow::MainWindow(QStringList &arg) : project(nullptr), inlineOpenMBVMW(nullptr), allowUndo(true), maxUndo(10), statusUpdate(true), doc(), elementBuffer(nullptr,false), parameterBuffer(nullptr,false) {
     QSettings settings;
@@ -211,7 +213,7 @@ namespace MBSimGUI {
     action = fileMenu->addAction(QIcon::fromTheme("document-open"), "Open...", this, QOverload<>::of(&MainWindow::loadProject));
     action->setShortcut(QKeySequence::Open);
     action->setStatusTip("Open project");
-    actionSave = fileMenu->addAction(QIcon::fromTheme("document-save"), "Save", this, [=](){ saveProject(); for(size_t i=0; i<file.size(); i++) if(file[i]->getModified()) saveReferencedFile(i); });
+    actionSave = fileMenu->addAction(QIcon::fromTheme("document-save"), "Save", this, [=](){ saveProject(); for(size_t i=0; i<file.size(); i++) saveReferencedFile(i); });
     actionSave->setShortcut(QKeySequence::Save);
     actionSave->setStatusTip("Save project and all references");
     actionSaveProject = fileMenu->addAction(QIcon::fromTheme("document-save"), "Save project only", this, [=](){ this->saveProject(); });
@@ -699,7 +701,9 @@ namespace MBSimGUI {
   }
 
   void MainWindow::updateUndos() {
-    setWindowModified(true);
+    currentModelID++;
+    setSceneViewOutdated(true);
+    QMainWindow::setWindowModified(true);
     auto oldDoc = shared_ptr<DOMDocument>(static_cast<DOMDocument*>(doc->cloneNode(true)));
     oldDoc->setDocumentURI(X()%D(doc)->getDocumentFilename().string());
     auto u = vector<shared_ptr<DOMDocument>>(1+file.size());
@@ -710,38 +714,25 @@ namespace MBSimGUI {
       u[i+1] = oldDoc;
     }
     undos.push_back(u);
-    if(undos.size() > maxUndo)
+    if(undos.size() > maxUndo) {
       undos.pop_front();
+      sizeOfUndosSinceLastSave=-1;
+    }
     redos.clear();
     if(allowUndo) actionUndo->setEnabled(true);
     actionRedo->setDisabled(true);
   }
   
   bool MainWindow::maybeSave() {
-    //bool referencedFileModified = false;
-    vector<int> modifiedFiles;
-    for(size_t i=0; i<file.size(); i++) {
-      if(file[i]->getModified())
-        modifiedFiles.push_back(i);
-    }
-    if(isWindowModified() or modifiedFiles.size()) {
-      QString text;
-      if(not modifiedFiles.size())
-        text = "Project has been modified.";
-      else if(not isWindowModified())
-        text = "Referenced file has been modified.";
-      else
-        text = "Project and referenced file have been modified.";
-      QMessageBox::StandardButton ret = QMessageBox::warning(this, "Application", text+"\nDo you want to save your changes?", QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+    if(isWindowModified()) {
+      QMessageBox::StandardButton ret = QMessageBox::warning(this, "Application", "Project file has been modified.\nDo you want to save your changes?", QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
       if(ret == QMessageBox::Save) {
-        if(isWindowModified()) {
           if(actionSaveProject->isEnabled())
             return saveProject();
           else
             return saveProjectAs();
-        }
-        for(size_t i=0; i<modifiedFiles.size(); i++)
-          saveReferencedFile(modifiedFiles[i]);
+        for(size_t i=0; i<file.size(); i++)
+          saveReferencedFile(i);
       } 
       else if(ret == QMessageBox::Cancel) 
         return false;
@@ -1087,11 +1078,12 @@ namespace MBSimGUI {
 
     if(maybeSave()) {
       undos.clear();
+      sizeOfUndosSinceLastSave = 0;
       actionUndo->setDisabled(true);
       actionRedo->setDisabled(true);
       elementBuffer.first = nullptr;
       parameterBuffer.first = nullptr;
-      setWindowModified(false);
+      QMainWindow::setWindowModified(false);
       actionOpenMBV->setDisabled(true);
       actionH5plotserie->setDisabled(true);
       setSimulateActionsEnabled(false);
@@ -1155,11 +1147,12 @@ namespace MBSimGUI {
   void MainWindow::loadProject(const QString &fileName, bool updateRecent) {
     if(QFile::exists(fileName)) {
       undos.clear();
+      sizeOfUndosSinceLastSave = 0;
       actionUndo->setDisabled(true);
       actionRedo->setDisabled(true);
       elementBuffer.first = nullptr;
       parameterBuffer.first = nullptr;
-      setWindowModified(false);
+      QMainWindow::setWindowModified(false);
       actionOpenMBV->setDisabled(true);
       actionH5plotserie->setDisabled(true);
       setSimulateActionsEnabled(false);
@@ -1304,7 +1297,10 @@ namespace MBSimGUI {
     QString fn = fileName.isEmpty() ? projectFile : fileName;
     try {
       serializer->writeToURI(doc.get(), X()%fn.toStdString());
-      if(modifyStatus) setWindowModified(false);
+      if(modifyStatus) {
+        QMainWindow::setWindowModified(false);
+        sizeOfUndosSinceLastSave = undos.size();
+      }
       return true;
     }
     catch(const DOMException &ex) {
@@ -1752,7 +1748,6 @@ namespace MBSimGUI {
       return;
 
     statusBar()->showMessage(tr("Refresh"));
-    currentModelID++;
     setSceneViewOutdated(true);
 
     shared_ptr<DOMDocument> doc=mbxmlparser->createDocument();
@@ -2056,7 +2051,10 @@ DEF mbsimgui_outdated_switch Switch {
   void MainWindow::undo() {
     elementBuffer.first = nullptr;
     parameterBuffer.first = nullptr;
-    setWindowModified(true);
+    currentModelID--;
+    auto modelIDLabel = static_cast<SoLabel*>(SoNode::getByName("mbsimgui_modelID"));
+    if(modelIDLabel)
+      setSceneViewOutdated(currentModelID != atoi(modelIDLabel->label.getValue().getString()));
     auto r = vector<shared_ptr<DOMDocument>>(1+file.size());
     r[0] = doc;
     for(int i=0; i<file.size(); i++)
@@ -2072,9 +2070,14 @@ DEF mbsimgui_outdated_switch Switch {
     if(getAutoRefresh()) refresh();
     actionUndo->setDisabled(undos.empty());
     actionRedo->setEnabled(true);
+    QMainWindow::setWindowModified(undos.size()!=sizeOfUndosSinceLastSave);
   }
 
   void MainWindow::redo() {
+    currentModelID++;
+    auto modelIDLabel = static_cast<SoLabel*>(SoNode::getByName("mbsimgui_modelID"));
+    if(modelIDLabel)
+      setSceneViewOutdated(currentModelID != atoi(modelIDLabel->label.getValue().getString()));
     auto u = vector<shared_ptr<DOMDocument>>(1+file.size());
     u[0] = doc;
     for(int i=0; i<file.size(); i++)
@@ -2090,6 +2093,7 @@ DEF mbsimgui_outdated_switch Switch {
     if(getAutoRefresh()) refresh();
     actionRedo->setDisabled(redos.empty());
     actionUndo->setEnabled(true);
+    QMainWindow::setWindowModified(undos.size()!=sizeOfUndosSinceLastSave);
   }
 
   void MainWindow::removeElement() {
@@ -2260,6 +2264,7 @@ DEF mbsimgui_outdated_switch Switch {
   }
 
   void MainWindow::moveParameter(bool up) {
+    updateUndos();
     auto *model = static_cast<ParameterTreeModel*>(parameterView->model());
     QModelIndex index = parameterView->selectionModel()->currentIndex();
     QModelIndex parentIndex = index.parent();
@@ -2284,6 +2289,7 @@ DEF mbsimgui_outdated_switch Switch {
   }
 
   void MainWindow::moveFrame(bool up) {
+    updateUndos();
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = elementView->selectionModel()->currentIndex();
     QModelIndex parentIndex = index.parent();
@@ -2309,6 +2315,7 @@ DEF mbsimgui_outdated_switch Switch {
   }
 
   void MainWindow::moveContour(bool up) {
+    updateUndos();
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = elementView->selectionModel()->currentIndex();
     QModelIndex parentIndex = index.parent();
@@ -2334,6 +2341,7 @@ DEF mbsimgui_outdated_switch Switch {
   }
 
   void MainWindow::moveGroup(bool up) {
+    updateUndos();
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = elementView->selectionModel()->currentIndex();
     QModelIndex parentIndex = index.parent();
@@ -2359,6 +2367,7 @@ DEF mbsimgui_outdated_switch Switch {
   }
 
   void MainWindow::moveObject(bool up) {
+    updateUndos();
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = elementView->selectionModel()->currentIndex();
     QModelIndex parentIndex = index.parent();
@@ -2384,6 +2393,7 @@ DEF mbsimgui_outdated_switch Switch {
   }
 
   void MainWindow::moveLink(bool up) {
+    updateUndos();
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = elementView->selectionModel()->currentIndex();
     QModelIndex parentIndex = index.parent();
@@ -2409,6 +2419,7 @@ DEF mbsimgui_outdated_switch Switch {
   }
 
   void MainWindow::moveConstraint(bool up) {
+    updateUndos();
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = elementView->selectionModel()->currentIndex();
     QModelIndex parentIndex = index.parent();
@@ -2434,6 +2445,7 @@ DEF mbsimgui_outdated_switch Switch {
   }
 
   void MainWindow::moveObserver(bool up) {
+    updateUndos();
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = elementView->selectionModel()->currentIndex();
     QModelIndex parentIndex = index.parent();
@@ -2496,9 +2508,6 @@ DEF mbsimgui_outdated_switch Switch {
     QModelIndex index = elementView->selectionModel()->currentIndex();
     auto *element = static_cast<Element*>(model->getItem(index)->getItemData());
     DOMElement *embedNode = element->getEmbedXMLElement();
-    auto *fileItem = element->getDedicatedFileItem();
-    if(fileItem)
-      fileItem->setModified(true);
     if(enable) {
       // - if "MBSimGUI_EnabledCount" ProcessingInstruction exists copy it to "count" Attribute
       string count;
@@ -2590,7 +2599,6 @@ DEF mbsimgui_outdated_switch Switch {
     auto *dedicatedParent = parent->getDedicatedItem();
     auto *fileItem = dedicatedParent->getFileItem();
     if(fileItem) {
-      fileItem->setModified(true);
       for(int i=0; i<fileItem->getNumberOfReferences(); i++) {
         if(fileItem->getFileReference(i)!=dedicatedParent) {
           fileItem->getFileReference(i)->setXMLElement(dedicatedParent->getXMLElement());
@@ -2604,8 +2612,6 @@ DEF mbsimgui_outdated_switch Switch {
       }
       updateParameterTreeAll();
     }
-    else
-      setWindowModified(true);
   }
 
   void MainWindow::updateParameterReferences(EmbedItemData *parent) {
@@ -2614,7 +2620,6 @@ DEF mbsimgui_outdated_switch Switch {
       auto *dedicatedParent = element->getParent()->getDedicatedItem();
       auto *fileItem = dedicatedParent->getFileItem();
       if(fileItem) {
-	fileItem->setModified(true);
 	for(int i=0; i<fileItem->getNumberOfReferences(); i++) {
 	  if(fileItem->getFileReference(i)!=dedicatedParent) {
 	    fileItem->getFileReference(i)->clear();
@@ -2629,10 +2634,6 @@ DEF mbsimgui_outdated_switch Switch {
       }
     }
     auto* fileItem = parent->getDedicatedParameterFileItem();
-    if(fileItem)
-      fileItem->setModified(true);
-    else
-      setWindowModified(true);
     fileItem = parent->getParameterFileItem();
     if(fileItem) {
       for(int i=0; i<fileItem->getNumberOfReferences(); i++) {
@@ -3089,7 +3090,6 @@ DEF mbsimgui_outdated_switch Switch {
     project->getXMLElement()->insertBefore(ele, project->getSolver()->getEmbedXMLElement()?project->getSolver()->getEmbedXMLElement():project->getSolver()->getXMLElement());
     project->setDynamicSystemSolver(dss);
     dss->create();
-    setWindowModified(true);
     model->createGroupItem(dss,project->getModelIndex());
     model->createSolverItem(project->getSolver(),project->getModelIndex());
     elementView->selectionModel()->setCurrentIndex(dss->getModelIndex(), QItemSelectionModel::ClearAndSelect);
@@ -3114,7 +3114,6 @@ DEF mbsimgui_outdated_switch Switch {
     project->getXMLElement()->insertBefore(ele, nullptr);
     project->setSolver(solver);
     solver->create();
-    setWindowModified(true);
     model->createSolverItem(solver,project->getModelIndex());
     elementView->selectionModel()->setCurrentIndex(solver->getModelIndex(), QItemSelectionModel::ClearAndSelect);
     updateParameterTreeAll();
@@ -3130,6 +3129,7 @@ DEF mbsimgui_outdated_switch Switch {
       editor->show();
       connect(editor,&QDialog::finished,this,[=](){
         if(editor->result()==QDialog::Accepted) {
+          updateUndos();
           editor->fromWidget();
           element->clear();
           auto *model = static_cast<ElementTreeModel*>(elementView->model());
@@ -3142,6 +3142,7 @@ DEF mbsimgui_outdated_switch Switch {
         }
       });
       connect(editor,&ElementPropertyDialog::apply,this,[=](){
+        updateUndos();
         editor->fromWidget();
         element->clear();
         auto *model = static_cast<ElementTreeModel*>(elementView->model());
@@ -3166,6 +3167,7 @@ DEF mbsimgui_outdated_switch Switch {
       editor->show();
       connect(editor,&QDialog::finished,this,[=](){
         if(editor->result()==QDialog::Accepted) {
+          updateUndos();
           editor->fromWidget();
           int n = parent->getNumberOfParameters();
           for(int i=n-1; i>=0; i--) parent->removeParameter(parent->getParameter(i));
@@ -3180,6 +3182,7 @@ DEF mbsimgui_outdated_switch Switch {
         }
       });
       connect(editor,&ElementPropertyDialog::apply,this,[=](){
+        updateUndos();
         editor->fromWidget();
         int n = parent->getNumberOfParameters();
         for(int i=n-1; i>=0; i--) parent->removeParameter(parent->getParameter(i));
@@ -3466,11 +3469,6 @@ DEF mbsimgui_outdated_switch Switch {
         editor->show();
         connect(editor,&QDialog::finished,this,[=](){
           if(editor->result()==QDialog::Accepted) {
-            auto *fileItem = element->getDedicatedFileItem();
-            if(fileItem)
-              fileItem->setModified(true);
-            else
-	      setWindowModified(true);
 	    if(editor->getCancel())
               updateUndos();
             editor->fromWidget();
@@ -3479,11 +3477,6 @@ DEF mbsimgui_outdated_switch Switch {
           }
         });
         connect(editor,&ElementPropertyDialog::apply,this,[=](){
-          auto *fileItem = element->getDedicatedFileItem();
-          if(fileItem)
-            fileItem->setModified(true);
-          else
-            setWindowModified(true);
           if(editor->getCancel())
             updateUndos();
           editor->fromWidget();
@@ -3519,11 +3512,6 @@ DEF mbsimgui_outdated_switch Switch {
         editor->show();
         connect(editor,&QDialog::finished,this,[=](){
           if(editor->result()==QDialog::Accepted) {
-            auto* fileItem = parameter->getParent()->getDedicatedParameterFileItem();
-            if(fileItem)
-              fileItem->setModified(true);
-            else
-	      setWindowModified(true);
 	    if(editor->getCancel())
               updateUndos();
             editor->fromWidget();
@@ -3535,11 +3523,6 @@ DEF mbsimgui_outdated_switch Switch {
           }
         });
         connect(editor,&ParameterPropertyDialog::apply,this,[=](){
-          auto* fileItem = parameter->getParent()->getDedicatedParameterFileItem();
-          if(fileItem)
-            fileItem->setModified(true);
-          else
-            setWindowModified(true);
           if(editor->getCancel())
             updateUndos();
           editor->fromWidget();
@@ -3568,11 +3551,6 @@ DEF mbsimgui_outdated_switch Switch {
         editor->show();
         connect(editor,&QDialog::finished,this,[=](){
           if(editor->result()==QDialog::Accepted) {
-            auto* fileItem = element->getDedicatedFileItem();
-            if(fileItem)
-              fileItem->setModified(true);
-            else
-	      setWindowModified(true);
 	    if(editor->getCancel())
               updateUndos();
             editor->fromWidget();
@@ -3580,11 +3558,6 @@ DEF mbsimgui_outdated_switch Switch {
           }
         });
         connect(editor,&ElementPropertyDialog::apply,this,[=](){
-          auto* fileItem = element->getDedicatedFileItem();
-          if(fileItem)
-            fileItem->setModified(true);
-          else
-            setWindowModified(true);
           if(editor->getCancel())
             updateUndos();
           editor->fromWidget();
@@ -3626,7 +3599,6 @@ DEF mbsimgui_outdated_switch Switch {
     QString fn = file[i]->getFileInfo().absoluteFilePath();
     try {
       serializer->writeToURI(file[i]->getXMLDocument().get(), X()%fn.toStdString());
-      file[i]->setModified(false);
       return;
     }
     catch(const DOMException &ex) {
@@ -3771,13 +3743,6 @@ DEF mbsimgui_outdated_switch Switch {
     for(int i=0; (childIndex=model->index(i,0,index)).isValid(); ++i)
       updateNameOfCorrespondingElementAndItsChilds(childIndex);
     mw->errorOccured = mw->errorOccured || oldErrorOccured;
-  }
-
-  void MainWindow::setWindowModified(bool mod) {
-    QMainWindow::setWindowModified(mod);
-    currentModelID++;
-    if(mod)
-      setSceneViewOutdated(true);
   }
 
   void MainWindow::setSceneViewOutdated(bool outdated) {

@@ -34,7 +34,7 @@ namespace MBSimGUI {
 
       FileItemData(const std::shared_ptr<xercesc::DOMDocument> &doc_);
 
-      QString getName() const override { return name+(modified?"*":""); }
+      QString getName() const override { return name; }
       QString getType() const override { return type; }
       QString getValue() const override { return QString::number(ref.size()); }
 
@@ -46,14 +46,11 @@ namespace MBSimGUI {
       void removeReference(EmbedItemData *item);
       int getNumberOfReferences() const { return ref.size(); }
       EmbedItemData *getFileReference(int i) { return ref[i]; }
-      void setModified(bool modified_) { modified = modified_; }
-      bool getModified() const { return modified; }
 
     protected:
       std::shared_ptr<xercesc::DOMDocument> doc;
       QFileInfo fileInfo;
       std::vector<EmbedItemData*> ref;
-      bool modified{false};
       QString name, type;
   };
 
