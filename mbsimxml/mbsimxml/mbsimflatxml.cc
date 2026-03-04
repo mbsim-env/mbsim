@@ -118,6 +118,8 @@ set<boost::filesystem::path> MBSimXML::loadModules(const set<boost::filesystem::
     for(auto &dir: allSearchDirs) {
       if(stage==SearchPath)
         Atom::msgStatic(Atom::Info)<<"Searching for MBSimXML plugins in directory: "<<dir<<endl;
+      if(!boost::filesystem::is_directory(dir))
+        continue;
       for(boost::filesystem::directory_iterator it=boost::filesystem::directory_iterator(dir);
           it!=boost::filesystem::directory_iterator(); it++) {
         string path=it->path().string();

@@ -97,6 +97,8 @@ shared_ptr<DOMDocument> getMBSimXMLCatalog(const set<bfs::path> &searchDirs) {
     for(auto &dir: allSearchDirs) {
       if(stage==SearchPath)
         fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<"Searching for MBSimXML plugins in directory: "<<dir<<endl;
+      if(!is_directory(dir))
+        continue;
       for(auto it=bfs::directory_iterator(dir); it!=bfs::directory_iterator(); it++) {
         string path=it->path().string();
         if(path.length()<=string(".mbsimmodule.xml").length()) continue;
