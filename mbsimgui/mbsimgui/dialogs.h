@@ -102,8 +102,8 @@ namespace MBSimGUI {
 
   class SourceCodeDialog : public QDialog {
     public:
-      SourceCodeDialog(const QString &text, bool readOnly, QWidget *parent);
-      SourceCodeDialog(const QString &text, const QString &filename, const QString &xpath, QWidget *parent);
+      SourceCodeDialog(const QString &text, bool readOnly, bool syntax, QWidget *parent);
+      SourceCodeDialog(const QString &text, const QString &filename, const QString &xpath, bool syntax, QWidget *parent);
       void highlightLine(int n);
       XMLEditorWidget *getEditor() { return xmlEditor; }
     private:

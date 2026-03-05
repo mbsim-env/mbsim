@@ -245,7 +245,7 @@ namespace MBSimGUI {
     if(item->data(0, Qt::UserRole).type()!=QVariant::String)
       tree->editItem(item, column);
     else {
-      auto dialog=new SourceCodeDialog(item->data(0, Qt::UserRole).toString(), false, this);
+      auto dialog=new SourceCodeDialog(item->data(0, Qt::UserRole).toString(), false, true, this);
       if(dialog->exec()==QDialog::Accepted)
         item->setData(0, Qt::UserRole, dialog->getEditor()->getText());
     }
@@ -1224,7 +1224,7 @@ namespace MBSimGUI {
     return onlyif->getWidget<PhysicalVariableWidget>()->getValue();
   }
 
-  XMLEditorWidget::XMLEditorWidget(const QString &text) {
+  XMLEditorWidget::XMLEditorWidget(const QString &text, bool syntax) {
     auto *layout = new QHBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
@@ -1232,7 +1232,7 @@ namespace MBSimGUI {
     edit = new QTextEdit;
     edit->setMinimumSize(300,200);
     setText(text);
-    new XMLHighlighter(edit->document());
+    if(syntax) new XMLHighlighter(edit->document());
     static const QFont fixedFont=QFontDatabase::systemFont(QFontDatabase::FixedFont);
     edit->setFont(fixedFont);
     layout->addWidget(edit);

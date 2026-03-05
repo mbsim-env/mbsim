@@ -308,11 +308,11 @@ namespace MBSimGUI {
     }
   }
 
-  SourceCodeDialog::SourceCodeDialog(const QString &text, bool readOnly, QWidget *parent) : QDialog(parent) {
+  SourceCodeDialog::SourceCodeDialog(const QString &text, bool readOnly, bool syntax, QWidget *parent) : QDialog(parent) {
     setWindowTitle(QString("XML view"));
     auto *layout = new QGridLayout;
     setLayout(layout);
-    xmlEditor = new XMLEditorWidget(text);
+    xmlEditor = new XMLEditorWidget(text,syntax);
     layout->addWidget(xmlEditor, 2,0,1,2);
     QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
     buttonBox->addButton(QDialogButtonBox::Ok);
@@ -323,8 +323,8 @@ namespace MBSimGUI {
     xmlEditor->getEditor()->setReadOnly(readOnly);
   }
 
-  SourceCodeDialog::SourceCodeDialog(const QString &text, const QString &filename, const QString &xpath, QWidget *parent) :
-    SourceCodeDialog(text, true, parent) {
+  SourceCodeDialog::SourceCodeDialog(const QString &text, const QString &filename, const QString &xpath, bool syntax, QWidget *parent) :
+    SourceCodeDialog(text, true, syntax, parent) {
     auto *layout = static_cast<QGridLayout*>(this->layout());
     layout->addWidget(new QLabel("Filename:"), 0,0,1,1);
     layout->addWidget(new QLabel("XPath:"), 1,0,1,1);

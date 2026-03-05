@@ -387,7 +387,7 @@ namespace MBSimGUI {
   class XMLEditorWidget : public Widget {
 
     public:
-      XMLEditorWidget(const QString &text="");
+      XMLEditorWidget(const QString &text="", bool syntax=true);
       QString getText() { return edit->toPlainText(); }
       void setText(const QString &text) { edit->setPlainText(text); }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;

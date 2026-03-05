@@ -380,6 +380,7 @@ R"+(</pre>
       SourceCodeDialog dialog(xml.c_str(),
         (absPath.size()<relPath.size() || relPath.startsWith("../")) ? absPath : relPath, // filename to show
         EmbedDOMLocator::convertToRootHRXPathExpression(xpath).c_str(), // xpath to show
+        xml.size()<100000?true,false, // syntax highlighting does not work for large models
         this);
       dialog.highlightLine(lineNr-1);
       dialog.exec();
