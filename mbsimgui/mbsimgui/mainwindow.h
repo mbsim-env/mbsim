@@ -143,7 +143,7 @@ namespace MBSimGUI {
       void newProject();
       void newProjectFromTemplate();
       void loadProject(const QString &file, bool updateRecent=true);
-      bool saveProject(const QString &fileName="", bool modifyStatus=true);
+      bool saveProject(const QString &fileName="", bool modifyStatus=true, bool saveReferences=true);
       void edit();
       void undo();
       void redo();
@@ -180,7 +180,6 @@ namespace MBSimGUI {
       void updateParameterReferences(EmbedItemData *parent);
       void updateParameterTreeOnlyForCurrentElement(QModelIndex current);
       void updateParameterTreeAll(bool keepExpandState=true);
-      void saveReferencedFile(int i);
       void convertDocument();
       void setSceneViewOutdated(bool outdated);
 

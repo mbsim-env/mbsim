@@ -213,10 +213,10 @@ namespace MBSimGUI {
     action = fileMenu->addAction(QIcon::fromTheme("document-open"), "Open...", this, QOverload<>::of(&MainWindow::loadProject));
     action->setShortcut(QKeySequence::Open);
     action->setStatusTip("Open project");
-    actionSave = fileMenu->addAction(QIcon::fromTheme("document-save"), "Save", this, [=](){ saveProject(); for(size_t i=0; i<file.size(); i++) saveReferencedFile(i); });
+    actionSave = fileMenu->addAction(QIcon::fromTheme("document-save"), "Save", this, [=](){ saveProject(); });
     actionSave->setShortcut(QKeySequence::Save);
     actionSave->setStatusTip("Save project and all references");
-    actionSaveProject = fileMenu->addAction(QIcon::fromTheme("document-save"), "Save project only", this, [=](){ this->saveProject(); });
+    actionSaveProject = fileMenu->addAction(QIcon::fromTheme("document-save"), "Save project only", this, [=](){ this->saveProject("",true,false); });
     actionSaveProject->setStatusTip("Save project (but not the references)");
     action = fileMenu->addAction(QIcon::fromTheme("document-save-as"), "Save project as...", this, &MainWindow::saveProjectAs);
     action->setShortcut(QKeySequence::SaveAs);
@@ -604,7 +604,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::autoSaveProject() {
-    saveProject("./.Project.mbsx",false);
+    saveProject("./.Project.mbsx",false,true);
   }
 
   void MainWindow::initInlineOpenMBV() {
@@ -727,12 +727,10 @@ namespace MBSimGUI {
     if(isWindowModified()) {
       QMessageBox::StandardButton ret = QMessageBox::warning(this, "Application", "Project file has been modified.\nDo you want to save your changes?", QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
       if(ret == QMessageBox::Save) {
-          if(actionSaveProject->isEnabled())
-            return saveProject();
-          else
-            return saveProjectAs();
-        for(size_t i=0; i<file.size(); i++)
-          saveReferencedFile(i);
+        if(actionSaveProject->isEnabled())
+          return saveProject();
+        else
+          return saveProjectAs();
       } 
       else if(ret == QMessageBox::Cancel) 
         return false;
@@ -1286,14 +1284,15 @@ namespace MBSimGUI {
       actionSave->setDisabled(false);
       actionSaveProject->setDisabled(false);
       bool ret = saveProject();
-      refresh();
+      if(getAutoRefresh()) refresh();
       return ret;
     }
     return false;
   }
 
-  bool MainWindow::saveProject(const QString &fileName, bool modifyStatus) {
+  bool MainWindow::saveProject(const QString &fileName, bool modifyStatus, bool saveReferences) {
     string err;
+    // Try to save project file
     QString fn = fileName.isEmpty() ? projectFile : fileName;
     try {
       serializer->writeToURI(doc.get(), X()%fn.toStdString());
@@ -1301,7 +1300,6 @@ namespace MBSimGUI {
         QMainWindow::setWindowModified(false);
         sizeOfUndosSinceLastSave = undos.size();
       }
-      return true;
     }
     catch(const DOMException &ex) {
       mw->setErrorOccured();
@@ -1321,15 +1319,58 @@ namespace MBSimGUI {
       mw->statusBar()->showMessage(err.c_str());
       cerr << err << endl;
     }
-    QMessageBox::warning(nullptr, "Saving Project Failed",
-      "Unable to save the project file\n"+
-      fn+"\n"
-      "(maybe due to file permission issues)\n"
-      "\n"
-      "Error message:\n"+
-      err.c_str()
-    );
-    return false;
+    if(not err.empty()) {
+      QMessageBox::warning(nullptr, "Saving Project Failed",
+        "Unable to save the project file\n"+
+        fn+"\n"
+        "(maybe due to file permission issues)\n"
+        "\n"
+        "Error message:\n"+
+        err.c_str()
+        );
+      return false;
+    }
+    if(saveReferences) {
+      // Try to save referenced files
+      for(size_t i=0; i<file.size(); i++) {
+        QString fn = file[i]->getFileInfo().absoluteFilePath();
+        try {
+          serializer->writeToURI(file[i]->getXMLDocument().get(), X()%fn.toStdString());
+        }
+        catch(const DOMException &ex) {
+          mw->setErrorOccured();
+          err = X()%ex.getMessage();
+          mw->statusBar()->showMessage(err.c_str());
+          cerr << err << endl;
+        }
+        catch(const std::exception &ex) {
+          mw->setErrorOccured();
+          err = ex.what();
+          mw->statusBar()->showMessage(err.c_str());
+          cerr << err << endl;
+        }
+        catch(...) {
+          mw->setErrorOccured();
+          err = "Unknown exception";
+          mw->statusBar()->showMessage(err.c_str());
+          cerr << err << endl;
+        }
+        if(not err.empty()) {
+          QMessageBox::warning(nullptr, "Saving Referenced File Failed",
+            "Unable to save the file\n"+
+            fn+"\n"
+            "which is referenced by the project.\n"
+            "(maybe due to file permission issues)\n"
+            "\n"
+            "Error message:\n"+
+            err.c_str()
+            );
+          return false;
+        }
+      }
+    }
+    // All files have been saved
+    return true;
   }
 
   void MainWindow::saveProjectAsTemplate() {
@@ -1347,7 +1388,7 @@ namespace MBSimGUI {
 	  write = (button == QMessageBox::Yes);
 	}
 	if(write)
-	  saveProject(file.absoluteFilePath(),false);
+	  saveProject(file.absoluteFilePath(),false,false);
       }
     }
   }
@@ -3216,8 +3257,12 @@ DEF mbsimgui_outdated_switch Switch {
   }
 
   void MainWindow::closeEvent(QCloseEvent *event) {
+    QSettings settings;
+    // auto refresh is deactivated as a refresh is not allowed when the main window is closed
+    // so we store the state of auto refresh here and restore it later
+    auto checked = settings.value("mainwindow/options/autorefresh", true).toBool();
+    settings.setValue("mainwindow/options/autorefresh", false);
     if(maybeSave()) {
-      QSettings settings;
       settings.setValue("mainwindow/geometry", saveGeometry());
       settings.setValue("mainwindow/state", saveState());
       settings.setValue("mainwindow/elementview/header/state", elementView->header()->saveState());
@@ -3226,6 +3271,8 @@ DEF mbsimgui_outdated_switch Switch {
     }
     else
       event->ignore();
+    // restore the state of auto refresh
+    settings.setValue("mainwindow/options/autorefresh", checked);
   }
 
   void MainWindow::showEvent(QShowEvent *event) {
@@ -3592,42 +3639,6 @@ DEF mbsimgui_outdated_switch Switch {
       }
     }
     delete fileItem;
-  }
-
-  void MainWindow::saveReferencedFile(int i) {
-    string err;
-    QString fn = file[i]->getFileInfo().absoluteFilePath();
-    try {
-      serializer->writeToURI(file[i]->getXMLDocument().get(), X()%fn.toStdString());
-      return;
-    }
-    catch(const DOMException &ex) {
-      mw->setErrorOccured();
-      err = X()%ex.getMessage();
-      mw->statusBar()->showMessage(err.c_str());
-      cerr << err << endl;
-    }
-    catch(const std::exception &ex) {
-      mw->setErrorOccured();
-      err = ex.what();
-      mw->statusBar()->showMessage(err.c_str());
-      cerr << err << endl;
-    }
-    catch(...) {
-      mw->setErrorOccured();
-      err = "Unknown exception";
-      mw->statusBar()->showMessage(err.c_str());
-      cerr << err << endl;
-    }
-    QMessageBox::warning(nullptr, "Saving Referenced File Failed",
-      "Unable to save the file\n"+
-      fn+"\n"
-      "which is referenced by the project.\n"
-      "(maybe due to file permission issues)\n"
-      "\n"
-      "Error message:\n"+
-      err.c_str()
-    );
   }
 
   void MainWindow::convertDocument() {
