@@ -273,35 +273,36 @@ R"+(</pre>
   }
 
   void EchoView::linkClicked(const QUrl &link, bool openPropertyDialog) {
+    // get the xpath
+    auto xpath = QUrlQuery(link).queryItemValue("xpath").toStdString();
+
     // get the XML document doc and the rootIndex of this element corresponding the path of the link
     QModelIndex rootIndex;
     std::shared_ptr<xercesc::DOMDocument> doc;
     if(QFileInfo(mw->getProjectFile()).absoluteFilePath()==link.path()) {
       doc = mw->getProjectDocument();
-      if(QUrlQuery(link).queryItemValue("xpath").contains("{http://www.mbsim-env.de/MBXMLUtils}Parameter"))
+      if(xpath.find("{"+PV.getNamespaceURI()+"}Parameter")!=string::npos)
         rootIndex = mw->getProject()->getParameterEmbedItem()->getModelIndex();
       else
         rootIndex = mw->getProject()->getModelIndex();
     }
-    else
+    else {
       for(auto fileItemData : mw->getFile()) {
         if(fileItemData->getFileInfo().absoluteFilePath()==link.path()) {
           doc = fileItemData->getXMLDocument();
-          if(E(fileItemData->getXMLElement()).getTagName() == PV%"Parameter")
+          if(xpath.find("{"+PV.getNamespaceURI()+"}Parameter")!=string::npos)
             rootIndex = fileItemData->getFileReference(0)->getParameterEmbedItem()->getModelIndex();
           else
             rootIndex = fileItemData->getFileReference(0)->getModelIndex();
           break;
         }
       }
+    }
 
     if(!doc) {
       mw->statusBar()->showMessage("XML document not found: "+link.path());
       return;
     }
-
-    // get the xpath in the re-parsed document
-    auto xpath = QUrlQuery(link).queryItemValue("xpath").toStdString();
 
     if(openPropertyDialog) {
       // open the property dialog of the element which generated the error
@@ -380,7 +381,7 @@ R"+(</pre>
       SourceCodeDialog dialog(xml.c_str(),
         (absPath.size()<relPath.size() || relPath.startsWith("../")) ? absPath : relPath, // filename to show
         EmbedDOMLocator::convertToRootHRXPathExpression(xpath).c_str(), // xpath to show
-        xml.size()<100000?true,false, // syntax highlighting does not work for large models
+        xml.size()<100000?true:false, // syntax highlighting does not work for large models
         this);
       dialog.highlightLine(lineNr-1);
       dialog.exec();
