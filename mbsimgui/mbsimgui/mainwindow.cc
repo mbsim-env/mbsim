@@ -414,7 +414,7 @@ namespace MBSimGUI {
     QAction *actionFem = miscBar->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"fbt.svg").string())),"Flexible body tool");
     miscMenu->addAction(actionFem);
     connect(actionFem,&QAction::triggered,this,&MainWindow::flexibleBodyTool);
-    QAction *actionConvert = miscBar->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"convert.svg").string())),"Convert file");
+    QAction *actionConvert = miscBar->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"convert.svg").string())),"Legacy MBSim-File conversion");
     miscMenu->addAction(actionConvert);
     connect(actionConvert,&QAction::triggered,this,&MainWindow::convertDocument);
 
@@ -3644,8 +3644,7 @@ DEF mbsimgui_outdated_switch Switch {
   void MainWindow::convertDocument() {
     QString file=QFileDialog::getOpenFileName(this, "Open MBSim file", getProjectFilePath(), "MBSim files (*.mbsx);;MBSim model files (*.mbsmx);;XML files (*.xml);;All files (*.*)");
     if(not(file.isEmpty())) {
-      xercesc::DOMLSParser *parser = impl->createLSParser(xercesc::DOMImplementation::MODE_SYNCHRONOUS, 0);
-      xercesc::DOMDocument *doc = parser->parseURI(XMLString::transcode(file.toStdString().c_str()));
+      auto doc = mbxmlparserNoVal->parse(file.toStdString());
       if(!doc) {
         statusBar()->showMessage("Unable to load or parse XML file: "+file);
         return;
@@ -3671,7 +3670,7 @@ DEF mbsimgui_outdated_switch Switch {
       file=QFileDialog::getSaveFileName(this, "Save MBSim file", file, "MBSim files (*.mbsx);;MBSim model files (*.mbsmx);;XML files (*.xml);;All files (*.*)");
       if(not(file.isEmpty())) {
 	try {
-	  serializer->writeToURI(doc, X()%(file.toStdString()));
+	  serializer->writeToURI(doc.get(), X()%(file.toStdString()));
 	}
 	catch(const std::exception &ex) {
           mw->setErrorOccured();
