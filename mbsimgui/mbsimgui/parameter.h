@@ -42,7 +42,7 @@ namespace MBSimGUI {
     public:
       ParameterItem(EmbedItemData *parent_=nullptr) : parent(parent_) { }
       QString getComment() const override { return ""; }
-      bool getEnabled() const override { return parent->getEnabled(); }
+      bool isActive() const override { return parent->isActive(); }
       void setParent(EmbedItemData* parent_) { parent = parent_; }
       EmbedItemData *getParent() const { return parent; }
       QString getReference() const override { return ""; }

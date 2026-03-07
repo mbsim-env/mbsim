@@ -77,7 +77,7 @@ namespace MBSimGUI {
     }
     else if(role==Qt::UserRole) {
       TreeItem *item = getItem(index);
-      return item->getItemData()->getEnabled();
+      return item->getItemData()->isActive();
     }
     else if(role==Qt::ToolTipRole) {
       TreeItem *item = getItem(index);

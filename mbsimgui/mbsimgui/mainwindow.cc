@@ -414,7 +414,7 @@ namespace MBSimGUI {
     QAction *actionFem = miscBar->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"fbt.svg").string())),"Flexible body tool");
     miscMenu->addAction(actionFem);
     connect(actionFem,&QAction::triggered,this,&MainWindow::flexibleBodyTool);
-    QAction *actionConvert = miscBar->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"convert.svg").string())),"Legacy MBSim-File conversion");
+    QAction *actionConvert = miscBar->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"convert.svg").string())),"Convert file");
     miscMenu->addAction(actionConvert);
     connect(actionConvert,&QAction::triggered,this,&MainWindow::convertDocument);
 
@@ -2550,38 +2550,15 @@ DEF mbsimgui_outdated_switch Switch {
     auto *element = static_cast<Element*>(model->getItem(index)->getItemData());
     DOMElement *embedNode = element->getEmbedXMLElement();
     if(enable) {
-      // - if "MBSimGUI_EnabledCount" ProcessingInstruction exists copy it to "count" Attribute
-      string count;
-      auto enabledCount=E(embedNode)->getFirstProcessingInstructionChildNamed("MBSimGUI_EnabledCount");
-      if(enabledCount) {
-        count=X()%enabledCount->getData();
-        embedNode->removeChild(enabledCount);
-      }
-      if(!count.empty())
-        E(embedNode)->setAttribute("count",count);
-      else {
-        E(embedNode)->removeAttribute("count");
-        E(embedNode)->removeAttribute("counterName");
-      }
+      E(embedNode)->removeAttribute("onlyif");
     }
     else {
-      // - copy "count" Attribute to "MBSimGUI_EnabledCount" ProcessingInstruction
-      // - set "count" Attribute = 0
       if(not embedNode)
         embedNode = element->createEmbedXMLElement();
-      if(E(embedNode)->hasAttribute("count")) {
-        auto enabledCount=E(embedNode)->getFirstProcessingInstructionChildNamed("MBSimGUI_EnabledCount");
-        if(enabledCount)
-          enabledCount->setData(X()%E(embedNode)->getAttribute("count"));
-        else
-          E(embedNode)->addProcessingInstructionChildNamed("MBSimGUI_EnabledCount", E(embedNode)->getAttribute("count"));
-      }
-      E(embedNode)->setAttribute("count","0");
-      if(!E(embedNode)->hasAttribute("counterName")) // if we set a count Attribute then there MUST be also a counterName Attribute
-        E(embedNode)->setAttribute("counterName","MBXMLUtils_disabled");
+      E(embedNode)->setAttribute("onlyif","0");
     }
     element->maybeRemoveEmbedXMLElement();
-    element->updateStatus();
+    element->updateName();
     elementViewFilter->updateItem(index,true);
     if(getAutoRefresh()) refresh();
   }
@@ -3564,9 +3541,9 @@ DEF mbsimgui_outdated_switch Switch {
             editor->fromWidget();
 	    updateValues(parameter->getParent());
             MainWindow::updateNameOfCorrespondingElementAndItsChilds(parameter->getParent()->getModelIndex());
+            elementViewFilter->updateItem(parameter->getParent()->getModelIndex(),true);
             if(getAutoRefresh()) refresh();
             updateParameterTreeAll();
-            if(getStatusUpdate()) parameter->getParent()->updateStatus();
           }
         });
         connect(editor,&ParameterPropertyDialog::apply,this,[=](){
@@ -3575,10 +3552,10 @@ DEF mbsimgui_outdated_switch Switch {
           editor->fromWidget();
 	  updateValues(parameter->getParent());
           MainWindow::updateNameOfCorrespondingElementAndItsChilds(parameter->getParent()->getModelIndex());
+          elementViewFilter->updateItem(parameter->getParent()->getModelIndex(),true);
           if(getAutoRefresh()) refresh();
           updateParameterTreeAll();
           editor->setCancel(true);
-	  if(getStatusUpdate()) parameter->getParent()->updateStatus();
         });
         connect(editor,&ElementPropertyDialog::showXMLHelp,[](){
           QDesktopServices::openUrl(QUrl(("file://"+getInstallPath().string()+"/share/mbxmlutils/doc/http___www_mbsim-env_de_MBXMLUtils/index.html#parameters").c_str()));
@@ -3601,6 +3578,7 @@ DEF mbsimgui_outdated_switch Switch {
 	    if(editor->getCancel())
               updateUndos();
             editor->fromWidget();
+            elementViewFilter->updateItem(index,true);
             if(getAutoRefresh()) refresh();
           }
         });
@@ -3608,6 +3586,7 @@ DEF mbsimgui_outdated_switch Switch {
           if(editor->getCancel())
             updateUndos();
           editor->fromWidget();
+          elementViewFilter->updateItem(index,true);
           if(getAutoRefresh()) refresh();
         });
       }

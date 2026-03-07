@@ -46,7 +46,6 @@ namespace MBSimGUI {
     frame_->setParent(this);
     if(not frame_->getDedicatedFileItem()) frame_->setDedicatedFileItem(dedicatedFileItem);
     if(not frame_->getDedicatedParameterFileItem()) frame_->setDedicatedParameterFileItem(dedicatedFileItem);
-    frame_->updateStatus();
   }
 
   void Body::addContour(Contour* contour_) {
@@ -54,7 +53,6 @@ namespace MBSimGUI {
     contour_->setParent(this);
     if(not contour_->getDedicatedFileItem()) contour_->setDedicatedFileItem(dedicatedFileItem);
     if(not contour_->getDedicatedParameterFileItem()) contour_->setDedicatedParameterFileItem(dedicatedFileItem);
-    contour_->updateStatus();
   }
 
   void Body::clear() {
@@ -123,15 +121,6 @@ namespace MBSimGUI {
       if(contour[i] == contour_)
         return i;
     return -1;
-  }
-
-  void Body::updateStatus() {
-    Element::updateStatus();
-    for(auto & i : frame)
-      i->updateStatus();
-    for(auto & i : contour)
-      i->updateStatus();
-    emitDataChangedOnChildren();
   }
 
 }

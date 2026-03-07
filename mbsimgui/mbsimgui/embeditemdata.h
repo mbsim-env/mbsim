@@ -54,7 +54,6 @@ namespace MBSimGUI {
       QString getValue() const override { return ""; }
       QString getComment() const override { return comment; }
       void setComment(const QString &comment_) { comment = comment_; }
-      bool isActive();
       virtual void create() { updateName(); }
       virtual void clear() { }
       void createParameters();
@@ -73,7 +72,7 @@ namespace MBSimGUI {
       void removeXMLElement(bool removeEmbedding=true);
       xercesc::DOMElement* createParameterXMLElement();
       virtual xercesc::DOMElement* createEmbedXMLElement();
-      xercesc::DOMElement* getEmbedXMLElement() { return embed; }
+      xercesc::DOMElement* getEmbedXMLElement() override { return embed; }
       void setEmbedXMLElement(xercesc::DOMElement *embed_) { embed = embed_; }
       virtual void maybeRemoveEmbedXMLElement();
       bool hasParameterXMLElement() const;
@@ -88,13 +87,12 @@ namespace MBSimGUI {
       FileItemData *getDedicatedFileItem() { return dedicatedFileItem; }
       FileItemData *getDedicatedParameterFileItem() { return dedicatedParameterFileItem; }
       virtual xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element);
-      virtual void updateStatus() { }
       virtual PropertyDialog* createPropertyDialog() { return new EmbedItemPropertyDialog("Element Properties", this); }
       bool getSelfEmbeded() const { return embed and MBXMLUtils::E(embed)->hasAttribute("href"); }
       QString getReference() const override;
       bool hasReference() const override { return fileItem; }
       bool hasParameterReference() const { return parameterFileItem; }
-      void updateName();
+      virtual void updateName();
       virtual void updateNames() { updateName(); }
       virtual void updateValues();
   };

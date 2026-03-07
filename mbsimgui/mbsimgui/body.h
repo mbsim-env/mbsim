@@ -44,7 +44,6 @@ namespace MBSimGUI {
       void addContour(Contour *contour_) override;
       void removeElement(Element* element) override;
       void clear() override;
-      void updateStatus() override;
     protected:
       std::vector<Frame*> frame;
       std::vector<Contour*> contour;

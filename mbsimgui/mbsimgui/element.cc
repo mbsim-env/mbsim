@@ -161,14 +161,6 @@ namespace MBSimGUI {
     return element;
   }
 
-  void Element::updateStatus() {
-    enabled = (not parent or parent->getEnabled()) and isActive();
-    if(getModelIndex().model()==mw->getElementView()->model())
-      Q_EMIT mw->getElementView()->model()->dataChanged( getModelIndex(), getModelIndex(), { Qt::UserRole });
-    if(getModelIndex().model()==mw->getParameterView()->model())
-      Q_EMIT mw->getParameterView()->model()->dataChanged( getModelIndex(), getModelIndex(), { Qt::UserRole });
-  }
-
   void Element::emitDataChangedOnChildren() {
     if(getModelIndex().isValid()) {
       int row=0;
@@ -179,6 +171,57 @@ namespace MBSimGUI {
         Q_EMIT mw->getElementView()->model()->dataChanged(containerIndex, containerIndex, { Qt::UserRole });
       }
     }
+  }
+
+  void Element::updateName() {
+    EmbedItemData::updateName();
+    disabled = false;
+    if(embed) {
+      if((E(embed)->hasAttribute("count") and E(embed)->getAttribute("count")=="0") or (E(embed)->hasAttribute("onlyif") and E(embed)->getAttribute("onlyif")=="0")) {
+        disabled = true;
+        name = "<disabled>: " + name;
+      }
+      else if(name.contains('{')) {
+        const static QString notUsedStr("<not used>: ");
+        // instantiate a new evaluator on mw->eval and restore the old one at scope end
+        NewParamLevel npl(mw->eval);
+
+        auto parameterLevels = mw->updateParameters(this);
+        auto values = MainWindow::evaluateForAllArrayPattern(parameterLevels, name.toStdString(), getXMLElement(), false, false, true).second;
+        // build the evaluated display name
+        name.clear();
+        set<string> uniqueNames;
+        for(auto &v : values)
+          try {
+            auto curName = mw->eval->cast<string>(v.second);
+            if(uniqueNames.insert(curName).second) // only add unique names
+              name += QString(" ❙ ") + QString::fromStdString(curName);
+          }
+        catch(exception &ex) {
+          mw->setErrorOccured();
+          auto msg = dynamic_cast<DOMEvalException*>(&ex) ? static_cast<DOMEvalException&>(ex).getMessage() : ex.what();
+          mw->statusBar()->showMessage(("Cannot evaluate element name to string: " + msg).c_str());
+          std::cerr << "Cannot evaluate element name to string: " << msg << std::endl;
+        }
+        catch(...) {
+          mw->setErrorOccured();
+          mw->statusBar()->showMessage("Cannot evaluate element name to string: Unknwon exception");
+          std::cerr << "Cannot evaluate element name to string: Unknwon exception" << std::endl;
+        }
+        if(name.isEmpty()) {
+          disabled = true;
+          name = notUsedStr + E(element)->getAttribute("name").c_str();
+        }
+        else
+          name = name.mid(3);
+      }
+    }
+  }
+
+  bool Element::isActive() const {
+    if(parent and not parent->isActive())
+      return false;
+    return not isDisabled();
   }
 
   void Element::setParameterValue(const std::string &parName, const std::string &code) {
@@ -203,7 +246,6 @@ namespace MBSimGUI {
 
           // post set parameter value
           MainWindow::updateNameOfCorrespondingElementAndItsChilds(parameter->getParent()->getModelIndex());
-          if(mw->getStatusUpdate()) parameter->getParent()->updateStatus();
           return;
         }
       }

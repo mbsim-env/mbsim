@@ -129,8 +129,13 @@ namespace MBSimGUI {
       // Enable/Disable
       action = new QAction("Enable", this);
       action->setCheckable(true);
-      action->setChecked(element->getEnabled());
-      action->setEnabled(element->getParent()->getEnabled());
+      bool disabled = element->isDisabled();
+      action->setChecked(not disabled);
+      action->setDisabled((disabled and (not E(embedEle)->hasAttribute("onlyif") or E(embedEle)->getAttribute("onlyif")!="0")) or (not disabled and embedEle and E(embedEle)->hasAttribute("onlyif") and E(embedEle)->getAttribute("onlyif")!=""));
+      if(not action->isEnabled())
+        action->setToolTip("Use Array/Pattern to enable the element.");
+      else
+        action->setToolTip(("Enable/Disable the element."));
       connect(action,&QAction::toggled,mw,&MainWindow::enableElement);
       addAction(action);
     }

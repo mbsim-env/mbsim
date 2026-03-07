@@ -41,7 +41,7 @@ namespace MBSimGUI {
       Element *parent{nullptr};
       std::vector<MBXMLUtils::FQN> plotFeatures;
       std::string ID;
-      bool enabled{true};
+      bool disabled{false};
       void emitDataChangedOnChildren();
 
       // This function cyn be called by Unknown* class in its processIDAndHref member function.
@@ -111,8 +111,9 @@ namespace MBSimGUI {
       virtual QMenu* createFrameContextMenu() { return nullptr; }
       const std::vector<MBXMLUtils::FQN>& getPlotFeatures() const { return plotFeatures; }
       virtual MBXMLUtils::FQN getPlotFeatureType() const { return ""; }
-      bool getEnabled() const override { return enabled; }
-      void updateStatus() override;
+      void updateName() override;
+      bool isDisabled() const { return disabled; }
+      bool isActive() const override;
       EmbedItemData *getDedicatedItem() override { return dedicatedFileItem?(fileItem?this:parent->getDedicatedItem()):this; }
       void setParameterValue(const std::string &parName, const std::string &code);
   };

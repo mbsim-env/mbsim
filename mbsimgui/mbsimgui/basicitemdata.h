@@ -36,7 +36,7 @@ namespace MBSimGUI {
       QString getComment() const override { return ""; }
       QString getType() const override { return ""; }
       QString getReference() const override { return ""; }
-      bool getEnabled() const override { return element->getEnabled(); }
+      bool isActive() const override { return element->isActive(); }
       Element* getElement() { return element; }
   };
 

@@ -111,7 +111,6 @@ namespace MBSimGUI {
       PropertyDialog* createPropertyDialog() override { return new GroupPropertyDialog(this); }
       QMenu* createFrameContextMenu() override { return new FixedRelativeFramesContextMenu(this); }
       QMenu* createContextMenu() override { return new GroupContextMenu(this); }
-      void updateStatus() override;
   };
 
   class UnknownGroup : public Group {

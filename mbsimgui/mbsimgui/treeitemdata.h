@@ -45,13 +45,14 @@ namespace MBSimGUI {
       virtual QString getReference() const { return "Reference"; }
       virtual QString getComment() const { return "Comment"; }
       QIcon getDecoration() const { return icon; }
-      virtual bool getEnabled() const { return true; }
+      virtual bool isActive() const { return true; }
       virtual bool hasReference() const { return false; }
       virtual QMenu* createContextMenu() { return nullptr; }
       void addTreeItemData(TreeItemData *treeItemData_) { treeItemData.push_back(treeItemData_); }
       void setModelIndex(const QModelIndex &index_) { index = index_; }
       const QModelIndex& getModelIndex() const { return index; }
       virtual xercesc::DOMElement* getXMLElement() { return nullptr; }
+      virtual xercesc::DOMElement* getEmbedXMLElement() { return nullptr; }
     protected:
       std::vector<TreeItemData*> treeItemData;
       QModelIndex index;
