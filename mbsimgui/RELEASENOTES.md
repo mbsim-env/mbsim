@@ -49,6 +49,12 @@ MBSimGUI
 - Feature "contact point transformation" is removed from magic formula 62 as it leads to incorrect tyre moments.
 - Improved the error message links in the 'Echo Area'. Allow to open either the property dialog or the XML source of the element
   which generates the error. The left click action on a error link is configureable to open either of both.
+- Undo/Redo is revised for proper interaction with modified windows status and outdated scene view
+- SaveProjectAs also saves the referenced files now.
+- Enable/Disable is revised: now we use attribute onlyif instead of attribute count to enable and disable elements.
+  Disabled elements get the hint "<disabled>:" in their name, similar to "<not used>:" for arrays of elements.
+  Disabled elements as well as empty arrays of elements are displayed with grey color. This also holds for all of their child elements
+  in order to distinguish active from non active elements deeper in the model tree more easily.
 
 H5Plotserie
 -----------
