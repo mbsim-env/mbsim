@@ -104,7 +104,7 @@ namespace MBSimGUI {
   static int currentModelID = 0;
   static int sizeOfUndosSinceLastSave = 0;
 
-  MainWindow::MainWindow(QStringList &arg) : project(nullptr), inlineOpenMBVMW(nullptr), allowUndo(true), maxUndo(10), statusUpdate(true), doc(), elementBuffer(nullptr,false), parameterBuffer(nullptr,false) {
+  MainWindow::MainWindow(QStringList &arg) : project(nullptr), inlineOpenMBVMW(nullptr), allowUndo(true), maxUndo(10), doc(), elementBuffer(nullptr,false), parameterBuffer(nullptr,false) {
     QSettings settings;
 
     echoView = new EchoView();
@@ -753,7 +753,6 @@ namespace MBSimGUI {
     menu.setParameterView(static_cast<OptionsDialog::ParameterView>(settings.value("mainwindow/options/parameterview", static_cast<int>(OptionsDialog::ParameterView::onlyForCurrentElement)).toInt()));
     menu.setOpenPropertyDialogOnErrorLinks(settings.value("mainwindow/options/openPropertyDialogOnErrorLinks", true).toBool());
     auto oldParameterView=menu.getParameterView();
-    menu.setStatusUpdate(settings.value("mainwindow/options/statusupdate", true).toBool());
     menu.setPlugins(settings.value("mainwindow/options/plugins", QString()).toString());
     menu.setDefaultEvaluator(settings.value("mainwindow/options/defaultevaluator", 0).toInt());
 
@@ -779,7 +778,6 @@ namespace MBSimGUI {
       settings.setValue("mainwindow/options/showemptyparameters"           , menu.getShowEmptyParameters());
       settings.setValue("mainwindow/options/parameterview"                 , static_cast<int>(menu.getParameterView()));
       settings.setValue("mainwindow/options/openPropertyDialogOnErrorLinks", menu.getOpenPropertyDialogOnErrorLinks());
-      settings.setValue("mainwindow/options/statusupdate"                  , menu.getStatusUpdate());
       settings.setValue("mainwindow/options/plugins"                       , menu.getPlugins());
       settings.setValue("mainwindow/options/defaultevaluator"              , menu.getDefaultEvaluator());
 
@@ -816,8 +814,6 @@ namespace MBSimGUI {
             "Parameter Tree (all parameters)"
         );
       }
-
-      statusUpdate = menu.getStatusUpdate();
 
       if(oldPlugins!=menu.getPlugins())
         QMessageBox::information(this, "Program restart required!",

@@ -91,9 +91,6 @@ namespace MBSimGUI {
     parameterViewLO->addWidget(parameterViewOnlyForCurrentElement);
     parameterViewLO->addWidget(parameterViewAll);
 
-    statusUpdate = new QCheckBox("Always update element status");
-    layout->addWidget(statusUpdate);
-
     auto onErrorLinks = new QGroupBox("When a error link in 'Echo Area' is clicked open", this);
     layout->addWidget(onErrorLinks);
     auto onErrorLinksLO = new QHBoxLayout(onErrorLinks);
@@ -213,15 +210,6 @@ namespace MBSimGUI {
     if( propertyDialog) onErrorLinksOpenPropertyDialog->setChecked(true);
     if(!propertyDialog) onErrorLinksOpenXMLSource     ->setChecked(true);
   }
-
-  bool OptionsDialog::getStatusUpdate() const {
-    return (statusUpdate->checkState()==Qt::Checked);
-  }
-
-  void OptionsDialog::setStatusUpdate(bool flag) {
-    statusUpdate->setCheckState(flag?Qt::Checked:Qt::Unchecked);
-  }
-
 
   QString OptionsDialog::getPlugins() const {
     return plugins->toPlainText();

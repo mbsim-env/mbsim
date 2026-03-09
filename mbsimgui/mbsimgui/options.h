@@ -58,8 +58,6 @@ namespace MBSimGUI {
       void setParameterView(ParameterView parView);
       bool getOpenPropertyDialogOnErrorLinks() const;
       void setOpenPropertyDialogOnErrorLinks(bool propertyDialog);
-      bool getStatusUpdate() const;
-      void setStatusUpdate(bool flag);
       QString getPlugins() const;
       void setPlugins(const QString &path);
       int getDefaultEvaluator() const;
@@ -70,7 +68,7 @@ namespace MBSimGUI {
       void setModulePath(const QString &path);
     private:
       void autoSaveChanged(int state);
-      QCheckBox *autoSave, *saveStateVector, *showFilters, *showHiddenItems, *showEmptyParameters, *statusUpdate;
+      QCheckBox *autoSave, *saveStateVector, *showFilters, *showHiddenItems, *showEmptyParameters;
       QRadioButton *parameterViewOnlyForCurrentElement, *parameterViewAll;
       QRadioButton *onErrorLinksOpenPropertyDialog, *onErrorLinksOpenXMLSource;
       QComboBox *defaultEvaluator;

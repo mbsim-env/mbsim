@@ -117,7 +117,6 @@ namespace MBSimGUI {
       QAction *recentProjectFileActs[maxRecentFiles];
       bool allowUndo;
       int maxUndo;
-      bool statusUpdate;
       bool callViewAllAfterFileReloaded { false };
       std::shared_ptr<xercesc::DOMDocument> doc;
       std::deque<std::vector<std::shared_ptr<xercesc::DOMDocument>>> undos, redos;
@@ -256,7 +255,6 @@ namespace MBSimGUI {
       QString getProjectPath() const { return QFileInfo(getProjectFilePath()).canonicalPath(); }
       QDir getProjectDir() const { return QFileInfo(getProjectFilePath()).dir(); }
       bool getAutoRefresh() const;
-      bool getStatusUpdate() const { return statusUpdate; }
 
       bool editorIsOpen() const { return openedEditors > 0; }
 
