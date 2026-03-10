@@ -41,7 +41,12 @@ namespace MBSimControl {
   }
 
   void FunctionSensor::updateSignal() {
-    s=(*function)(getTime());
+    if(includeFunctionValue)
+      s.set(IFV, (*function)(getTime()));
+    if(includeFirstDerivative)
+      s.set(IFD, function->parDer(getTime()));
+    if(includeSecondDerivative)
+      s.set(ISD, function->parDerDirDer(1,getTime()));
     upds = false;
   }
 
@@ -49,11 +54,40 @@ namespace MBSimControl {
     Sensor::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"function");
     setFunction(MBSim::ObjectFactory::createAndInit<MBSim::Function<VecV(double)>>(e->getFirstElementChild()));
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"includeFunctionValue");
+    if(e) setIncludeFunctionValue(E(e)->getText<bool>());
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"includeFirstDerivative");
+    if(e) setIncludeFirstDerivative(E(e)->getText<bool>());
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"includeSecondDerivative");
+    if(e) setIncludeSecondDerivative(E(e)->getText<bool>());
   }
 
   void FunctionSensor::init(MBSim::Element::InitStage stage, const InitConfigSet &config) {
     Sensor::init(stage, config);
+    if(stage==unknownStage) {
+      int retSize = function->getRetSize().first;
+      int k = 0;
+      if(includeFunctionValue) {
+        IFV = RangeV(k*retSize,(k+1)*retSize-1);
+        k++;
+      }
+      if(includeFirstDerivative)  {
+        IFD = RangeV(k*retSize,(k+1)*retSize-1);
+        k++;
+      }
+      if(includeSecondDerivative)
+        ISD = RangeV(k*retSize,(k+1)*retSize-1);
+    }
     function->init(stage, config);
+  }
+
+  int FunctionSensor::getSignalSize() const {
+    int retSize = function->getRetSize().first;
+    int size = 0;
+    if(includeFunctionValue) size += retSize;
+    if(includeFirstDerivative) size += retSize;
+    if(includeSecondDerivative) size += retSize;
+    return size;
   }
 
 }

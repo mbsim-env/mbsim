@@ -5,6 +5,10 @@ MBSim
 -----
 - Feature "contact point transformation" is removed from magic formula 62 as it leads to incorrect tyre moments.
 
+MBSimControl
+------------
+- Function sensor can now also return first and second derivative
+
 MBSimXML
 --------
 - Added a new class MBSimProject and SWIG Python directors in order to have access to mbsim xml models from Python.

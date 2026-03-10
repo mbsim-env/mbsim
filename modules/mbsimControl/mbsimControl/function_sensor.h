@@ -35,12 +35,19 @@ namespace MBSimControl {
       FunctionSensor(const std::string &name, MBSim::Function<fmatvec::VecV(double)>* function_);
       ~FunctionSensor() override { delete function; }
       void setFunction(MBSim::Function<fmatvec::VecV(double)>* function_);
+      void setIncludeFunctionValue(bool includeFunctionValue_) { includeFunctionValue = includeFunctionValue_; }
+      void setIncludeFirstDerivative(bool includeFirstDerivative_) { includeFirstDerivative = includeFirstDerivative_; }
+      void setIncludeSecondDerivative(bool includeSecondDerivative_) { includeSecondDerivative = includeSecondDerivative_; }
       void updateSignal() override;
       void initializeUsingXML(xercesc::DOMElement *element) override;
       void init(MBSim::Element::InitStage stage, const MBSim::InitConfigSet &config) override;
-      int getSignalSize() const override { return function->getRetSize().first; }
+      int getSignalSize() const override;
     private:
       MBSim::Function<fmatvec::VecV(double)> * function{nullptr};
+      bool includeFunctionValue{true};
+      bool includeFirstDerivative{false};
+      bool includeSecondDerivative{false};
+      fmatvec::RangeV IFV, IFD, ISD;
   };
 
 }

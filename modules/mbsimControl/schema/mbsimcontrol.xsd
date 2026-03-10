@@ -352,7 +352,9 @@
   <xs:element name="FunctionSensor" substitutionGroup="Sensor" type="FunctionSensorType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
-        Sensor zur zeitabhängigen Auswertung von Funktionen
+        Sensor zur zeitabhängigen Auswertung von Funktionen. Das Sensor-Signal kann abhängig von den Variablen includeFunctionValue,
+        includeFirstDerivative und includeSecondDerivative den Funktionswert, die erste Ableitung und die zweite Ableitung enthalten.
+        Standardsmäßig wird nur der Funktionswert zurückgegeben.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -373,6 +375,9 @@
               </xs:choice>
             </xs:complexType>
           </xs:element>
+          <xs:element name="includeFunctionValue" type="pv:booleanFullEval" minOccurs="0"/>
+          <xs:element name="includeFirstDerivative" type="pv:booleanFullEval" minOccurs="0"/>
+          <xs:element name="includeSecondDerivative" type="pv:booleanFullEval" minOccurs="0"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>

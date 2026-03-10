@@ -224,17 +224,32 @@ namespace MBSimGUI {
   FunctionSensorPropertyDialog::FunctionSensorPropertyDialog(Element *sensor) : SensorPropertyDialog(sensor) {
     function = new ExtWidget("Function",new ChoiceWidget(new Function1ArgWidgetFactory(sensor,"t",1,FunctionWidget::scalar,1,FunctionWidget::varVec,this),QBoxLayout::TopToBottom,0),false,false,MBSIMCONTROL%"function");
     addToTab("General", function);
+
+    ifv = new ExtWidget("Include function value",new ChoiceWidget(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"includeFunctionValue");
+    addToTab("General", ifv);
+
+    ifd = new ExtWidget("Include first derivative",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"includeFirstDerivative");
+    addToTab("General", ifd);
+
+    isd = new ExtWidget("Include second derivative",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"includeSecondDerivative");
+    addToTab("General", isd);
   }
 
   DOMElement* FunctionSensorPropertyDialog::initializeUsingXML(DOMElement *parent) {
     SensorPropertyDialog::initializeUsingXML(item->getXMLElement());
     function->initializeUsingXML(item->getXMLElement());
+    ifv->initializeUsingXML(item->getXMLElement());
+    ifd->initializeUsingXML(item->getXMLElement());
+    isd->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* FunctionSensorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     SensorPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
     function->writeXMLFile(item->getXMLElement(),ref);
+    ifv->writeXMLFile(item->getXMLElement(),ref);
+    ifd->writeXMLFile(item->getXMLElement(),ref);
+    isd->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 
