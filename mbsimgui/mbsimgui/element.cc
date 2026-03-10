@@ -177,43 +177,56 @@ namespace MBSimGUI {
     EmbedItemData::updateName();
     disabled = false;
     if(embed) {
+      const static QString disabledStr("<disabled>: ");
       if((E(embed)->hasAttribute("count") and E(embed)->getAttribute("count")=="0") or (E(embed)->hasAttribute("onlyif") and E(embed)->getAttribute("onlyif")=="0")) {
         disabled = true;
-        name = "<disabled>: " + name;
+        name = disabledStr + name;
       }
       else if(name.contains('{')) {
         const static QString notUsedStr("<not used>: ");
-        // instantiate a new evaluator on mw->eval and restore the old one at scope end
-        NewParamLevel npl(mw->eval);
-
-        auto parameterLevels = mw->updateParameters(this);
-        auto values = MainWindow::evaluateForAllArrayPattern(parameterLevels, name.toStdString(), getXMLElement(), false, false, true).second;
-        // build the evaluated display name
-        name.clear();
-        set<string> uniqueNames;
-        for(auto &v : values)
-          try {
-            auto curName = mw->eval->cast<string>(v.second);
-            if(uniqueNames.insert(curName).second) // only add unique names
-              name += QString(" ❙ ") + QString::fromStdString(curName);
+        // skip name evaluation if a parent name was already unable to evaluate
+        bool skipNameEvaluation = false;
+        for(auto parent=getEmbedItemParent(); parent; parent = parent->getEmbedItemParent()) {
+          if(parent->getName().startsWith(notUsedStr) || parent->getName().startsWith(disabledStr)) {
+            skipNameEvaluation = true;
+            break;
           }
-        catch(exception &ex) {
-          mw->setErrorOccured();
-          auto msg = dynamic_cast<DOMEvalException*>(&ex) ? static_cast<DOMEvalException&>(ex).getMessage() : ex.what();
-          mw->statusBar()->showMessage(("Cannot evaluate element name to string: " + msg).c_str());
-          std::cerr << "Cannot evaluate element name to string: " << msg << std::endl;
         }
-        catch(...) {
-          mw->setErrorOccured();
-          mw->statusBar()->showMessage("Cannot evaluate element name to string: Unknwon exception");
-          std::cerr << "Cannot evaluate element name to string: Unknwon exception" << std::endl;
-        }
-        if(name.isEmpty()) {
-          disabled = true;
+        if(skipNameEvaluation)
           name = notUsedStr + E(element)->getAttribute("name").c_str();
+        else {
+          // instantiate a new evaluator on mw->eval and restore the old one at scope end
+          NewParamLevel npl(mw->eval);
+
+          auto parameterLevels = mw->updateParameters(this);
+          auto values = MainWindow::evaluateForAllArrayPattern(parameterLevels, name.toStdString(), getXMLElement(), false, false, true).second;
+          // build the evaluated display name
+          name.clear();
+          set<string> uniqueNames;
+          for(auto &v : values)
+            try {
+              auto curName = mw->eval->cast<string>(v.second);
+              if(uniqueNames.insert(curName).second) // only add unique names
+                name += QString(" ❙ ") + QString::fromStdString(curName);
+            }
+          catch(exception &ex) {
+            mw->setErrorOccured();
+            auto msg = dynamic_cast<DOMEvalException*>(&ex) ? static_cast<DOMEvalException&>(ex).getMessage() : ex.what();
+            mw->statusBar()->showMessage(("Cannot evaluate element name to string: " + msg).c_str());
+            std::cerr << "Cannot evaluate element name to string: " << msg << std::endl;
+          }
+          catch(...) {
+            mw->setErrorOccured();
+            mw->statusBar()->showMessage("Cannot evaluate element name to string: Unknwon exception");
+            std::cerr << "Cannot evaluate element name to string: Unknwon exception" << std::endl;
+          }
+          if(name.isEmpty()) {
+            disabled = true;
+            name = notUsedStr + E(element)->getAttribute("name").c_str();
+          }
+          else
+            name = name.mid(3);
         }
-        else
-          name = name.mid(3);
       }
     }
   }

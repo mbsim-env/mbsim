@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" xmlns:p="http://www.mbsim-env.de/MBXMLUtils" name="Project">
+
+  <evaluator xmlns="http://www.mbsim-env.de/MBXMLUtils">python</evaluator>
+
+  <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
+    <frames/>
+    <contours/>
+    <groups>
+      <p:Embed counterName="i" count="0">
+        <Group name="Group_with_count_0__id_{i}">
+          <frames/>
+          <contours/>
+          <groups>
+            <p:Embed>
+              <p:Parameter>
+                <p:anyParameter name="p">
+                  if i==0:
+                    raise RuntimeError('To test error handling this element is not able to be evaluated with i==0')
+                  else:
+                    ret=0
+                </p:anyParameter>
+              </p:Parameter>
+              <Group name="Group{j}">
+                <frames/>
+                <contours/>
+                <groups/>
+                <objects/>
+                <links/>
+                <constraints/>
+                <observers/>
+              </Group>
+            </p:Embed>
+          </groups>
+          <objects/>
+          <links/>
+          <constraints/>
+          <observers/>
+        </Group>
+      </p:Embed>
+      <p:Embed counterName="i" count="1-1">
+        <Group name="Group_with_count_1-1__id_{i}">
+          <frames/>
+          <contours/>
+          <groups>
+            <p:Embed>
+              <p:Parameter>
+                <p:anyParameter name="p">
+                  if i==0:
+                    raise RuntimeError('To test error handling this element is not able to be evaluated with i==0')
+                  else:
+                    ret=0
+                </p:anyParameter>
+              </p:Parameter>
+              <Group name="Group{j}">
+                <frames/>
+                <contours/>
+                <groups/>
+                <objects/>
+                <links/>
+                <constraints/>
+                <observers/>
+              </Group>
+            </p:Embed>
+          </groups>
+          <objects/>
+          <links/>
+          <constraints/>
+          <observers/>
+        </Group>
+      </p:Embed>
+    </groups>
+    <objects>
+      <RigidBody name="DummyBodyWith1DOF_JustToEnableIntegration">
+        <mass unit="kg">1</mass>
+        <inertiaTensor unit="kg*m^2">[[1,0,0],[0,1,0],[0,0,1]] </inertiaTensor>
+        <stateDependentTranslation>
+          <TranslationAlongXAxis/>
+        </stateDependentTranslation>
+        <frames/>
+        <contours/>
+        <enableOpenMBVFrameC/>
+      </RigidBody>
+    </objects>
+    <links/>
+    <constraints/>
+    <observers/>
+    <enableOpenMBVFrameI/>
+    <environments>
+      <MBSimEnvironment>
+        <accelerationOfGravity unit="m/s^2">[0,-9.81,0]</accelerationOfGravity>
+      </MBSimEnvironment>
+    </environments>
+  </DynamicSystemSolver>
+
+  <DOPRI5Integrator xmlns="http://www.mbsim-env.de/MBSim">
+    <startTime unit="s">0</startTime>
+    <endTime unit="s">1</endTime>
+    <plotStepSize unit="s">1e-2</plotStepSize>
+  </DOPRI5Integrator>
+
+
+</MBSimProject>
