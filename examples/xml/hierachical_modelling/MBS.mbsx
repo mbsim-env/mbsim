@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <pv:Embed xmlns="http://www.mbsim-env.de/MBSimXML" xmlns:pv="http://www.mbsim-env.de/MBXMLUtils">
   <Parameter xmlns="http://www.mbsim-env.de/MBXMLUtils">
+    <vectorParameter name="testChdirOnMBSimProjectLevel">
+      <pv:fromFile href="gravity.txt"/>
+    </vectorParameter>
     <scalarParameter name="TendHalf"><!--test comment for TendHalf, single line-->2</scalarParameter>
   </Parameter>
-  <MBSimProject name="MBSPRJ">
+  <MBSimProject name="{ret='MBSPRJ';d=load('gravity.txt')}">
     <!-- test commend on MBSimProject line 1
       line2
       linelast -->
@@ -11,6 +14,9 @@
     <pv:Embed href="MBS.mbsim.xml" parameterHref="parameter.mbsim.xml"/>
     <pv:Embed href="Integrator.mbsimint.xml">
       <Parameter xmlns="http://www.mbsim-env.de/MBXMLUtils">
+        <vectorParameter name="testChdirOnIntegratorLevel">
+          <pv:fromFile href="gravity.txt"/>
+        </vectorParameter>
         <scalarParameter name="Tend">
           <!--
             test comment for TendHalf*2 line1
