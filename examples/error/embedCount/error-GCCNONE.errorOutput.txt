@@ -1,0 +1,3 @@
+MBS.mbsx:47: Evaluation of refernece 'Frame[C2]' failed: Message from Object[Rigid body 2(with_ID_0xXXXXXX)]: (Body::getFrame): The body comprises no frame "C2"!
+Created by object of type MBSim::RigidBody
+  MBS.mbsx:10: Created by object of type MBSim::DynamicSystemSolver
