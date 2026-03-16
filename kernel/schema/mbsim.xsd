@@ -3075,21 +3075,19 @@
             </xs:annotation>
           </xs:element>
           <xs:choice>
-            <xs:element name="solid">
+            <xs:element name="solid" type="pv:emptyContentType">
               <xs:annotation>
                 <xs:documentation xml:lang="de" xmlns="">
                   Als Kontaktkontur wird die Ausfläche des Kegelstumpfes gewählt.
                 </xs:documentation>
               </xs:annotation>
-              <xs:complexType/>
             </xs:element>
-            <xs:element name="hollow">
+            <xs:element name="hollow" type="pv:emptyContentType">
               <xs:annotation>
                 <xs:documentation xml:lang="de" xmlns="">
                   Als Kontaktkontur wird die Innenfläche des Kegelstumpfes gewählt.
                 </xs:documentation>
               </xs:annotation>
-              <xs:complexType/>
             </xs:element>
           </xs:choice>
           <xs:element name="enableOpenMBV" minOccurs="0">

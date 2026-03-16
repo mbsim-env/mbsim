@@ -51,7 +51,9 @@
           </UnilateralNewtonImpact>
         </contactImpactLaw>
       </MaximalOpeningContact>
-      <enableOpenMBVBodies/>
+      <enableOpenMBVBodies>
+        <?dummy test?>
+      </enableOpenMBVBodies>
       <enableOpenMBVFrames/>
       <enableOpenMBVArrows/>
     </Checkvalve>

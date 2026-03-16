@@ -1179,13 +1179,12 @@
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>
-                <xs:element name="setValued" minOccurs="0">
+                <xs:element name="setValued" minOccurs="0" type="pv:emptyContentType">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="">
                       Wenn gesetzt, so erfolgt eine Sperrung des Durchflusses durch numerische Nebenbedingungen.
                     </xs:documentation>
                   </xs:annotation>
-                  <xs:complexType/>
                 </xs:element>
               </xs:sequence>
             </xs:complexType>
@@ -2101,13 +2100,12 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="bilateralConstrained" minOccurs="0">
+          <xs:element name="bilateralConstrained" minOccurs="0" type="pv:emptyContentType">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 Wenn gesetzt, wird der Fluss über die Steuerkante des Ventils bei einem relativen alpha-Wert unter der gesetzten Schranke durch eine Nebenbedingung gesperrt. (nur Time-Stepping Integratoren)
               </xs:documentation>
             </xs:annotation>
-            <xs:complexType/>
           </xs:element>
           <xs:element name="offset" type="pv:nounitScalar">
             <xs:annotation>
@@ -2247,13 +2245,12 @@
                           </xs:documentation>
                         </xs:annotation>
                       </xs:element>
-                      <xs:element name="setValued" minOccurs="0">
+                      <xs:element name="setValued" minOccurs="0" type="pv:emptyContentType">
                         <xs:annotation>
                           <xs:documentation xml:lang="de" xmlns="">
                             Berechnung des Rückschlagventils mit einem Eckengesetz.
                           </xs:documentation>
                         </xs:annotation>
-                        <xs:complexType/>
                       </xs:element>
                     </xs:sequence>
                   </xs:complexType>
@@ -2394,29 +2391,26 @@
               </xs:sequence> 
             </xs:complexType>
           </xs:element>
-          <xs:element name="enableOpenMBVBodies" minOccurs="0">
+          <xs:element name="enableOpenMBVBodies" minOccurs="0" type="pv:emptyContentType">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 Visualisierung der Körper des Rückschlagventils
               </xs:documentation>
             </xs:annotation>
-            <xs:complexType/>
           </xs:element>
-          <xs:element name="enableOpenMBVFrames" minOccurs="0">
+          <xs:element name="enableOpenMBVFrames" minOccurs="0" type="pv:emptyContentType">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 Visualisierung der internen Koordinatensyteme des Rückschlagventils
               </xs:documentation>
             </xs:annotation>
-            <xs:complexType/>
           </xs:element>
-          <xs:element name="enableOpenMBVArrows" minOccurs="0">
+          <xs:element name="enableOpenMBVArrows" minOccurs="0" type="pv:emptyContentType">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 Visualisierung der Kräfte des Rückschlagventils
               </xs:documentation>
             </xs:annotation>
-            <xs:complexType/>
           </xs:element>
         </xs:sequence>
       </xs:extension>
