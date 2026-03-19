@@ -1,7 +1,7 @@
 <root>
   <span class="MBSIMGUI_ERROR">
     <span class="MBXMLUTILS_ERROROUTPUT">
-      <a href="submodel/Untergruppe.xml?xpath=/{http://www.mbsim-env.de/MBSim}Group[1]/{http://www.mbsim-env.de/MBSim}objects[1]/{http://www.mbsim-env.de/MBSim}RigidBody[1]/{http://www.mbsim-env.de/MBSim}frameForKinematics[1]&amp;line=15">submodel/Untergruppe.xml:15:/Group[1]/objects[1]/RigidBody[1]/frameForKinematics[1]</a>:<br />
+      <a href="submodel/Untergruppe.xml?xpath=/{http://www.mbsim-env.de/MBSim}Group[1]/{http://www.mbsim-env.de/MBSim}objects[1]/{http://www.mbsim-env.de/MBSim}RigidBody[1]/{http://www.mbsim-env.de/MBSim}frameForKinematics[1]&amp;line=13">submodel/Untergruppe.xml:13:/Group[1]/objects[1]/RigidBody[1]/frameForKinematics[1]</a>:<br />
       <span class="MBXMLUTILS_MSG">Error: no declaration found for element 'massERROR'
 </span>
       <span class="MBSIMGUI_ERROR" />

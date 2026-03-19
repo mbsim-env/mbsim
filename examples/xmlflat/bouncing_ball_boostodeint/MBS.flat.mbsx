@@ -1,7 +1,6 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no" ?><MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
-
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
   <evaluator xmlns="http://www.mbsim-env.de/MBXMLUtils">xmlflat</evaluator>
-
   <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
     <plotFeatureRecursive value="generalizedRelativePosition">true</plotFeatureRecursive>
     <plotFeatureRecursive value="generalizedRelativeVelocity">true</plotFeatureRecursive>
@@ -10,41 +9,41 @@
     <plotFeatureRecursive value="generalizedVelocity">true</plotFeatureRecursive>
     <frames>
       <FixedRelativeFrame name="P1">
-        <enableOpenMBV>
-        </enableOpenMBV>
+        <enableOpenMBV/>
         <relativeOrientation>
           
-        [6.123233995736766e-17,-1,0 ; 1,6.123233995736766e-17,0 ; 0,0,1]</relativeOrientation>
+        [6.123233995736766e-17,-1,0 ; 1,6.123233995736766e-17,0 ; 0,0,1]
+        </relativeOrientation>
       </FixedRelativeFrame>
     </frames>
     <contours>
       <Plane name="Plane1">
-        <frameOfReference ref="../Frame[P1]"></frameOfReference>
-        <enableOpenMBV>
-        </enableOpenMBV>
+        <frameOfReference ref="../Frame[P1]"/>
+        <enableOpenMBV/>
       </Plane>
     </contours>
-    <groups></groups>
+    <groups/>
     <objects>
       <RigidBody name="RigidBody1">
         <generalizedInitialPosition>[0 ; 0.2]</generalizedInitialPosition>
         <generalizedInitialVelocity>[0.5 ; 0]</generalizedInitialVelocity>
-        <frameOfReference ref="../Frame[I]"></frameOfReference>
-        <frameForKinematics ref="Frame[C]"></frameForKinematics>
+        <frameOfReference ref="../Frame[I]"/>
+        <frameForKinematics ref="Frame[C]"/>
         <mass unit="kg">1</mass>
         <inertiaTensor unit="kg*m^2">
           
-        [0.01,0,0 ; 0,0.01,0 ; 0,0,0.01]</inertiaTensor>
+        [0.01,0,0 ; 0,0.01,0 ; 0,0,0.01]
+        </inertiaTensor>
         <stateDependentTranslation>
-          <TranslationAlongAxesXY></TranslationAlongAxesXY>
+          <TranslationAlongAxesXY/>
         </stateDependentTranslation>
         <frames>
           <FixedRelativeFrame name="P1">
-            <enableOpenMBV>
-            </enableOpenMBV>
+            <enableOpenMBV/>
             <relativePosition unit="m">
               
-            [0 ; -0.1 ; 0]</relativePosition>
+            [0 ; -0.1 ; 0]
+            </relativePosition>
           </FixedRelativeFrame>
         </frames>
         <contours>
@@ -59,23 +58,24 @@
             <transparency unit="-">0.3</transparency>
             <initialTranslation unit="m">
               
-            [0 ; 0 ; 0]</initialTranslation>
+            [0 ; 0 ; 0]
+            </initialTranslation>
             <initialRotation unit="rad">
               
-            [0 ; 0 ; 0]</initialRotation>
+            [0 ; 0 ; 0]
+            </initialRotation>
             <scaleFactor unit="-">1</scaleFactor>
             <radius unit="m">0.1</radius>
           </Sphere>
         </openMBVRigidBody>
-        <enableOpenMBVFrameC>
-        </enableOpenMBVFrameC>
+        <enableOpenMBVFrameC/>
       </RigidBody>
     </objects>
     <links>
       <Contact name="Contact1">
-        <connect ref1="../Contour[Plane1]" ref2="../Object[RigidBody1]/Contour[Point1]"></connect>
+        <connect ref1="../Contour[Plane1]" ref2="../Object[RigidBody1]/Contour[Point1]"/>
         <normalForceLaw>
-          <UnilateralConstraint></UnilateralConstraint>
+          <UnilateralConstraint/>
         </normalForceLaw>
         <normalImpactLaw>
           <UnilateralNewtonImpact>
@@ -96,17 +96,16 @@
     </links>
     <constraints/>
     <observers/>
-    <enableOpenMBVFrameI>
-    </enableOpenMBVFrameI>
+    <enableOpenMBVFrameI/>
     <environments>
       <MBSimEnvironment>
         <accelerationOfGravity unit="m/s^2">
           
-        [0 ; -9.81 ; 0]</accelerationOfGravity>
+        [0 ; -9.81 ; 0]
+        </accelerationOfGravity>
       </MBSimEnvironment>
     </environments>
   </DynamicSystemSolver>
-
   <BoostOdeintDOS_Rosenbrock4 xmlns="http://www.mbsim-env.de/MBSim">
     <startTime unit="s">0</startTime>
     <endTime unit="s">1</endTime>
@@ -114,5 +113,4 @@
     <plotOnRoot>true</plotOnRoot>
     <maximumStepSize unit="s">0.01</maximumStepSize>
   </BoostOdeintDOS_Rosenbrock4>
-
 </MBSimProject>

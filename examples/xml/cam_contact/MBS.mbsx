@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
-
   <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
     <Parameter>
       <scalarParameter name="m">1</scalarParameter>
@@ -9,11 +8,11 @@
       <scalarParameter name="om" unit="-">4*pi</scalarParameter>
     </Parameter>
     <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
-       <plotFeatureRecursive value="generalizedRelativePosition">true</plotFeatureRecursive>
-       <plotFeatureRecursive value="generalizedRelativeVelocity">true</plotFeatureRecursive>
-       <plotFeatureRecursive value="generalizedForce">true</plotFeatureRecursive>
-       <plotFeatureRecursive value="generalizedPosition">true</plotFeatureRecursive>
-       <plotFeatureRecursive value="generalizedVelocity">true</plotFeatureRecursive>
+      <plotFeatureRecursive value="generalizedRelativePosition">true</plotFeatureRecursive>
+      <plotFeatureRecursive value="generalizedRelativeVelocity">true</plotFeatureRecursive>
+      <plotFeatureRecursive value="generalizedForce">true</plotFeatureRecursive>
+      <plotFeatureRecursive value="generalizedPosition">true</plotFeatureRecursive>
+      <plotFeatureRecursive value="generalizedVelocity">true</plotFeatureRecursive>
       <frames/>
       <contours/>
       <groups/>
@@ -134,8 +133,7 @@
           <contours>
             <Circle name="Circle1">
               <radius unit="m">r</radius>
-              <enableOpenMBV>
-              </enableOpenMBV>
+              <enableOpenMBV/>
             </Circle>
           </contours>
           <enableOpenMBVFrameC>
@@ -194,7 +192,6 @@
       <generalizedImpulseTolerance unit="-">1e-6</generalizedImpulseTolerance>
     </DynamicSystemSolver>
   </Embed>
-
   <LSODAIntegrator xmlns="http://www.mbsim-env.de/MBSim">
     <startTime unit="s">0</startTime>
     <endTime unit="s">2</endTime>
@@ -205,5 +202,4 @@
     <relativeToleranceScalar unit="-">1e-6</relativeToleranceScalar>
     <maximumStepSize unit="s">1e-2</maximumStepSize>
   </LSODAIntegrator>
-
 </MBSimProject>

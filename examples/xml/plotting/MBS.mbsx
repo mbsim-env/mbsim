@@ -7,8 +7,7 @@
     <pv:evaluator>python</pv:evaluator>
     <pv:Embed>
       <pv:Parameter>
-        <pv:vectorParameter name="x">
-          <!-- a multi line
+        <pv:vectorParameter name="x"><!-- a multi line
                comment -->
           <?MBSIMGUI_CONTEXT_ACTION name="Some output and refresh"
             import mbsimgui
@@ -19,6 +18,7 @@
             mbsimgui.mw.refresh()
           ?>
           [0,1,2,3,4,5]
+        
         </pv:vectorParameter>
         <pv:matrixParameter name="y">
           <?MBSIMGUI_CONTEXT_ACTION name="Show XML documentation ..."
@@ -27,6 +27,7 @@
             webbrowser.open(mbxmlutils.installPrefix()+"/share/mbxmlutils/doc/http___www_mbsim-env_de_MBSimXML/mbsimxml.html")
           ?>
           [[2,2,0],[5,5,0],[8,8,0],[6,6,0],[3,3,0],[2,2,0]]
+        
         </pv:matrixParameter>
         <pv:scalarParameter name="s">0.06</pv:scalarParameter>
         <pv:anyParameter name="splineIn">
@@ -72,7 +73,7 @@
                     <groups/>
                     <objects>
                       <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="4" counterName="o" onlyif="o!=1">
-                        <RigidBody name="smoothing_{g}_NONE_{o}" xmlns="http://www.mbsim-env.de/MBSim">
+                        <RigidBody xmlns="http://www.mbsim-env.de/MBSim" name="smoothing_{g}_NONE_{o}">
                           <?MBSIMGUI_CONTEXT_ACTION name="Show plot"
                             import PySide2
                             import numpy
@@ -218,15 +219,21 @@
                               <components>
                                 <PiecewisePolynomFunction>
                                   <breaks>splineOut[0].x</breaks>
-                                  <coefficientsArray><ele>splineOut[0].c[:,:].T</ele></coefficientsArray>
+                                  <coefficientsArray>
+                                    <ele>splineOut[0].c[:,:].T</ele>
+                                  </coefficientsArray>
                                 </PiecewisePolynomFunction>
                                 <PiecewisePolynomFunction>
                                   <breaks>splineOut[1].x</breaks>
-                                  <coefficientsArray><ele>splineOut[1].c[:,:].T</ele></coefficientsArray>
+                                  <coefficientsArray>
+                                    <ele>splineOut[1].c[:,:].T</ele>
+                                  </coefficientsArray>
                                 </PiecewisePolynomFunction>
                                 <PiecewisePolynomFunction>
                                   <breaks>splineOut[2].x</breaks>
-                                  <coefficientsArray><ele>splineOut[2].c[:,:].T</ele></coefficientsArray>
+                                  <coefficientsArray>
+                                    <ele>splineOut[2].c[:,:].T</ele>
+                                  </coefficientsArray>
                                 </PiecewisePolynomFunction>
                               </components>
                             </VectorValuedFunction>
@@ -250,8 +257,7 @@
                   </Group>
                 </Embed>
               </groups>
-              <objects>
-              </objects>
+              <objects/>
               <links/>
               <constraints/>
               <observers/>
@@ -331,7 +337,7 @@
             </openMBVRigidBody>
             <enableOpenMBVFrameC/>
           </RigidBody>
-          <pv:Embed counterName="icoeffs" count="2" onlyif="icoeffs==1">
+          <pv:Embed count="2" counterName="icoeffs" onlyif="icoeffs==1">
             <pv:Parameter>
               <pv:anyParameter name="spline">
                 import scipy
@@ -339,12 +345,14 @@
               </pv:anyParameter>
               <pv:scalarParameter name="context1">
                 1
+              
                 <?MBSIMGUI_CONTEXT_ACTION name="Print own value"
                   print("The value of this parameter is currently: "+str(context1))
                 ?>
               </pv:scalarParameter>
               <pv:scalarParameter name="context2">
                 2
+              
                 <?MBSIMGUI_CONTEXT_ACTION name="Print own value"
                   context1
                   print("The value of this parameter is currently: "+str(context2))

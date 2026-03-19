@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
-
   <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
     <Parameter>
       <scalarParameter name="l" unit="-">1</scalarParameter>
@@ -115,13 +114,11 @@
             <contours>
               <Point name="Point1">
                 <frameOfReference ref="../Frame[P1]"/>
-                <enableOpenMBV>
-                </enableOpenMBV>
+                <enableOpenMBV/>
               </Point>
               <Point name="Point2">
                 <frameOfReference ref="../Frame[P2]"/>
-                <enableOpenMBV>
-                </enableOpenMBV>
+                <enableOpenMBV/>
               </Point>
             </contours>
             <openMBVRigidBody>
@@ -344,17 +341,16 @@
             </xmlVector>
           </accelerationOfGravity>
         </MBSimEnvironment>
-        </environments>
-        <projectionTolerance unit="-">1e-15</projectionTolerance>
-        <generalizedRelativePositionTolerance unit="-">1e-6</generalizedRelativePositionTolerance>
-        <generalizedRelativeVelocityTolerance unit="-">1e-8</generalizedRelativeVelocityTolerance>
-        <generalizedRelativeAccelerationTolerance unit="-">1e-10</generalizedRelativeAccelerationTolerance>
-        <generalizedForceTolerance unit="-">1e-10</generalizedForceTolerance>
-        <generalizedImpulseTolerance unit="-">1e-8</generalizedImpulseTolerance>
+      </environments>
+      <projectionTolerance unit="-">1e-15</projectionTolerance>
+      <generalizedRelativePositionTolerance unit="-">1e-6</generalizedRelativePositionTolerance>
+      <generalizedRelativeVelocityTolerance unit="-">1e-8</generalizedRelativeVelocityTolerance>
+      <generalizedRelativeAccelerationTolerance unit="-">1e-10</generalizedRelativeAccelerationTolerance>
+      <generalizedForceTolerance unit="-">1e-10</generalizedForceTolerance>
+      <generalizedImpulseTolerance unit="-">1e-8</generalizedImpulseTolerance>
       <useConstraintSolverForPlot>1</useConstraintSolverForPlot>
     </DynamicSystemSolver>
   </Embed>
-
   <LSODAIntegrator xmlns="http://www.mbsim-env.de/MBSim">
     <startTime unit="s">0</startTime>
     <endTime unit="s">7.01</endTime>
@@ -364,5 +360,4 @@
     <initialStepSize unit="s">1e-10</initialStepSize>
     <maximumStepSize unit="s">1e-2</maximumStepSize>
   </LSODAIntegrator>
-
 </MBSimProject>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
-<RigidBody name="embedhrefparameterhref{n}" xmlns="http://www.mbsim-env.de/MBSim">
+<RigidBody xmlns="http://www.mbsim-env.de/MBSim" name="embedhrefparameterhref{n}">
   <mass>m</mass>
   <inertiaTensor>[1,0,0;0,1,0;0,0,1]</inertiaTensor>
   <stateDependentTranslation>

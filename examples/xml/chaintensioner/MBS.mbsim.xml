@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no" ?><DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="TS" xmlns:c="http://www.mbsim-env.de/MBSimControl" xmlns:h="http://www.mbsim-env.de/MBSimHydraulics" xmlns:ombv="http://www.mbsim-env.de/OpenMBV" xmlns:pv="http://www.mbsim-env.de/MBXMLUtils">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="TS" xmlns:c="http://www.mbsim-env.de/MBSimControl" xmlns:h="http://www.mbsim-env.de/MBSimHydraulics" xmlns:ombv="http://www.mbsim-env.de/OpenMBV" xmlns:pv="http://www.mbsim-env.de/MBXMLUtils">
   <plotFeatureRecursive value="deflection">true</plotFeatureRecursive>
   <plotFeatureRecursive value="generalizedRelativePosition">true</plotFeatureRecursive>
   <plotFeatureRecursive value="generalizedRelativeVelocity">true</plotFeatureRecursive>
@@ -18,9 +19,11 @@
       <mass>1.</mass>
       <inertiaTensor>eye(3)</inertiaTensor>
       <timeDependentTranslation>
-        <SymbolicFunction><definition arg1="t">
+        <SymbolicFunction>
+          <definition arg1="t">
           [0; 2e-4*sin(2*pi*100*t); 0]
-        </definition></SymbolicFunction>
+          </definition>
+        </SymbolicFunction>
       </timeDependentTranslation>
       <frames/>
       <contours/>
@@ -43,7 +46,7 @@
     </RigidBody>
   </objects>
   <links>
-  <!--
+    <!--
     <c:RelativePositionSensor name="KinematicExcitationPosition">
       <c:frame ref="../Group[ChainTensioner]/Object[Housing]/Frame[PistonInitialTopFrame]" rel="../Object[KinematicExcitation]/Frame[C]"/>
       <c:direction>[0;1;0]</c:direction>

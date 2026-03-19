@@ -82,7 +82,8 @@
             </length>
           </enableOpenMBV>
         </Plane>
-      </contours><groups>
+      </contours>
+      <groups>
         <Group name="Schwerpunkt">
           <frames/>
           <contours/>
@@ -127,8 +128,9 @@
                       <ele>0</ele>
                       <ele>0</ele>
                       <ele>-(mR+mH+mV+mG)*9.81</ele>
-                  </xmlVector>
-                </definition></SymbolicFunction>
+                    </xmlVector>
+                  </definition>
+                </SymbolicFunction>
               </function>
             </FunctionSensor>
           </links>
@@ -149,7 +151,8 @@
                 <referencePoint xmlns="http://www.mbsim-env.de/MBSim">"toPoint"</referencePoint>
               </enableOpenMBV>
             </SignalObserver>
-          </observers><enableOpenMBVFrameI/>
+          </observers>
+          <enableOpenMBVFrameI/>
         </Group>
       </groups>
       <objects>
@@ -220,7 +223,8 @@
                 <aboutY xmlns="http://www.mbsim-env.de/MBXMLUtils" unit="rad">-be</aboutY>
               </relativeOrientation>
             </FixedRelativeFrame>
-          </frames><contours/>
+          </frames>
+          <contours/>
           <openMBVRigidBody>
             <IvBody xmlns="http://www.mbsim-env.de/OpenMBV" name="IvBody2">
               <transparency unit="-">0.3</transparency>
@@ -245,7 +249,8 @@
           <openMBVFrameOfReference ref="Frame[K]"/>
           <enableOpenMBVFrameC>
             <size unit="dm">1</size>
-          </enableOpenMBVFrameC></RigidBody>
+          </enableOpenMBVFrameC>
+        </RigidBody>
         <RigidBody name="Hinterrad">
           <generalizedInitialVelocity>
             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -285,12 +290,14 @@
                 <aboutX xmlns="http://www.mbsim-env.de/MBXMLUtils" unit="degree">-90</aboutX>
               </relativeOrientation>
             </FixedRelativeFrame>
-          </frames><contours>
+          </frames>
+          <contours>
             <Circle name="Rad">
               <frameOfReference ref="../Frame[R]"/>
               <radius unit="m">r</radius>
             </Circle>
-          </contours><openMBVRigidBody>
+          </contours>
+          <openMBVRigidBody>
             <IvBody xmlns="http://www.mbsim-env.de/OpenMBV" name="IvBody2">
               <transparency unit="-">0.3</transparency>
               <initialTranslation unit="m">
@@ -313,7 +320,8 @@
           </openMBVRigidBody>
           <enableOpenMBVFrameC>
             <size unit="dm">1</size>
-          </enableOpenMBVFrameC></RigidBody>
+          </enableOpenMBVFrameC>
+        </RigidBody>
         <RigidBody name="Gabel">
           <generalizedInitialPosition>
             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -354,7 +362,8 @@
                 </xmlVector>
               </relativePosition>
             </FixedRelativeFrame>
-          </frames><contours/>
+          </frames>
+          <contours/>
           <openMBVRigidBody>
             <IvBody xmlns="http://www.mbsim-env.de/OpenMBV" name="IvBody2">
               <transparency unit="-">0.3</transparency>
@@ -379,7 +388,8 @@
           <openMBVFrameOfReference ref="Frame[K]"/>
           <enableOpenMBVFrameC>
             <size unit="dm">1</size>
-          </enableOpenMBVFrameC></RigidBody>
+          </enableOpenMBVFrameC>
+        </RigidBody>
         <RigidBody name="Vorderrad">
           <generalizedInitialVelocity>
             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -419,12 +429,14 @@
                 <aboutX xmlns="http://www.mbsim-env.de/MBXMLUtils" unit="degree">-90</aboutX>
               </relativeOrientation>
             </FixedRelativeFrame>
-          </frames><contours>
+          </frames>
+          <contours>
             <Circle name="Rad">
               <frameOfReference ref="../Frame[R]"/>
               <radius unit="m">r</radius>
             </Circle>
-          </contours><openMBVRigidBody>
+          </contours>
+          <openMBVRigidBody>
             <IvBody xmlns="http://www.mbsim-env.de/OpenMBV" name="IvBody2">
               <transparency unit="-">0.3</transparency>
               <initialTranslation unit="m">
@@ -447,8 +459,10 @@
           </openMBVRigidBody>
           <enableOpenMBVFrameC>
             <size unit="dm">1</size>
-          </enableOpenMBVFrameC></RigidBody>
-      </objects><links>
+          </enableOpenMBVFrameC>
+        </RigidBody>
+      </objects>
+      <links>
         <Contact name="KontaktVR">
           <connect ref1="../Contour[Boden]" ref2="../Object[Vorderrad]/Contour[Rad]"/>
           <normalForceLaw>
@@ -492,7 +506,8 @@
               </frictionForceFunction>
             </RegularizedSpatialFriction>
           </tangentialForceLaw>
-        </Contact><FunctionSensor xmlns="http://www.mbsim-env.de/MBSimControl" name="Richtungssoll">
+        </Contact>
+        <FunctionSensor xmlns="http://www.mbsim-env.de/MBSimControl" name="Richtungssoll">
           <function>
             <LinearFunction xmlns="http://www.mbsim-env.de/MBSim">
               <a1>1</a1>
@@ -516,8 +531,9 @@
               <definition arg1="x" arg1Dim="9" arg2="y" arg2Dim="3">
                 <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                   <ele>x(1)*y(1) + x(4)*y(2) + x(7)*y(3)</ele>
-              </xmlVector>
-            </definition></SymbolicFunction>
+                </xmlVector>
+              </definition>
+            </SymbolicFunction>
           </function>
         </SignalOperation>
         <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="Fahrtrichtung">
@@ -528,7 +544,8 @@
 bx = [x(1);x(4);x(7)]
 bz = [x(3);x(6);x(9)]
 c = [n(2)*bx(3)-n(3)*bx(2);n(3)*bx(1)-n(1)*bx(3);n(1)*bx(2)-n(2)*bx(1)]
-ret = [sign(bz(1)*c(1)+bz(2)*c(2)+bz(3)*c(3))*acos(bx(1))]</definition>
+ret = [sign(bz(1)*c(1)+bz(2)*c(2)+bz(3)*c(3))*acos(bx(1))]
+              </definition>
             </SymbolicFunction>
           </function>
         </SignalOperation>
@@ -540,7 +557,8 @@ ret = [sign(bz(1)*c(1)+bz(2)*c(2)+bz(3)*c(3))*acos(bx(1))]</definition>
 bx = [x(1);x(4);x(7)]
 bz = [x(3);x(6);x(9)]
 c = [n(2)*bz(3)-n(3)*bz(2);n(3)*bz(1)-n(1)*bz(3);n(1)*bz(2)-n(2)*bz(1)]
-ret = [sign(bx(1)*c(1)+bx(2)*c(2)+bx(3)*c(3))*acos(bz(3))]</definition>
+ret = [sign(bx(1)*c(1)+bx(2)*c(2)+bx(3)*c(3))*acos(bz(3))]
+              </definition>
             </SymbolicFunction>
           </function>
         </SignalOperation>
@@ -552,8 +570,9 @@ ret = [sign(bx(1)*c(1)+bx(2)*c(2)+bx(3)*c(3))*acos(bz(3))]</definition>
               <definition arg1="x" arg2="y">
                 <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                   <ele>x-y</ele>
-              </xmlVector>
-            </definition></SymbolicFunction>
+                </xmlVector>
+              </definition>
+            </SymbolicFunction>
           </function>
         </SignalOperation>
         <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -561,7 +580,7 @@ ret = [sign(bx(1)*c(1)+bx(2)*c(2)+bx(3)*c(3))*acos(bz(3))]</definition>
             <scalarParameter name="P">0.5</scalarParameter>
             <scalarParameter name="I">0</scalarParameter>
             <scalarParameter name="D">0.2</scalarParameter>
-        </Parameter>
+          </Parameter>
           <LinearTransferSystem xmlns="http://www.mbsim-env.de/MBSimControl" name="Navigationsregler">
             <inputSignal ref="../Link[Richtungsdiff]"/>
             <systemMatrix>
@@ -602,7 +621,6 @@ ret = [sign(bx(1)*c(1)+bx(2)*c(2)+bx(3)*c(3))*acos(bz(3))]</definition>
               </xmlMatrix>
             </feedthroughMatrix>
           </LinearTransferSystem>
-      
         </Embed>
         <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="Neigungsbegrenzer">
           <inputSignal ref="../Link[Navigationsregler]"/>
@@ -620,8 +638,9 @@ ret = [sign(bx(1)*c(1)+bx(2)*c(2)+bx(3)*c(3))*acos(bz(3))]</definition>
               <definition arg1="x">
                 <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                   <ele>-x</ele>
-              </xmlVector>
-            </definition></SymbolicFunction>
+                </xmlVector>
+              </definition>
+            </SymbolicFunction>
           </function>
         </SignalOperation>
         <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -669,15 +688,16 @@ ret = [sign(bx(1)*c(1)+bx(2)*c(2)+bx(3)*c(3))*acos(bz(3))]</definition>
               <definition arg1="x" arg2="y">
                 <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                   <ele>x-y</ele>
-              </xmlVector>
-            </definition></SymbolicFunction>
+                </xmlVector>
+              </definition>
+            </SymbolicFunction>
           </function>
         </SignalOperation>
         <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
           <Parameter>
             <scalarParameter name="P">4</scalarParameter>
             <scalarParameter name="I">1</scalarParameter>
-        </Parameter>
+          </Parameter>
           <LinearTransferSystem xmlns="http://www.mbsim-env.de/MBSimControl" name="Neigungsregler">
             <inputSignal ref="../Link[Neigungsdiff]"/>
             <systemMatrix>
@@ -709,7 +729,6 @@ ret = [sign(bx(1)*c(1)+bx(2)*c(2)+bx(3)*c(3))*acos(bz(3))]</definition>
               </xmlMatrix>
             </feedthroughMatrix>
           </LinearTransferSystem>
-      
         </Embed>
         <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="Lenkwinkelbegrenzung">
           <inputSignal ref="../Link[Neigungsregler]"/>
@@ -728,8 +747,9 @@ ret = [sign(bx(1)*c(1)+bx(2)*c(2)+bx(3)*c(3))*acos(bz(3))]</definition>
               <definition arg1="x" arg2="y">
                 <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                   <ele>x-y</ele>
-              </xmlVector>
-            </definition></SymbolicFunction>
+                </xmlVector>
+              </definition>
+            </SymbolicFunction>
           </function>
         </SignalOperation>
         <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -782,7 +802,6 @@ ret = [sign(bx(1)*c(1)+bx(2)*c(2)+bx(3)*c(3))*acos(bz(3))]</definition>
               </xmlMatrix>
             </feedthroughMatrix>
           </LinearTransferSystem>
-      
         </Embed>
         <KineticExcitation name="MotorLenker">
           <connect ref1="../Object[Rahmen]/Frame[G]" ref2="../Object[Gabel]/Frame[K]"/>
@@ -892,7 +911,8 @@ ret = [sign(bx(1)*c(1)+bx(2)*c(2)+bx(3)*c(3))*acos(bz(3))]</definition>
       </observers>
       <enableOpenMBVFrameI>
         <size unit="dm">1</size>
-      </enableOpenMBVFrameI><environments>
+      </enableOpenMBVFrameI>
+      <environments>
         <MBSimEnvironment>
           <accelerationOfGravity unit="m/s^2">
             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">

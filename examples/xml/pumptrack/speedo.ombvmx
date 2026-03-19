@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
-<IvScreenAnnotation name="{name}" xmlns="http://www.mbsim-env.de/OpenMBV">
+<IvScreenAnnotation xmlns="http://www.mbsim-env.de/OpenMBV" name="{name}">
   <scale1To1At>scale1To1At</scale1To1At>
-  <ivContent>
-<![CDATA[
+  <ivContent><![CDATA[
 import numpy
 import math
 import colorsys
@@ -195,7 +194,6 @@ Separator {{
 '''
 
 ret=content
-]]>
-  </ivContent>
+]]></ivContent>
   <columnLabel>'speedoValue'</columnLabel>
 </IvScreenAnnotation>

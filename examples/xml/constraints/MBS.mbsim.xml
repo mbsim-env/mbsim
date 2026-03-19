@@ -1,16 +1,14 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="TS">
   <plotFeatureRecursive value="generalizedRelativePosition">true</plotFeatureRecursive>
   <plotFeatureRecursive value="generalizedRelativeVelocity">true</plotFeatureRecursive>
   <plotFeatureRecursive value="generalizedForce">true</plotFeatureRecursive>
   <plotFeatureRecursive value="generalizedPosition">true</plotFeatureRecursive>
   <plotFeatureRecursive value="generalizedVelocity">true</plotFeatureRecursive>
-  <frames>
-</frames>
-  <contours>
-</contours>
+  <frames/>
+  <contours/>
   <groups>
-    <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" href="./CrankMechanism.xml" count="1" counterName="n">
+    <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="1" counterName="n" href="./CrankMechanism.xml">
       <Parameter xmlns="http://www.mbsim-env.de/MBXMLUtils">
         <scalarParameter name="fSize">.01</scalarParameter>
         <scalarParameter name="carrier_Mass">8.5</scalarParameter>

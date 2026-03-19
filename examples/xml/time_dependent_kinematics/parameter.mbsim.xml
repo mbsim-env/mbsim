@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <Parameter xmlns="http://www.mbsim-env.de/MBXMLUtils">
   <scalarParameter name="freq1">pi</scalarParameter>
   <scalarParameter name="freq2">pi/3</scalarParameter>

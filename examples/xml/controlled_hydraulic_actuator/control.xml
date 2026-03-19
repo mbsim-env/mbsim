@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no" ?><Group xmlns="http://www.mbsim-env.de/MBSim" name="Control">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<Group xmlns="http://www.mbsim-env.de/MBSim" name="Control">
   <frameOfReference ref="../Frame[I]"/>
   <frames/>
   <contours/>
@@ -29,9 +30,11 @@
       <inputSignal ref="../Link[FMassPosition]"/>
       <inputSignal ref="../Link[MassPosition]"/>
       <function>
-       <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim"><definition arg1="x" arg1Dim="3" arg2="y" arg2Dim="3">
+        <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim">
+          <definition arg1="x" arg1Dim="3" arg2="y" arg2Dim="3">
           y(2)-x(2)
-        </definition></SymbolicFunction>
+          </definition>
+        </SymbolicFunction>
       </function>
     </SignalOperation>
     <!--
@@ -59,9 +62,11 @@
       <inputSignal ref="../Link[DesiredPosition]"/>
       <inputSignal ref="../Link[RelativeMassPosition]"/>
       <function>
-       <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim"><definition arg1="x" arg2="y">
+        <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim">
+          <definition arg1="x" arg2="y">
           y-x
-        </definition></SymbolicFunction>
+          </definition>
+        </SymbolicFunction>
       </function>
     </SignalOperation>
     <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="ControlOutputLimitted">
@@ -70,7 +75,7 @@
         <BoundedFunction xmlns="http://www.mbsim-env.de/MBSim">
           <lowerBound>0-5</lowerBound>
           <upperBound>1+5</upperBound>
-         </BoundedFunction>
+        </BoundedFunction>
       </function>
     </SignalOperation>
     <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="PT1ControlvalveOutputLimitted">
@@ -79,7 +84,7 @@
         <BoundedFunction xmlns="http://www.mbsim-env.de/MBSim">
           <lowerBound>0</lowerBound>
           <upperBound>1</upperBound>
-         </BoundedFunction>
+        </BoundedFunction>
       </function>
     </SignalOperation>
   </links>

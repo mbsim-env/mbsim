@@ -1,22 +1,19 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Group name="Hauptgruppe{numHG}" xmlns="http://www.mbsim-env.de/MBSim"
-    xmlns:mbsimns="http://www.mbsim-env.de/MBSim"
-    xmlns:pv="http://www.mbsim-env.de/MBXMLUtils"
-    xmlns:ombv="http://www.mbsim-env.de/OpenMBV">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<Group xmlns="http://www.mbsim-env.de/MBSim" name="Hauptgruppe{numHG}" xmlns:mbsimns="http://www.mbsim-env.de/MBSim" xmlns:ombv="http://www.mbsim-env.de/OpenMBV" xmlns:pv="http://www.mbsim-env.de/MBXMLUtils">
   <plotFeatureRecursive value="mbsimns:deflection">true</plotFeatureRecursive>
   <plotFeatureRecursive value="generalizedRelativePosition">1</plotFeatureRecursive>
   <plotFeatureRecursive value="generalizedRelativeVelocity">1</plotFeatureRecursive>
   <plotFeatureRecursive value="generalizedForce">1</plotFeatureRecursive>
   <plotFeatureRecursive value="mbsimns:generalizedPosition">1</plotFeatureRecursive>
   <plotFeatureRecursive value="mbsimns:generalizedVelocity">1</plotFeatureRecursive>
-  <plotAttribute name="empty"></plotAttribute>
+  <plotAttribute name="empty"/>
   <plotAttributeInt name="int">9</plotAttributeInt>
   <plotAttributeFloat name="float">3.4</plotAttributeFloat>
   <plotAttributeString name="string">'test'</plotAttributeString>
   <plotAttributeIntVector name="intVec">[3;54;2]</plotAttributeIntVector>
   <plotAttributeFloatVector name="floatVec">[3.4;54.3;2.1]</plotAttributeFloatVector>
   <plotAttributeFloatMatrix name="floatMat">[3.4,54.3;3.5,2.1]</plotAttributeFloatMatrix>
-  <plotAttribute name="emptyDS" storage="dataset"></plotAttribute>
+  <plotAttribute name="emptyDS" storage="dataset"/>
   <plotAttributeInt name="intDS" storage="dataset">9</plotAttributeInt>
   <plotAttributeFloat name="floatDS" storage="dataset">3.4</plotAttributeFloat>
   <plotAttributeString name="stringDS" storage="dataset">'test'</plotAttributeString>
@@ -43,14 +40,14 @@
   <objects>
     <RigidBody name="Box1">
       <plotFeature value="generalizedAcceleration">1</plotFeature>
-      <plotAttribute name="empty"></plotAttribute>
+      <plotAttribute name="empty"/>
       <plotAttributeInt name="int">9</plotAttributeInt>
       <plotAttributeFloat name="float">3.4</plotAttributeFloat>
       <plotAttributeString name="string">'test'</plotAttributeString>
       <plotAttributeIntVector name="intVec">[3;54;2]</plotAttributeIntVector>
       <plotAttributeFloatVector name="floatVec">[3.4;54.3;2.1]</plotAttributeFloatVector>
       <plotAttributeFloatMatrix name="floatMat">[3.4,54.3;3.5,2.1]</plotAttributeFloatMatrix>
-      <plotAttribute name="emptyDS" storage="dataset"></plotAttribute>
+      <plotAttribute name="emptyDS" storage="dataset"/>
       <plotAttributeInt name="intDS" storage="dataset">9</plotAttributeInt>
       <plotAttributeFloat name="floatDS" storage="dataset">3.4</plotAttributeFloat>
       <plotAttributeString name="stringDS" storage="dataset">'test'</plotAttributeString>
@@ -64,7 +61,8 @@
       <mass><!-- comment for mass -->m</mass>
       <inertiaTensor>[1,0,0 ; 0,1,0 ; 0,0,1]</inertiaTensor>
       <stateDependentTranslation>
-        <pv:Embed><!-- just to check Embed for a Function element-->
+        <pv:Embed>
+          <!-- just to check Embed for a Function element-->
           <TranslationAlongYAxis/>
         </pv:Embed>
       </stateDependentTranslation>
@@ -75,20 +73,20 @@
           <ombv:initialTranslation>[0;0;0]</ombv:initialTranslation>
           <ombv:initialRotation>[0;0;0]</ombv:initialRotation>
           <ombv:scaleFactor>1</ombv:scaleFactor>
-          <Sphere name="crb_1" xmlns="http://www.mbsim-env.de/OpenMBV">
+          <Sphere xmlns="http://www.mbsim-env.de/OpenMBV" name="crb_1">
             <diffuseColor>namedColor('oliveDrab')</diffuseColor>
             <initialTranslation>[0;0;0]</initialTranslation>
             <initialRotation>[0;0;0]</initialRotation>
             <scaleFactor>1</scaleFactor>
             <radius>h/3</radius>
           </Sphere>
-          <Cube name="crb_2" xmlns="http://www.mbsim-env.de/OpenMBV">
+          <Cube xmlns="http://www.mbsim-env.de/OpenMBV" name="crb_2">
             <initialTranslation>[2*h/3;0;0]</initialTranslation>
             <initialRotation unit="degree">[45;0;0]</initialRotation>
             <scaleFactor>1</scaleFactor>
             <length>h/2</length>
           </Cube>
-          <IvBody name="crb_3" xmlns="http://www.mbsim-env.de/OpenMBV">
+          <IvBody xmlns="http://www.mbsim-env.de/OpenMBV" name="crb_3">
             <diffuseColor>[-1;0.0;0.5]</diffuseColor>
             <initialTranslation>[2*h/3;2*h/3;0]</initialTranslation>
             <initialRotation unit="degree">[0;30;20]</initialRotation>

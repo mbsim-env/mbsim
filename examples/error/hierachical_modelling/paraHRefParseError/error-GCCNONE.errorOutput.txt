@@ -1,4 +1,4 @@
-submodel/Untergruppe.param.xml:2: Error: no declaration found for element 'scalarParameterERROR'
-Hauptgruppe.xml:38: included from here
-MBS.mbsim.xml:18: [ecount=1] included from here
+submodel/Untergruppe.param.xml:3: Error: no declaration found for element 'scalarParameterERROR'
+Hauptgruppe.xml:35: included from here
+MBS.mbsim.xml:21: [ecount=1] included from here
 MBS.mbsx:8: [ecount=1] included from here

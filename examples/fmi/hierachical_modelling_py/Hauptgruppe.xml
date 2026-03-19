@@ -1,11 +1,10 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Group name="Hauptgruppe{numHG+1}" xmlns="http://www.mbsim-env.de/MBSim"
-    xmlns:pv="http://www.mbsim-env.de/MBXMLUtils"
-    xmlns:ombv="http://www.mbsim-env.de/OpenMBV">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<Group xmlns="http://www.mbsim-env.de/MBSim" name="Hauptgruppe{numHG+1}" xmlns:ombv="http://www.mbsim-env.de/OpenMBV" xmlns:pv="http://www.mbsim-env.de/MBXMLUtils">
   <frameOfReference ref="../Frame[Q{numHG}]"/>
   <frames>
     <FixedRelativeFrame name="Q">
-      <relativePosition>[(1/math.tan(2))/(1/math.tan(2)),0*555,0]</relativePosition><!-- use "cot" to test a octave internal .m file; use "det" to test a octave internal .oct file -->
+      <relativePosition>[(1/math.tan(2))/(1/math.tan(2)),0*555,0]</relativePosition>
+      <!-- use "cot" to test a octave internal .m file; use "det" to test a octave internal .oct file -->
       <relativeOrientation>
         <pv:cardan unit="degree">
           <pv:alpha>0</pv:alpha>
@@ -38,20 +37,20 @@
           <ombv:initialTranslation>[0,0,0]</ombv:initialTranslation>
           <ombv:initialRotation>[0,0,0]</ombv:initialRotation>
           <ombv:scaleFactor>1</ombv:scaleFactor>
-          <Sphere name="crb_1" xmlns="http://www.mbsim-env.de/OpenMBV">
+          <Sphere xmlns="http://www.mbsim-env.de/OpenMBV" name="crb_1">
             <diffuseColor>[0.5,0.5,0.5]</diffuseColor>
             <initialTranslation>[0,0,0]</initialTranslation>
             <initialRotation>[0,0,0]</initialRotation>
             <scaleFactor>1</scaleFactor>
             <radius>h/3</radius>
           </Sphere>
-          <Cube name="crb_2" xmlns="http://www.mbsim-env.de/OpenMBV">
+          <Cube xmlns="http://www.mbsim-env.de/OpenMBV" name="crb_2">
             <initialTranslation>[2*h/3,0,0]</initialTranslation>
             <initialRotation unit="degree">[45,0,0]</initialRotation>
             <scaleFactor>1</scaleFactor>
             <length>h/2</length>
           </Cube>
-          <IvBody name="crb_3" xmlns="http://www.mbsim-env.de/OpenMBV">
+          <IvBody xmlns="http://www.mbsim-env.de/OpenMBV" name="crb_3">
             <diffuseColor>[-1,0.0,0.5]</diffuseColor>
             <initialTranslation>[2*h/3,2*h/3,0]</initialTranslation>
             <initialRotation unit="degree">[0,30,20]</initialRotation>

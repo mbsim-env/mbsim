@@ -1,11 +1,10 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no" ?><MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
-
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
   <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
     <Parameter>
       <scalarParameter name="l1" unit="-">0.5</scalarParameter>
       <scalarParameter name="l2" unit="-">0.4</scalarParameter>
       <scalarParameter name="l3" unit="-">0.2</scalarParameter>
-
     </Parameter>
     <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
       <plotFeatureRecursive value="generalizedPosition">true</plotFeatureRecursive>
@@ -13,8 +12,8 @@
       <plotFeatureRecursive value="generalizedRelativePosition">true</plotFeatureRecursive>
       <plotFeatureRecursive value="generalizedRelativeVelocity">true</plotFeatureRecursive>
       <plotFeatureRecursive value="generalizedForce">true</plotFeatureRecursive>
-      <frames>
-      </frames><contours/>
+      <frames/>
+      <contours/>
       <groups/>
       <objects>
         <RigidBody name="RigidBody1">
@@ -67,7 +66,8 @@
                 </xmlVector>
               </relativePosition>
             </FixedRelativeFrame>
-          </frames><contours/>
+          </frames>
+          <contours/>
           <openMBVRigidBody>
             <Cuboid xmlns="http://www.mbsim-env.de/OpenMBV" name="Cuboid2">
               <transparency unit="-">0.3</transparency>
@@ -97,7 +97,8 @@
           </openMBVRigidBody>
           <enableOpenMBVFrameC>
             <size unit="dm">1</size>
-          </enableOpenMBVFrameC></RigidBody>
+          </enableOpenMBVFrameC>
+        </RigidBody>
         <RigidBody name="RigidBody2">
           <frameOfReference ref="../Object[RigidBody1]/Frame[P2]"/>
           <frameForKinematics ref="Frame[P1]"/>
@@ -149,7 +150,8 @@
                 </xmlVector>
               </relativePosition>
             </FixedRelativeFrame>
-          </frames><contours/>
+          </frames>
+          <contours/>
           <openMBVRigidBody>
             <Cuboid xmlns="http://www.mbsim-env.de/OpenMBV" name="Cuboid2">
               <transparency unit="-">0.3</transparency>
@@ -179,7 +181,8 @@
           </openMBVRigidBody>
           <enableOpenMBVFrameC>
             <size unit="dm">1</size>
-          </enableOpenMBVFrameC></RigidBody>
+          </enableOpenMBVFrameC>
+        </RigidBody>
         <RigidBody name="RigidBody3">
           <frameOfReference ref="../Object[RigidBody2]/Frame[P2]"/>
           <frameForKinematics ref="Frame[P1]"/>
@@ -231,7 +234,8 @@
                 </xmlVector>
               </relativePosition>
             </FixedRelativeFrame>
-          </frames><contours/>
+          </frames>
+          <contours/>
           <openMBVRigidBody>
             <Cuboid xmlns="http://www.mbsim-env.de/OpenMBV" name="Cuboid2">
               <transparency unit="-">0.3</transparency>
@@ -262,8 +266,9 @@
           <enableOpenMBVFrameC>
             <size unit="dm">1</size>
           </enableOpenMBVFrameC>
-         </RigidBody>
-      </objects><links/>
+        </RigidBody>
+      </objects>
+      <links/>
       <constraints>
         <InverseKinematicsConstraint name="IK">
           <kinematics>"planar"</kinematics>
@@ -274,7 +279,9 @@
                 <TranslationAlongAxesXY/>
               </outerFunction>
               <innerFunction>
-                <SymbolicFunction><definition arg1="t">[l1+l2+l3-0.3*t-0.05;-0.4*t-0.03]</definition></SymbolicFunction>
+                <SymbolicFunction>
+                  <definition arg1="t">[l1+l2+l3-0.3*t-0.05;-0.4*t-0.03]</definition>
+                </SymbolicFunction>
               </innerFunction>
             </CompositeFunction>
           </translation>
@@ -303,7 +310,8 @@
       </observers>
       <enableOpenMBVFrameI>
         <size unit="dm">1</size>
-      </enableOpenMBVFrameI><environments>
+      </enableOpenMBVFrameI>
+      <environments>
         <MBSimEnvironment>
           <accelerationOfGravity unit="m/s^2">
             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -317,11 +325,9 @@
       <inverseKinetics>true</inverseKinetics>
     </DynamicSystemSolver>
   </Embed>
-
   <ExplicitEulerIntegrator xmlns="http://www.mbsim-env.de/MBSim">
     <startTime unit="s">0</startTime>
     <endTime unit="s">1</endTime>
     <plotStepSize unit="s">1e-2</plotStepSize>
   </ExplicitEulerIntegrator>
-
 </MBSimProject>

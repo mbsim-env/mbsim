@@ -1,7 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<DynamicSystemSolver name="TS" xmlns="http://www.mbsim-env.de/MBSim"
-  xmlns:mbsimcontrol="http://www.mbsim-env.de/MBSimControl"
-  xmlns:pv="http://www.mbsim-env.de/MBXMLUtils">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="TS" xmlns:mbsimcontrol="http://www.mbsim-env.de/MBSimControl" xmlns:pv="http://www.mbsim-env.de/MBXMLUtils">
   <plotFeatureRecursive value="generalizedRelativePosition">true</plotFeatureRecursive>
   <plotFeatureRecursive value="generalizedRelativeVelocity">true</plotFeatureRecursive>
   <plotFeatureRecursive value="generalizedForce">true</plotFeatureRecursive>
@@ -24,16 +22,14 @@
       <relativeOrientation>eye(3)</relativeOrientation>
     </FixedRelativeFrame>
   </frames>
-  <contours>
-  </contours>
+  <contours/>
   <groups>
-    <pv:Embed href="rocker.xml" count="1" counterName="numHG"/>
-    <pv:Embed href="hydraulic_actor.xml" count="1" counterName="numHG"/>
-    <pv:Embed href="hydraulic_system.xml" count="1" counterName="numHG"/>
-    <pv:Embed href="control.xml" count="1" counterName="numHG"/>
+    <pv:Embed count="1" counterName="numHG" href="rocker.xml"/>
+    <pv:Embed count="1" counterName="numHG" href="hydraulic_actor.xml"/>
+    <pv:Embed count="1" counterName="numHG" href="hydraulic_system.xml"/>
+    <pv:Embed count="1" counterName="numHG" href="control.xml"/>
   </groups>
-  <objects>
-  </objects>
+  <objects/>
   <links>
     <Joint name="JackJoint">
       <connect ref1="../Group[Rocker]/Object[LeftPin]/Frame[C]" ref2="../Group[HydraulicActor]/Object[Plunger]/Frame[Top]"/>

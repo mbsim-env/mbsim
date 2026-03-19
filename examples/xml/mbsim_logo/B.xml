@@ -1,10 +1,8 @@
-<Group name="B" xmlns="http://www.mbsim-env.de/MBSim">
-  <frames>
-  </frames>
-  <contours>
-  </contours>
-  <groups>
-  </groups>
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<Group xmlns="http://www.mbsim-env.de/MBSim" name="B">
+  <frames/>
+  <contours/>
+  <groups/>
   <objects>
     <RigidBody name="S1" xmlns="http://www.mbsim-env.de/MBSim">
       <generalizedInitialPosition>pi/2</generalizedInitialPosition>
@@ -19,45 +17,45 @@
       </stateDependentRotation>
       <frames>
         <FixedRelativeFrame name="F1">
-          <enableOpenMBV> 
+          <enableOpenMBV>
             <size>frameSize</size>
             <offset>1.</offset>
           </enableOpenMBV>
-          <frameOfReference ref="../Frame[C]"/> 
+          <frameOfReference ref="../Frame[C]"/>
           <relativePosition>[-y/2; 0; 0]</relativePosition>
           <relativeOrientation>eye(3)</relativeOrientation>
         </FixedRelativeFrame>
         <FixedRelativeFrame name="F2">
-          <enableOpenMBV> 
+          <enableOpenMBV>
             <size>frameSize</size>
             <offset>1.</offset>
           </enableOpenMBV>
-          <frameOfReference ref="../Frame[C]"/> 
+          <frameOfReference ref="../Frame[C]"/>
           <relativePosition>[0; 0; 0]</relativePosition>
           <relativeOrientation>eye(3)</relativeOrientation>
         </FixedRelativeFrame>
         <FixedRelativeFrame name="F3">
-          <enableOpenMBV> 
+          <enableOpenMBV>
             <size>frameSize</size>
             <offset>1.</offset>
           </enableOpenMBV>
-          <frameOfReference ref="../Frame[C]"/> 
+          <frameOfReference ref="../Frame[C]"/>
           <relativePosition>[y/2; 0; 0]</relativePosition>
           <relativeOrientation>eye(3)</relativeOrientation>
         </FixedRelativeFrame>
         <FixedRelativeFrame name="F4">
-          <frameOfReference ref="../Frame[C]"/> 
+          <frameOfReference ref="../Frame[C]"/>
           <relativePosition>[0;r;0]</relativePosition>
           <relativeOrientation>rotateAboutZ(pi/2)</relativeOrientation>
         </FixedRelativeFrame>
       </frames>
       <contours>
         <Line name="CSide" xmlns="http://www.mbsim-env.de/MBSim">
-          <frameOfReference ref="../Frame[F4]"/> 
+          <frameOfReference ref="../Frame[F4]"/>
         </Line>
       </contours>
-      <openMBVRigidBody> 
-        <Frustum name="dummy" xmlns="http://www.mbsim-env.de/OpenMBV">
+      <openMBVRigidBody>
+        <Frustum xmlns="http://www.mbsim-env.de/OpenMBV" name="dummy">
           <initialTranslation>[0; 0; 0]</initialTranslation>
           <initialRotation>[0; -pi/2; 0]</initialRotation>
           <scaleFactor>1</scaleFactor>
@@ -68,14 +66,14 @@
           <innerTopRadius>0</innerTopRadius>
         </Frustum>
       </openMBVRigidBody>
-      <openMBVFrameOfReference ref="Frame[F1]"/> 
-      <enableOpenMBVFrameC> 
+      <openMBVFrameOfReference ref="Frame[F1]"/>
+      <enableOpenMBVFrameC>
         <size>frameSize</size>
         <offset>1.</offset>
       </enableOpenMBVFrameC>
     </RigidBody>
-    <Embed count="3" counterName="nr" xmlns="http://www.mbsim-env.de/MBXMLUtils">
-      <RigidBody name="S{nr+1}" xmlns="http://www.mbsim-env.de/MBSim">
+    <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="3" counterName="nr">
+      <RigidBody xmlns="http://www.mbsim-env.de/MBSim" name="S{nr+1}">
         <generalizedInitialPosition>-pi/2</generalizedInitialPosition>
         <frameOfReference ref="../Object[S1]/Frame[F{nr}]"/>
         <frameForKinematics ref="Frame[F1]"/>
@@ -88,28 +86,27 @@
         </stateDependentRotation>
         <frames>
           <FixedRelativeFrame name="F1">
-            <enableOpenMBV> 
+            <enableOpenMBV>
               <size>frameSize</size>
               <offset>1.</offset>
             </enableOpenMBV>
-            <frameOfReference ref="../Frame[C]"/> 
+            <frameOfReference ref="../Frame[C]"/>
             <relativePosition>[-c*x/2; 0; 0]</relativePosition>
             <relativeOrientation>eye(3)</relativeOrientation>
           </FixedRelativeFrame>
           <FixedRelativeFrame name="F2">
-            <enableOpenMBV> 
+            <enableOpenMBV>
               <size>frameSize</size>
               <offset>1.</offset>
             </enableOpenMBV>
-            <frameOfReference ref="../Frame[C]"/> 
+            <frameOfReference ref="../Frame[C]"/>
             <relativePosition>[c*x/2; 0; 0]</relativePosition>
             <relativeOrientation>eye(3)</relativeOrientation>
           </FixedRelativeFrame>
         </frames>
-        <contours>
-        </contours>
-        <openMBVRigidBody> 
-          <Frustum name="dummy" xmlns="http://www.mbsim-env.de/OpenMBV">
+        <contours/>
+        <openMBVRigidBody>
+          <Frustum xmlns="http://www.mbsim-env.de/OpenMBV" name="dummy">
             <initialTranslation>[0; 0; 0]</initialTranslation>
             <initialRotation>[0; -pi/2; 0]</initialRotation>
             <scaleFactor>1</scaleFactor>
@@ -120,15 +117,15 @@
             <innerTopRadius>0</innerTopRadius>
           </Frustum>
         </openMBVRigidBody>
-        <openMBVFrameOfReference ref="Frame[F1]"/> 
-        <enableOpenMBVFrameC> 
+        <openMBVFrameOfReference ref="Frame[F1]"/>
+        <enableOpenMBVFrameC>
           <size>frameSize</size>
           <offset>1.</offset>
         </enableOpenMBVFrameC>
       </RigidBody>
     </Embed>
-    <Embed count="4" counterName="nr" xmlns="http://www.mbsim-env.de/MBXMLUtils">
-      <RigidBody name="S{nr+4}" xmlns="http://www.mbsim-env.de/MBSim">
+    <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="4" counterName="nr">
+      <RigidBody xmlns="http://www.mbsim-env.de/MBSim" name="S{nr+4}">
         <generalizedInitialPosition>[1;-1;1;-1](nr)*atan(hy/hx)</generalizedInitialPosition>
         <frameOfReference ref="../Object[S{[2;3;3;4](nr)}]/Frame[F2]"/>
         <frameForKinematics ref="Frame[F1]"/>
@@ -141,28 +138,27 @@
         </stateDependentRotation>
         <frames>
           <FixedRelativeFrame name="F1">
-            <enableOpenMBV> 
+            <enableOpenMBV>
               <size>frameSize</size>
               <offset>1.</offset>
             </enableOpenMBV>
-            <frameOfReference ref="../Frame[C]"/> 
+            <frameOfReference ref="../Frame[C]"/>
             <relativePosition>[-h/2; 0; 0]</relativePosition>
             <relativeOrientation>eye(3)</relativeOrientation>
           </FixedRelativeFrame>
           <FixedRelativeFrame name="F2">
-            <enableOpenMBV> 
+            <enableOpenMBV>
               <size>frameSize</size>
               <offset>1.</offset>
             </enableOpenMBV>
-            <frameOfReference ref="../Frame[C]"/> 
+            <frameOfReference ref="../Frame[C]"/>
             <relativePosition>[h/2; 0; 0]</relativePosition>
             <relativeOrientation>eye(3)</relativeOrientation>
           </FixedRelativeFrame>
         </frames>
-        <contours>
-        </contours>
-        <openMBVRigidBody> 
-          <Frustum name="dummy" xmlns="http://www.mbsim-env.de/OpenMBV">
+        <contours/>
+        <openMBVRigidBody>
+          <Frustum xmlns="http://www.mbsim-env.de/OpenMBV" name="dummy">
             <initialTranslation>[0; 0; 0]</initialTranslation>
             <initialRotation>[0; -pi/2; 0]</initialRotation>
             <scaleFactor>1</scaleFactor>
@@ -173,15 +169,15 @@
             <innerTopRadius>0</innerTopRadius>
           </Frustum>
         </openMBVRigidBody>
-        <openMBVFrameOfReference ref="Frame[F1]"/> 
-        <enableOpenMBVFrameC> 
+        <openMBVFrameOfReference ref="Frame[F1]"/>
+        <enableOpenMBVFrameC>
           <size>frameSize</size>
           <offset>1.</offset>
         </enableOpenMBVFrameC>
       </RigidBody>
     </Embed>
-    <Embed count="2" counterName="nr" xmlns="http://www.mbsim-env.de/MBXMLUtils">
-      <RigidBody name="S{[9,10](nr)}" xmlns="http://www.mbsim-env.de/MBSim">
+    <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="2" counterName="nr">
+      <RigidBody xmlns="http://www.mbsim-env.de/MBSim" name="S{[9,10](nr)}">
         <generalizedInitialPosition>pi/2-atan(hy/hx)</generalizedInitialPosition>
         <frameOfReference ref="../Object[S{[5;7](nr)}]/Frame[F2]"/>
         <frameForKinematics ref="Frame[F1]"/>
@@ -194,36 +190,36 @@
         </stateDependentRotation>
         <frames>
           <FixedRelativeFrame name="F1">
-            <enableOpenMBV> 
+            <enableOpenMBV>
               <size>frameSize</size>
               <offset>1.</offset>
             </enableOpenMBV>
-            <frameOfReference ref="../Frame[C]"/> 
+            <frameOfReference ref="../Frame[C]"/>
             <relativePosition>[-(c*y/4)/2; 0; 0]</relativePosition>
             <relativeOrientation>eye(3)</relativeOrientation>
           </FixedRelativeFrame>
           <FixedRelativeFrame name="F2">
-            <enableOpenMBV> 
+            <enableOpenMBV>
               <size>frameSize</size>
               <offset>1.</offset>
             </enableOpenMBV>
-            <frameOfReference ref="../Frame[C]"/> 
+            <frameOfReference ref="../Frame[C]"/>
             <relativePosition>[(c*y/4)/2; 0; 0]</relativePosition>
             <relativeOrientation>eye(3)</relativeOrientation>
           </FixedRelativeFrame>
           <FixedRelativeFrame name="F3">
-            <frameOfReference ref="../Frame[C]"/> 
+            <frameOfReference ref="../Frame[C]"/>
             <relativePosition>[0;-r;0]</relativePosition>
             <relativeOrientation>rotateAboutZ(-pi/2)</relativeOrientation>
           </FixedRelativeFrame>
         </frames>
         <contours>
           <Line name="CSide" xmlns="http://www.mbsim-env.de/MBSim">
-            <frameOfReference ref="../Frame[F3]"/> 
+            <frameOfReference ref="../Frame[F3]"/>
           </Line>
         </contours>
-        <openMBVRigidBody> 
-          <Frustum name="dummy" xmlns="http://www.mbsim-env.de/OpenMBV">
+        <openMBVRigidBody>
+          <Frustum xmlns="http://www.mbsim-env.de/OpenMBV" name="dummy">
             <initialTranslation>[0; 0; 0]</initialTranslation>
             <initialRotation>[0; -pi/2; 0]</initialRotation>
             <scaleFactor>1</scaleFactor>
@@ -234,8 +230,8 @@
             <innerTopRadius>0</innerTopRadius>
           </Frustum>
         </openMBVRigidBody>
-        <openMBVFrameOfReference ref="Frame[F1]"/> 
-        <enableOpenMBVFrameC> 
+        <openMBVFrameOfReference ref="Frame[F1]"/>
+        <enableOpenMBVFrameC>
           <size>frameSize</size>
           <offset>1.</offset>
         </enableOpenMBVFrameC>
@@ -243,8 +239,8 @@
     </Embed>
   </objects>
   <links>
-    <Embed count="2" counterName="nr" xmlns="http://www.mbsim-env.de/MBXMLUtils">
-      <Joint name="Constraint{nr}" xmlns="http://www.mbsim-env.de/MBSim">
+    <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="2" counterName="nr">
+      <Joint xmlns="http://www.mbsim-env.de/MBSim" name="Constraint{nr}">
         <connect ref1="../Object[S{[9,10](nr)}]/Frame[F2]" ref2="../Object[S{[6,8](nr)}]/Frame[F2]"/>
         <forceDirection>[1, 0; 0, 1; 0, 0]</forceDirection>
         <forceLaw>
@@ -267,8 +263,8 @@
       </momentLaw>
       <integrateGeneralizedRelativeVelocityOfRotation>true</integrateGeneralizedRelativeVelocityOfRotation>
     </Joint>
-    <Embed count="11" counterName="nr" xmlns="http://www.mbsim-env.de/MBXMLUtils">
-      <Joint name="Joint{nr}" xmlns="http://www.mbsim-env.de/MBSim">
+    <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="11" counterName="nr">
+      <Joint xmlns="http://www.mbsim-env.de/MBSim" name="Joint{nr}">
         <connect ref1="../Object[S{[1,1,1,2,3,3,4,5,6,7,8](nr)}]/Frame[F{[1,2,3,2,2,2,2,2,2,2,2](nr)}]" ref2="../Object[S{[2,3,4,5,6,7,8,9,9,10,10](nr)}]/Frame[F{[1,1,1,1,1,1,1,1,2,1,2](nr)}]"/>
         <momentDirection>[0; 0; 1]</momentDirection>
         <momentLaw>
@@ -288,4 +284,3 @@
   <constraints/>
   <observers/>
 </Group>
-

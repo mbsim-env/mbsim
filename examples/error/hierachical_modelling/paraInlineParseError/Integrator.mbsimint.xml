@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <DOPRI5Integrator xmlns="http://www.mbsim-env.de/MBSim">
   <startTime>0</startTime>
   <endTime>Tend</endTime>

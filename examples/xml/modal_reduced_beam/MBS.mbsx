@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
-
   <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
     <Parameter>
       <scalarParameter name="nN">21</scalarParameter>
@@ -38,21 +37,23 @@
               </enableOpenMBV>
               <nodeNumber>nN</nodeNumber>
             </NodeFrame>
-          </frames><contours/>
+          </frames>
+          <contours/>
           <enableOpenMBV>
             <lineWidth xmlns="http://www.mbsim-env.de/MBSim">5</lineWidth>
             <visualization>"lines"</visualization>
           </enableOpenMBV>
           <enableOpenMBVFrameK>
             <size xmlns="http://www.mbsim-env.de/MBSim" unit="cm">1</size>
-        </enableOpenMBVFrameK></ExternalFlexibleFfrBody>
-      </objects>  
+          </enableOpenMBVFrameK>
+        </ExternalFlexibleFfrBody>
+      </objects>
       <links/>
       <constraints/>
       <observers/>
       <enableOpenMBVFrameI>
         <size unit="cm">1</size>
-    </enableOpenMBVFrameI>  
+      </enableOpenMBVFrameI>
       <environments>
         <MBSimEnvironment>
           <accelerationOfGravity unit="m/s^2">
@@ -60,18 +61,16 @@
               <ele>0</ele>
               <ele>-9.81</ele>
               <ele>0</ele>
-          </xmlVector>
-        </accelerationOfGravity>
-      </MBSimEnvironment>
-    </environments>
+            </xmlVector>
+          </accelerationOfGravity>
+        </MBSimEnvironment>
+      </environments>
     </DynamicSystemSolver>
   </Embed>
-
   <LinearSystemAnalyzer xmlns="http://www.mbsim-env.de/MBSimControl">
     <normalModeScaleFactor>1e3</normalModeScaleFactor>
     <visualizeNormalModes/>
     <visualizeFrequencyResponse/>
     <plotStepSize unit="s">1e-4</plotStepSize>
   </LinearSystemAnalyzer>
-
 </MBSimProject>

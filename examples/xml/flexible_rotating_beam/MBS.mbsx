@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no" ?><MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
-
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
   <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
     <Parameter>
       <scalarParameter name="E">1.17e11</scalarParameter>
@@ -22,8 +22,7 @@
       <plotFeatureRecursive value="generalizedVelocity">true</plotFeatureRecursive>
       <frames>
         <FixedRelativeFrame name="P">
-          <enableOpenMBV>
-          </enableOpenMBV>
+          <enableOpenMBV/>
           <relativePosition unit="m">
             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
               <ele>0</ele>
@@ -33,8 +32,7 @@
           </relativePosition>
         </FixedRelativeFrame>
         <FixedRelativeFrame name="Q">
-          <enableOpenMBV>
-          </enableOpenMBV>
+          <enableOpenMBV/>
           <relativePosition unit="m">
             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
               <ele>0</ele>
@@ -324,11 +322,13 @@
                   <limitedFunctions>
                     <LimitedFunction>
                       <function>
-                        <SymbolicFunction><definition arg1="t">
-                          <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                            <ele>Om/T0*(0.5*t^2+(T0/2/pi)^2*cos(2*pi*t/T0))</ele>
-                          </xmlVector>
-                        </definition></SymbolicFunction>
+                        <SymbolicFunction>
+                          <definition arg1="t">
+                            <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                              <ele>Om/T0*(0.5*t^2+(T0/2/pi)^2*cos(2*pi*t/T0))</ele>
+                            </xmlVector>
+                          </definition>
+                        </SymbolicFunction>
                       </function>
                       <limit>T0</limit>
                     </LimitedFunction>
@@ -347,14 +347,12 @@
           </timeDependentRotation>
           <frames>
             <NodeFrame name="P1">
-              <enableOpenMBV xmlns="http://www.mbsim-env.de/MBSim">
-              </enableOpenMBV>
+              <enableOpenMBV xmlns="http://www.mbsim-env.de/MBSim"/>
               <nodeNumber unit="-">1</nodeNumber>
             </NodeFrame>
           </frames>
           <contours/>
-          <enableOpenMBVFrameK>
-          </enableOpenMBVFrameK>
+          <enableOpenMBVFrameK/>
         </FlexibleFfrBody>
         <FlexibleFfrBody xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="FlexibleFfrBody2">
           <frameOfReference xmlns="http://www.mbsim-env.de/MBSim" ref="../Frame[P]"/>
@@ -672,11 +670,13 @@
                   <limitedFunctions>
                     <LimitedFunction>
                       <function>
-                        <SymbolicFunction><definition arg1="t">
-                          <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                            <ele>Om/T0*(0.5*t^2+(T0/2/pi)^2*cos(2*pi*t/T0))</ele>
-                          </xmlVector>
-                        </definition></SymbolicFunction>
+                        <SymbolicFunction>
+                          <definition arg1="t">
+                            <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                              <ele>Om/T0*(0.5*t^2+(T0/2/pi)^2*cos(2*pi*t/T0))</ele>
+                            </xmlVector>
+                          </definition>
+                        </SymbolicFunction>
                       </function>
                       <limit>T0</limit>
                     </LimitedFunction>
@@ -695,14 +695,12 @@
           </timeDependentRotation>
           <frames>
             <NodeFrame name="P1">
-              <enableOpenMBV xmlns="http://www.mbsim-env.de/MBSim">
-              </enableOpenMBV>
+              <enableOpenMBV xmlns="http://www.mbsim-env.de/MBSim"/>
               <nodeNumber unit="-">1</nodeNumber>
             </NodeFrame>
           </frames>
           <contours/>
-          <enableOpenMBVFrameK>
-          </enableOpenMBVFrameK>
+          <enableOpenMBVFrameK/>
         </FlexibleFfrBody>
         <FlexibleFfrBody xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="FlexibleFfrBody3">
           <frameOfReference xmlns="http://www.mbsim-env.de/MBSim" ref="../Frame[Q]"/>
@@ -1062,11 +1060,13 @@
                   <limitedFunctions>
                     <LimitedFunction>
                       <function>
-                        <SymbolicFunction><definition arg1="t">
-                          <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                            <ele>Om/T0*(0.5*t^2+(T0/2/pi)^2*cos(2*pi*t/T0))</ele>
-                          </xmlVector>
-                        </definition></SymbolicFunction>
+                        <SymbolicFunction>
+                          <definition arg1="t">
+                            <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                              <ele>Om/T0*(0.5*t^2+(T0/2/pi)^2*cos(2*pi*t/T0))</ele>
+                            </xmlVector>
+                          </definition>
+                        </SymbolicFunction>
                       </function>
                       <limit>T0</limit>
                     </LimitedFunction>
@@ -1085,21 +1085,18 @@
           </timeDependentRotation>
           <frames>
             <NodeFrame name="P1">
-              <enableOpenMBV xmlns="http://www.mbsim-env.de/MBSim">
-              </enableOpenMBV>
+              <enableOpenMBV xmlns="http://www.mbsim-env.de/MBSim"/>
               <nodeNumber unit="-">1</nodeNumber>
             </NodeFrame>
           </frames>
           <contours/>
-          <enableOpenMBVFrameK>
-          </enableOpenMBVFrameK>
+          <enableOpenMBVFrameK/>
         </FlexibleFfrBody>
       </objects>
       <links/>
       <constraints/>
       <observers/>
-      <enableOpenMBVFrameI>
-      </enableOpenMBVFrameI>
+      <enableOpenMBVFrameI/>
       <environments>
         <MBSimEnvironment>
           <accelerationOfGravity unit="m/s^2">
@@ -1113,7 +1110,6 @@
       </environments>
     </DynamicSystemSolver>
   </Embed>
-
   <LSODEIntegrator xmlns="http://www.mbsim-env.de/MBSim">
     <startTime unit="s">0</startTime>
     <endTime unit="s">30</endTime>
@@ -1125,5 +1121,4 @@
     <minimumStepSize unit="s">0</minimumStepSize>
     <stepLimit>0</stepLimit>
   </LSODEIntegrator>
-
 </MBSimProject>

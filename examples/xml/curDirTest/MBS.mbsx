@@ -2,7 +2,6 @@
 <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" parameterHref="subdir/Project.mbspx">
   <MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project" xmlns:p="http://www.mbsim-env.de/MBXMLUtils">
     <p:evaluator>python</p:evaluator>
-  
     <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
       <frames/>
       <contours/>
@@ -44,8 +43,7 @@
             <enableOpenMBVFrameC/>
           </RigidBody>
         </Embed>
-        <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" href="subdir/RB2.mbsmx" parameterHref="subdir/RB.mbspx">
-        </Embed>
+        <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" href="subdir/RB2.mbsmx" parameterHref="subdir/RB.mbspx"/>
         <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" href="subdir/RB3.mbsmx">
           <Parameter xmlns="http://www.mbsim-env.de/MBXMLUtils">
             <stringParameter name="stringParameter">
@@ -54,13 +52,15 @@
               if not os.path.exists("./subdir/RB.mbspx"):
                 raise RuntimeError(f"File './subdir/RB.mbspx' not found; cwd={os.getcwd()} should be 'dir of MBS.mbsx'")
             </stringParameter>
-            <stringParameter name="hidden"><?MBSIMGUI_HIDDEN #
+            <stringParameter name="hidden">
+              <?MBSIMGUI_HIDDEN #
               import os
               if not os.path.exists("./MBS.mbsx"):
                 raise RuntimeError(f"File './MBS.mbsx' not found; cwd={os.getcwd()} should be 'dir of MBS.mbsx'")
               ret=False
               ?>
               ret="dummyhidden"
+            
             </stringParameter>
           </Parameter>
         </Embed>
@@ -81,12 +81,10 @@
         </MBSimEnvironment>
       </environments>
     </DynamicSystemSolver>
-  
     <DOPRI5Integrator xmlns="http://www.mbsim-env.de/MBSim">
       <startTime unit="s">0</startTime>
       <endTime unit="s">0.1</endTime>
       <plotStepSize unit="s">1e-2</plotStepSize>
     </DOPRI5Integrator>
-  
   </MBSimProject>
 </Embed>

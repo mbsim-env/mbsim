@@ -1,5 +1,5 @@
-<DynamicSystemSolver name="TS" xmlns="http://www.mbsim-env.de/MBSim"
-  xmlns:mbsimcontrol="http://www.mbsim-env.de/MBSimControl">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="TS" xmlns:mbsimcontrol="http://www.mbsim-env.de/MBSimControl">
   <plotFeatureRecursive value="generalizedRelativePosition">true</plotFeatureRecursive>
   <plotFeatureRecursive value="generalizedRelativeVelocity">true</plotFeatureRecursive>
   <plotFeatureRecursive value="generalizedForce">true</plotFeatureRecursive>
@@ -7,8 +7,8 @@
   <plotFeatureRecursive value="generalizedVelocity">true</plotFeatureRecursive>
   <plotFeatureRecursive value="mbsimcontrol:signal">true</plotFeatureRecursive>
   <frames>
-    <Embed count="3" counterName="i" xmlns="http://www.mbsim-env.de/MBXMLUtils">
-      <FixedRelativeFrame name="I{i}" xmlns="http://www.mbsim-env.de/MBSim">
+    <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="3" counterName="i">
+      <FixedRelativeFrame xmlns="http://www.mbsim-env.de/MBSim" name="I{i}">
         <!--
         -<enableOpenMBV>
           -  <size>fSize</size>
@@ -16,28 +16,25 @@
           -</enableOpenMBV>
         -->
         <frameOfReference ref="../Frame[I]"/>
-        <relativePosition>
-          <![CDATA[
+        <relativePosition><![CDATA[
           x=linspace(-swingL/2*.6, swingL/2*.6, 3);
           ret=[x(i) swingH+.02 0]';
-          ]]>
-        </relativePosition>
+          ]]></relativePosition>
         <relativeOrientation>eye(3)</relativeOrientation>
       </FixedRelativeFrame>
     </Embed>
-    <Embed count="3" counterName="i" xmlns="http://www.mbsim-env.de/MBXMLUtils">
-      <FixedRelativeFrame name="Q{i}" xmlns="http://www.mbsim-env.de/MBSim">
+    <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="3" counterName="i">
+      <FixedRelativeFrame xmlns="http://www.mbsim-env.de/MBSim" name="Q{i}">
         <frameOfReference ref="../Frame[I{i}]"/>
         <relativeOrientation>rotateAboutZ(pi/2)</relativeOrientation>
       </FixedRelativeFrame>
     </Embed>
   </frames>
-  <contours>
-  </contours>
+  <contours/>
   <groups>
-    <Embed href="swing.xml" count="1" counterName="X" xmlns="http://www.mbsim-env.de/MBXMLUtils"/>
-    <Embed href="metronome.xml" count="3" counterName="i" xmlns="http://www.mbsim-env.de/MBXMLUtils"/>
-    <Embed href="control.xml" count="3" counterName="i" xmlns="http://www.mbsim-env.de/MBXMLUtils"/>
+    <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="1" counterName="X" href="swing.xml"/>
+    <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="3" counterName="i" href="metronome.xml"/>
+    <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="3" counterName="i" href="control.xml"/>
   </groups>
   <objects/>
   <links/>
@@ -56,4 +53,3 @@
   <generalizedImpulseTolerance>eps*10</generalizedImpulseTolerance>
   <initialProjection>false</initialProjection>
 </DynamicSystemSolver>
-

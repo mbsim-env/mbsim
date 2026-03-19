@@ -7,7 +7,7 @@
       <matrixParameter name="m">[1/3,5;6,8]</matrixParameter>
       <stringParameter name="s">'mystring'</stringParameter>
     </Parameter>
-    <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" xmlns:c="http://www.mbsim-env.de/MBSimControl" name="MBS">
+    <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS" xmlns:c="http://www.mbsim-env.de/MBSimControl">
       <plotFeatureRecursive value="generalizedRelativePosition">true</plotFeatureRecursive>
       <plotFeatureRecursive value="generalizedRelativeVelocity">true</plotFeatureRecursive>
       <plotFeatureRecursive value="generalizedForce">true</plotFeatureRecursive>
@@ -260,14 +260,14 @@
             <type>'polyline'</type>
           </enableOpenMBV>
         </SpringDamper>
-        <PySpringDamperXMLInit name="Spring1" xmlns="http://mypytest">
-          <plotFeatureRecursive value="mypy:pyTestPlotFeature" xmlns="http://www.mbsim-env.de/MBSim" xmlns:mypy="http://mypytest">true</plotFeatureRecursive>
-          <connect ref1="../Frame[I]" ref2="../Object[Box1]/Frame[C]" xmlns="http://www.mbsim-env.de/MBSim"/>
+        <PySpringDamperXMLInit xmlns="http://mypytest" name="Spring1">
+          <plotFeatureRecursive xmlns="http://www.mbsim-env.de/MBSim" value="mypy:pyTestPlotFeature" xmlns:mypy="http://mypytest">true</plotFeatureRecursive>
+          <connect xmlns="http://www.mbsim-env.de/MBSim" ref1="../Frame[I]" ref2="../Object[Box1]/Frame[C]"/>
           <stiffness>3*c</stiffness>
         </PySpringDamperXMLInit>
-        <PySpringDamperPyScriptInit name="Spring2" xmlns="http://mypytest">
-          <mbsim:plotFeatureRecursive value="pyTestPlotFeature" xmlns:mbsim="http://www.mbsim-env.de/MBSim">true</mbsim:plotFeatureRecursive>
-          <connect ref1="../Frame[I]" ref2="../Object[Box2]/Frame[C]" xmlns="http://www.mbsim-env.de/MBSim"/>
+        <PySpringDamperPyScriptInit xmlns="http://mypytest" name="Spring2">
+          <mbsim:plotFeatureRecursive xmlns:mbsim="http://www.mbsim-env.de/MBSim" value="pyTestPlotFeature">true</mbsim:plotFeatureRecursive>
+          <connect xmlns="http://www.mbsim-env.de/MBSim" ref1="../Frame[I]" ref2="../Object[Box2]/Frame[C]"/>
           <pyScript objName="self_x">
             import OpenMBV
             self_x.c=3*c
@@ -277,8 +277,8 @@
             self_x.coilspringOpenMBV.setType(OpenMBV.CoilSpring.polyline)
           </pyScript>
         </PySpringDamperPyScriptInit>
-        <PySpringDamperEmpty name="Spring3" xmlns="http://mypytest">
-          <connect ref1="../Frame[I]" ref2="../Object[Box3]/Frame[C]" xmlns="http://www.mbsim-env.de/MBSim"/>
+        <PySpringDamperEmpty xmlns="http://mypytest" name="Spring3">
+          <connect xmlns="http://www.mbsim-env.de/MBSim" ref1="../Frame[I]" ref2="../Object[Box3]/Frame[C]"/>
         </PySpringDamperEmpty>
         <SpringDamper name="Spring4">
           <connect ref1="../Frame[I4]" ref2="../Object[Box4]/Frame[C]"/>
@@ -308,7 +308,7 @@
             <PySignalFunction xmlns="http://mypytest"/>
           </c:function>
         </c:FunctionSensor>
-        <PyGeneralizedRelativePositionSensorWithOffsetXMLInit name="relpossen" xmlns="http://mypytest">
+        <PyGeneralizedRelativePositionSensorWithOffsetXMLInit xmlns="http://mypytest" name="relpossen">
           <c:link ref="../Link[Spring1]"/>
           <offset>0.1</offset>
         </PyGeneralizedRelativePositionSensorWithOffsetXMLInit>
@@ -323,12 +323,10 @@
       </environments>
     </DynamicSystemSolver>
   </Embed>
-
   <TimeSteppingIntegrator xmlns="http://www.mbsim-env.de/MBSim">
     <startTime unit="s">0</startTime>
     <endTime unit="s">1</endTime>
     <plotStepSize unit="s">1e-2</plotStepSize>
     <stepSize unit="s">1e-3</stepSize>
   </TimeSteppingIntegrator>
-
 </MBSimProject>

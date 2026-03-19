@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
-
   <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
     <plotFeatureRecursive value="generalizedRelativePosition">true</plotFeatureRecursive>
     <plotFeatureRecursive value="generalizedRelativeVelocity">true</plotFeatureRecursive>
@@ -72,7 +71,8 @@
             <openXi>true</openXi>
             <enableOpenMBV/>
           </SpatialNurbsContour>
-        </contours><enableOpenMBVFrameC/>
+        </contours>
+        <enableOpenMBVFrameC/>
       </RigidBody>
       <RigidBody name="RigidBody2">
         <generalizedInitialPosition>
@@ -112,9 +112,11 @@
               <transparency unit="-">0.5</transparency>
             </enableOpenMBV>
           </Point>
-        </contours><enableOpenMBVFrameC>
+        </contours>
+        <enableOpenMBVFrameC>
           <size unit="dm">1</size>
-        </enableOpenMBVFrameC></RigidBody>
+        </enableOpenMBVFrameC>
+      </RigidBody>
     </objects>
     <links>
       <Contact name="Contact">
@@ -145,7 +147,8 @@
           <size unit="dm">1</size>
         </enableOpenMBVContactPoints>
       </ContactObserver>
-    </observers><enableOpenMBVFrameI/>
+    </observers>
+    <enableOpenMBVFrameI/>
     <environments>
       <MBSimEnvironment>
         <accelerationOfGravity unit="m/s^2">
@@ -164,11 +167,9 @@
     <generalizedForceTolerance>1e-8</generalizedForceTolerance>
     <generalizedImpulseTolerance>1e-6</generalizedImpulseTolerance>
   </DynamicSystemSolver>
-
   <DOPRI5Integrator xmlns="http://www.mbsim-env.de/MBSim">
     <startTime unit="s">0</startTime>
     <endTime unit="s">1</endTime>
     <plotStepSize unit="s">1e-2</plotStepSize>
   </DOPRI5Integrator>
-
 </MBSimProject>

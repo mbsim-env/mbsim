@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
-
   <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
     <Parameter>
       <scalarParameter name="mu">0.1</scalarParameter>
       <scalarParameter name="N0">1</scalarParameter>
-      <scalarParameter name="t0">0.5</scalarParameter></Parameter>
+      <scalarParameter name="t0">0.5</scalarParameter>
+    </Parameter>
     <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
       <plotFeatureRecursive value="generalizedVelocity">true</plotFeatureRecursive>
       <plotFeatureRecursive value="generalizedRelativeVelocity">true</plotFeatureRecursive>
@@ -18,10 +18,10 @@
               <ele>0</ele>
               <ele>0</ele>
               <ele>1</ele>
-          </xmlVector>
-        </relativePosition>
-      </FixedRelativeFrame>
-    </frames>
+            </xmlVector>
+          </relativePosition>
+        </FixedRelativeFrame>
+      </frames>
       <contours/>
       <groups/>
       <objects>
@@ -87,22 +87,22 @@
                 <ele>0.01</ele>
                 <ele>0</ele>
                 <ele>0</ele>
-            </row>
+              </row>
               <row>
                 <ele>0</ele>
                 <ele>0.01</ele>
                 <ele>0</ele>
-            </row>
+              </row>
               <row>
                 <ele>0</ele>
                 <ele>0</ele>
                 <ele>0.01</ele>
-            </row>
-          </xmlMatrix>
-        </inertiaTensor>
+              </row>
+            </xmlMatrix>
+          </inertiaTensor>
           <stateDependentRotation>
             <RotationAboutZAxis/>
-        </stateDependentRotation>
+          </stateDependentRotation>
           <frames/>
           <contours/>
           <openMBVRigidBody>
@@ -112,33 +112,33 @@
                   <ele>0.851444</ele>
                   <ele>0.265888</ele>
                   <ele>0.678431</ele>
-              </xmlVector>
-            </diffuseColor>
+                </xmlVector>
+              </diffuseColor>
               <transparency unit="-">0.3</transparency>
               <initialTranslation unit="m">
                 <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                   <ele>0</ele>
                   <ele>0</ele>
                   <ele>0.5</ele>
-              </xmlVector>
-            </initialTranslation>
+                </xmlVector>
+              </initialTranslation>
               <initialRotation unit="rad">
                 <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                   <ele>0</ele>
                   <ele>0</ele>
                   <ele>0</ele>
-              </xmlVector>
-            </initialRotation>
+                </xmlVector>
+              </initialRotation>
               <scaleFactor unit="-">1</scaleFactor>
               <baseRadius unit="m">1</baseRadius>
               <topRadius unit="m">1</topRadius>
               <height unit="m">1</height>
               <innerBaseRadius unit="m">0</innerBaseRadius>
               <innerTopRadius unit="m">0</innerTopRadius>
-          </Frustum>
-        </openMBVRigidBody>
+            </Frustum>
+          </openMBVRigidBody>
           <enableOpenMBVFrameC/>
-      </RigidBody>
+        </RigidBody>
       </objects>
       <links>
         <GeneralizedFriction name="GeneralizedFriction">
@@ -209,18 +209,15 @@
               <ele>0</ele>
               <ele>-9.81</ele>
               <ele>0</ele>
-          </xmlVector>
-        </accelerationOfGravity>
-      </MBSimEnvironment>
-    </environments>
+            </xmlVector>
+          </accelerationOfGravity>
+        </MBSimEnvironment>
+      </environments>
     </DynamicSystemSolver>
   </Embed>
-
   <DOPRI5Integrator xmlns="http://www.mbsim-env.de/MBSim">
     <startTime unit="s">0</startTime>
     <endTime unit="s">1</endTime>
     <plotStepSize unit="s">1e-3</plotStepSize>
   </DOPRI5Integrator>
-
-
 </MBSimProject>

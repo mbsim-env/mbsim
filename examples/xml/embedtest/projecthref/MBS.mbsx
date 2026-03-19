@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <p:Embed xmlns:p="http://www.mbsim-env.de/MBXMLUtils" parameterHref="project.mbspx">
   <MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
-    <p:Embed xmlns:p="http://www.mbsim-env.de/MBXMLUtils" parameterHref="dss.mbspx" href="dss.mbsmx"/>
-    <p:Embed xmlns:p="http://www.mbsim-env.de/MBXMLUtils" parameterHref="integrator.mbspx" href="integrator.mbsmx"/>
+    <p:Embed href="dss.mbsmx" parameterHref="dss.mbspx" xmlns:p="http://www.mbsim-env.de/MBXMLUtils"/>
+    <p:Embed href="integrator.mbsmx" parameterHref="integrator.mbspx" xmlns:p="http://www.mbsim-env.de/MBXMLUtils"/>
   </MBSimProject>
 </p:Embed>

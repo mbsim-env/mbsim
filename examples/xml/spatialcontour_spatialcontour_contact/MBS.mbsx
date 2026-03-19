@@ -1,9 +1,10 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no" ?><MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
-
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
   <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
     <Parameter>
       <scalarParameter name="r">0.5</scalarParameter>
-      <scalarParameter name="mu">0.5</scalarParameter></Parameter>
+      <scalarParameter name="mu">0.5</scalarParameter>
+    </Parameter>
     <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
       <plotFeatureRecursive value="generalizedRelativePosition">true</plotFeatureRecursive>
       <plotFeatureRecursive value="generalizedRelativeVelocity">true</plotFeatureRecursive>
@@ -36,13 +37,15 @@
             </xmlVector>
           </xiNodes>
           <contourFunction>
-            <SymbolicFunction><definition arg1="zeta" arg1Dim="2">
-              <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                <ele>zeta(1)</ele>
-                <ele>0.2*sin(zeta(1))</ele>
-                <ele>-zeta(2)</ele>
-              </xmlVector>
-            </definition></SymbolicFunction>
+            <SymbolicFunction>
+              <definition arg1="zeta" arg1Dim="2">
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <ele>zeta(1)</ele>
+                  <ele>0.2*sin(zeta(1))</ele>
+                  <ele>-zeta(2)</ele>
+                </xmlVector>
+              </definition>
+            </SymbolicFunction>
           </contourFunction>
           <enableOpenMBV>
             <diffuseColor>
@@ -111,13 +114,15 @@
                 </xmlVector>
               </xiNodes>
               <contourFunction>
-                <SymbolicFunction><definition arg1="zeta" arg1Dim="2">
-                  <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                    <ele>r*cos(zeta(1))*cos(zeta(2))</ele>
-                    <ele>r*sin(zeta(1))*cos(zeta(2))</ele>
-                    <ele>r*sin(zeta(2))</ele>
-                  </xmlVector>
-                </definition></SymbolicFunction>
+                <SymbolicFunction>
+                  <definition arg1="zeta" arg1Dim="2">
+                    <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                      <ele>r*cos(zeta(1))*cos(zeta(2))</ele>
+                      <ele>r*sin(zeta(1))*cos(zeta(2))</ele>
+                      <ele>r*sin(zeta(2))</ele>
+                    </xmlVector>
+                  </definition>
+                </SymbolicFunction>
               </contourFunction>
               <enableOpenMBV>
                 <transparency unit="-">0.3</transparency>
@@ -126,7 +131,8 @@
           </contours>
           <enableOpenMBVFrameC>
             <size unit="dm">1</size>
-          </enableOpenMBVFrameC></RigidBody>
+          </enableOpenMBVFrameC>
+        </RigidBody>
       </objects>
       <links>
         <Contact name="Contact">
@@ -169,9 +175,11 @@
             <size unit="dm">1</size>
           </enableOpenMBVContactPoints>
         </ContactObserver>
-      </observers><enableOpenMBVFrameI>
+      </observers>
+      <enableOpenMBVFrameI>
         <size unit="dm">1</size>
-      </enableOpenMBVFrameI><environments>
+      </enableOpenMBVFrameI>
+      <environments>
         <MBSimEnvironment>
           <accelerationOfGravity unit="m/s^2">
             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -184,13 +192,10 @@
       </environments>
     </DynamicSystemSolver>
   </Embed>
-
   <DOPRI5Integrator xmlns="http://www.mbsim-env.de/MBSim">
     <startTime unit="s">0</startTime>
     <endTime unit="s">1</endTime>
     <plotStepSize unit="s">1e-2</plotStepSize>
     <maximumStepSize unit="s">1e-2</maximumStepSize>
   </DOPRI5Integrator>
-
-
 </MBSimProject>

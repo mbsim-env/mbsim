@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
-
   <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
     <Parameter>
       <scalarParameter name="mu">1/3</scalarParameter>
@@ -29,7 +28,7 @@
             </xmlVector>
           </relativePosition>
         </FixedRelativeFrame>
-      </frames>  
+      </frames>
       <contours/>
       <groups/>
       <objects>
@@ -266,11 +265,9 @@
       </environments>
     </DynamicSystemSolver>
   </Embed>
-
   <DOPRI5Integrator xmlns="http://www.mbsim-env.de/MBSim">
     <startTime unit="s">0</startTime>
     <endTime unit="s">1</endTime>
     <plotStepSize unit="s">1e-3</plotStepSize>
   </DOPRI5Integrator>
-
 </MBSimProject>

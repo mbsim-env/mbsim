@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <Parameter xmlns="http://www.mbsim-env.de/MBXMLUtils">
   <vectorParameter name="rHG">[0,2]</vectorParameter>
   <import action="addAllVarsAsParams">import math</import>
@@ -8,7 +9,9 @@
     </xmlVector>
   </vectorParameter>
   <scalarParameter name="m1">5</scalarParameter>
-  <scalarParameter name="m"><?MBSIMGUI_HIDDEN?>m1</scalarParameter>
+  <scalarParameter name="m">
+    <?MBSIMGUI_HIDDEN?>m1
+  </scalarParameter>
   <scalarParameter name="h">0.8</scalarParameter>
   <import action="addAllVarsAsParams">from math import pi</import>
   <scalarParameter name="alphaUG">pi/4</scalarParameter>
@@ -20,18 +23,34 @@
   <anyParameter name="l012">(0.5, 0.5)</anyParameter>
   <matrixParameter name="identHalf">
     <xmlMatrix>
-      <row><ele>0.5</ele><ele>0</ele><ele>0</ele></row>
-      <row><ele>0</ele><ele>a=1;ret=a/2</ele><ele>0</ele></row>
-      <row><ele>0</ele><ele>0</ele><ele>m2/4</ele></row>
+      <row>
+        <ele>0.5</ele>
+        <ele>0</ele>
+        <ele>0</ele>
+      </row>
+      <row>
+        <ele>0</ele>
+        <ele>a=1;ret=a/2</ele>
+        <ele>0</ele>
+      </row>
+      <row>
+        <ele>0</ele>
+        <ele>0</ele>
+        <ele>m2/4</ele>
+      </row>
     </xmlMatrix>
   </matrixParameter>
   <stringParameter name="grav">'gravity.txt'</stringParameter>
   <stringParameter name="pathPrefix">'py'</stringParameter>
   <stringParameter name="ivdir">'iv'</stringParameter>
   <scalarParameter name="hide">1</scalarParameter>
-  <scalarParameter name="hidden"><?MBSIMGUI_HIDDEN?>0</scalarParameter>
-  <scalarParameter name="hidden_by_hide"><?MBSIMGUI_HIDDEN pass
+  <scalarParameter name="hidden">
+    <?MBSIMGUI_HIDDEN?>0
+  </scalarParameter>
+  <scalarParameter name="hidden_by_hide">
+    <?MBSIMGUI_HIDDEN pass
 ret=hide?>
     0
+  
   </scalarParameter>
 </Parameter>

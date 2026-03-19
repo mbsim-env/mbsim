@@ -40,26 +40,31 @@
       <contours/>
       <groups>
         <Group name="ControllerB0" xmlns="http://www.mbsim-env.de/MBSim">
-            <frames/>
-            <contours/>
-            <groups/>
-            <objects/>
-            <links>
-              <PositionSensor xmlns="http://www.mbsim-env.de/MBSimControl" name="Pos plate">
+          <frames/>
+          <contours/>
+          <groups/>
+          <objects/>
+          <links>
+            <PositionSensor xmlns="http://www.mbsim-env.de/MBSimControl" name="Pos plate">
               <frame ref="../../Object[Plate]/Frame[C]"/>
-            </PositionSensor><VelocitySensor xmlns="http://www.mbsim-env.de/MBSimControl" name="Vel plate">
+            </PositionSensor>
+            <VelocitySensor xmlns="http://www.mbsim-env.de/MBSimControl" name="Vel plate">
               <frame ref="../../Object[Plate]/Frame[C]"/>
-            </VelocitySensor><GeneralizedPositionSensor xmlns="http://www.mbsim-env.de/MBSimControl" name="Pos B0 actual">
+            </VelocitySensor>
+            <GeneralizedPositionSensor xmlns="http://www.mbsim-env.de/MBSimControl" name="Pos B0 actual">
               <object ref="../../Object[B0]"/>
-            </GeneralizedPositionSensor><GeneralizedVelocitySensor xmlns="http://www.mbsim-env.de/MBSimControl" name="Vel B0 actual">
+            </GeneralizedPositionSensor>
+            <GeneralizedVelocitySensor xmlns="http://www.mbsim-env.de/MBSimControl" name="Vel B0 actual">
               <object ref="../../Object[B0]"/>
-            </GeneralizedVelocitySensor><SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="Pos B0 desired">
+            </GeneralizedVelocitySensor>
+            <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="Pos B0 desired">
               <inputSignal ref="../../Link[Time]"/>
               <inputSignal ref="../Link[Pos plate]"/>
               <function>
                 <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim">
                   <definition arg1="u1" arg1Dim="1" arg2="u2" arg2Dim="3">cSP = condition(tF-u1(1),0,1)
-[u2(1);u2(2)]*cSP</definition>
+[u2(1);u2(2)]*cSP
+                  </definition>
                 </SymbolicFunction>
               </function>
             </SignalOperation>
@@ -69,7 +74,8 @@
               <function>
                 <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim">
                   <definition arg1="u1" arg1Dim="1" arg2="u2" arg2Dim="3">cSP = condition(tF-u1(1),0,1)
-[u2(1);u2(2)]*cSP</definition>
+[u2(1);u2(2)]*cSP
+                  </definition>
                 </SymbolicFunction>
               </function>
             </SignalOperation>
@@ -81,7 +87,8 @@
                   <definition arg1="u1" arg1Dim="2" arg2="u2" arg2Dim="2">u1 - u2</definition>
                 </SymbolicFunction>
               </function>
-            </SignalOperation><SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="Vel B0 diff">
+            </SignalOperation>
+            <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="Vel B0 diff">
               <inputSignal ref="../Link[Vel B0 desired]"/>
               <inputSignal ref="../Link[Vel B0 actual]"/>
               <function>
@@ -124,8 +131,8 @@
               </forceFunction>
             </KineticExcitation>
           </links>
-            <constraints/>
-            <observers/>
+          <constraints/>
+          <observers/>
         </Group>
         <Group name="ControllerB1" xmlns="http://www.mbsim-env.de/MBSim">
           <frames/>
@@ -208,7 +215,7 @@
                 <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim">
                   <definition arg1="t" arg1Dim="1">
 condition(tphi1-t(1),phi1/tphi1*t(1),condition(tphi2-t(1),phi1,condition(tphi3-t(1),phi1-phi1/(tphi3-tphi2)*(t(1)-tphi2),0)))
-</definition>
+                  </definition>
                 </SymbolicFunction>
               </function>
             </SignalOperation>
@@ -218,7 +225,7 @@ condition(tphi1-t(1),phi1/tphi1*t(1),condition(tphi2-t(1),phi1,condition(tphi3-t
                 <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim">
                   <definition arg1="t" arg1Dim="1">
 condition(tphi1-t(1),phi1/tphi1,condition(tphi2-t(1),0,condition(tphi3-t(1),-phi1/(tphi3-tphi2),0)))
-</definition>
+                  </definition>
                 </SymbolicFunction>
               </function>
             </SignalOperation>
@@ -307,7 +314,8 @@ condition(tphi1-t(1),phi1/tphi1,condition(tphi2-t(1),0,condition(tphi3-t(1),-phi
                 <aboutY xmlns="http://www.mbsim-env.de/MBXMLUtils" unit="degree">-90</aboutY>
               </relativeOrientation>
             </FixedRelativeFrame>
-          </frames><contours/>
+          </frames>
+          <contours/>
         </RigidBody>
         <RigidBody name="B1" xmlns="http://www.mbsim-env.de/MBSim">
           <frameOfReference ref="../Object[B0]/Frame[P]"/>
@@ -363,7 +371,7 @@ condition(tphi1-t(1),phi1/tphi1,condition(tphi2-t(1),0,condition(tphi3-t(1),-phi
             <RotationAboutYAxis/>
           </stateDependentRotation>
           <frames>
-              <FixedRelativeFrame name="P">
+            <FixedRelativeFrame name="P">
               <enableOpenMBV>
                 <size unit="cm">1</size>
               </enableOpenMBV>
@@ -371,15 +379,17 @@ condition(tphi1-t(1),phi1/tphi1,condition(tphi2-t(1),0,condition(tphi3-t(1),-phi
                 <aboutY xmlns="http://www.mbsim-env.de/MBXMLUtils" unit="degree">90</aboutY>
               </relativeOrientation>
             </FixedRelativeFrame>
-          </frames><contours/>
+          </frames>
+          <contours/>
           <enableOpenMBVFrameC>
-              <size unit="cm">1</size>
-          </enableOpenMBVFrameC></RigidBody>
+            <size unit="cm">1</size>
+          </enableOpenMBVFrameC>
+        </RigidBody>
         <ExternalFlexibleFfrBody xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="Rod">
           <frameOfReference xmlns="http://www.mbsim-env.de/MBSim" ref="../Object[B2]/Frame[P]"/>
           <inputDataFileName>"input_data.h5"</inputDataFileName>
           <frames>
-              <NodeFrame name="P">
+            <NodeFrame name="P">
               <nodeNumber>622</nodeNumber>
             </NodeFrame>
             <NodeFrame name="Q">
@@ -387,7 +397,7 @@ condition(tphi1-t(1),phi1/tphi1,condition(tphi2-t(1),0,condition(tphi3-t(1),-phi
             </NodeFrame>
           </frames>
           <contours>
-              <Sphere xmlns="http://www.mbsim-env.de/MBSim" name="Tip">
+            <Sphere xmlns="http://www.mbsim-env.de/MBSim" name="Tip">
               <frameOfReference ref="../Frame[P]"/>
               <radius unit="mm">2</radius>
               <enableOpenMBV>
@@ -737,7 +747,7 @@ condition(tphi1-t(1),phi1/tphi1,condition(tphi2-t(1),0,condition(tphi3-t(1),-phi
               </forceFunction>
             </RegularizedBilateralConstraint>
           </forceLaw>
-        </Joint>      
+        </Joint>
         <FunctionSensor xmlns="http://www.mbsim-env.de/MBSimControl" name="Time">
           <function>
             <LinearFunction xmlns="http://www.mbsim-env.de/MBSim">
@@ -756,7 +766,8 @@ condition(tphi1-t(1),phi1/tphi1,condition(tphi2-t(1),0,condition(tphi3-t(1),-phi
           <enableOpenMBVTangentialForce>
             <scaleLength>0.01</scaleLength>
           </enableOpenMBVTangentialForce>
-        </ContactObserver><ContactObserver name="Contact observer cone" xmlns="http://www.mbsim-env.de/MBSim">
+        </ContactObserver>
+        <ContactObserver name="Contact observer cone" xmlns="http://www.mbsim-env.de/MBSim">
           <contact ref="../Link[Contact cone]"/>
           <enableOpenMBVNormalForce>
             <scaleLength>0.01</scaleLength>
@@ -764,7 +775,8 @@ condition(tphi1-t(1),phi1/tphi1,condition(tphi2-t(1),0,condition(tphi3-t(1),-phi
           <enableOpenMBVTangentialForce>
             <scaleLength>0.01</scaleLength>
           </enableOpenMBVTangentialForce>
-        </ContactObserver><ContactObserver name="Contact observer ring 1" xmlns="http://www.mbsim-env.de/MBSim">
+        </ContactObserver>
+        <ContactObserver name="Contact observer ring 1" xmlns="http://www.mbsim-env.de/MBSim">
           <contact ref="../Link[Contact ring 1]"/>
           <enableOpenMBVNormalForce>
             <scaleLength>0.01</scaleLength>
@@ -772,7 +784,8 @@ condition(tphi1-t(1),phi1/tphi1,condition(tphi2-t(1),0,condition(tphi3-t(1),-phi
           <enableOpenMBVTangentialForce>
             <scaleLength>0.01</scaleLength>
           </enableOpenMBVTangentialForce>
-        </ContactObserver><ContactObserver name="Contact observer ring 2" xmlns="http://www.mbsim-env.de/MBSim">
+        </ContactObserver>
+        <ContactObserver name="Contact observer ring 2" xmlns="http://www.mbsim-env.de/MBSim">
           <contact ref="../Link[Contact ring 2]"/>
           <enableOpenMBVNormalForce>
             <scaleLength>0.01</scaleLength>
@@ -780,7 +793,8 @@ condition(tphi1-t(1),phi1/tphi1,condition(tphi2-t(1),0,condition(tphi3-t(1),-phi
           <enableOpenMBVTangentialForce>
             <scaleLength>0.01</scaleLength>
           </enableOpenMBVTangentialForce>
-        </ContactObserver><ContactObserver name="Contact observer ring 3" xmlns="http://www.mbsim-env.de/MBSim">
+        </ContactObserver>
+        <ContactObserver name="Contact observer ring 3" xmlns="http://www.mbsim-env.de/MBSim">
           <contact ref="../Link[Contact ring 3]"/>
           <enableOpenMBVNormalForce>
             <scaleLength>0.01</scaleLength>

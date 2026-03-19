@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
-
   <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
     <Parameter>
       <scalarParameter name="m">16e-3</scalarParameter>
@@ -63,8 +62,8 @@
             <stateDependentRotation>
               <RotationAboutZAxis/>
             </stateDependentRotation>
-            <frames>
-            </frames><contours>
+            <frames/>
+            <contours>
               <CylindricalGear name="CylindricalGear">
                 <numberOfTeeth>z1</numberOfTeeth>
                 <width unit="mm">50</width>
@@ -81,9 +80,11 @@
                   <transparency unit="-">0.3</transparency>
                 </enableOpenMBV>
               </CylindricalGear>
-            </contours><enableOpenMBVFrameC>
+            </contours>
+            <enableOpenMBVFrameC>
               <size unit="cm">1</size>
-            </enableOpenMBVFrameC></RigidBody>
+            </enableOpenMBVFrameC>
+          </RigidBody>
         </Embed>
         <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
           <Parameter>
@@ -120,8 +121,8 @@
             <stateDependentTranslation>
               <TranslationAlongXAxis/>
             </stateDependentTranslation>
-            <frames>
-            </frames><contours>
+            <frames/>
+            <contours>
               <Rack name="Rack">
                 <numberOfTeeth>z2</numberOfTeeth>
                 <height unit="mm">50</height>
@@ -132,9 +133,11 @@
                   <transparency unit="-">0.3</transparency>
                 </enableOpenMBV>
               </Rack>
-            </contours><enableOpenMBVFrameC>
+            </contours>
+            <enableOpenMBVFrameC>
               <size unit="cm">1</size>
-            </enableOpenMBVFrameC></RigidBody>
+            </enableOpenMBVFrameC>
+          </RigidBody>
         </Embed>
       </objects>
       <links>
@@ -188,7 +191,8 @@
       </observers>
       <enableOpenMBVFrameI>
         <size unit="cm">1</size>
-      </enableOpenMBVFrameI><environments>
+      </enableOpenMBVFrameI>
+      <environments>
         <MBSimEnvironment>
           <accelerationOfGravity unit="m/s^2">
             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -201,12 +205,9 @@
       </environments>
     </DynamicSystemSolver>
   </Embed>
-
   <DOPRI5Integrator xmlns="http://www.mbsim-env.de/MBSim">
     <startTime unit="s">0</startTime>
     <endTime unit="s">4</endTime>
     <plotStepSize unit="s">1e-2</plotStepSize>
   </DOPRI5Integrator>
-
-
 </MBSimProject>

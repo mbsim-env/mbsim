@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
-
   <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
     <plotFeatureRecursive value="generalizedRelativePosition">true</plotFeatureRecursive>
     <plotFeatureRecursive value="generalizedRelativeVelocity">true</plotFeatureRecursive>
@@ -9,8 +8,7 @@
     <plotFeatureRecursive value="generalizedVelocity">true</plotFeatureRecursive>
     <frames>
       <FixedRelativeFrame name="P1">
-        <enableOpenMBV>
-        </enableOpenMBV>
+        <enableOpenMBV/>
         <relativeOrientation>
           <aboutZ xmlns="http://www.mbsim-env.de/MBXMLUtils" unit="degree">90</aboutZ>
         </relativeOrientation>
@@ -19,8 +17,7 @@
     <contours>
       <Plane name="Plane1">
         <frameOfReference ref="../Frame[P1]"/>
-        <enableOpenMBV>
-        </enableOpenMBV>
+        <enableOpenMBV/>
       </Plane>
     </contours>
     <groups/>
@@ -55,8 +52,7 @@
         </stateDependentTranslation>
         <frames>
           <FixedRelativeFrame name="P1">
-            <enableOpenMBV>
-            </enableOpenMBV>
+            <enableOpenMBV/>
             <relativePosition unit="m">
               <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                 <ele>0</ele>
@@ -69,8 +65,7 @@
         <contours>
           <Point name="Point1">
             <frameOfReference ref="../Frame[P1]"/>
-            <enableOpenMBV>
-            </enableOpenMBV>
+            <enableOpenMBV/>
           </Point>
         </contours>
         <openMBVRigidBody>
@@ -94,8 +89,7 @@
             <radius unit="m">0.1</radius>
           </Sphere>
         </openMBVRigidBody>
-        <enableOpenMBVFrameC>
-        </enableOpenMBVFrameC>
+        <enableOpenMBVFrameC/>
       </RigidBody>
     </objects>
     <links>
@@ -123,8 +117,7 @@
     </links>
     <constraints/>
     <observers/>
-    <enableOpenMBVFrameI>
-    </enableOpenMBVFrameI>
+    <enableOpenMBVFrameI/>
     <environments>
       <MBSimEnvironment>
         <accelerationOfGravity unit="m/s^2">
@@ -137,12 +130,10 @@
       </MBSimEnvironment>
     </environments>
   </DynamicSystemSolver>
-
   <TimeSteppingIntegrator xmlns="http://www.mbsim-env.de/MBSim">
     <startTime unit="s">0</startTime>
     <endTime unit="s">1</endTime>
     <plotStepSize unit="s">1e-2</plotStepSize>
     <stepSize unit="s">1e-3</stepSize>
   </TimeSteppingIntegrator>
-
 </MBSimProject>

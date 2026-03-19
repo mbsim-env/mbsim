@@ -1,7 +1,7 @@
 <root>
   <span class="MBSIMGUI_ERROR">
     <span class="MBXMLUTILS_ERROROUTPUT">
-      <a href="submodel/Untergruppe.xml?xpath=/{http://www.mbsim-env.de/MBSim}Group[1]/{http://www.mbsim-env.de/MBSim}objects[1]/{http://www.mbsim-env.de/MBSim}RigidBody[1]/{http://www.mbsim-env.de/MBSim}mass[1]&amp;line=16">submodel/Untergruppe.xml:16:/Group[1]/objects[1]/RigidBody[1]/mass[1]</a>:<br />
+      <a href="submodel/Untergruppe.xml?xpath=/{http://www.mbsim-env.de/MBSim}Group[1]/{http://www.mbsim-env.de/MBSim}objects[1]/{http://www.mbsim-env.de/MBSim}RigidBody[1]/{http://www.mbsim-env.de/MBSim}mass[1]&amp;line=14">submodel/Untergruppe.xml:14:/Group[1]/objects[1]/RigidBody[1]/mass[1]</a>:<br />
       <span class="MBXMLUTILS_MSG">Mass must be nonnegative
 </span>
       <span class="MBSIMGUI_ERROR">Created by object of type MBSim::RigidBody
@@ -21,7 +21,7 @@
   </span>
   <span class="MBSIMGUI_ERROR">
     <span class="MBXMLUTILS_ERROROUTPUT MBXMLUTILS_SSE">
-      <a href="submodel/Untergruppe.xml?xpath=/{http://www.mbsim-env.de/MBSim}Group[1]/{http://www.mbsim-env.de/MBSim}objects[1]&amp;line=9">submodel/Untergruppe.xml:9:/Group[1]/objects[1]</a>:<br />
+      <a href="submodel/Untergruppe.xml?xpath=/{http://www.mbsim-env.de/MBSim}Group[1]/{http://www.mbsim-env.de/MBSim}objects[1]&amp;line=7">submodel/Untergruppe.xml:7:/Group[1]/objects[1]</a>:<br />
       <span class="MBXMLUTILS_MSG">Created by object of type MBSim::Group
 </span>
       <span class="MBSIMGUI_ERROR">  </span>
@@ -51,7 +51,7 @@
   </span>
   <span class="MBSIMGUI_ERROR">
     <span class="MBXMLUTILS_ERROROUTPUT MBXMLUTILS_SSE">
-      <a href="MBS.mbsim.xml?xpath=/{http://www.mbsim-env.de/MBSim}DynamicSystemSolver[1]/{http://www.mbsim-env.de/MBSim}groups[1]&amp;line=17">MBS.mbsim.xml:17:/DynamicSystemSolver[1]/groups[1]</a>:<br />
+      <a href="MBS.mbsim.xml?xpath=/{http://www.mbsim-env.de/MBSim}DynamicSystemSolver[1]/{http://www.mbsim-env.de/MBSim}groups[1]&amp;line=20">MBS.mbsim.xml:20:/DynamicSystemSolver[1]/groups[1]</a>:<br />
       <span class="MBXMLUTILS_MSG">Created by object of type MBSim::DynamicSystemSolver
 </span>
       <span class="MBSIMGUI_ERROR">      </span>

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
-
   <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
     <plotFeatureRecursive value="generalizedPosition">true</plotFeatureRecursive>
     <plotFeatureRecursive value="ns1:nodalDisplacement" xmlns:ns1="http://www.mbsim-env.de/MBSimFlexibleBody">true</plotFeatureRecursive>
@@ -36,9 +35,10 @@
                -0.0833333
                0.166667
                0.166667]
-	    </weightingFactors>
+            </weightingFactors>
           </FfrInterfaceNodeFrame>
-        </frames><contours/>
+        </frames>
+        <contours/>
         <enableOpenMBV>
           <colorRepresentation xmlns="http://www.mbsim-env.de/MBSim">"zDisplacement"</colorRepresentation>
           <minimalColorValue xmlns="http://www.mbsim-env.de/MBSim">0</minimalColorValue>
@@ -105,12 +105,9 @@
       </MBSimEnvironment>
     </environments>
   </DynamicSystemSolver>
-
   <DOPRI5Integrator xmlns="http://www.mbsim-env.de/MBSim">
     <startTime unit="s">0</startTime>
     <endTime unit="s">0.1</endTime>
     <plotStepSize unit="s">1e-3</plotStepSize>
   </DOPRI5Integrator>
-
-
 </MBSimProject>

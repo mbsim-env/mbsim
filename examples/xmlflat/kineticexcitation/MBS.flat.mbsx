@@ -1,8 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<MBSimProject name="MBSPRJ" xmlns="http://www.mbsim-env.de/MBSimXML">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="MBSPRJ">
   <evaluator xmlns="http://www.mbsim-env.de/MBXMLUtils">xmlflat</evaluator>
-  <DynamicSystemSolver name="TS" xmlns="http://www.mbsim-env.de/MBSim"
-      xmlns:ombv="http://www.mbsim-env.de/OpenMBV">
+  <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="TS" xmlns:ombv="http://www.mbsim-env.de/OpenMBV">
     <plotFeatureRecursive value="generalizedRelativePosition">true</plotFeatureRecursive>
     <plotFeatureRecursive value="generalizedRelativeVelocity">true</plotFeatureRecursive>
     <plotFeatureRecursive value="generalizedForce">true</plotFeatureRecursive>
@@ -65,7 +64,7 @@
       </RigidBody>
     </objects>
     <links>
-      <KineticExcitation name ="ex">
+      <KineticExcitation name="ex">
         <connect ref1="../Frame[Wrot]" ref2="../Object[Box1]/Frame[C]"/>
         <frameOfReference>"firstFrame"</frameOfReference>
         <forceDirection>[1;0;0]</forceDirection>

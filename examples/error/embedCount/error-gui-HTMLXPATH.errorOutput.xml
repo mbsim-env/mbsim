@@ -1,7 +1,7 @@
 <root>
   <span class="MBSIMGUI_ERROR">
     <span class="MBXMLUTILS_ERROROUTPUT">
-      <a href="MBS.mbsx?xpath=/{http://www.mbsim-env.de/MBSimXML}MBSimProject[1]/{http://www.mbsim-env.de/MBSim}DynamicSystemSolver[1]/{http://www.mbsim-env.de/MBSim}objects[1]/{http://www.mbsim-env.de/MBSim}RigidBody[1]&amp;line=47">MBS.mbsx:.../DynamicSystemSolver[1]/objects[1]/RigidBody[1]</a>:<br />
+      <a href="MBS.mbsx?xpath=/{http://www.mbsim-env.de/MBSimXML}MBSimProject[1]/{http://www.mbsim-env.de/MBSim}DynamicSystemSolver[1]/{http://www.mbsim-env.de/MBSim}objects[1]/{http://www.mbsim-env.de/MBSim}RigidBody[1]&amp;line=45">MBS.mbsx:.../DynamicSystemSolver[1]/objects[1]/RigidBody[1]</a>:<br />
       <span class="MBXMLUTILS_MSG">Evaluation of refernece 'Frame[C2]' failed: Message from Object[Rigid body 2(with_ID_0xXXXXXX)]: (Body::getFrame): The body comprises no frame "C2"!
 </span>
       <span class="MBSIMGUI_ERROR">Created by object of type MBSim::RigidBody</span>
@@ -9,13 +9,13 @@
   </span>
   <span class="MBSIMGUI_ERROR">
     <span class="MBXMLUTILS_ERROROUTPUT MBXMLUTILS_SSE">
-      <a href="MBS.mbsx?xpath=/{http://www.mbsim-env.de/MBSimXML}MBSimProject[1]/{http://www.mbsim-env.de/MBSim}DynamicSystemSolver[1]/{http://www.mbsim-env.de/MBSim}objects[1]&amp;line=10">MBS.mbsx:/mx:MBSimProject[1]/DynamicSystemSolver[1]/objects[1]</a>:<br />
+      <a href="MBS.mbsx?xpath=/{http://www.mbsim-env.de/MBSimXML}MBSimProject[1]/{http://www.mbsim-env.de/MBSim}DynamicSystemSolver[1]/{http://www.mbsim-env.de/MBSim}objects[1]&amp;line=8">MBS.mbsx:/mx:MBSimProject[1]/DynamicSystemSolver[1]/objects[1]</a>:<br />
       <span class="MBXMLUTILS_MSG">Created by object of type MBSim::DynamicSystemSolver</span>
     </span>
   </span>
   <span class="MBSIMGUI_ERROR">
     <span class="MBXMLUTILS_ERROROUTPUT">
-      <a href="MBS.mbsx?xpath=/{http://www.mbsim-env.de/MBSimXML}MBSimProject[1]/{http://www.mbsim-env.de/MBSim}DynamicSystemSolver[1]/{http://www.mbsim-env.de/MBSim}objects[1]/{http://www.mbsim-env.de/MBSim}RigidBody[1]&amp;line=47">MBS.mbsx:.../DynamicSystemSolver[1]/objects[1]/RigidBody[1]</a>:<br />
+      <a href="MBS.mbsx?xpath=/{http://www.mbsim-env.de/MBSimXML}MBSimProject[1]/{http://www.mbsim-env.de/MBSim}DynamicSystemSolver[1]/{http://www.mbsim-env.de/MBSim}objects[1]/{http://www.mbsim-env.de/MBSim}RigidBody[1]&amp;line=45">MBS.mbsx:.../DynamicSystemSolver[1]/objects[1]/RigidBody[1]</a>:<br />
       <span class="MBXMLUTILS_MSG">Evaluation of refernece 'Frame[C2]' failed: Message from Object[Rigid body 2(with_ID_0xXXXXXX)]: (Body::getFrame): The body comprises no frame "C2"!
 </span>
       <span class="MBSIMGUI_ERROR">Created by object of type MBSim::RigidBody</span>
@@ -23,7 +23,7 @@
   </span>
   <span class="MBSIMGUI_ERROR">
     <span class="MBXMLUTILS_ERROROUTPUT MBXMLUTILS_SSE">
-      <a href="MBS.mbsx?xpath=/{http://www.mbsim-env.de/MBSimXML}MBSimProject[1]/{http://www.mbsim-env.de/MBSim}DynamicSystemSolver[1]/{http://www.mbsim-env.de/MBSim}objects[1]&amp;line=10">MBS.mbsx:/mx:MBSimProject[1]/DynamicSystemSolver[1]/objects[1]</a>:<br />
+      <a href="MBS.mbsx?xpath=/{http://www.mbsim-env.de/MBSimXML}MBSimProject[1]/{http://www.mbsim-env.de/MBSim}DynamicSystemSolver[1]/{http://www.mbsim-env.de/MBSim}objects[1]&amp;line=8">MBS.mbsx:/mx:MBSimProject[1]/DynamicSystemSolver[1]/objects[1]</a>:<br />
       <span class="MBXMLUTILS_MSG">Created by object of type MBSim::DynamicSystemSolver</span>
     </span>
   </span>

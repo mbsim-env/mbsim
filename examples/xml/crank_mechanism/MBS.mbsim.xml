@@ -1,5 +1,5 @@
-<DynamicSystemSolver name="MBS" xmlns="http://www.mbsim-env.de/MBSim"
-  xmlns:mbsimcontrol="http://www.mbsim-env.de/MBSimControl">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS" xmlns:mbsimcontrol="http://www.mbsim-env.de/MBSimControl">
   <plotFeatureRecursive value="generalizedRelativePosition">true</plotFeatureRecursive>
   <plotFeatureRecursive value="generalizedRelativeVelocity">true</plotFeatureRecursive>
   <plotFeatureRecursive value="generalizedForce">true</plotFeatureRecursive>
@@ -8,17 +8,18 @@
   <plotFeatureRecursive value="mbsimcontrol:signal">true</plotFeatureRecursive>
   <frames>
     <FixedRelativeFrame name="I2">
-      <enableOpenMBV> <!-- optional -->
+      <enableOpenMBV>
+        <!-- optional -->
         <size>fSize</size>
         <offset>1</offset>
       </enableOpenMBV>
-    <relativePosition>[l1 0 0]'</relativePosition>
-    <relativeOrientation>eye(3)</relativeOrientation>
+      <relativePosition>[l1 0 0]'</relativePosition>
+      <relativeOrientation>eye(3)</relativeOrientation>
     </FixedRelativeFrame>
   </frames>
   <contours/>
   <groups>
-    <Embed href="controller.xml" count="1" counterName="X" xmlns="http://www.mbsim-env.de/MBXMLUtils">
+    <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="1" counterName="X" href="controller.xml">
       <Parameter xmlns="http://www.mbsim-env.de/MBXMLUtils">
         <scalarParameter name="controllerKP">20.</scalarParameter>
         <scalarParameter name="controllerKI">100.</scalarParameter>
@@ -27,8 +28,10 @@
   </groups>
   <objects>
     <RigidBody name="Crank" xmlns="http://www.mbsim-env.de/MBSim">
-      <generalizedInitialPosition>phi2InitPos</generalizedInitialPosition> <!-- optional -->
-      <generalizedInitialVelocity>phi2InitVel</generalizedInitialVelocity> <!-- optional -->
+      <generalizedInitialPosition>phi2InitPos</generalizedInitialPosition>
+      <!-- optional -->
+      <generalizedInitialVelocity>phi2InitVel</generalizedInitialVelocity>
+      <!-- optional -->
       <frameOfReference ref="../Frame[I]"/>
       <frameForKinematics ref="Frame[B2]"/>
       <mass>m2</mass>
@@ -40,7 +43,8 @@
       </stateDependentRotation>
       <frames>
         <FixedRelativeFrame name="B2">
-          <enableOpenMBV> <!-- optional -->
+          <enableOpenMBV>
+            <!-- optional -->
             <size>fSize</size>
             <offset>1</offset>
           </enableOpenMBV>
@@ -48,21 +52,25 @@
           <relativeOrientation>eye(3)</relativeOrientation>
         </FixedRelativeFrame>
         <FixedRelativeFrame name="B3">
-          <frameOfReference ref="../Frame[C]"/> <!-- optional -->
+          <frameOfReference ref="../Frame[C]"/>
+          <!-- optional -->
           <relativePosition>[l2-r2 0 0]'</relativePosition>
           <relativeOrientation>eye(3)</relativeOrientation>
         </FixedRelativeFrame>
       </frames>
       <contours>
         <Circle name="crankBolt" xmlns="http://www.mbsim-env.de/MBSim">
-          <frameOfReference ref="../Frame[B3]"/> <!-- optional -->
-            <radius>rBolt</radius>
-            <!--<enableOpenMBV/> [> optional <]-->
+          <frameOfReference ref="../Frame[B3]"/>
+          <!-- optional -->
+          <radius>rBolt</radius>
+          <!--<enableOpenMBV/> [> optional <]-->
         </Circle>
       </contours>
-      <openMBVRigidBody> <!-- optional -->
-        <CompoundRigidBody name="XXX" xmlns="http://www.mbsim-env.de/OpenMBV">
-          <diffuseColor>[0.3333;1;0.3333]</diffuseColor> <!-- optional -->
+      <openMBVRigidBody>
+        <!-- optional -->
+        <CompoundRigidBody xmlns="http://www.mbsim-env.de/OpenMBV" name="XXX">
+          <diffuseColor>[0.3333;1;0.3333]</diffuseColor>
+          <!-- optional -->
           <initialTranslation>[0 0 0]'</initialTranslation>
           <initialRotation>[0 0 0]'</initialRotation>
           <scaleFactor>1.</scaleFactor>
@@ -84,14 +92,17 @@
           </Frustum>
         </CompoundRigidBody>
       </openMBVRigidBody>
-      <enableOpenMBVFrameC> <!-- optional -->
+      <enableOpenMBVFrameC>
+        <!-- optional -->
         <size>fSize</size>
         <offset>1</offset>
       </enableOpenMBVFrameC>
     </RigidBody>
     <RigidBody name="Rocker" xmlns="http://www.mbsim-env.de/MBSim">
-      <generalizedInitialPosition>phi4InitPos</generalizedInitialPosition> <!-- optional -->
-      <generalizedInitialVelocity>phi4InitVel</generalizedInitialVelocity> <!-- optional -->
+      <generalizedInitialPosition>phi4InitPos</generalizedInitialPosition>
+      <!-- optional -->
+      <generalizedInitialVelocity>phi4InitVel</generalizedInitialVelocity>
+      <!-- optional -->
       <frameOfReference ref="../Frame[I2]"/>
       <frameForKinematics ref="Frame[B4]"/>
       <mass>m4</mass>
@@ -103,40 +114,47 @@
       </stateDependentRotation>
       <frames>
         <FixedRelativeFrame name="B4">
-          <enableOpenMBV> <!-- optional -->
+          <enableOpenMBV>
+            <!-- optional -->
             <size>fSize</size>
             <offset>1</offset>
           </enableOpenMBV>
-        <relativePosition>[-l4+r4 0 0]'</relativePosition>
-        <relativeOrientation>eye(3)</relativeOrientation>
+          <relativePosition>[-l4+r4 0 0]'</relativePosition>
+          <relativeOrientation>eye(3)</relativeOrientation>
         </FixedRelativeFrame>
         <FixedRelativeFrame name="T4">
-          <enableOpenMBV> <!-- optional -->
+          <enableOpenMBV>
+            <!-- optional -->
             <size>fSize</size>
             <offset>1</offset>
           </enableOpenMBV>
-        <relativePosition>[r4 0 0]'</relativePosition>
-        <relativeOrientation>eye(3)</relativeOrientation>
+          <relativePosition>[r4 0 0]'</relativePosition>
+          <relativeOrientation>eye(3)</relativeOrientation>
         </FixedRelativeFrame>
       </frames>
       <contours/>
-      <openMBVRigidBody> <!-- optional -->
-        <Cuboid name="XXX" xmlns="http://www.mbsim-env.de/OpenMBV">
-          <diffuseColor>[0;1;0.6666]</diffuseColor> <!-- optional -->
+      <openMBVRigidBody>
+        <!-- optional -->
+        <Cuboid xmlns="http://www.mbsim-env.de/OpenMBV" name="XXX">
+          <diffuseColor>[0;1;0.6666]</diffuseColor>
+          <!-- optional -->
           <initialTranslation>[-l4/2+r4 0 0]'</initialTranslation>
           <initialRotation>[0 0 0]'</initialRotation>
           <scaleFactor>1</scaleFactor>
           <length>[l4 b b]'</length>
         </Cuboid>
       </openMBVRigidBody>
-      <enableOpenMBVFrameC> <!-- optional -->
+      <enableOpenMBVFrameC>
+        <!-- optional -->
         <size>fSize</size>
         <offset>1</offset>
       </enableOpenMBVFrameC>
     </RigidBody>
     <RigidBody name="Coupler" xmlns="http://www.mbsim-env.de/MBSim">
-      <generalizedInitialPosition>phi43InitPos</generalizedInitialPosition> <!-- optional -->
-      <generalizedInitialVelocity>phi43InitVel</generalizedInitialVelocity> <!-- optional -->
+      <generalizedInitialPosition>phi43InitPos</generalizedInitialPosition>
+      <!-- optional -->
+      <generalizedInitialVelocity>phi43InitVel</generalizedInitialVelocity>
+      <!-- optional -->
       <frameOfReference ref="../Object[Rocker]/Frame[T4]"/>
       <frameForKinematics ref="Frame[B3]"/>
       <mass>m3</mass>
@@ -148,7 +166,8 @@
       </stateDependentRotation>
       <frames>
         <FixedRelativeFrame name="B3">
-          <enableOpenMBV> <!-- optional -->
+          <enableOpenMBV>
+            <!-- optional -->
             <size>fSize</size>
             <offset>1</offset>
           </enableOpenMBV>
@@ -156,21 +175,25 @@
           <relativeOrientation>eye(3)</relativeOrientation>
         </FixedRelativeFrame>
         <FixedRelativeFrame name="B4">
-          <frameOfReference ref="../Frame[C]"/> <!-- optional -->
+          <frameOfReference ref="../Frame[C]"/>
+          <!-- optional -->
           <relativePosition>[r3 0 0]'</relativePosition>
           <relativeOrientation>eye(3)</relativeOrientation>
         </FixedRelativeFrame>
       </frames>
       <contours>
         <Circle name="couplerBushing" xmlns="http://www.mbsim-env.de/MBSim">
-          <frameOfReference ref="../Frame[B4]"/> <!-- optional -->
+          <frameOfReference ref="../Frame[B4]"/>
+          <!-- optional -->
           <radius>rBushing</radius>
           <solid>0</solid>
         </Circle>
       </contours>
-      <openMBVRigidBody> <!-- optional -->
-        <CompoundRigidBody name="XXX" xmlns="http://www.mbsim-env.de/OpenMBV">
-          <diffuseColor>[0.6666;1;1]</diffuseColor> <!-- optional -->
+      <openMBVRigidBody>
+        <!-- optional -->
+        <CompoundRigidBody xmlns="http://www.mbsim-env.de/OpenMBV" name="XXX">
+          <diffuseColor>[0.6666;1;1]</diffuseColor>
+          <!-- optional -->
           <initialTranslation>[0 0 0]'</initialTranslation>
           <initialRotation>[0 0 0]'</initialRotation>
           <scaleFactor>1.</scaleFactor>
@@ -192,7 +215,8 @@
           </Frustum>
         </CompoundRigidBody>
       </openMBVRigidBody>
-      <enableOpenMBVFrameC> <!-- optional -->
+      <enableOpenMBVFrameC>
+        <!-- optional -->
         <size>fSize</size>
         <offset>1</offset>
       </enableOpenMBVFrameC>
@@ -202,7 +226,7 @@
     <Contact name="jointContact" xmlns="http://www.mbsim-env.de/MBSim">
       <connect ref1="../Object[Coupler]/Contour[couplerBushing]" ref2="../Object[Crank]/Contour[crankBolt]"/>
       <normalForceLaw>
-        <UnilateralConstraint xmlns="http://www.mbsim-env.de/MBSim"></UnilateralConstraint>
+        <UnilateralConstraint xmlns="http://www.mbsim-env.de/MBSim"/>
       </normalForceLaw>
       <normalImpactLaw>
         <UnilateralNewtonImpact xmlns="http://www.mbsim-env.de/MBSim">
@@ -227,12 +251,15 @@
       <contact ref="../Link[jointContact]"/>
       <enableOpenMBVContactPoints>
         <size>fSize/4.</size>
-      </enableOpenMBVContactPoints> <!-- optional -->
-      <enableOpenMBVNormalForce> <!-- optional -->
+      </enableOpenMBVContactPoints>
+      <!-- optional -->
+      <enableOpenMBVNormalForce>
+        <!-- optional -->
         <colorRepresentation>'absoluteValue'</colorRepresentation>
         <scaleLength>.01</scaleLength>
       </enableOpenMBVNormalForce>
-      <enableOpenMBVTangentialForce> <!-- optional -->
+      <enableOpenMBVTangentialForce>
+        <!-- optional -->
         <scaleLength>.1</scaleLength>
       </enableOpenMBVTangentialForce>
     </ContactObserver>
@@ -244,4 +271,3 @@
   </environments>
   <initialProjection>false</initialProjection>
 </DynamicSystemSolver>
-

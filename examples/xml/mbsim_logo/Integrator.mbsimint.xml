@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <DOPRI5Integrator xmlns="http://www.mbsim-env.de/MBSim">
   <startTime>0</startTime>
   <endTime>2</endTime>
@@ -8,5 +8,3 @@
   <initialStepSize>1e-9</initialStepSize>
   <maximumStepSize>1e-3</maximumStepSize>
 </DOPRI5Integrator>
-
-

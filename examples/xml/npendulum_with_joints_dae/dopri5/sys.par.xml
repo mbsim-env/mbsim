@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <pv:Parameter xmlns:pv="http://www.mbsim-env.de/MBXMLUtils">
   <pv:scalarParameter name="N">5</pv:scalarParameter>
   <pv:scalarParameter name="lO">0.2</pv:scalarParameter>

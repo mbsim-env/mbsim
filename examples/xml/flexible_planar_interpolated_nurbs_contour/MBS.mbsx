@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
-
   <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
     <Parameter>
       <scalarParameter name="rho">2000</scalarParameter>
@@ -398,12 +397,12 @@
             <size unit="dm">1</size>
           </enableOpenMBVContactPoints>
         </ContactObserver>
-      </observers><enableOpenMBVFrameI>
+      </observers>
+      <enableOpenMBVFrameI>
         <size unit="dm">1</size>
-      </enableOpenMBVFrameI><environments>
+      </enableOpenMBVFrameI>
+      <environments>
         <MBSimEnvironment>
-          
-          
           <accelerationOfGravity unit="m/s^2">
             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
               <ele>0</ele>
@@ -421,12 +420,9 @@
       <generalizedImpulseTolerance>1e-6</generalizedImpulseTolerance>
     </DynamicSystemSolver>
   </Embed>
-
   <DOPRI5Integrator xmlns="http://www.mbsim-env.de/MBSim">
     <startTime unit="s">0</startTime>
     <endTime unit="s">0.1</endTime>
     <plotStepSize unit="s">1e-3</plotStepSize>
   </DOPRI5Integrator>
-
-
 </MBSimProject>

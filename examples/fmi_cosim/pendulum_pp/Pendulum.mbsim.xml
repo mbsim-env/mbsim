@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <Group xmlns="http://www.mbsim-env.de/MBSim" name="Group{grpID}" xmlns:mc="http://www.mbsim-env.de/MBSimControl">
-
   <frameOfReference ref="../Frame[QP{grpID-1}]"/>
-
   <frames>
     <FixedRelativeFrame name="StopRED">
       <enableOpenMBV>
@@ -18,11 +16,8 @@
       </relativePosition>
     </FixedRelativeFrame>
   </frames>
-
   <contours/>
-
   <groups/>
-
   <objects>
     <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="N" counterName="n">
       <Parameter/>
@@ -167,7 +162,6 @@
       </contours>
     </RigidBody>
   </objects>
-
   <links>
     <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="N" counterName="n">
       <Parameter/>
@@ -186,14 +180,14 @@
     <PositionSensor xmlns="http://www.mbsim-env.de/MBSimControl" name="positionFull">
       <frame ref="../Object[ChainLink_{N}]/Frame[bottom]"/>
     </PositionSensor>
-    <Demultiplexer name="position" xmlns="http://www.mbsim-env.de/MBSimControl">
+    <Demultiplexer xmlns="http://www.mbsim-env.de/MBSimControl" name="position">
       <inputSignal ref="../Link[positionFull]"/>
       <indices>[1;2]</indices>
     </Demultiplexer>
     <VelocitySensor xmlns="http://www.mbsim-env.de/MBSimControl" name="velocityFull">
       <frame ref="../Object[ChainLink_{N}]/Frame[bottom]"/>
     </VelocitySensor>
-    <Demultiplexer name="velocity" xmlns="http://www.mbsim-env.de/MBSimControl">
+    <Demultiplexer xmlns="http://www.mbsim-env.de/MBSimControl" name="velocity">
       <inputSignal ref="../Link[velocityFull]"/>
       <indices>[1;2]</indices>
     </Demultiplexer>
@@ -212,24 +206,22 @@
       </enableOpenMBV>
     </KineticExcitation>
     <ExternSignalSource xmlns="http://www.mbsim-env.de/MBSimControl" name="forceInput">
-      <m:plotFeature value="signal" xmlns:m="http://www.mbsim-env.de/MBSim">true</m:plotFeature>
+      <m:plotFeature xmlns:m="http://www.mbsim-env.de/MBSim" value="signal">true</m:plotFeature>
       <sourceSize>2</sourceSize>
     </ExternSignalSource>
     <ExternSignalSink xmlns="http://www.mbsim-env.de/MBSimControl" name="positionOutput">
-      <plotFeature value="mc:signal" xmlns="http://www.mbsim-env.de/MBSim">true</plotFeature>
+      <plotFeature xmlns="http://www.mbsim-env.de/MBSim" value="mc:signal">true</plotFeature>
       <inputSignal ref="../Link[position]"/>
     </ExternSignalSink>
     <ExternSignalSink xmlns="http://www.mbsim-env.de/MBSimControl" name="velocityOutput">
-      <plotFeature value="mc:signal" xmlns="http://www.mbsim-env.de/MBSim">true</plotFeature>
+      <plotFeature xmlns="http://www.mbsim-env.de/MBSim" value="mc:signal">true</plotFeature>
       <inputSignal ref="../Link[velocity]"/>
     </ExternSignalSink>
   </links>
-
   <constraints/>
-
   <observers>
     <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="N" counterName="n">
-      <ContactObserver name="ChainLink_Contact_left_{n}" xmlns="http://www.mbsim-env.de/MBSim">
+      <ContactObserver xmlns="http://www.mbsim-env.de/MBSim" name="ChainLink_Contact_left_{n}">
         <contact ref="../Link[ChainLink_Contact_leftRED_{n}]"/>
         <enableOpenMBVContactPoints>
           <size>0.015</size>
@@ -243,11 +235,9 @@
       </ContactObserver>
     </Embed>
   </observers>
-
   <enableOpenMBVFrameI>
     <?OPENMBV_ID 37?>
     <size unit="m">0.05</size>
     <offset unit="-">0.5</offset>
   </enableOpenMBVFrameI>
-
 </Group>

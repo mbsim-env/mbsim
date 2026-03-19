@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
-
   <evaluator xmlns="http://www.mbsim-env.de/MBXMLUtils">python</evaluator>
-
   <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
     <Parameter>
       <scalarParameter name="l1" unit="-">0.3</scalarParameter>
       <scalarParameter name="l2" unit="-">1</scalarParameter>
       <scalarParameter name="l3" unit="-">1.1</scalarParameter>
-
       <scalarParameter name="a">1.5</scalarParameter>
       <import>import numpy</import>
     </Parameter>
@@ -30,7 +27,8 @@
             </xmlVector>
           </relativePosition>
         </FixedRelativeFrame>
-      </frames><contours/>
+      </frames>
+      <contours/>
       <groups/>
       <objects>
         <RigidBody name="RigidBody1">
@@ -83,7 +81,8 @@
                 </xmlVector>
               </relativePosition>
             </FixedRelativeFrame>
-          </frames><contours/>
+          </frames>
+          <contours/>
           <openMBVRigidBody>
             <Cuboid xmlns="http://www.mbsim-env.de/OpenMBV" name="Cuboid2">
               <transparency unit="-">0.3</transparency>
@@ -113,7 +112,8 @@
           </openMBVRigidBody>
           <enableOpenMBVFrameC>
             <size unit="dm">1</size>
-          </enableOpenMBVFrameC></RigidBody>
+          </enableOpenMBVFrameC>
+        </RigidBody>
         <RigidBody name="RigidBody2">
           <frameOfReference ref="../Object[RigidBody1]/Frame[P2]"/>
           <frameForKinematics ref="Frame[P1]"/>
@@ -165,7 +165,8 @@
                 </xmlVector>
               </relativePosition>
             </FixedRelativeFrame>
-          </frames><contours/>
+          </frames>
+          <contours/>
           <openMBVRigidBody>
             <Cuboid xmlns="http://www.mbsim-env.de/OpenMBV" name="Cuboid2">
               <transparency unit="-">0.3</transparency>
@@ -195,7 +196,8 @@
           </openMBVRigidBody>
           <enableOpenMBVFrameC>
             <size unit="dm">1</size>
-          </enableOpenMBVFrameC></RigidBody>
+          </enableOpenMBVFrameC>
+        </RigidBody>
         <RigidBody name="RigidBody3">
           <frameOfReference ref="../Object[RigidBody2]/Frame[P2]"/>
           <frameForKinematics ref="Frame[P1]"/>
@@ -247,7 +249,8 @@
                 </xmlVector>
               </relativePosition>
             </FixedRelativeFrame>
-          </frames><contours/>
+          </frames>
+          <contours/>
           <openMBVRigidBody>
             <Cuboid xmlns="http://www.mbsim-env.de/OpenMBV" name="Cuboid2">
               <transparency unit="-">0.3</transparency>
@@ -277,7 +280,8 @@
           </openMBVRigidBody>
           <enableOpenMBVFrameC>
             <size unit="dm">1</size>
-          </enableOpenMBVFrameC></RigidBody>
+          </enableOpenMBVFrameC>
+        </RigidBody>
         <RigidBody name="RigidBody4">
           <frameForKinematics ref="Frame[P]"/>
           <mass unit="kg">1</mass>
@@ -349,7 +353,8 @@
           </openMBVRigidBody>
           <enableOpenMBVFrameC>
             <size unit="dm">1</size>
-          </enableOpenMBVFrameC></RigidBody>
+          </enableOpenMBVFrameC>
+        </RigidBody>
       </objects>
       <links>
         <Joint name="Joint">
@@ -410,7 +415,8 @@
       <observers/>
       <enableOpenMBVFrameI>
         <size unit="dm">1</size>
-      </enableOpenMBVFrameI><environments>
+      </enableOpenMBVFrameI>
+      <environments>
         <MBSimEnvironment>
           <accelerationOfGravity unit="m/s^2">
             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -423,7 +429,6 @@
       </environments>
     </DynamicSystemSolver>
   </Embed>
-
   <DOPRI5Integrator xmlns="http://www.mbsim-env.de/MBSim">
     <startTime unit="s">0</startTime>
     <endTime unit="s">1</endTime>
@@ -431,5 +436,4 @@
     <toleranceForPositionConstraints>1e-5</toleranceForPositionConstraints>
     <toleranceForVelocityConstraints>1e-5</toleranceForVelocityConstraints>
   </DOPRI5Integrator>
-
 </MBSimProject>

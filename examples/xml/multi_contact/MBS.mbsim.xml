@@ -1,10 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<DynamicSystemSolver name="TS" 
-  xmlns="http://www.mbsim-env.de/MBSim"
-  xmlns:pv="http://www.mbsim-env.de/MBXMLUtils"
-  xmlns:ombv="http://www.mbsim-env.de/OpenMBV"
-  xmlns:h="http://www.mbsim-env.de/MBSimHydraulics"
-  xmlns:c="http://www.mbsim-env.de/MBSimControl">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="TS" xmlns:c="http://www.mbsim-env.de/MBSimControl" xmlns:h="http://www.mbsim-env.de/MBSimHydraulics" xmlns:ombv="http://www.mbsim-env.de/OpenMBV" xmlns:pv="http://www.mbsim-env.de/MBXMLUtils">
   <plotFeatureRecursive value="generalizedRelativePosition">true</plotFeatureRecursive>
   <plotFeatureRecursive value="generalizedRelativeVelocity">true</plotFeatureRecursive>
   <plotFeatureRecursive value="generalizedForce">true</plotFeatureRecursive>
@@ -14,7 +9,7 @@
   <contours>
     <Plane name="Ground">
       <enableOpenMBV>
-        <length>[1;1]</length>   
+        <length>[1;1]</length>
       </enableOpenMBV>
     </Plane>
   </contours>
@@ -31,17 +26,16 @@
       </stateDependentTranslation>
       <frames/>
       <contours>
-        <Sphere name="Sphere"> 
+        <Sphere name="Sphere">
           <radius>0.006</radius>
-          <enableOpenMBV></enableOpenMBV>
+          <enableOpenMBV/>
         </Sphere>
       </contours>
       <enableOpenMBVFrameC>
         <size>.001</size>
         <offset>1.</offset>
-      </enableOpenMBVFrameC>      
+      </enableOpenMBVFrameC>
     </RigidBody>
-    
     <RigidBody name="Ball2">
       <generalizedInitialPosition>[0.01;0;0]</generalizedInitialPosition>
       <frameOfReference ref="../Frame[I]"/>
@@ -53,9 +47,9 @@
       </stateDependentTranslation>
       <frames/>
       <contours>
-        <Sphere name="Sphere"> 
+        <Sphere name="Sphere">
           <radius>0.006</radius>
-          <enableOpenMBV></enableOpenMBV>
+          <enableOpenMBV/>
         </Sphere>
       </contours>
       <enableOpenMBVFrameC>
@@ -64,9 +58,8 @@
       </enableOpenMBVFrameC>
     </RigidBody>
   </objects>
-  
   <links>
-   <MaxwellContact name="Contact" xmlns="http://www.mbsim-env.de/MBSim">
+    <MaxwellContact name="Contact" xmlns="http://www.mbsim-env.de/MBSim">
       <!--
      <contactForceLaw>
       <UnilateralConstraint xmlns="http://www.mbsim-env.de/MBSim"/>
@@ -77,14 +70,14 @@
       </UnilateralNewtonImpact>      
      </contactImpactLaw>
       -->
-     <connect ref1="../Contour[Ground]" ref2="../Object[Ball1]/Contour[Sphere]" name="Contact_Uno"/>
-     <connect ref1="../Contour[Ground]" ref2="../Object[Ball2]/Contour[Sphere]" name="Contact_Due"/>
-        <InfluenceFunction>
-          <FlexibilityInfluenceFunction contourName1="../Contour[Ground]" contourName2="../Contour[Ground]">
-            <Flexibility>1e-5</Flexibility>
-          </FlexibilityInfluenceFunction>
-        </InfluenceFunction>
-   </MaxwellContact>
+      <connect name="Contact_Uno" ref1="../Contour[Ground]" ref2="../Object[Ball1]/Contour[Sphere]"/>
+      <connect name="Contact_Due" ref1="../Contour[Ground]" ref2="../Object[Ball2]/Contour[Sphere]"/>
+      <InfluenceFunction>
+        <FlexibilityInfluenceFunction contourName1="../Contour[Ground]" contourName2="../Contour[Ground]">
+          <Flexibility>1e-5</Flexibility>
+        </FlexibilityInfluenceFunction>
+      </InfluenceFunction>
+    </MaxwellContact>
   </links>
   <constraints/>
   <observers>

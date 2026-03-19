@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
-
   <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
     <Parameter>
       <scalarParameter name="m1">0.36</scalarParameter>
@@ -45,31 +44,32 @@
             <RotationAboutZAxis/>
           </stateDependentRotation>
           <frames>
-              <FixedRelativeFrame name="K">
-                <enableOpenMBV>
-                  <size unit="cm">1</size>
+            <FixedRelativeFrame name="K">
+              <enableOpenMBV>
+                <size unit="cm">1</size>
               </enableOpenMBV>
-                <relativePosition unit="m">
-                  <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                    <ele>-l1/2</ele>
-                    <ele>0</ele>
-                    <ele>0</ele>
+              <relativePosition unit="m">
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <ele>-l1/2</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
                 </xmlVector>
               </relativePosition>
             </FixedRelativeFrame>
-              <FixedRelativeFrame name="Q">
-                <enableOpenMBV>
-                  <size unit="cm">1</size>
+            <FixedRelativeFrame name="Q">
+              <enableOpenMBV>
+                <size unit="cm">1</size>
               </enableOpenMBV>
-                <relativePosition unit="m">
-                  <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                    <ele>l1/2</ele>
-                    <ele>0</ele>
-                    <ele>0</ele>
+              <relativePosition unit="m">
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <ele>l1/2</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
                 </xmlVector>
               </relativePosition>
             </FixedRelativeFrame>
-          </frames><contours/>
+          </frames>
+          <contours/>
           <openMBVRigidBody>
             <Cuboid xmlns="http://www.mbsim-env.de/OpenMBV" name="Cuboid2">
               <diffuseColor>
@@ -105,8 +105,9 @@
             </Cuboid>
           </openMBVRigidBody>
           <enableOpenMBVFrameC>
-              <size unit="cm">1</size>
-          </enableOpenMBVFrameC></RigidBody>
+            <size unit="cm">1</size>
+          </enableOpenMBVFrameC>
+        </RigidBody>
         <ExternalFlexibleFfrBody xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="FlexibleFfrBody2">
           <frameOfReference xmlns="http://www.mbsim-env.de/MBSim" ref="../Object[RigidBody1]/Frame[Q]"/>
           <inputDataFileName>"input_data.h5"</inputDataFileName>
@@ -120,14 +121,16 @@
               </enableOpenMBV>
               <nodeNumber>nFE+1</nodeNumber>
             </NodeFrame>
-          </frames><contours/>
+          </frames>
+          <contours/>
           <enableOpenMBV>
             <lineWidth xmlns="http://www.mbsim-env.de/MBSim">5</lineWidth>
             <visualization>"lines"</visualization>
           </enableOpenMBV>
           <enableOpenMBVFrameK>
             <size xmlns="http://www.mbsim-env.de/MBSim" unit="cm">1</size>
-          </enableOpenMBVFrameK></ExternalFlexibleFfrBody>
+          </enableOpenMBVFrameK>
+        </ExternalFlexibleFfrBody>
         <RigidBody name="RigidBody3" xmlns="http://www.mbsim-env.de/MBSim">
           <generalizedInitialPosition>
             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -194,37 +197,40 @@
             </Cuboid>
           </openMBVRigidBody>
           <enableOpenMBVFrameC>
-              <size unit="cm">1</size>
-          </enableOpenMBVFrameC></RigidBody>
+            <size unit="cm">1</size>
+          </enableOpenMBVFrameC>
+        </RigidBody>
       </objects>
       <links>
         <Joint name="Joint1" xmlns="http://www.mbsim-env.de/MBSim">
-            <connect ref1="../Object[RigidBody3]/Frame[C]" ref2="../Object[FlexibleFfrBody2]/Frame[Q]"/>
-            <forceDirection unit="-">
-              <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                <row>
-                  <ele>1</ele>
-                  <ele>0</ele>
+          <connect ref1="../Object[RigidBody3]/Frame[C]" ref2="../Object[FlexibleFfrBody2]/Frame[Q]"/>
+          <forceDirection unit="-">
+            <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <row>
+                <ele>1</ele>
+                <ele>0</ele>
               </row>
-                <row>
-                  <ele>0</ele>
-                  <ele>1</ele>
+              <row>
+                <ele>0</ele>
+                <ele>1</ele>
               </row>
-                <row>
-                  <ele>0</ele>
-                  <ele>0</ele>
+              <row>
+                <ele>0</ele>
+                <ele>0</ele>
               </row>
             </xmlMatrix>
           </forceDirection>
-            <forceLaw>
-              <BilateralConstraint/>
+          <forceLaw>
+            <BilateralConstraint/>
           </forceLaw>
         </Joint>
-      </links><constraints/>
+      </links>
+      <constraints/>
       <observers/>
       <enableOpenMBVFrameI>
         <size unit="cm">1</size>
-      </enableOpenMBVFrameI><environments>
+      </enableOpenMBVFrameI>
+      <environments>
         <MBSimEnvironment>
           <accelerationOfGravity unit="m/s^2">
             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -237,7 +243,6 @@
       </environments>
     </DynamicSystemSolver>
   </Embed>
-
   <LSODEIntegrator xmlns="http://www.mbsim-env.de/MBSim">
     <startTime unit="s">0</startTime>
     <endTime unit="s">0.1</endTime>
@@ -249,5 +254,4 @@
     <minimumStepSize unit="s">0</minimumStepSize>
     <stepLimit>5000</stepLimit>
   </LSODEIntegrator>
-
 </MBSimProject>

@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no" ?><DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="TS" xmlns:mbsimcontrol="http://www.mbsim-env.de/MBSimControl" xmlns:pv="http://www.mbsim-env.de/MBXMLUtils">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="TS" xmlns:mbsimcontrol="http://www.mbsim-env.de/MBSimControl" xmlns:pv="http://www.mbsim-env.de/MBXMLUtils">
   <plotFeatureRecursive value="generalizedRelativePosition">true</plotFeatureRecursive>
   <plotFeatureRecursive value="generalizedRelativeVelocity">true</plotFeatureRecursive>
   <plotFeatureRecursive value="generalizedForce">true</plotFeatureRecursive>
@@ -29,9 +30,11 @@
       <mass>1.</mass>
       <inertiaTensor>eye(3)</inertiaTensor>
       <timeDependentTranslation>
-        <SymbolicFunction><definition arg1="t">
+        <SymbolicFunction>
+          <definition arg1="t">
           [0; A*sin(2*pi*f*t + pi/2); 0]
-        </definition></SymbolicFunction>
+          </definition>
+        </SymbolicFunction>
       </timeDependentTranslation>
       <frames>
         <FixedRelativeFrame name="LineF">
@@ -84,7 +87,7 @@
           </forceFunction>
         </RegularizedUnilateralConstraint>
       </normalForceLaw>
-        <!--
+      <!--
       <normalImpactLaw>
         <UnilateralNewtonImpact>
           <restitutionCoefficient>.1</restitutionCoefficient>

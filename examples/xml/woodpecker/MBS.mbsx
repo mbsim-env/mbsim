@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
-
   <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
     <Parameter>
       <scalarParameter name="mS">100e-3</scalarParameter>
@@ -13,7 +12,8 @@
           <ele>50e-3</ele>
           <ele>0</ele>
         </xmlVector>
-      </vectorParameter><scalarParameter name="spiel">0.7e-3</scalarParameter>
+      </vectorParameter>
+      <scalarParameter name="spiel">0.7e-3</scalarParameter>
       <scalarParameter name="R">r+spiel/2</scalarParameter>
       <scalarParameter name="h">R/2</scalarParameter>
       <scalarParameter name="mM">10e-3</scalarParameter>
@@ -114,7 +114,8 @@
               <height unit="m">1</height>
             </Cylinder>
           </openMBVRigidBody>
-        </RigidBody><RigidBody name="Muffe">
+        </RigidBody>
+        <RigidBody name="Muffe">
           <generalizedInitialPosition>
             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
               <ele>spiel*0.2</ele>
@@ -254,7 +255,8 @@
               <innerBaseRadius unit="m">R/2</innerBaseRadius>
               <innerTopRadius unit="m">R/2</innerTopRadius>
             </Frustum>
-          </openMBVRigidBody><enableOpenMBVFrameC>
+          </openMBVRigidBody>
+          <enableOpenMBVFrameC>
             <size unit="cm">1</size>
           </enableOpenMBVFrameC>
         </RigidBody>
@@ -335,7 +337,8 @@
               <scaleFactor unit="-">0.05</scaleFactor>
               <ivFileName>"objects/specht.wrl"</ivFileName>
             </IvBody>
-          </openMBVRigidBody><enableOpenMBVFrameC>
+          </openMBVRigidBody>
+          <enableOpenMBVFrameC>
             <size unit="cm">1</size>
           </enableOpenMBVFrameC>
         </RigidBody>
@@ -464,8 +467,6 @@
       </enableOpenMBVFrameI>
       <environments>
         <MBSimEnvironment>
-          
-          
           <accelerationOfGravity unit="m/s^2">
             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
               <ele>0</ele>
@@ -485,7 +486,6 @@
       <generalizedImpulseTolerance>1e-8</generalizedImpulseTolerance>
     </DynamicSystemSolver>
   </Embed>
-
   <LSODEIntegrator xmlns="http://www.mbsim-env.de/MBSim">
     <startTime unit="s">0</startTime>
     <endTime unit="s">5.001</endTime>
@@ -498,5 +498,4 @@
     <initialStepSize unit="s">1e-10</initialStepSize>
     <maximumStepSize unit="s">1e-2</maximumStepSize>
   </LSODEIntegrator>
-
 </MBSimProject>

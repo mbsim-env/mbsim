@@ -1,14 +1,15 @@
-        <pv:xmlMatrix xmlns:pv="http://www.mbsim-env.de/MBXMLUtils">
-          <pv:row>
-            <pv:ele>1</pv:ele>
-            <pv:ele>0</pv:ele>
-          </pv:row>
-          <pv:row>
-            <pv:ele>0</pv:ele>
-            <pv:ele>1</pv:ele>
-          </pv:row>
-          <pv:row>
-            <pv:ele>0</pv:ele>
-            <pv:ele>0</pv:ele>
-          </pv:row>
-        </pv:xmlMatrix>
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<pv:xmlMatrix xmlns:pv="http://www.mbsim-env.de/MBXMLUtils">
+  <pv:row>
+    <pv:ele>1</pv:ele>
+    <pv:ele>0</pv:ele>
+  </pv:row>
+  <pv:row>
+    <pv:ele>0</pv:ele>
+    <pv:ele>1</pv:ele>
+  </pv:row>
+  <pv:row>
+    <pv:ele>0</pv:ele>
+    <pv:ele>0</pv:ele>
+  </pv:row>
+</pv:xmlMatrix>

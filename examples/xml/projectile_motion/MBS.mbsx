@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no" ?><MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
-
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
   <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
     <Parameter>
       <scalarParameter name="r" unit="-">0.1</scalarParameter>
@@ -16,20 +16,21 @@
       <plotFeatureRecursive value="generalizedVelocity">true</plotFeatureRecursive>
       <frames>
         <FixedRelativeFrame name="P1">
-          <enableOpenMBV>
-          </enableOpenMBV>
+          <enableOpenMBV/>
           <relativeOrientation>
             <aboutZ xmlns="http://www.mbsim-env.de/MBXMLUtils" unit="degree">90</aboutZ>
           </relativeOrientation>
         </FixedRelativeFrame>
-      </frames><contours>
+      </frames>
+      <contours>
         <Line name="Line1">
           <frameOfReference ref="../Frame[P1]"/>
           <enableOpenMBV>
             <length unit="m">50</length>
           </enableOpenMBV>
         </Line>
-      </contours><groups/>
+      </contours>
+      <groups/>
       <objects>
         <RigidBody name="RigidBody1">
           <generalizedInitialPosition>
@@ -71,8 +72,7 @@
           <contours>
             <Circle name="Circle1">
               <radius unit="m">r</radius>
-              <enableOpenMBV>
-              </enableOpenMBV>
+              <enableOpenMBV/>
             </Circle>
           </contours>
           <openMBVRigidBody>
@@ -140,8 +140,7 @@
           <contours>
             <Circle name="Circle1">
               <radius unit="m">r</radius>
-              <enableOpenMBV>
-              </enableOpenMBV>
+              <enableOpenMBV/>
             </Circle>
           </contours>
           <openMBVRigidBody>
@@ -209,10 +208,10 @@
           <contours>
             <Circle name="Circle1">
               <radius unit="m">r</radius>
-              <enableOpenMBV>
-              </enableOpenMBV>
+              <enableOpenMBV/>
             </Circle>
-          </contours><openMBVRigidBody>
+          </contours>
+          <openMBVRigidBody>
             <Sphere xmlns="http://www.mbsim-env.de/OpenMBV" name="Sphere2">
               <transparency unit="-">0.3</transparency>
               <initialTranslation unit="m">
@@ -235,7 +234,8 @@
           </openMBVRigidBody>
           <enableOpenMBVFrameC>
             <size unit="dm">1</size>
-          </enableOpenMBVFrameC></RigidBody>
+          </enableOpenMBVFrameC>
+        </RigidBody>
       </objects>
       <links>
         <Aerodynamics xmlns="http://www.mbsim-env.de/MBSimPhysics" name="Aerodynamics">
@@ -246,13 +246,15 @@
             </ConstantFunction>
           </densityFunction>
           <coefficientFunction>
-            <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim"><definition arg1="zeta" arg1Dim="2">
-              <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                <ele>cw*A</ele>
-                <ele>0</ele>
-                <ele>0</ele>
-              </xmlVector>
-            </definition></SymbolicFunction>
+            <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim">
+              <definition arg1="zeta" arg1Dim="2">
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <ele>cw*A</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                </xmlVector>
+              </definition>
+            </SymbolicFunction>
           </coefficientFunction>
           <windSpeed unit="m/s">[-vWind;0;0]</windSpeed>
           <enableOpenMBV>
@@ -280,7 +282,8 @@
               <restitutionCoefficient unit="-">0.4</restitutionCoefficient>
             </UnilateralNewtonImpact>
           </normalImpactLaw>
-        </Contact><Contact name="Contact2">
+        </Contact>
+        <Contact name="Contact2">
           <connect ref1="../Contour[Line1]" ref2="../Object[RigidBody2]/Contour[Circle1]"/>
           <normalForceLaw>
             <UnilateralConstraint/>
@@ -380,7 +383,8 @@
       </observers>
       <enableOpenMBVFrameI>
         <size unit="dm">1</size>
-      </enableOpenMBVFrameI><environments>
+      </enableOpenMBVFrameI>
+      <environments>
         <MBSimEnvironment>
           <accelerationOfGravity unit="m/s^2">
             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -393,7 +397,6 @@
       </environments>
     </DynamicSystemSolver>
   </Embed>
-
   <LSODEIntegrator xmlns="http://www.mbsim-env.de/MBSim">
     <startTime unit="s">0</startTime>
     <endTime unit="s">3</endTime>
@@ -402,5 +405,4 @@
     <relativeToleranceScalar>1e-6</relativeToleranceScalar>
     <initialStepSize unit="s">1e-8</initialStepSize>
   </LSODEIntegrator>
-
 </MBSimProject>

@@ -1,7 +1,7 @@
 <root>
   <span class="MBSIMGUI_ERROR">
     <span class="MBXMLUTILS_ERROROUTPUT">
-      <a href="submodel/Untergruppe.xml?xpath=/{http://www.mbsim-env.de/MBSim}Group[1]/{http://www.mbsim-env.de/MBSim}objects[1]/{http://www.mbsim-env.de/MBSim}RigidBody[1]&amp;line=10">Untergruppe.xml:/Group[1]/objects[1]/RigidBody[1]</a>:<br />
+      <a href="submodel/Untergruppe.xml?xpath=/{http://www.mbsim-env.de/MBSim}Group[1]/{http://www.mbsim-env.de/MBSim}objects[1]/{http://www.mbsim-env.de/MBSim}RigidBody[1]&amp;line=8">Untergruppe.xml:/Group[1]/objects[1]/RigidBody[1]</a>:<br />
       <span class="MBXMLUTILS_MSG">Evaluation of refernece 'Frame[Cerror]' failed: Message from Object[Box1(with_ID_0xXXXXXX)]: (Body::getFrame): The body comprises no frame "Cerror"!
 </span>
       <span class="MBSIMGUI_ERROR">Created by object of type MBSim::RigidBody
@@ -9,13 +9,13 @@
       <span class="MBSIMGUI_ERROR" />
     </span>
     <span class="MBXMLUTILS_ERROROUTPUT MBXMLUTILS_SSE">
-      <a href="Hauptgruppe.xml?xpath=/{http://www.mbsim-env.de/MBSim}Group[1]/{http://www.mbsim-env.de/MBSim}groups[1]/{http://www.mbsim-env.de/MBXMLUtils}Embed[2]&amp;line=38">Hauptgruppe.xml:/Group[1]/groups[1]/p:Embed[2]</a>:<br />
+      <a href="Hauptgruppe.xml?xpath=/{http://www.mbsim-env.de/MBSim}Group[1]/{http://www.mbsim-env.de/MBSim}groups[1]/{http://www.mbsim-env.de/MBXMLUtils}Embed[2]&amp;line=35">Hauptgruppe.xml:/Group[1]/groups[1]/p:Embed[2]</a>:<br />
       <span class="MBXMLUTILS_MSG">included from here
 </span>
       <span class="MBSIMGUI_ERROR" />
     </span>
     <span class="MBXMLUTILS_ERROROUTPUT MBXMLUTILS_SSE">
-      <a href="MBS.mbsim.xml?xpath=/{http://www.mbsim-env.de/MBSim}DynamicSystemSolver[1]/{http://www.mbsim-env.de/MBSim}groups[1]/{http://www.mbsim-env.de/MBXMLUtils}Embed[1]&amp;line=18">MBS.mbsim.xml:/DynamicSystemSolver[1]/groups[1]/p:Embed[1]</a>:<br />
+      <a href="MBS.mbsim.xml?xpath=/{http://www.mbsim-env.de/MBSim}DynamicSystemSolver[1]/{http://www.mbsim-env.de/MBSim}groups[1]/{http://www.mbsim-env.de/MBXMLUtils}Embed[1]&amp;line=21">MBS.mbsim.xml:/DynamicSystemSolver[1]/groups[1]/p:Embed[1]</a>:<br />
       <span class="MBXMLUTILS_MSG">included from here
 </span>
       <span class="MBSIMGUI_ERROR" />
@@ -27,19 +27,19 @@
   </span>
   <span class="MBSIMGUI_ERROR">
     <span class="MBXMLUTILS_ERROROUTPUT MBXMLUTILS_SSE">
-      <a href="submodel/Untergruppe.xml?xpath=/{http://www.mbsim-env.de/MBSim}Group[1]/{http://www.mbsim-env.de/MBSim}objects[1]&amp;line=9">Untergruppe.xml:/Group[1]/objects[1]</a>:<br />
+      <a href="submodel/Untergruppe.xml?xpath=/{http://www.mbsim-env.de/MBSim}Group[1]/{http://www.mbsim-env.de/MBSim}objects[1]&amp;line=7">Untergruppe.xml:/Group[1]/objects[1]</a>:<br />
       <span class="MBXMLUTILS_MSG">Created by object of type MBSim::Group
 </span>
       <span class="MBSIMGUI_ERROR">  </span>
     </span>
     <span class="MBXMLUTILS_ERROROUTPUT MBXMLUTILS_SSE">
-      <a href="Hauptgruppe.xml?xpath=/{http://www.mbsim-env.de/MBSim}Group[1]/{http://www.mbsim-env.de/MBSim}groups[1]/{http://www.mbsim-env.de/MBXMLUtils}Embed[2]&amp;line=38">Hauptgruppe.xml:/Group[1]/groups[1]/p:Embed[2]</a>:<br />
+      <a href="Hauptgruppe.xml?xpath=/{http://www.mbsim-env.de/MBSim}Group[1]/{http://www.mbsim-env.de/MBSim}groups[1]/{http://www.mbsim-env.de/MBXMLUtils}Embed[2]&amp;line=35">Hauptgruppe.xml:/Group[1]/groups[1]/p:Embed[2]</a>:<br />
       <span class="MBXMLUTILS_MSG">included from here
 </span>
       <span class="MBSIMGUI_ERROR">  </span>
     </span>
     <span class="MBXMLUTILS_ERROROUTPUT MBXMLUTILS_SSE">
-      <a href="MBS.mbsim.xml?xpath=/{http://www.mbsim-env.de/MBSim}DynamicSystemSolver[1]/{http://www.mbsim-env.de/MBSim}groups[1]/{http://www.mbsim-env.de/MBXMLUtils}Embed[1]&amp;line=18">MBS.mbsim.xml:/DynamicSystemSolver[1]/groups[1]/p:Embed[1]</a>:<br />
+      <a href="MBS.mbsim.xml?xpath=/{http://www.mbsim-env.de/MBSim}DynamicSystemSolver[1]/{http://www.mbsim-env.de/MBSim}groups[1]/{http://www.mbsim-env.de/MBXMLUtils}Embed[1]&amp;line=21">MBS.mbsim.xml:/DynamicSystemSolver[1]/groups[1]/p:Embed[1]</a>:<br />
       <span class="MBXMLUTILS_MSG">included from here
 </span>
       <span class="MBSIMGUI_ERROR">  </span>
@@ -51,13 +51,13 @@
   </span>
   <span class="MBSIMGUI_ERROR">
     <span class="MBXMLUTILS_ERROROUTPUT MBXMLUTILS_SSE">
-      <a href="Hauptgruppe.xml?xpath=/{http://www.mbsim-env.de/MBSim}Group[1]/{http://www.mbsim-env.de/MBSim}groups[1]&amp;line=26">Hauptgruppe.xml:/Group[1]/groups[1]</a>:<br />
+      <a href="Hauptgruppe.xml?xpath=/{http://www.mbsim-env.de/MBSim}Group[1]/{http://www.mbsim-env.de/MBSim}groups[1]&amp;line=23">Hauptgruppe.xml:/Group[1]/groups[1]</a>:<br />
       <span class="MBXMLUTILS_MSG">Created by object of type MBSim::Group
 </span>
       <span class="MBSIMGUI_ERROR">    </span>
     </span>
     <span class="MBXMLUTILS_ERROROUTPUT MBXMLUTILS_SSE">
-      <a href="MBS.mbsim.xml?xpath=/{http://www.mbsim-env.de/MBSim}DynamicSystemSolver[1]/{http://www.mbsim-env.de/MBSim}groups[1]/{http://www.mbsim-env.de/MBXMLUtils}Embed[1]&amp;line=18">MBS.mbsim.xml:/DynamicSystemSolver[1]/groups[1]/p:Embed[1]</a>:<br />
+      <a href="MBS.mbsim.xml?xpath=/{http://www.mbsim-env.de/MBSim}DynamicSystemSolver[1]/{http://www.mbsim-env.de/MBSim}groups[1]/{http://www.mbsim-env.de/MBXMLUtils}Embed[1]&amp;line=21">MBS.mbsim.xml:/DynamicSystemSolver[1]/groups[1]/p:Embed[1]</a>:<br />
       <span class="MBXMLUTILS_MSG">included from here
 </span>
       <span class="MBSIMGUI_ERROR">    </span>
@@ -69,7 +69,7 @@
   </span>
   <span class="MBSIMGUI_ERROR">
     <span class="MBXMLUTILS_ERROROUTPUT MBXMLUTILS_SSE">
-      <a href="MBS.mbsim.xml?xpath=/{http://www.mbsim-env.de/MBSim}DynamicSystemSolver[1]/{http://www.mbsim-env.de/MBSim}groups[1]&amp;line=17">MBS.mbsim.xml:/DynamicSystemSolver[1]/groups[1]</a>:<br />
+      <a href="MBS.mbsim.xml?xpath=/{http://www.mbsim-env.de/MBSim}DynamicSystemSolver[1]/{http://www.mbsim-env.de/MBSim}groups[1]&amp;line=20">MBS.mbsim.xml:/DynamicSystemSolver[1]/groups[1]</a>:<br />
       <span class="MBXMLUTILS_MSG">Created by object of type MBSim::DynamicSystemSolver
 </span>
       <span class="MBSIMGUI_ERROR">      </span>
@@ -81,7 +81,7 @@
   </span>
   <span class="MBSIMGUI_ERROR">
     <span class="MBXMLUTILS_ERROROUTPUT">
-      <a href="submodel/Untergruppe.xml?xpath=/{http://www.mbsim-env.de/MBSim}Group[1]/{http://www.mbsim-env.de/MBSim}objects[1]/{http://www.mbsim-env.de/MBSim}RigidBody[1]&amp;line=10">Untergruppe.xml:/Group[1]/objects[1]/RigidBody[1]</a>:<br />
+      <a href="submodel/Untergruppe.xml?xpath=/{http://www.mbsim-env.de/MBSim}Group[1]/{http://www.mbsim-env.de/MBSim}objects[1]/{http://www.mbsim-env.de/MBSim}RigidBody[1]&amp;line=8">Untergruppe.xml:/Group[1]/objects[1]/RigidBody[1]</a>:<br />
       <span class="MBXMLUTILS_MSG">Evaluation of refernece 'Frame[Cerror]' failed: Message from Object[Box1(with_ID_0xXXXXXX)]: (Body::getFrame): The body comprises no frame "Cerror"!
 </span>
       <span class="MBSIMGUI_ERROR">Created by object of type MBSim::RigidBody
@@ -89,13 +89,13 @@
       <span class="MBSIMGUI_ERROR" />
     </span>
     <span class="MBXMLUTILS_ERROROUTPUT MBXMLUTILS_SSE">
-      <a href="Hauptgruppe.xml?xpath=/{http://www.mbsim-env.de/MBSim}Group[1]/{http://www.mbsim-env.de/MBSim}groups[1]/{http://www.mbsim-env.de/MBXMLUtils}Embed[2]&amp;line=38">Hauptgruppe.xml:/Group[1]/groups[1]/p:Embed[2]</a>:<br />
+      <a href="Hauptgruppe.xml?xpath=/{http://www.mbsim-env.de/MBSim}Group[1]/{http://www.mbsim-env.de/MBSim}groups[1]/{http://www.mbsim-env.de/MBXMLUtils}Embed[2]&amp;line=35">Hauptgruppe.xml:/Group[1]/groups[1]/p:Embed[2]</a>:<br />
       <span class="MBXMLUTILS_MSG">included from here
 </span>
       <span class="MBSIMGUI_ERROR" />
     </span>
     <span class="MBXMLUTILS_ERROROUTPUT MBXMLUTILS_SSE">
-      <a href="MBS.mbsim.xml?xpath=/{http://www.mbsim-env.de/MBSim}DynamicSystemSolver[1]/{http://www.mbsim-env.de/MBSim}groups[1]/{http://www.mbsim-env.de/MBXMLUtils}Embed[1]&amp;line=18">MBS.mbsim.xml:/DynamicSystemSolver[1]/groups[1]/p:Embed[1]</a>:<br />
+      <a href="MBS.mbsim.xml?xpath=/{http://www.mbsim-env.de/MBSim}DynamicSystemSolver[1]/{http://www.mbsim-env.de/MBSim}groups[1]/{http://www.mbsim-env.de/MBXMLUtils}Embed[1]&amp;line=21">MBS.mbsim.xml:/DynamicSystemSolver[1]/groups[1]/p:Embed[1]</a>:<br />
       <span class="MBXMLUTILS_MSG">included from here
 </span>
       <span class="MBSIMGUI_ERROR" />
@@ -107,19 +107,19 @@
   </span>
   <span class="MBSIMGUI_ERROR">
     <span class="MBXMLUTILS_ERROROUTPUT MBXMLUTILS_SSE">
-      <a href="submodel/Untergruppe.xml?xpath=/{http://www.mbsim-env.de/MBSim}Group[1]/{http://www.mbsim-env.de/MBSim}objects[1]&amp;line=9">Untergruppe.xml:/Group[1]/objects[1]</a>:<br />
+      <a href="submodel/Untergruppe.xml?xpath=/{http://www.mbsim-env.de/MBSim}Group[1]/{http://www.mbsim-env.de/MBSim}objects[1]&amp;line=7">Untergruppe.xml:/Group[1]/objects[1]</a>:<br />
       <span class="MBXMLUTILS_MSG">Created by object of type MBSim::Group
 </span>
       <span class="MBSIMGUI_ERROR">  </span>
     </span>
     <span class="MBXMLUTILS_ERROROUTPUT MBXMLUTILS_SSE">
-      <a href="Hauptgruppe.xml?xpath=/{http://www.mbsim-env.de/MBSim}Group[1]/{http://www.mbsim-env.de/MBSim}groups[1]/{http://www.mbsim-env.de/MBXMLUtils}Embed[2]&amp;line=38">Hauptgruppe.xml:/Group[1]/groups[1]/p:Embed[2]</a>:<br />
+      <a href="Hauptgruppe.xml?xpath=/{http://www.mbsim-env.de/MBSim}Group[1]/{http://www.mbsim-env.de/MBSim}groups[1]/{http://www.mbsim-env.de/MBXMLUtils}Embed[2]&amp;line=35">Hauptgruppe.xml:/Group[1]/groups[1]/p:Embed[2]</a>:<br />
       <span class="MBXMLUTILS_MSG">included from here
 </span>
       <span class="MBSIMGUI_ERROR">  </span>
     </span>
     <span class="MBXMLUTILS_ERROROUTPUT MBXMLUTILS_SSE">
-      <a href="MBS.mbsim.xml?xpath=/{http://www.mbsim-env.de/MBSim}DynamicSystemSolver[1]/{http://www.mbsim-env.de/MBSim}groups[1]/{http://www.mbsim-env.de/MBXMLUtils}Embed[1]&amp;line=18">MBS.mbsim.xml:/DynamicSystemSolver[1]/groups[1]/p:Embed[1]</a>:<br />
+      <a href="MBS.mbsim.xml?xpath=/{http://www.mbsim-env.de/MBSim}DynamicSystemSolver[1]/{http://www.mbsim-env.de/MBSim}groups[1]/{http://www.mbsim-env.de/MBXMLUtils}Embed[1]&amp;line=21">MBS.mbsim.xml:/DynamicSystemSolver[1]/groups[1]/p:Embed[1]</a>:<br />
       <span class="MBXMLUTILS_MSG">included from here
 </span>
       <span class="MBSIMGUI_ERROR">  </span>
@@ -131,13 +131,13 @@
   </span>
   <span class="MBSIMGUI_ERROR">
     <span class="MBXMLUTILS_ERROROUTPUT MBXMLUTILS_SSE">
-      <a href="Hauptgruppe.xml?xpath=/{http://www.mbsim-env.de/MBSim}Group[1]/{http://www.mbsim-env.de/MBSim}groups[1]&amp;line=26">Hauptgruppe.xml:/Group[1]/groups[1]</a>:<br />
+      <a href="Hauptgruppe.xml?xpath=/{http://www.mbsim-env.de/MBSim}Group[1]/{http://www.mbsim-env.de/MBSim}groups[1]&amp;line=23">Hauptgruppe.xml:/Group[1]/groups[1]</a>:<br />
       <span class="MBXMLUTILS_MSG">Created by object of type MBSim::Group
 </span>
       <span class="MBSIMGUI_ERROR">    </span>
     </span>
     <span class="MBXMLUTILS_ERROROUTPUT MBXMLUTILS_SSE">
-      <a href="MBS.mbsim.xml?xpath=/{http://www.mbsim-env.de/MBSim}DynamicSystemSolver[1]/{http://www.mbsim-env.de/MBSim}groups[1]/{http://www.mbsim-env.de/MBXMLUtils}Embed[1]&amp;line=18">MBS.mbsim.xml:/DynamicSystemSolver[1]/groups[1]/p:Embed[1]</a>:<br />
+      <a href="MBS.mbsim.xml?xpath=/{http://www.mbsim-env.de/MBSim}DynamicSystemSolver[1]/{http://www.mbsim-env.de/MBSim}groups[1]/{http://www.mbsim-env.de/MBXMLUtils}Embed[1]&amp;line=21">MBS.mbsim.xml:/DynamicSystemSolver[1]/groups[1]/p:Embed[1]</a>:<br />
       <span class="MBXMLUTILS_MSG">included from here
 </span>
       <span class="MBSIMGUI_ERROR">    </span>
@@ -149,7 +149,7 @@
   </span>
   <span class="MBSIMGUI_ERROR">
     <span class="MBXMLUTILS_ERROROUTPUT MBXMLUTILS_SSE">
-      <a href="MBS.mbsim.xml?xpath=/{http://www.mbsim-env.de/MBSim}DynamicSystemSolver[1]/{http://www.mbsim-env.de/MBSim}groups[1]&amp;line=17">MBS.mbsim.xml:/DynamicSystemSolver[1]/groups[1]</a>:<br />
+      <a href="MBS.mbsim.xml?xpath=/{http://www.mbsim-env.de/MBSim}DynamicSystemSolver[1]/{http://www.mbsim-env.de/MBSim}groups[1]&amp;line=20">MBS.mbsim.xml:/DynamicSystemSolver[1]/groups[1]</a>:<br />
       <span class="MBXMLUTILS_MSG">Created by object of type MBSim::DynamicSystemSolver
 </span>
       <span class="MBSIMGUI_ERROR">      </span>
