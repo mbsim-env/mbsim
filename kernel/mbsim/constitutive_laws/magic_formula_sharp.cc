@@ -199,7 +199,7 @@ namespace MBSim {
   void MagicFormulaSharp::updatexd() {
     TyreContact *contact = static_cast<TyreContact*>(parent);
     static_cast<TyreContact*>(parent)->evalGeneralizedForce(); // Enforce variables to be up to date
-    contact->getxd(false)(0) = (atan(vsy/vx) - contact->getx()(0))*vx/si;
+    contact->getxd(false)(0) = (atan(vsy/vxlim) - contact->getx()(0))*vx/si;
   }
 
   VecV MagicFormulaSharp::getContourParameters() const {
@@ -225,10 +225,11 @@ namespace MBSim {
     vsx = contact->evalGeneralizedRelativeVelocity()(0);
     vsy = contact->getGeneralizedRelativeVelocity()(1);
     vx = abs(contact->evalForwardVelocity()(0));
+    vxlim = max(1.0,vx);
     if(Fz>0) {
       if(Fz<1) Fz = 1;
       double dfz = (Fz-Fz0)/Fz0;
-      ka = -vsx/vx;
+      ka = -vsx/vxlim;
       be = contact->getx()(0);
       ga = asin(tyre->getFrame()->getOrientation().col(1).T()*contact->getContourFrame(0)->getOrientation().col(2));
 

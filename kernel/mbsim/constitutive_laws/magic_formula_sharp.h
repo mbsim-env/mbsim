@@ -176,7 +176,7 @@ namespace MBSim {
       double sfFy{1};
       double sfMz{1};
 
-      double vsx, vsy, vx, ka, ga, Kyal, si, be, rhoz, Re, Rs;
+      double vsx, vsy, vx, vxlim, ka, ga, Kyal, si, be, rhoz, Re, Rs;
  };
 
 }
