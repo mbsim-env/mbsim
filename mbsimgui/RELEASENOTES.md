@@ -4,10 +4,11 @@ Release NEXT
 MBSim
 -----
 - Feature "contact point transformation" is removed from magic formula 62 as it leads to incorrect tyre moments.
+- Enable simulation at low speed for sharp model
 
 MBSimControl
 ------------
-- Function sensor can now also return first and second derivative
+- Function sensor can now also return first and second derivative.
 
 MBSimXML
 --------
