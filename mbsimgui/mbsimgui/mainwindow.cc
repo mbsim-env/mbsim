@@ -133,16 +133,12 @@ namespace MBSimGUI {
         updateStatusMessage(s.c_str());
       }));
 
-    impl=DOMImplementation::getImplementation();
-    serializer=impl->createLSSerializer();
     // output type of MBXMLUtils
     if(getenv("MBXMLUTILS_ERROROUTPUT")==nullptr) {
       static char ERROROUTPUT[10000];
       strcpy(ERROROUTPUT, R"|(MBXMLUTILS_ERROROUTPUT=HTMLOUTPUT:<span class="MBXMLUTILS_ERROROUTPUT(?{sse} MBXMLUTILS_SSE:)"><a href="$+{file}?xpath=$+{xpath}(?{ecount}&amp;ecount=$+{ecount}:)(?{line}\&amp;line=$+{line}:)">$+{basefile}:$+{shorthrxpath}</a>:<br/><span class="MBXMLUTILS_MSG">$+{msg}</span></span>)|");
       putenv(ERROROUTPUT);
     }
-
-    serializer->getDomConfig()->setParameter(u"format-pretty-print", true);
 
     mw = this;
 
@@ -697,7 +693,6 @@ namespace MBSimGUI {
     auto *fmodel = static_cast<FileTreeModel*>(fileView->model());
     fmodel->removeRows(fmodel->index(0,0).row(), fmodel->rowCount(QModelIndex()), QModelIndex());
     delete project;
-    serializer->release();
   }
 
   void MainWindow::updateUndos() {
@@ -1291,7 +1286,7 @@ namespace MBSimGUI {
     // Try to save project file
     QString fn = fileName.isEmpty() ? projectFile : fileName;
     try {
-      serializer->writeToURI(doc.get(), X()%fn.toStdString());
+      DOMParser::serialize(doc.get(), fn.toStdString(), true);
       if(modifyStatus) {
         QMainWindow::setWindowModified(false);
         sizeOfUndosSinceLastSave = undos.size();
@@ -1331,7 +1326,7 @@ namespace MBSimGUI {
       for(size_t i=0; i<file.size(); i++) {
         QString fn = file[i]->getFileInfo().absoluteFilePath();
         try {
-          serializer->writeToURI(file[i]->getXMLDocument().get(), X()%fn.toStdString());
+          DOMParser::serialize(file[i]->getXMLDocument().get(), fn.toStdString(), true);
         }
         catch(const DOMException &ex) {
           mw->setErrorOccured();
@@ -2522,7 +2517,7 @@ DEF mbsimgui_outdated_switch Switch {
 	  auto doc = mbxmlparserNoVal->createDocument();
 	  DOMNode *node = doc->importNode(item->getXMLElement(),true);
 	  doc->insertBefore(node,nullptr);
-	  serializer->writeToURI(doc.get(), X()%dialog.getModelFileName().toStdString());
+          DOMParser::serialize(doc.get(), dialog.getModelFileName().toStdString(), true);
 	}
       }
       if(item->getNumberOfParameters() and not dialog.getParameterFileName().isEmpty()) {
@@ -2533,7 +2528,7 @@ DEF mbsimgui_outdated_switch Switch {
 	  auto doc = mbxmlparserNoVal->createDocument();
 	  DOMNode *node = doc->importNode(item->getParameter(0)->getXMLElement()->getParentNode(),true);
 	  doc->insertBefore(node,nullptr);
-	  serializer->writeToURI(doc.get(), X()%dialog.getParameterFileName().toStdString());
+          DOMParser::serialize(doc.get(), dialog.getParameterFileName().toStdString(), true);
 	}
       }
     }
@@ -2573,7 +2568,7 @@ DEF mbsimgui_outdated_switch Switch {
 	auto doc = mbxmlparserNoVal->createDocument();
 	DOMNode *node = doc->importNode(parameterEmbedItem->getParent()->getEmbedXMLElement()->getFirstElementChild(),true);
 	doc->insertBefore(node,nullptr);
-	serializer->writeToURI(doc.get(), X()%dialog.getParameterFileName().toStdString());
+        DOMParser::serialize(doc.get(), dialog.getParameterFileName().toStdString(), true);
       }
     }
   }
@@ -3351,7 +3346,7 @@ DEF mbsimgui_outdated_switch Switch {
 	  project->processIDAndHref(newDocElement);
 	  QString uniqueTempDir_ = QString::fromStdString(uniqueTempDir.generic_string());
 	  QString projectFile = uniqueTempDir_+"/MBS_tmp.mbsx";
-	  serializer->writeToURI(doc.get(), X()%projectFile.toStdString());
+          DOMParser::serialize(doc.get(), projectFile.toStdString(), true);
 	  QStringList arg;
 	  if(dialog.cosim()) arg.append("--cosim");
 	  if(not dialog.compression()) arg.append("--nocompress");
@@ -3645,7 +3640,7 @@ DEF mbsimgui_outdated_switch Switch {
       file=QFileDialog::getSaveFileName(this, "Save MBSim file", file, "MBSim files (*.mbsx);;MBSim model files (*.mbsmx);;XML files (*.xml);;All files (*.*)");
       if(not(file.isEmpty())) {
 	try {
-	  serializer->writeToURI(doc.get(), X()%(file.toStdString()));
+          DOMParser::serialize(doc.get(), file.toStdString(), true);
 	}
 	catch(const std::exception &ex) {
           mw->setErrorOccured();

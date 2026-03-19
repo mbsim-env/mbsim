@@ -351,7 +351,8 @@ R"+(</pre>
 
       // serialize the document without using the MBXMLUtils_ processing instructions (its a user written XML source file)
       auto rootEle = doc->getDocumentElement();
-      auto xml = X()%mw->serializer->writeToString(rootEle);
+      string xml;
+      DOMParser::serializeToString(rootEle, xml, true);
       // re-parse the serialized document (while recording the line number using the MBXMLUtils_ processing instructions
       // (this generated a equal XML document as the document used by the MainWindow refresh and simulation action)
       stringstream str(std::move(xml));

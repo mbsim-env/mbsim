@@ -415,7 +415,8 @@ namespace MBSimGUI {
     E(ele)->setAttribute("ref",item->text(0).toStdString());
     if(tree->columnCount()==2)
       E(ele)->setAttribute("ratio",item->text(1).toStdString());
-    string text = X()%mw->serializer->writeToString(embed.get());
+    string text;
+    DOMParser::serializeToString(embed.get(), text, true);
     item->setData(0, Qt::UserRole, text.c_str());
 
     item->setFlags(item->flags() & ~Qt::ItemIsEditable);
@@ -499,7 +500,8 @@ namespace MBSimGUI {
         item->setText(0, "<Array/Pattern>");
         auto icon = Utils::QIconCached(QString::fromStdString((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"embed-active.svg").string()));
         item->setIcon(0, icon);
-        string text = X()%mw->serializer->writeToString(e);
+        string text;
+        DOMParser::serializeToString(e, text, true);
         item->setData(0, Qt::UserRole, text.c_str());
       }
       tree->addTopLevelItem(item);
@@ -781,7 +783,8 @@ namespace MBSimGUI {
     auto *ele = D(doc)->createElement(xmlName);
     embed->insertBefore(ele, nullptr);
     ele->insertBefore(doc->createTextNode(X()%item->text(0).toStdString()), nullptr);
-    string text = X()%mw->serializer->writeToString(embed.get());
+    string text;
+    DOMParser::serializeToString(embed.get(), text, true);
     item->setData(0, Qt::UserRole, text.c_str());
 
     item->setFlags(item->flags() & ~Qt::ItemIsEditable);
@@ -873,7 +876,8 @@ namespace MBSimGUI {
         item->setText(0, "<Array/Pattern>");
         auto icon = Utils::QIconCached(QString::fromStdString((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"embed-active.svg").string()));
         item->setIcon(0, icon);
-        string text = X()%mw->serializer->writeToString(e);
+        string text;
+        DOMParser::serializeToString(e, text, true);
         item->setData(0, Qt::UserRole, text.c_str());
       }
       tree->addTopLevelItem(item);
@@ -1113,7 +1117,9 @@ namespace MBSimGUI {
         item->setText(3, QString::fromStdString(E(e)->getAttributeQName("value").first));
       }
       else {
-        item->setText(1, (X()%mw->serializer->writeToString(e)).c_str());
+        string text;
+        DOMParser::serializeToString(e, text, true);
+        item->setText(1, text.c_str());
         item->setText(2, "");
         item->setText(3, "");
       }
@@ -1157,7 +1163,9 @@ namespace MBSimGUI {
         item->setText(3, QString::fromStdString(E(e)->getAttributeQName("value").first));
       }
       else {
-        item->setText(1, (X()%mw->serializer->writeToString(e)).c_str());
+        string text;
+        DOMParser::serializeToString(e, text, true);
+        item->setText(1, text.c_str());
         item->setText(2, "");
         item->setText(3, "");
       }
@@ -1241,7 +1249,8 @@ namespace MBSimGUI {
   }
 
   DOMElement* XMLEditorWidget::initializeUsingXML(DOMElement *element) {
-    string text = X()%mw->serializer->writeToString(element);
+    string text;
+    DOMParser::serializeToString(element, text, true);
     edit->setText(QString::fromStdString(text));
     return element;
   }
