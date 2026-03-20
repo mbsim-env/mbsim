@@ -589,8 +589,11 @@ namespace MBSimGUI {
       if(E(definition)->hasAttribute(str))
         argname[i]->getWidget<TextWidget>()->setText(QString::fromStdString(E(definition)->getAttribute(str)));
       str = "arg"+toStr(int(i+1))+"Dim";
-      if(E(definition)->hasAttribute(str))
-        argdim[i]->getWidget<SpinBoxWidget>()->setValue(boost::lexical_cast<int>(E(definition)->getAttribute(str)));
+      if(E(definition)->hasAttribute(str)) {
+        auto value = E(definition)->getAttribute(str);
+        boost::trim(value);
+        argdim[i]->getWidget<SpinBoxWidget>()->setValue(boost::lexical_cast<int>(value));
+      }
     }
     return element;
   }

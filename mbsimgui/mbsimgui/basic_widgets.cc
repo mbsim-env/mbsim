@@ -613,7 +613,9 @@ namespace MBSimGUI {
     DOMText *text = E(element)->getFirstTextChild();
     if(text) {
       value->blockSignals(true);
-      setValue(boost::lexical_cast<int>(X()%text->getData()));
+      auto str = X()%text->getData();
+      boost::trim(str);
+      setValue(boost::lexical_cast<int>(str));
       value->blockSignals(false);
       return element;
     }

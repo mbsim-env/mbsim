@@ -110,7 +110,9 @@ namespace {
     string name=v.getName();
     name=name.substr(name.find('[')+1);
     name=name.substr(name.find(',')+1);
-    return boost::lexical_cast<size_t>(name.substr(0, name.size()-1));
+    auto str = name.substr(0, name.size()-1);
+    boost::trim(str);
+    return boost::lexical_cast<size_t>(str);
   }
 
   void convertVariableToParamSet(size_t startIndex, const vector<std::shared_ptr<MBSimFMI::Variable> > &var,

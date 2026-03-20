@@ -40,8 +40,11 @@ namespace {
       throw runtime_error("Internal error: Unknwon variable type.");
     // get default
     Datatype defaultValue{};
-    if(E(scalarVar->getFirstElementChild())->hasAttribute("start"))
-      defaultValue=boost::lexical_cast<Datatype>(E(scalarVar->getFirstElementChild())->getAttribute("start"));
+    if(E(scalarVar->getFirstElementChild())->hasAttribute("start")) {
+      auto str = E(scalarVar->getFirstElementChild())->getAttribute("start");
+      boost::trim(str);
+      defaultValue=boost::lexical_cast<Datatype>(str);
+    }
     // create preprocessing variable
     var.push_back(make_shared<MBSimFMI::VariableStore<Datatype> >(E(scalarVar)->getAttribute("name"), type, defaultValue));
   }
@@ -110,8 +113,12 @@ namespace MBSimFMI {
 
     if(!cosim) {
       // init state vector size (just to be usable before initialize is called)
-      z.get().resize(boost::lexical_cast<size_t>(E(doc->getDocumentElement())->getAttribute("numberOfContinuousStates")));
-      svLast.resize(boost::lexical_cast<size_t>(E(doc->getDocumentElement())->getAttribute("numberOfEventIndicators")));
+      auto str = E(doc->getDocumentElement())->getAttribute("numberOfContinuousStates");
+      boost::trim(str);
+      z.get().resize(boost::lexical_cast<size_t>(str));
+      str = E(doc->getDocumentElement())->getAttribute("numberOfEventIndicators");
+      boost::trim(str);
+      svLast.resize(boost::lexical_cast<size_t>(str));
     }
 
     // add all predefined parameters
@@ -128,7 +135,9 @@ namespace MBSimFMI {
 
       // now add all other parameters
       msg(Debug)<<"Generate variable '"<<E(scalarVar)->getAttribute("name")<<"'"<<endl;
-      if(vr!=boost::lexical_cast<size_t>(E(scalarVar)->getAttribute("valueReference")))
+      auto str = E(scalarVar)->getAttribute("valueReference");
+      boost::trim(str);
+      if(vr!=boost::lexical_cast<size_t>(str))
         throw runtime_error("Internal error: valueReference missmatch!");
       // add variable
       if(E(scalarVar)->getFirstElementChildNamed("Real"))
