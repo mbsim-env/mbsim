@@ -98,7 +98,7 @@ namespace MBSim {
       int side{1};
       bool constsix{false}, constsiy{false};
 
-      double vx, vsx, vcx, vcy, vc, ka, ga, Kyal, alF, rhoz, dpi, Re, Rs, phit{0}, phiF{0}, epsga{0};
+      double vx, vsx, vcx, vcxlim, vcy, vc, ka, ga, Kyal, alF, rhoz, dpi, Re, Rs, phit{0}, phiF{0}, epsga{0};
 
       bool mck{false}, ts{false};
 

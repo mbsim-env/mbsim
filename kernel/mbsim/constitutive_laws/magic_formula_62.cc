@@ -590,7 +590,7 @@ namespace MBSim {
       i++;
     }
     if(siy!=0)
-      contact->getxd(false)(i) = (atan(vcy/vcx) - contact->getx()(i))*vcx/siy; // original MF62: (vsy - contact->getx()(0)*vx)/sigy
+      contact->getxd(false)(i) = (atan(vcy/vcxlim) - contact->getx()(i))*vcx/siy; // original MF62: (vsy - contact->getx()(0)*vx)/sigy
   }
 
   VecV MagicFormula62::getContourParameters() const {
@@ -620,7 +620,8 @@ namespace MBSim {
       ga = sgn(ga)*CAMMIN;
 
     vx = contact->getContourFrame(0)->getOrientation().col(0).T()*tyre->getFrame()->evalVelocity();
-    vcx = max(1.,abs(contact->evalForwardVelocity()(0)));
+    vcx = abs(contact->evalForwardVelocity()(0));
+    vcxlim = max(1.0,vcx);
     vcy = contact->getForwardVelocity()(1);
     vc = sqrt(pow(vcx,2)+pow(vcy,2));
     double Om = tyre->getFrame()->getOrientation().col(1).T()*tyre->getFrame()->evalAngularVelocity();
@@ -704,12 +705,12 @@ namespace MBSim {
       }
       double dfz = (Fz-Fz0)/Fz0;
       int i = 0;
-      double alM = atan(vcy/vcx);
+      double alM = atan(vcy/vcxlim);
       if(abs(alM) > ALPMAX)
 	alM = sgn(alM)*ALPMAX;
       else if(abs(alM) < ALPMIN)
 	alM = sgn(alM)*ALPMIN;
-      ka = six!=0 ? contact->getx()(i++) : -vsx/vcx;
+      ka = six!=0 ? contact->getx()(i++) : -vsx/vcxlim;
       if(abs(ka) > KPUMAX)
 	ka = sgn(ka)*KPUMAX;
       else if(abs(ka) < KPUMIN)

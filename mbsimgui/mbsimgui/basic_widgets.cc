@@ -151,7 +151,7 @@ namespace MBSimGUI {
     QString oldText = frame->currentText();
     for(int i=0, k=0; i<element->getNumberOfFrames(); i++) {
       if(omitFrame!=element->getFrame(i)) {
-        frame->addItem("Frame["+element->getFrame(i)->getName()+"]");
+        frame->addItem("Frame["+element->getFrame(i)->getXMLName()+"]");
         if(element->getFrame(i) == selectedFrame)
           oldIndex = k;
         k++;
@@ -206,7 +206,7 @@ namespace MBSimGUI {
     QString oldText = frame->currentText();
     for(int i=0, k=0; i<element->getParent()->getNumberOfFrames(); i++) {
       if(omitFrame!=element->getParent()->getFrame(i)) {
-        frame->addItem("../Frame["+element->getParent()->getFrame(i)->getName()+"]");
+        frame->addItem("../Frame["+element->getParent()->getFrame(i)->getXMLName()+"]");
         if(element->getParent()->getFrame(i) == selectedFrame)
           oldIndex = k;
         k++;
