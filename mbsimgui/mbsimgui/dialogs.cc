@@ -186,7 +186,7 @@ namespace MBSimGUI {
       text = new QPlainTextEdit;
       text->setReadOnly(true);
 
-      Evaluator::installSyntaxHighlighter(text->document(), text);
+      Evaluator::installSyntaxHighlighter(text);
 
       vlayout->addWidget(text,2);
 

@@ -24,7 +24,7 @@
 #include "utils.h"
 #include "custom_widgets.h"
 #include <QCheckBox>
-#include <QPlainTextEdit>
+#include "codeeditor.h"
 #include <QLineEdit>
 
 class QLabel;
@@ -94,7 +94,7 @@ namespace MBSimGUI {
       int getStretchHint() const override { return 10; }
 
     private:
-      QPlainTextEdit *value;
+      CodeEditor *value;
       int varType;
   };
 

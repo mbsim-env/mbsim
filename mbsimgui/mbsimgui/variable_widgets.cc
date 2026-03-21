@@ -149,9 +149,9 @@ namespace MBSimGUI {
     auto *layout=new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
-    value=new QPlainTextEdit;
+    value=new CodeEditor;
     value->setMinimumSize(300,200);
-    Evaluator::installSyntaxHighlighter(value->document(), value);
+    Evaluator::installSyntaxHighlighter(value);
     layout->addWidget(value);
     setValue(str);
   }

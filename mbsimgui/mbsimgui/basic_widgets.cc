@@ -710,12 +710,12 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    text = new QTextEdit;
+    text = new CodeEditor;
     text->setMinimumSize(300,200);
-    text->setText(text_);
+    text->setPlainText(text_);
     text->setReadOnly(readOnly);
     layout->addWidget(text);
-    connect(text,&QTextEdit::textChanged,this,&Widget::widgetChanged);
+    connect(text,&QPlainTextEdit::textChanged,this,&Widget::widgetChanged);
   }
 
   DOMElement* TextEditorWidget::initializeUsingXML(DOMElement *element) {
@@ -728,11 +728,11 @@ namespace MBSimGUI {
   void TextEditorWidget::enableMonospaceFont() {
     static const QFont fixedFont=QFontDatabase::systemFont(QFontDatabase::FixedFont);
     text->setFont(fixedFont);
-    text->setLineWrapMode(QTextEdit::NoWrap);
+    text->setLineWrapMode(QPlainTextEdit::NoWrap);
   }
 
   void TextEditorWidget::enableSyntaxHighlighter() {
-    Evaluator::installSyntaxHighlighter(text, text);
+    Evaluator::installSyntaxHighlighter(text);
   }
 
   TextListWidget::TextListWidget(const QString &label_, const FQN &xmlName_, bool allowEmbed_) : EmbedableListWidget(nullptr, xmlName_, allowEmbed_), label(label_) {
@@ -1239,7 +1239,7 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    edit = new QTextEdit;
+    edit = new CodeEditor;
     edit->setMinimumSize(300,200);
     setText(text);
     if(syntax) new XMLHighlighter(edit->document());
@@ -1251,7 +1251,7 @@ namespace MBSimGUI {
   DOMElement* XMLEditorWidget::initializeUsingXML(DOMElement *element) {
     string text;
     DOMParser::serializeToString(element, text, true);
-    edit->setText(QString::fromStdString(text));
+    edit->setPlainText(QString::fromStdString(text));
     return element;
   }
 
@@ -1653,9 +1653,9 @@ namespace MBSimGUI {
   }
 
   namespace {
-    QTextEdit* createCodeWidget(QWidget *parent) {
-      auto *c=new QTextEdit(parent);
-      Evaluator::installSyntaxHighlighter(c, c);
+    CodeEditor* createCodeWidget(QWidget *parent) {
+      auto *c=new CodeEditor(parent);
+      Evaluator::installSyntaxHighlighter(c);
       return c;
     }
   }
