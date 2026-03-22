@@ -725,12 +725,6 @@ namespace MBSimGUI {
     return ele;
   }
 
-  void TextEditorWidget::enableMonospaceFont() {
-    static const QFont fixedFont=QFontDatabase::systemFont(QFontDatabase::FixedFont);
-    text->setFont(fixedFont);
-    text->setLineWrapMode(QPlainTextEdit::NoWrap);
-  }
-
   void TextEditorWidget::enableSyntaxHighlighter() {
     Evaluator::installSyntaxHighlighter(text);
   }
@@ -1243,8 +1237,6 @@ namespace MBSimGUI {
     edit->setMinimumSize(300,200);
     setText(text);
     if(syntax) new XMLHighlighter(edit->document());
-    static const QFont fixedFont=QFontDatabase::systemFont(QFontDatabase::FixedFont);
-    edit->setFont(fixedFont);
     layout->addWidget(edit);
   }
 

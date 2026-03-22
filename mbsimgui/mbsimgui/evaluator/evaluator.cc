@@ -95,9 +95,6 @@ void Evaluator::installSyntaxHighlighter(QPlainTextEdit *t) {
     new PythonHighlighter(t->document());
   else
     cerr<<"No syntax hightlighter for current evaluator "+mw->getProject()->getEvaluator()+" available."<<endl;
-  static const QFont fixedFont=QFontDatabase::systemFont(QFontDatabase::FixedFont);
-  t->setFont(fixedFont);
-  t->setLineWrapMode(QPlainTextEdit::NoWrap);
 }
 
 pair<string, string> Evaluator::getInitCode(const std::string &evaluator) {

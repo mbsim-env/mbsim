@@ -12,6 +12,10 @@ CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent) {
   connect(this, &CodeEditor::updateRequest, this, &CodeEditor::updateLineNumberArea);
 
   updateLineNumberAreaWidth(0);
+
+  static const QFont fixedFont=QFontDatabase::systemFont(QFontDatabase::FixedFont);
+  setFont(fixedFont);
+  setLineWrapMode(QPlainTextEdit::NoWrap);
 }
 
 int CodeEditor::lineNumberAreaWidth() {
