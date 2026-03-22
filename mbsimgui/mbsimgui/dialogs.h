@@ -55,10 +55,11 @@ namespace MBSimGUI {
   class XMLEditorWidget;
   class VariableWidget;
   class EmbedItemData;
+  class CodeEditor;
 
   class EvalDialog : public QDialog {
     public:
-      EvalDialog(VariableWidget *widget_);
+      EvalDialog(VariableWidget *widget_, const std::string &evalLang_ = "None");
     private:
       void showEvent(QShowEvent *event) override;
       void hideEvent(QHideEvent *event) override;
@@ -70,7 +71,8 @@ namespace MBSimGUI {
       std::vector<std::pair<int, QSpinBox*>> levelWidget;
       QVBoxLayout *vlayout;
       QHBoxLayout *floatTypeLayout { nullptr };
-      QPlainTextEdit *text { nullptr };
+      CodeEditor *text { nullptr };
+      std::string evalLang;
       QHBoxLayout *levelLayout;
   };
 

@@ -23,8 +23,8 @@ bin_PROGRAMS = mbsimgui
 
 mbsimguidir = $(includedir)/mbsimgui
 
-libmbsimgui_la_CPPFLAGS = $(MBXMLUTILS_CFLAGS) $(OPENMBV_CFLAGS) $(QWT_CFLAGS)
-libmbsimgui_la_LDFLAGS = $(MBXMLUTILS_LIBS) $(OPENMBV_LIBS) $(QWT_LIBS) $(EXPORT_ALL_SYMBOLS)
+libmbsimgui_la_CPPFLAGS = $(MBXMLUTILS_CFLAGS) $(OPENMBV_CFLAGS) $(QWT_CFLAGS) $(KF5SH_CFLAGS)
+libmbsimgui_la_LDFLAGS = $(MBXMLUTILS_LIBS) $(OPENMBV_LIBS) $(QWT_LIBS) $(EXPORT_ALL_SYMBOLS) $(KF5SH_LIBDIR) -lKF5SyntaxHighlighting
 libmbsimgui_la_SOURCES = \
   single_line_delegate.cc \
   parameter_view.cc \
@@ -40,9 +40,6 @@ libmbsimgui_la_SOURCES = \
   basic_widgets.cc \
   widget.cc \
   variable_widgets.cc \
-  octave_highlighter.cc \
-  python_highlighter.cc \
-  xml_highlighter.cc \
   function_widget.cc \
   function_widgets.cc \
   kinematic_functions_widgets.cc \
@@ -238,9 +235,6 @@ mbsimguiinclude_HEADERS = analyzer.h \
   unknown_widget.h \
   utils.h \
   variable_widgets.h \
-  octave_highlighter.h \
-  python_highlighter.h \
-  xml_highlighter.h \
   widget.h \
   xml_property_dialog.h \
   fe_type.h \

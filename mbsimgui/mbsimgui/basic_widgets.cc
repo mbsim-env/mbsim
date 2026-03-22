@@ -30,7 +30,6 @@
 #include "variable_widgets.h"
 #include "mainwindow.h"
 #include "project.h"
-#include "xml_highlighter.h"
 #include <QLabel>
 #include <QColorDialog>
 #include <QApplication>
@@ -725,8 +724,8 @@ namespace MBSimGUI {
     return ele;
   }
 
-  void TextEditorWidget::enableSyntaxHighlighter() {
-    Evaluator::installSyntaxHighlighter(text);
+  void TextEditorWidget::enableSyntaxHighlighter(const string &name) {
+    text->enableSyntaxHighlighter(name);
   }
 
   TextListWidget::TextListWidget(const QString &label_, const FQN &xmlName_, bool allowEmbed_) : EmbedableListWidget(nullptr, xmlName_, allowEmbed_), label(label_) {
@@ -1236,7 +1235,7 @@ namespace MBSimGUI {
     edit = new CodeEditor;
     edit->setMinimumSize(300,200);
     setText(text);
-    if(syntax) new XMLHighlighter(edit->document());
+    if(syntax) edit->enableSyntaxHighlighter("XML");
     layout->addWidget(edit);
   }
 
@@ -1647,7 +1646,7 @@ namespace MBSimGUI {
   namespace {
     CodeEditor* createCodeWidget(QWidget *parent) {
       auto *c=new CodeEditor(parent);
-      Evaluator::installSyntaxHighlighter(c);
+      c->enableSyntaxHighlighter();
       return c;
     }
   }

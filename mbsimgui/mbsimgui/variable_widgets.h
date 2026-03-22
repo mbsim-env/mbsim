@@ -449,6 +449,7 @@ namespace MBSimGUI {
       QComboBox* unit;
       QStringList units;
       int defaultUnit;
+      std::string evalLang {"None"};
     public:
       PhysicalVariableWidget(VariableWidget *widget_, const QStringList &units_=QStringList(), int defaultUnit_=0, bool eval=true);
       QString getValue() const override { return widget->getValue(); }

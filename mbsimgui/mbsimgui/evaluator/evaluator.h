@@ -47,7 +47,7 @@ class Evaluator {
     static int getImportActionDefaultIdx();
     static int getImportActionOnlyOneNoneDepr();
 
-    static void installSyntaxHighlighter(QPlainTextEdit *t);
+    static std::string getKDESyntaxHighlighterName();
 
     static std::pair<std::string, std::string> getInitCode(const std::string &evaluator);
     static std::string getElementObjCode(Element *);

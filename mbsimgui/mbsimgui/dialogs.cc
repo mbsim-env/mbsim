@@ -31,6 +31,7 @@
 #include "element_view.h"
 #include "treemodel.h"
 #include "treeitem.h"
+#include "codeeditor.h"
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QDialogButtonBox>
@@ -78,7 +79,7 @@ namespace MBSimGUI {
     return QModelIndex();
   }
 
-  EvalDialog::EvalDialog(VariableWidget *widget_) : QDialog(widget_), widget(widget_) {
+  EvalDialog::EvalDialog(VariableWidget *widget_, const string &evalLang_) : QDialog(widget_), widget(widget_), evalLang(evalLang_) {
     auto *mainlayout = new QVBoxLayout;
     setLayout(mainlayout);
 
@@ -183,10 +184,9 @@ namespace MBSimGUI {
         vlayout->removeWidget(text);
         delete text;
       }
-      text = new QPlainTextEdit;
+      text = new CodeEditor;
       text->setReadOnly(true);
-
-      Evaluator::installSyntaxHighlighter(text);
+      text->enableSyntaxHighlighter(evalLang);
 
       vlayout->addWidget(text,2);
 

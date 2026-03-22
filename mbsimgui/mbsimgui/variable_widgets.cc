@@ -23,8 +23,7 @@
 #include "project.h"
 #include "dialogs.h"
 #include "custom_widgets.h"
-#include "octave_highlighter.h"
-#include "python_highlighter.h"
+#include "xercesc/dom/DOMProcessingInstruction.hpp"
 #include <mbxmlutils/eval.h>
 #include <utility>
 #include <vector>
@@ -151,7 +150,7 @@ namespace MBSimGUI {
     setLayout(layout);
     value=new CodeEditor;
     value->setMinimumSize(300,200);
-    Evaluator::installSyntaxHighlighter(value);
+    value->enableSyntaxHighlighter();
     layout->addWidget(value);
     setValue(str);
   }
@@ -1246,7 +1245,7 @@ namespace MBSimGUI {
 
   void PhysicalVariableWidget::openEvalDialog() {
     try {
-      EvalDialog evalDialog(widget);
+      EvalDialog evalDialog(widget, evalLang);
       evalDialog.exec();
     }
     catch(exception &ex) {
@@ -1263,18 +1262,22 @@ namespace MBSimGUI {
   }
 
   DOMElement* PhysicalVariableWidget::initializeUsingXML(DOMElement *parent) {
-//    DOMElement *e = (xmlName==FQN())?parent:E(parent)->getFirstElementChildNamed(xmlName);
-//    if(e) {
-      if(widget->initializeUsingXML(parent)) {
-        if(E(parent)->hasAttribute("unit"))
-          setUnit(QString::fromStdString(E(parent)->getAttribute("unit")));
-        return parent;
-      }
-//    }
+    auto pi = E(parent)->getFirstProcessingInstructionChildNamed("MBSIMGUI_EVALLANG");
+    evalLang = pi ? X()%pi->getData() : "None";
+//  DOMElement *e = (xmlName==FQN())?parent:E(parent)->getFirstElementChildNamed(xmlName);
+//  if(e) {
+    if(widget->initializeUsingXML(parent)) {
+      if(E(parent)->hasAttribute("unit"))
+        setUnit(QString::fromStdString(E(parent)->getAttribute("unit")));
+      return parent;
+    }
+//  }
     return nullptr;
   }
 
   DOMElement* PhysicalVariableWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    if(evalLang!="None")
+      E(static_cast<DOMElement*>(parent))->addProcessingInstructionChildNamed("MBSIMGUI_EVALLANG", evalLang);
     if(getUnit()!="")
       E(static_cast<DOMElement*>(parent))->setAttribute("unit", getUnit().toStdString());
     widget->writeXMLFile(parent);

@@ -21,8 +21,6 @@
 #include "evaluator.h"
 #include "project.h"
 #include "mainwindow.h"
-#include "octave_highlighter.h"
-#include "python_highlighter.h"
 #include <QTextEdit>
 #include <QTextDocument>
 #include <QPlainTextEdit>
@@ -88,13 +86,16 @@ int Evaluator::getImportActionOnlyOneNoneDepr() {
     return oneDeprIdx;
 }
 
-void Evaluator::installSyntaxHighlighter(QPlainTextEdit *t) {
+string Evaluator::getKDESyntaxHighlighterName() {
   if(mw->getProject()->getEvaluator()=="octave")
-    new OctaveHighlighter(t->document());
+    return "Octave";
   else if(mw->getProject()->getEvaluator()=="python")
-    new PythonHighlighter(t->document());
+    return "Python";
+  else if(mw->getProject()->getEvaluator()=="flatxml")
+    return "Octave";
   else
     cerr<<"No syntax hightlighter for current evaluator "+mw->getProject()->getEvaluator()+" available."<<endl;
+  return "None";
 }
 
 pair<string, string> Evaluator::getInitCode(const std::string &evaluator) {

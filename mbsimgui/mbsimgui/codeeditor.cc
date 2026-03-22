@@ -1,9 +1,21 @@
 /* this code is taken from Qt examples */
 
 #include "codeeditor.h"
+#include "project.h"
 #include "qapplication.h"
 #include <QPainter>
 #include <QTextObject>
+#include "mainwindow.h"
+#include <KF5/KSyntaxHighlighting/KSyntaxHighlighting/SyntaxHighlighter>
+#include <KF5/KSyntaxHighlighting/KSyntaxHighlighting/Repository>
+#include <KF5/KSyntaxHighlighting/KSyntaxHighlighting/Definition>
+#include <KF5/KSyntaxHighlighting/KSyntaxHighlighting/Theme>
+
+using namespace std;
+
+namespace MBSimGUI {
+
+extern MainWindow *mw;
 
 CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent) {
   lineNumberArea = new LineNumberArea(this);
@@ -15,7 +27,22 @@ CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent) {
 
   static const QFont fixedFont=QFontDatabase::systemFont(QFontDatabase::FixedFont);
   setFont(fixedFont);
+
   setLineWrapMode(QPlainTextEdit::NoWrap);
+}
+
+void CodeEditor::enableSyntaxHighlighter(const std::string &name) {
+  auto *highlighter = new KSyntaxHighlighting::SyntaxHighlighter(document());
+  static auto repository = std::make_unique<KSyntaxHighlighting::Repository>();
+
+  highlighter->setTheme(repository->defaultTheme(
+    QApplication::palette().color(QPalette::Window).lightness() < 128 ? KSyntaxHighlighting::Repository::DarkTheme : KSyntaxHighlighting::Repository::LightTheme
+  ));
+
+  if(name=="EVALUATOR")
+    highlighter->setDefinition(repository->definitionForName(Evaluator::getKDESyntaxHighlighterName().c_str()));
+  else
+    highlighter->setDefinition(repository->definitionForName(name.c_str()));
 }
 
 int CodeEditor::lineNumberAreaWidth() {
@@ -74,4 +101,6 @@ void CodeEditor::lineNumberAreaPaintEvent(QPaintEvent *event) {
     bottom = top + qRound(blockBoundingRect(block).height());
     ++blockNumber;
   }
+}
+
 }

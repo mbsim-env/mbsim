@@ -7,7 +7,9 @@
       <scalarParameter name="Tend">4</scalarParameter>
       <!-- test the conversion from a Python value to a vector/matrix represented as a numpy 1D/2D array -->
       <import action="addAllVarsAsParams">import numpy</import>
-      <anyParameter name="listScalar">[1,2,3]</anyParameter>
+      <anyParameter name="listScalar">
+        <?MBSIMGUI_EVALLANG Python?>[1,2,3]
+      </anyParameter>
       <anyParameter name="listListScalar">[[1,2],[3,4],[5,6]]</anyParameter>
       <anyParameter name="listListScalarNoMat">[[1,2],[3,4,9],[5,6]]</anyParameter>
       <anyParameter name="listNumpy1D">[numpy.array([1,2]),numpy.array([3,4]),numpy.array([5,6])]</anyParameter>

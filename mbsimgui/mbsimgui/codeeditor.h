@@ -1,6 +1,11 @@
 /* this code is taken from Qt examples */
 
+#ifndef MBSIMGUI_CODEEDITOR_H
+#define MBSIMGUI_CODEEDITOR_H
+
 #include <QPlainTextEdit>
+
+namespace MBSimGUI {
 
 class CodeEditor : public QPlainTextEdit {
   Q_OBJECT
@@ -8,6 +13,7 @@ class CodeEditor : public QPlainTextEdit {
     CodeEditor(QWidget *parent = nullptr);
     void lineNumberAreaPaintEvent(QPaintEvent *event);
     int lineNumberAreaWidth();
+    void enableSyntaxHighlighter(const std::string &name="EVALUATOR");
   
   protected:
     void resizeEvent(QResizeEvent *event) override;
@@ -37,3 +43,7 @@ class LineNumberArea : public QWidget {
   private:
     CodeEditor *codeEditor;
 };
+
+}
+
+#endif

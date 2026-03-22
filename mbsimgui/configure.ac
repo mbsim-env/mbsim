@@ -99,6 +99,12 @@ LIBS="$OLDLIBS"
 AC_SUBST([QWT_CFLAGS])
 AC_SUBST([QWT_LIBS])
 
+dnl KDE syntax highlighting
+AC_ARG_WITH(kf5syntaxhighlighting_inc_prefix,
+  [  --with-kf5syntaxhighlighting-inc-prefix=include dir of KF5 syntax highlighting], [KF5SH_CFLAGS="-I$withval"], [])
+AC_ARG_WITH(k5fsyntaxhighlighting_lib_prefix,
+  [  --with-k5fsyntaxhighlighting-lib-prefix=dir of KF5 syntax highlighting library], [KF5SH_LIBDIR="-L$withval"], [])
+
 LDFLAGS="$LDFLAGS $LDFLAGS_LIBTOOL -no-undefined -Wl,--no-undefined"
 test "_$host_os" != "_mingw32" && LDFLAGS="$LDFLAGS -Wl,--disable-new-dtags,-rpath,\\\$\$ORIGIN/../lib"
 
