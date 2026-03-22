@@ -286,7 +286,7 @@ R"+(</pre>
             return;
           auto itemXPath = E(e)->getRootXPathExpression();
           if(xpath.substr(0,itemXPath.size())==itemXPath && itemXPath.size()>maxXPathFound &&
-             link.path().toStdString()==D(e->getOwnerDocument())->getDocumentFilename().string()) {
+             QFileInfo(link.path()).canonicalFilePath()==QFileInfo(D(e->getOwnerDocument())->getDocumentFilename().string().c_str()).canonicalFilePath()) {
             clickedTreeItemData = treeItemData;
             maxXPathFound = itemXPath.size();
           }
@@ -341,11 +341,11 @@ R"+(</pre>
       // show the XML source code of doc and the line number of the error
 
       std::shared_ptr<xercesc::DOMDocument> doc;
-      if(QFileInfo(mw->getProjectFile()).absoluteFilePath()==link.path())
+      if(QFileInfo(mw->getProjectFile()).canonicalFilePath()==QFileInfo(link.path()).canonicalFilePath())
         doc = mw->getProjectDocument();
       else
         for(auto fileItemData : mw->getFile())
-          if(fileItemData->getFileInfo().absoluteFilePath()==link.path()) {
+          if(fileItemData->getFileInfo().canonicalFilePath()==QFileInfo(link.path()).canonicalFilePath()) {
             doc = fileItemData->getXMLDocument();
             break;
           }
