@@ -23,8 +23,13 @@ bin_PROGRAMS = mbsimgui
 
 mbsimguidir = $(includedir)/mbsimgui
 
+if COND_KF5
+  MAYBE_KF5_LIB = -lKF5SyntaxHighlighting
+else
+  MAYBE_KF5_LIB = 
+endif
 libmbsimgui_la_CPPFLAGS = $(MBXMLUTILS_CFLAGS) $(OPENMBV_CFLAGS) $(QWT_CFLAGS) $(KF5SH_CFLAGS)
-libmbsimgui_la_LDFLAGS = $(MBXMLUTILS_LIBS) $(OPENMBV_LIBS) $(QWT_LIBS) $(EXPORT_ALL_SYMBOLS) $(KF5SH_LIBDIR) -lKF5SyntaxHighlighting
+libmbsimgui_la_LDFLAGS = $(MBXMLUTILS_LIBS) $(OPENMBV_LIBS) $(QWT_LIBS) $(EXPORT_ALL_SYMBOLS) $(KF5SH_LIBDIR) $(MAYBE_KF5_LIB)
 libmbsimgui_la_SOURCES = \
   single_line_delegate.cc \
   parameter_view.cc \

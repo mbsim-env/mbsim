@@ -104,6 +104,13 @@ AC_ARG_WITH(kf5syntaxhighlighting_inc_prefix,
   [  --with-kf5syntaxhighlighting-inc-prefix=include dir of KF5 syntax highlighting], [KF5SH_CFLAGS="-I$withval"], [])
 AC_ARG_WITH(k5fsyntaxhighlighting_lib_prefix,
   [  --with-k5fsyntaxhighlighting-lib-prefix=dir of KF5 syntax highlighting library], [KF5SH_LIBDIR="-L$withval"], [])
+OLDCPPFLAGS=$CPPFLAGS; CPPFLAGS="$CPPFLAGS $QT_CFLAGS $KF5SH_CFLAGS -std=c++17"
+AC_CHECK_HEADERS([KF5/KSyntaxHighlighting/KSyntaxHighlighting/SyntaxHighlighter], [KF5_FOUND=1], [KF5_FOUND=0])
+CPPFLAGS="$OLDCPPFLAGS"
+if test "_$KF5_FOUND" == "_1"; then
+  AC_DEFINE([KF5_FOUND],[1],[Use KDE Kate syntax highlighter])
+fi
+AM_CONDITIONAL([COND_KF5], [test "_$KF5_FOUND" = "_1"])
 
 LDFLAGS="$LDFLAGS $LDFLAGS_LIBTOOL -no-undefined -Wl,--no-undefined"
 test "_$host_os" != "_mingw32" && LDFLAGS="$LDFLAGS -Wl,--disable-new-dtags,-rpath,\\\$\$ORIGIN/../lib"

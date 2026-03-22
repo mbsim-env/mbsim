@@ -1,15 +1,18 @@
 /* this code is taken from Qt examples */
 
+#include "config.h"
 #include "codeeditor.h"
 #include "project.h"
 #include "qapplication.h"
 #include <QPainter>
 #include <QTextObject>
 #include "mainwindow.h"
-#include <KF5/KSyntaxHighlighting/KSyntaxHighlighting/SyntaxHighlighter>
-#include <KF5/KSyntaxHighlighting/KSyntaxHighlighting/Repository>
-#include <KF5/KSyntaxHighlighting/KSyntaxHighlighting/Definition>
-#include <KF5/KSyntaxHighlighting/KSyntaxHighlighting/Theme>
+#ifdef KF5_FOUND
+  #include <KF5/KSyntaxHighlighting/KSyntaxHighlighting/SyntaxHighlighter>
+  #include <KF5/KSyntaxHighlighting/KSyntaxHighlighting/Repository>
+  #include <KF5/KSyntaxHighlighting/KSyntaxHighlighting/Definition>
+  #include <KF5/KSyntaxHighlighting/KSyntaxHighlighting/Theme>
+#endif
 
 using namespace std;
 
@@ -32,6 +35,7 @@ CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent) {
 }
 
 void CodeEditor::enableSyntaxHighlighter(const std::string &name) {
+#ifdef KF5_FOUND
   auto *highlighter = new KSyntaxHighlighting::SyntaxHighlighter(document());
   static auto repository = std::make_unique<KSyntaxHighlighting::Repository>();
 
@@ -43,6 +47,7 @@ void CodeEditor::enableSyntaxHighlighter(const std::string &name) {
     highlighter->setDefinition(repository->definitionForName(Evaluator::getKDESyntaxHighlighterName().c_str()));
   else
     highlighter->setDefinition(repository->definitionForName(name.c_str()));
+#endif
 }
 
 int CodeEditor::lineNumberAreaWidth() {
