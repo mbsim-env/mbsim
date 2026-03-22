@@ -1432,22 +1432,20 @@ namespace MBSimGUI {
         // all parameters
         shared_ptr<DOMDocument> doc=mbxmlparser->createDocument();
         doc->setDocumentURI(X()%D(this->doc)->getDocumentFilename().string());
-        if(int nrPar = parent->getNumberOfParameters(); nrPar>0) {
-          // add PV%"Parameter" only if really parameters exist
-          DOMElement *eleP = D(doc)->createElement(PV%"Parameter");
-          doc->insertBefore(eleP,nullptr);
-          for(size_t j=0; j<nrPar; j++) {
-            auto par=parent->getParameter(j);
-            if(skipEvenLastParToUse && par==lastParToUse)
-              break;
-            DOMNode *node = doc->importNode(par->getXMLElement(),true);
-            eleP->insertBefore(node,nullptr);
-            boost::filesystem::path orgFileName=E(par->getXMLElement())->getOriginalFilename();
-            E(static_cast<DOMElement*>(node))->addEmbedData("MBXMLUtils_OriginalFilename", orgFileName.string());
-            E(static_cast<DOMElement*>(node))->setOriginalElementLineNumber(E(eleP)->getLineNumber());
-            if(par==lastParToUse)
-              break;
-          }
+        // add PV%"Parameter" only if really parameters exist
+        DOMElement *eleP = D(doc)->createElement(PV%"Parameter");
+        doc->insertBefore(eleP,nullptr);
+        for(size_t j=0; j<parent->getNumberOfParameters(); j++) {
+          auto par=parent->getParameter(j);
+          if(skipEvenLastParToUse && par==lastParToUse)
+            break;
+          DOMNode *node = doc->importNode(par->getXMLElement(),true);
+          eleP->insertBefore(node,nullptr);
+          boost::filesystem::path orgFileName=E(par->getXMLElement())->getOriginalFilename();
+          E(static_cast<DOMElement*>(node))->addEmbedData("MBXMLUtils_OriginalFilename", orgFileName.string());
+          E(static_cast<DOMElement*>(node))->setOriginalElementLineNumber(E(eleP)->getLineNumber());
+          if(par==lastParToUse)
+            break;
         }
         try {
           D(doc)->validate();
