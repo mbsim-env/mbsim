@@ -438,8 +438,8 @@ int main(int argc, char *argv[]) {
         if(AUTORELOADTIME>0)
           dependencies = preprocess.getDependencies();
       }
-      catch(const SilentError &) {
-        Atom::msgStatic(Atom::Info)<<disableEscaping<<"Exception due to silent user requested exit."<<enableEscaping<<endl;
+      catch(const SilentMBSimError &ex) {
+        Atom::msgStatic(Atom::Info)<<disableEscaping<<"Silent stop:"<<endl<<ex.what()<<enableEscaping<<endl;
       }
       catch(const MBSimError &ex) {
         // DOMEvalException is already passed thought escapeFunc -> skip escapeFunc (if enabled on the Atom streams) from duing another escaping

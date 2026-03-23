@@ -456,7 +456,7 @@ namespace MBSim {
 
       // This function should be called repeatetly in mbsim, at least in heavy work parts of the code.
       // If the DSS exitRequest flag is set a error message is printed and a std::runtime_error exception is thrown to interrupt.
-      // If silent is true or the DSS silentExit flag is set then not message is printed and a SilentError is thrown.
+      // If silent is true or the DSS silentExit flag is set then not message is printed and a SilentMBSimError is thrown.
       static void throwIfExitRequested(bool silent=false) {
         if(exitRequest) {
           if(!silent && !silentExit) {
@@ -464,7 +464,7 @@ namespace MBSim {
             throw std::runtime_error("Exception due to user requested exit.");
           }
           msgStatic(fmatvec::Atom::Info)<<"User requested a silent exit (throw exception now)."<<std::endl;
-          throw SilentError();
+          throw SilentMBSimError("User requested exit.");
         }
       }
 

@@ -30,11 +30,15 @@ using namespace xercesc;
 namespace MBSim {
   
   MBSimError::MBSimError(const Element *context, std::string mbsim_error_message_) noexcept : exception(),
-    mbsim_error_message(std::move(mbsim_error_message_)), path(context->getPath()), domEvalError(context->getDOMEvalError()) {
+    mbsim_error_message(std::move(mbsim_error_message_)), path(context ? context->getPath() : "") {
+    if(context)
+      domEvalError = context->getDOMEvalError();
   }
 
   MBSimError::MBSimError(const Solver *context, std::string mbsim_error_message_) noexcept : exception(),
-    mbsim_error_message(std::move(mbsim_error_message_)), path(), domEvalError(context->getDOMEvalError()) {
+    mbsim_error_message(std::move(mbsim_error_message_)), path() {
+    if(context)
+      domEvalError = context->getDOMEvalError();
   }
 
   const char* MBSimError::what() const noexcept {
@@ -44,8 +48,12 @@ namespace MBSim {
     auto msg=mbsim_error_message+mbsimLoc;
     if(MBXMLUtils::DOMEvalException::isHTMLOutputEnabled())
       MBXMLUtils::DOMEvalException::htmlEscaping(msg);
-    domEvalError.setMessage(msg);
-    whatMsg=domEvalError.what();
+    if(domEvalError) {
+      domEvalError.value().setMessage(msg);
+      whatMsg=domEvalError.value().what();
+    }
+    else
+      whatMsg=msg;
     return whatMsg.c_str();
   }
 
