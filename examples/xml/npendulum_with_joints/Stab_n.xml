@@ -1,7 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<RigidBody name="Stab{n_pendel+1}" xmlns="http://www.mbsim-env.de/MBSim"
-  xmlns:pv="http://www.mbsim-env.de/MBXMLUtils"
-  xmlns:ombv="http://www.mbsim-env.de/OpenMBV">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<RigidBody xmlns="http://www.mbsim-env.de/MBSim" name="Stab{n_pendel+1}" xmlns:ombv="http://www.mbsim-env.de/OpenMBV" xmlns:pv="http://www.mbsim-env.de/MBXMLUtils">
   <generalizedInitialPosition>[lO+lU;-lO-(lU+lO)*(n_pendel-1);0]</generalizedInitialPosition>
   <generalizedInitialVelocity>[0;0;0]</generalizedInitialVelocity>
   <frameOfReference ref="../Frame[Os]"/>

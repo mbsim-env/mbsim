@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no" ?><MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
-
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
   <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
     <plotFeatureRecursive value="deflection">true</plotFeatureRecursive>
     <plotFeatureRecursive value="generalizedRelativePosition">true</plotFeatureRecursive>
@@ -9,8 +9,7 @@
     <plotFeatureRecursive value="generalizedVelocity">true</plotFeatureRecursive>
     <frames>
       <FixedRelativeFrame name="P1">
-        <enableOpenMBV>
-        </enableOpenMBV>
+        <enableOpenMBV/>
         <relativePosition unit="m">
           <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
             <ele>0</ele>
@@ -79,8 +78,7 @@
             <innerTopRadius unit="m">0</innerTopRadius>
           </Frustum>
         </openMBVRigidBody>
-        <enableOpenMBVFrameC>
-        </enableOpenMBVFrameC>
+        <enableOpenMBVFrameC/>
       </RigidBody>
       <RigidBody name="RigidBody2">
         <frameOfReference ref="../Frame[P1]"/>
@@ -141,8 +139,7 @@
             <innerTopRadius unit="m">0</innerTopRadius>
           </Frustum>
         </openMBVRigidBody>
-        <enableOpenMBVFrameC>
-        </enableOpenMBVFrameC>
+        <enableOpenMBVFrameC/>
       </RigidBody>
     </objects>
     <links>
@@ -151,11 +148,13 @@
         <generalizedFrictionForceLaw>
           <RegularizedPlanarFriction>
             <frictionForceFunction>
-              <SymbolicFunction><definition arg1="gd" arg1Dim="1" arg2="laN">
-                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                  <ele>-0.3*laN*2/pi*atan(100*gd(1))</ele>
-                </xmlVector>
-              </definition></SymbolicFunction>
+              <SymbolicFunction>
+                <definition arg1="gd" arg1Dim="1" arg2="laN">
+                  <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                    <ele>-0.3*laN*2/pi*atan(100*gd(1))</ele>
+                  </xmlVector>
+                </definition>
+              </SymbolicFunction>
             </frictionForceFunction>
           </RegularizedPlanarFriction>
         </generalizedFrictionForceLaw>
@@ -170,11 +169,13 @@
         <generalizedFrictionForceLaw>
           <RegularizedPlanarFriction>
             <frictionForceFunction>
-              <SymbolicFunction><definition arg1="gd" arg1Dim="1" arg2="laN">
-                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                  <ele>-0.3*laN*2/pi*atan(100*gd(1))</ele>
-                </xmlVector>
-              </definition></SymbolicFunction>
+              <SymbolicFunction>
+                <definition arg1="gd" arg1Dim="1" arg2="laN">
+                  <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                    <ele>-0.3*laN*2/pi*atan(100*gd(1))</ele>
+                  </xmlVector>
+                </definition>
+              </SymbolicFunction>
             </frictionForceFunction>
           </RegularizedPlanarFriction>
         </generalizedFrictionForceLaw>
@@ -207,8 +208,7 @@
     </links>
     <constraints/>
     <observers/>
-    <enableOpenMBVFrameI>
-    </enableOpenMBVFrameI>
+    <enableOpenMBVFrameI/>
     <environments>
       <MBSimEnvironment>
         <accelerationOfGravity unit="m/s^2">
@@ -221,7 +221,6 @@
       </MBSimEnvironment>
     </environments>
   </DynamicSystemSolver>
-
   <DOPRI5Integrator xmlns="http://www.mbsim-env.de/MBSim">
     <startTime unit="s">0</startTime>
     <endTime unit="s">5</endTime>
@@ -231,5 +230,4 @@
     <initialStepSize unit="s">0</initialStepSize>
     <maximumStepSize unit="s">0</maximumStepSize>
   </DOPRI5Integrator>
-
 </MBSimProject>

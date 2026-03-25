@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <Group xmlns="http://www.mbsim-env.de/MBSim" name="Ball">
-
   <frameOfReference ref="../Frame[QB]"/>
-
   <frames>
     <FixedRelativeFrame name="PlaneRED">
       <relativeOrientation>rotateAboutZ(pi/2)</relativeOrientation>
     </FixedRelativeFrame>
   </frames>
-
   <contours>
     <Plane name="Plane">
       <frameOfReference ref="../Frame[PlaneRED]"/>
@@ -17,11 +14,9 @@
       </enableOpenMBV>
     </Plane>
   </contours>
-
   <groups/>
-
   <objects>
-    <RigidBody xmlns="http://www.mbsim-env.de/MBSim" name="Ball">
+    <RigidBody name="Ball" xmlns="http://www.mbsim-env.de/MBSim">
       <generalizedInitialPosition>[0;0.15;0.4]</generalizedInitialPosition>
       <generalizedInitialVelocity>[0;0;-1]</generalizedInitialVelocity>
       <mass unit="kg">1</mass>
@@ -38,10 +33,9 @@
       </contours>
     </RigidBody>
   </objects>
-
   <links>
-    <Contact xmlns="http://www.mbsim-env.de/MBSim" name="BallPlaneRED">
-      <connect ref2="../Object[Ball]/Contour[Ball]" ref1="../Contour[Plane]"/>
+    <Contact name="BallPlaneRED" xmlns="http://www.mbsim-env.de/MBSim">
+      <connect ref1="../Contour[Plane]" ref2="../Object[Ball]/Contour[Ball]"/>
       <normalForceLaw>
         <UnilateralConstraint/>
       </normalForceLaw>
@@ -52,9 +46,7 @@
       </normalImpactLaw>
     </Contact>
   </links>
-
   <constraints/>
-
   <observers>
     <ContactObserver name="BallPlane">
       <contact ref="../Link[BallPlaneRED]"/>
@@ -69,5 +61,4 @@
       </enableOpenMBVNormalForce>
     </ContactObserver>
   </observers>
-
 </Group>

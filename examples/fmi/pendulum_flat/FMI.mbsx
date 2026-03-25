@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
-<pv:Embed xmlns="http://www.mbsim-env.de/MBSimXML" xmlns:pv="http://www.mbsim-env.de/MBXMLUtils" parameterHref="parameter.xml">
+<pv:Embed xmlns:pv="http://www.mbsim-env.de/MBXMLUtils" parameterHref="parameter.xml" xmlns="http://www.mbsim-env.de/MBSimXML">
   <MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
-  
     <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
       <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBSIM">
         <frames>
@@ -66,10 +65,10 @@
         </environments>
       </DynamicSystemSolver>
     </Embed>
-  
     <BoostOdeintDOS_RKDOPRI5 xmlns="http://www.mbsim-env.de/MBSim">
       <startTime unit="s">0</startTime>
-      <endTime unit="s">0.7</endTime><!-- use a smaller end time since fmuCheck cannot handle roots propably -->
+      <endTime unit="s">0.7</endTime>
+      <!-- use a smaller end time since fmuCheck cannot handle roots propably -->
       <plotStepSize unit="s">1e-2</plotStepSize>
       <toleranceForPositionConstraints>1e-6</toleranceForPositionConstraints>
       <toleranceForVelocityConstraints>1e-5</toleranceForVelocityConstraints>
@@ -79,6 +78,5 @@
       <initialStepSize unit="s">1e-6</initialStepSize>
       <maximumStepSize unit="s">1e-2</maximumStepSize>
     </BoostOdeintDOS_RKDOPRI5>
-  
   </MBSimProject>
 </pv:Embed>

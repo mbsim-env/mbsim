@@ -1,12 +1,9 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no" ?><Group xmlns="http://www.mbsim-env.de/MBSim" name="controller">
-  <frames>
-  </frames>
-  <contours>
-  </contours>
-  <groups>
-  </groups>
-  <objects>
-  </objects>
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<Group xmlns="http://www.mbsim-env.de/MBSim" name="controller">
+  <frames/>
+  <contours/>
+  <groups/>
+  <objects/>
   <links>
     <LinearTransferSystem xmlns="http://www.mbsim-env.de/MBSimControl" name="pidController">
       <inputSignal ref="../Link[speedDeviation]"/>
@@ -25,18 +22,21 @@
         </ConstantFunction>
       </function>
     </FunctionSensor>
-   <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="speedDeviation">
+    <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="speedDeviation">
       <inputSignal ref="../Link[crankReferenceSpeed]"/>
       <inputSignal ref="../Link[crankMeasuredSpeed]"/>
       <function>
-       <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim"><definition arg1="x" arg2="y">
+        <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim">
+          <definition arg1="x" arg2="y">
           x-y
-        </definition></SymbolicFunction>
+          </definition>
+        </SymbolicFunction>
       </function>
     </SignalOperation>
     <KineticExcitation name="motor" xmlns="http://www.mbsim-env.de/MBSim">
       <connect ref1="../Frame[I]" ref2="../../Object[Crank]/Frame[B2]"/>
-      <momentDirection>[0 0 1]'</momentDirection> <!-- optional -->
+      <momentDirection>[0 0 1]'</momentDirection>
+      <!-- optional -->
       <momentFunction>
         <SignalFunction xmlns="http://www.mbsim-env.de/MBSimControl">
           <returnSignal ref="../../Link[pidController]"/>

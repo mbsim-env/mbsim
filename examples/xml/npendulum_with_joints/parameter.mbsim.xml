@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <Parameter xmlns="http://www.mbsim-env.de/MBXMLUtils">
   <scalarParameter name="N">9</scalarParameter>
   <scalarParameter name="lO">0.2</scalarParameter>

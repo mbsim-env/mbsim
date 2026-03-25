@@ -47,15 +47,12 @@ class Evaluator {
     static int getImportActionDefaultIdx();
     static int getImportActionOnlyOneNoneDepr();
 
-    template<class T1, class T2> static void installSyntaxHighlighter(T1 *t1, T2 *t2);
+    static void installSyntaxHighlighter(QPlainTextEdit *t);
 
     static std::pair<std::string, std::string> getInitCode(const std::string &evaluator);
     static std::string getElementObjCode(Element *);
     static std::string getParameterObjCode(Parameter *);
 };
-
-extern template void Evaluator::installSyntaxHighlighter<QTextEdit, QTextEdit>(QTextEdit *t1, QTextEdit *t2);
-extern template void Evaluator::installSyntaxHighlighter<QTextDocument, QPlainTextEdit>(QTextDocument *t1, QPlainTextEdit *t2);
 
 }
 

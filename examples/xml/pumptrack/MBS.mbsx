@@ -89,13 +89,15 @@
           <etaNodes>[-10,70]</etaNodes>
           <xiNodes>[-1,5]</xiNodes>
           <contourFunction>
-            <SymbolicFunction><definition arg1="zeta" arg1Dim="2">
-              <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                <ele>zeta[0]</ele>
-                <ele>zeta[1]</ele>
-                <ele>0.2*sympy.sin(zeta[0])</ele>
-              </xmlVector>
-            </definition></SymbolicFunction>
+            <SymbolicFunction>
+              <definition arg1="zeta" arg1Dim="2">
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <ele>zeta[0]</ele>
+                  <ele>zeta[1]</ele>
+                  <ele>0.2*sympy.sin(zeta[0])</ele>
+                </xmlVector>
+              </definition>
+            </SymbolicFunction>
           </contourFunction>
           <openEta>True</openEta>
           <openXi>True</openXi>

@@ -276,82 +276,89 @@ R"+(</pre>
     // get the xpath
     auto xpath = QUrlQuery(link).queryItemValue("xpath").toStdString();
 
-    // get the XML document doc and the rootIndex of this element corresponding the path of the link
-    QModelIndex rootIndex;
-    std::shared_ptr<xercesc::DOMDocument> doc;
-    if(QFileInfo(mw->getProjectFile()).absoluteFilePath()==link.path()) {
-      doc = mw->getProjectDocument();
-      if(xpath.find("{"+PV.getNamespaceURI()+"}Parameter")!=string::npos)
-        rootIndex = mw->getProject()->getParameterEmbedItem()->getModelIndex();
-      else
-        rootIndex = mw->getProject()->getModelIndex();
-    }
-    else {
-      for(auto fileItemData : mw->getFile()) {
-        if(fileItemData->getFileInfo().absoluteFilePath()==link.path()) {
-          doc = fileItemData->getXMLDocument();
-          if(xpath.find("{"+PV.getNamespaceURI()+"}Parameter")!=string::npos)
-            rootIndex = fileItemData->getFileReference(0)->getParameterEmbedItem()->getModelIndex();
-          else
-            rootIndex = fileItemData->getFileReference(0)->getModelIndex();
-          break;
-        }
-      }
-    }
-
-    if(!doc) {
-      mw->statusBar()->showMessage("XML document not found: "+link.path());
-      return;
-    }
-
     if(openPropertyDialog) {
-      // open the property dialog of the element which generated the error
+      // help function to check for a element with the maximal match of the xpth
+      size_t maxXPathFound = 0;
+      TreeItemData *clickedTreeItemData = nullptr;
+      auto checkPathAndXPath = [&xpath, &maxXPathFound, &clickedTreeItemData, &link](TreeItemData *treeItemData){
+        for(auto e : {treeItemData->getXMLElement(), treeItemData->getEmbedXMLElement()}) {
+          if(!e)
+            return;
+          auto itemXPath = E(e)->getRootXPathExpression();
+          if(xpath.substr(0,itemXPath.size())==itemXPath && itemXPath.size()>maxXPathFound &&
+             QFileInfo(link.path()).canonicalFilePath()==QFileInfo(D(e->getOwnerDocument())->getDocumentFilename().string().c_str()).canonicalFilePath()) {
+            clickedTreeItemData = treeItemData;
+            maxXPathFound = itemXPath.size();
+          }
+        }
+      };
 
-      // walk the element tree to find the item with the same xpath as the link
-      auto *model = static_cast<const TreeModel*>(rootIndex.model());
-      if(model) {
-        QModelIndex clickedIndex;
-        size_t maxXPathFound = 0;
-        function<void(TreeItem *item)> walk;
-        walk = [&walk,&xpath,&maxXPathFound,&clickedIndex](TreeItem *item) {
-          if(auto e = item->getItemData()->getXMLElement(); e) {
-            auto itemXPath = E(e)->getRootXPathExpression();
-            if(xpath.substr(0,itemXPath.size())==itemXPath && itemXPath.size()>maxXPathFound) {
-              clickedIndex = item->getItemData()->getModelIndex();
-              maxXPathFound = itemXPath.size();
+      // walk the tree to search the xpath in all elements and parameters
+      function<void(TreeItem *eleItem)> walk1;
+      walk1 = [&walk1, &checkPathAndXPath](TreeItem *eleItem) {
+        checkPathAndXPath(eleItem->getItemData());
+        if(auto *eid = dynamic_cast<EmbedItemData*>(eleItem->getItemData()); eid)
+          for(int i=0; i<eid->getNumberOfParameters(); ++i) {
+            auto p = eid->getParameter(i);
+            checkPathAndXPath(p);
+          }
+
+        for(int cNr=0; cNr<eleItem->childCount(); ++cNr)
+          walk1(eleItem->child(cNr));
+      };
+      auto *model = static_cast<ElementTreeModel*>(mw->getElementView()->model());
+      if(auto i = model->getItem(QModelIndex())->child(0); i)
+        walk1(i);
+
+      if(!clickedTreeItemData)
+        openPropertyDialog = false;
+      else {
+        if(auto *pi = dynamic_cast<ParameterItem*>(clickedTreeItemData); pi) {
+          if(auto mi = pi->getParent()->getModelIndex(); mi.isValid()) {
+            mw->getElementView()->setCurrentIndex(mi);
+            if(auto mi = clickedTreeItemData->getModelIndex();  mi.isValid()) {
+              mw->getParameterView()->setCurrentIndex(mi);
+              mw->openParameterEditor();
             }
+            else
+              openPropertyDialog = false;
           }
-
-          for(int cNr=0; cNr<item->childCount(); ++cNr)
-            walk(item->child(cNr));
-        };
-        walk(model->getItem(rootIndex));
-        if(clickedIndex.isValid()) {
-          if(dynamic_cast<const ElementTreeModel*>(model)) {
-            mw->getElementView()->setCurrentIndex(clickedIndex);
-            mw->openElementEditor();
-          }
-          else if(dynamic_cast<const ParameterTreeModel*>(model)) {
-            mw->getParameterView()->setCurrentIndex(clickedIndex);
-            mw->openParameterEditor();
-          }
+          else
+            openPropertyDialog = false;
         }
         else {
-          mw->statusBar()->showMessage("No element/parameter found for XPath in doc: "+
-            QString::fromStdString(EmbedDOMLocator::convertToRootHRXPathExpression(xpath)));
-          openPropertyDialog = false;
+          if(auto mi = clickedTreeItemData->getModelIndex(); mi.isValid()) {
+            mw->getElementView()->setCurrentIndex(mi);
+            mw->openElementEditor();
+          }
+          else
+            openPropertyDialog = false;
         }
       }
-      else
-        openPropertyDialog = false;
     }
 
     if(!openPropertyDialog) {
       // show the XML source code of doc and the line number of the error
 
+      std::shared_ptr<xercesc::DOMDocument> doc;
+      if(QFileInfo(mw->getProjectFile()).canonicalFilePath()==QFileInfo(link.path()).canonicalFilePath())
+        doc = mw->getProjectDocument();
+      else
+        for(auto fileItemData : mw->getFile())
+          if(fileItemData->getFileInfo().canonicalFilePath()==QFileInfo(link.path()).canonicalFilePath()) {
+            doc = fileItemData->getXMLDocument();
+            break;
+          }
+
+      if(!doc) {
+        mw->statusBar()->showMessage("XML document not found: "+link.path());
+        return;
+      }
+
       // serialize the document without using the MBXMLUtils_ processing instructions (its a user written XML source file)
       auto rootEle = doc->getDocumentElement();
-      auto xml = X()%mw->serializer->writeToString(rootEle);
+      string xml;
+      DOMParser::serializeToString(rootEle, xml, true);
       // re-parse the serialized document (while recording the line number using the MBXMLUtils_ processing instructions
       // (this generated a equal XML document as the document used by the MainWindow refresh and simulation action)
       stringstream str(std::move(xml));

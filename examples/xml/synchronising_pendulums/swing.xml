@@ -1,5 +1,7 @@
-<Group name="Swing" xmlns="http://www.mbsim-env.de/MBSim">
-  <frameOfReference ref="../Frame[I]"/> <!-- optional -->
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<Group xmlns="http://www.mbsim-env.de/MBSim" name="Swing">
+  <frameOfReference ref="../Frame[I]"/>
+  <!-- optional -->
   <frames>
     <FixedRelativeFrame name="fMountLeft">
       <!--
@@ -19,15 +21,14 @@
          -  <offset>1.</offset>
          -</enableOpenMBV>
          -->
-      <frameOfReference ref="../Frame[I]"/> <!-- optional -->
+      <frameOfReference ref="../Frame[I]"/>
+      <!-- optional -->
       <relativePosition>[swingL/2; suspensionL; 0]</relativePosition>
       <relativeOrientation>rotateAboutZ(-pi/2)</relativeOrientation>
     </FixedRelativeFrame>
   </frames>
-  <contours>
-  </contours>
-  <groups>
-  </groups>
+  <contours/>
+  <groups/>
   <objects>
     <RigidBody name="Swing" xmlns="http://www.mbsim-env.de/MBSim">
       <generalizedInitialPosition>suspensionL*[sin(phi0); 1-cos(phi0)]</generalizedInitialPosition>
@@ -82,7 +83,7 @@
         </Line>
       </contours>
       <openMBVRigidBody>
-        <Cuboid name="X" xmlns="http://www.mbsim-env.de/OpenMBV">
+        <Cuboid xmlns="http://www.mbsim-env.de/OpenMBV" name="X">
           <diffuseColor>.2*ones(3,1)</diffuseColor>
           <initialTranslation>[0 0 0]'</initialTranslation>
           <initialRotation>[pi/2 0 0]'</initialRotation>
@@ -110,7 +111,7 @@
         </RotationAboutFixedAxis>
       </stateDependentRotation>
       <frames>
-          <FixedRelativeFrame name="fMountLeft">
+        <FixedRelativeFrame name="fMountLeft">
           <!--
              -<enableOpenMBV>
              -  <size>fSize</size>
@@ -135,7 +136,7 @@
       </frames>
       <contours/>
       <openMBVRigidBody>
-        <Cuboid name="X" xmlns="http://www.mbsim-env.de/OpenMBV">
+        <Cuboid xmlns="http://www.mbsim-env.de/OpenMBV" name="X">
           <diffuseColor>.4*ones(3,1)</diffuseColor>
           <initialTranslation>[0 0 0]'</initialTranslation>
           <initialRotation>[pi/2 0 0]'</initialRotation>
@@ -188,7 +189,7 @@
       </frames>
       <contours/>
       <openMBVRigidBody>
-        <Cuboid name="X" xmlns="http://www.mbsim-env.de/OpenMBV">
+        <Cuboid xmlns="http://www.mbsim-env.de/OpenMBV" name="X">
           <diffuseColor>.4*ones(3,1)</diffuseColor>
           <initialTranslation>[0 0 0]'</initialTranslation>
           <initialRotation>[pi/2 0 0]'</initialRotation>
@@ -223,4 +224,3 @@
   <constraints/>
   <observers/>
 </Group>
-

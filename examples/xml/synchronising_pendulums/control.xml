@@ -1,17 +1,14 @@
-<Group name="Control{i}" xmlns="http://www.mbsim-env.de/MBSim">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<Group xmlns="http://www.mbsim-env.de/MBSim" name="Control{i}">
   <frameOfReference ref="../Frame[Q{i}]"/>
-  <frames>
-  </frames>
-  <contours>
-  </contours>
-  <groups>
-  </groups>
+  <frames/>
+  <contours/>
+  <groups/>
   <objects>
-    <Embed count="1" counterName="n" xmlns="http://www.mbsim-env.de/MBXMLUtils">
+    <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="1" counterName="n">
       <Parameter xmlns="http://www.mbsim-env.de/MBXMLUtils">
         <scalarParameter name="timeMove">1.</scalarParameter>
-        <matrixParameter name="xValue">
-          <![CDATA[
+        <matrixParameter name="xValue"><![CDATA[
           tBound=200;
           tStartVal=linspace(tStart(i), tStart(i)+timeMove, 200);
           tEndVal=linspace(tEnd(i), tEnd(i)+timeMove, 200);
@@ -25,10 +22,9 @@
           xValue=interp1(tVal, xVal, timeValue, 'pchip');
           xValue=interp1(tVal, xVal, timeValue);
           ret=[timeValue' xValue' 0*xValue' 0*xValue'];
-          ]]>
-        </matrixParameter>
+          ]]></matrixParameter>
       </Parameter>
-      <RigidBody name="Body" xmlns="http://www.mbsim-env.de/MBSim">
+      <RigidBody xmlns="http://www.mbsim-env.de/MBSim" name="Body">
         <frameOfReference ref="../Frame[I]"/>
         <frameForKinematics ref="Frame[C]"/>
         <mass>1.</mass>
@@ -40,8 +36,7 @@
             <interpolationMethod>"cSplineNatural"</interpolationMethod>
           </PiecewisePolynomFunction>
         </timeDependentTranslation>
-        <frames>
-        </frames>
+        <frames/>
         <contours>
           <Line name="cTop">
             <frameOfReference ref="../Frame[C]"/>
@@ -88,4 +83,3 @@
   <constraints/>
   <observers/>
 </Group>
-

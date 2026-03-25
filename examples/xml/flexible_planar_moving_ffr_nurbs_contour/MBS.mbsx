@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
-
   <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
     <Parameter>
       <scalarParameter name="rho">2000</scalarParameter>
@@ -284,7 +283,8 @@
             <NodeFrame name="NodeFrame">
               <nodeNumber>4</nodeNumber>
             </NodeFrame>
-          </frames><contours>
+          </frames>
+          <contours>
             <FlexiblePlanarFfrNurbsContour name="FlexiblePlanarNurbsContour">
               <thickness xmlns="http://www.mbsim-env.de/MBSim" unit="m">1</thickness>
               <interpolation>true</interpolation>
@@ -293,7 +293,8 @@
               <open>true</open>
               <enableOpenMBV/>
             </FlexiblePlanarFfrNurbsContour>
-          </contours></FlexibleFfrBody>
+          </contours>
+        </FlexibleFfrBody>
         <RigidBody name="RigidBody">
           <generalizedInitialPosition>
             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -335,9 +336,11 @@
             <Point name="Point">
               <enableOpenMBV/>
             </Point>
-          </contours><enableOpenMBVFrameC>
+          </contours>
+          <enableOpenMBVFrameC>
             <size unit="dm">1</size>
-          </enableOpenMBVFrameC></RigidBody>
+          </enableOpenMBVFrameC>
+        </RigidBody>
       </objects>
       <links>
         <Contact name="Contact">
@@ -437,12 +440,12 @@
             <size unit="dm">1</size>
           </enableOpenMBVContactPoints>
         </ContactObserver>
-      </observers><enableOpenMBVFrameI>
+      </observers>
+      <enableOpenMBVFrameI>
         <size unit="dm">1</size>
-      </enableOpenMBVFrameI><environments>
+      </enableOpenMBVFrameI>
+      <environments>
         <MBSimEnvironment>
-          
-          
           <accelerationOfGravity unit="m/s^2">
             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
               <ele>0</ele>
@@ -460,11 +463,9 @@
       <generalizedImpulseTolerance>1e-6</generalizedImpulseTolerance>
     </DynamicSystemSolver>
   </Embed>
-
   <DOPRI5Integrator xmlns="http://www.mbsim-env.de/MBSim">
     <startTime unit="s">0</startTime>
     <endTime unit="s">0.1</endTime>
     <plotStepSize unit="s">1e-3</plotStepSize>
   </DOPRI5Integrator>
-
 </MBSimProject>

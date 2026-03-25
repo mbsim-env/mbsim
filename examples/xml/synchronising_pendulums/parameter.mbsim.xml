@@ -1,6 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <Parameter xmlns="http://www.mbsim-env.de/MBXMLUtils">
   <scalarParameter name="fSize">.01</scalarParameter>
-
   <!-- Geometry-Data of Swing -->
   <scalarParameter name="swingL">.75</scalarParameter>
   <scalarParameter name="swingB">.1</scalarParameter>
@@ -19,43 +19,32 @@
   <scalarParameter name="pendulumD">.005</scalarParameter>
   <!-- Geometry-Data of Sphere -->
   <scalarParameter name="sphereD">.02</scalarParameter>
-
   <!-- Material Data -->
   <scalarParameter name="metronomeStiffness">.05</scalarParameter>
   <scalarParameter name="rho">800</scalarParameter>
-
   <!-- Initial Sizes of thw Swing -->
   <scalarParameter name="phi0">0</scalarParameter>
   <scalarParameter name="omega0">0</scalarParameter>
-
   <!-- Height of the Pendulum-Sphere (EIGENFREQUENCY OF THE PENDULUM) -->
   <vectorParameter name="sphereHeight">[.24 .241 .242]'</vectorParameter>
   <!--<vectorParameter name="sphereHeight">[.24 .24 .24]</vectorParameter>-->
-
   <!-- Derived Sizes -->
   <scalarParameter name="swingMass">swingL*swingB*swingH*rho/5</scalarParameter>
   <matrixParameter name="swingTheta">1/12*swingMass*diag([swingB*swingH; swingL*swingB; swingH*swingL])</matrixParameter>
-
   <scalarParameter name="suspensionMass">suspensionL*suspensionB*suspensionH*rho</scalarParameter>
   <matrixParameter name="suspensionTheta">1/12*suspensionMass*diag([suspensionB*suspensionH; suspensionL*suspensionB; suspensionH*suspensionL])</matrixParameter>
-
   <scalarParameter name="baseMass">baseL*baseB*baseH*rho</scalarParameter>
   <matrixParameter name="baseTheta">1/12*baseMass*diag([baseB*baseH; baseL*baseB; baseH*baseL])</matrixParameter>
-
   <scalarParameter name="pendulumMass">pendulumL*pi*pendulumD^2/4*rho</scalarParameter>
   <matrixParameter name="pendulumTheta">pendulumMass*diag([1/2*(pendulumD/2)^2; 1/4*(pendulumD/2)^2+1/12*pendulumL^2; 1/4*(pendulumD/2)^2+1/12*pendulumL^2])</matrixParameter>
-
   <scalarParameter name="sphereMass">4/3*(sphereD/2)^3*pi*rho</scalarParameter>
   <matrixParameter name="sphereTheta">2/5*sphereMass*(sphereD/2)^2*eye(3)</matrixParameter>
-
   <!-- Simulatin Control -->
   <vectorParameter name="tStart">[1 11.9 75]'</vectorParameter>
   <vectorParameter name="tEnd">[105 110 115]'</vectorParameter>
   <vectorParameter name="timalOffset">[0 6.9 70]'</vectorParameter>
-
   <!-- Calculation of relevant sizes -->
-  <scalarParameter name="Calculations">
-    <![CDATA[
+  <scalarParameter name="Calculations"><![CDATA[
     fprintf("\n\n= = = = = = = = = =\n\n");
     MLin= 2*suspensionTheta(3,3) + (1/2*suspensionMass+swingMass)*suspensionL^2;
     KLin= (suspensionMass+swingMass)*suspensionL*9.81;
@@ -134,7 +123,5 @@
     fprintf("\n\n= = = = = = = = = =\n\n");
 
     ret=0;
-    ]]>
-  </scalarParameter>
-
+    ]]></scalarParameter>
 </Parameter>

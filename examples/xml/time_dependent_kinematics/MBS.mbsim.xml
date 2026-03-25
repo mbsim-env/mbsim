@@ -1,22 +1,22 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<DynamicSystemSolver name="TS" xmlns="http://www.mbsim-env.de/MBSim" xmlns:pv="http://www.mbsim-env.de/MBXMLUtils" xmlns:ombv="http://www.mbsim-env.de/OpenMBV" xmlns:xi="http://www.w3.org/2001/XInclude">
-    <plotFeatureRecursive value="generalizedRelativePosition">true</plotFeatureRecursive>
-    <plotFeatureRecursive value="generalizedRelativeVelocity">true</plotFeatureRecursive>
-    <plotFeatureRecursive value="generalizedForce">true</plotFeatureRecursive>
-    <plotFeatureRecursive value="generalizedPosition">true</plotFeatureRecursive>
-    <plotFeatureRecursive value="generalizedVelocity">true</plotFeatureRecursive>
-    <frames />
-    <contours />
-    <groups />
-    <objects>
-        <RigidBody name="Box1">
-            <frameOfReference ref="../Frame[I]" />
-            <frameForKinematics ref="Frame[C]" />
-            <mass>3</mass>
-            <inertiaTensor>[1,0,0;0,1,0;0,0,1]</inertiaTensor>
-            <timeDependentTranslation>
-              <SymbolicFunction>
-                <definition arg1="t">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="TS" xmlns:ombv="http://www.mbsim-env.de/OpenMBV" xmlns:pv="http://www.mbsim-env.de/MBXMLUtils" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <plotFeatureRecursive value="generalizedRelativePosition">true</plotFeatureRecursive>
+  <plotFeatureRecursive value="generalizedRelativeVelocity">true</plotFeatureRecursive>
+  <plotFeatureRecursive value="generalizedForce">true</plotFeatureRecursive>
+  <plotFeatureRecursive value="generalizedPosition">true</plotFeatureRecursive>
+  <plotFeatureRecursive value="generalizedVelocity">true</plotFeatureRecursive>
+  <frames/>
+  <contours/>
+  <groups/>
+  <objects>
+    <RigidBody name="Box1">
+      <frameOfReference ref="../Frame[I]"/>
+      <frameForKinematics ref="Frame[C]"/>
+      <mass>3</mass>
+      <inertiaTensor>[1,0,0;0,1,0;0,0,1]</inertiaTensor>
+      <timeDependentTranslation>
+        <SymbolicFunction>
+          <definition arg1="t">
                   % some dummy tests
                   x=tilde([1;2;3]);
                   x=tilde([0,2,3;-2,0,6;-3,-6,0]);
@@ -42,173 +42,173 @@
                   half=SymbolicExpression();
                   half=2;
                   ret=[sin(freq1*t + pi/half); v0y*t; 0];
-                </definition>
-              </SymbolicFunction>
-            </timeDependentTranslation>
-            <timeDependentRotation>
-              <CompositeFunction>
-                <outerFunction>
-                  <RotationAboutFixedAxis>
-                    <axisOfRotation>[0;0;1]</axisOfRotation>
-                  </RotationAboutFixedAxis>
-                </outerFunction>
-                <innerFunction>
-                  <SymbolicFunction>
-                    <definition arg1="t">
+          </definition>
+        </SymbolicFunction>
+      </timeDependentTranslation>
+      <timeDependentRotation>
+        <CompositeFunction>
+          <outerFunction>
+            <RotationAboutFixedAxis>
+              <axisOfRotation>[0;0;1]</axisOfRotation>
+            </RotationAboutFixedAxis>
+          </outerFunction>
+          <innerFunction>
+            <SymbolicFunction>
+              <definition arg1="t">
                       5*sin(freq2*t)
-                    </definition>
-                  </SymbolicFunction>
-                </innerFunction>
-              </CompositeFunction>
-            </timeDependentRotation>
-            <frames />
-            <contours />
-            <openMBVRigidBody>
-                <ombv:Cube name="Box1">
-                    <ombv:initialTranslation>[0;0;0]</ombv:initialTranslation>
-                    <ombv:initialRotation>[0;0;0]</ombv:initialRotation>
-                    <ombv:scaleFactor>1</ombv:scaleFactor>
-                    <ombv:length>2</ombv:length>
-                </ombv:Cube>
-            </openMBVRigidBody>
-        </RigidBody>
-        <RigidBody name="Box1a">
-            <frameOfReference ref="../Frame[I]" />
-            <frameForKinematics ref="Frame[C]" />
-            <mass>3</mass>
-            <inertiaTensor>[1,0,0;0,1,0;0,0,1]</inertiaTensor>
-            <timeDependentTranslation>
-              <SymbolicFunction>
-                <definition arg1="t">
+              </definition>
+            </SymbolicFunction>
+          </innerFunction>
+        </CompositeFunction>
+      </timeDependentRotation>
+      <frames/>
+      <contours/>
+      <openMBVRigidBody>
+        <ombv:Cube name="Box1">
+          <ombv:initialTranslation>[0;0;0]</ombv:initialTranslation>
+          <ombv:initialRotation>[0;0;0]</ombv:initialRotation>
+          <ombv:scaleFactor>1</ombv:scaleFactor>
+          <ombv:length>2</ombv:length>
+        </ombv:Cube>
+      </openMBVRigidBody>
+    </RigidBody>
+    <RigidBody name="Box1a">
+      <frameOfReference ref="../Frame[I]"/>
+      <frameForKinematics ref="Frame[C]"/>
+      <mass>3</mass>
+      <inertiaTensor>[1,0,0;0,1,0;0,0,1]</inertiaTensor>
+      <timeDependentTranslation>
+        <SymbolicFunction>
+          <definition arg1="t">
                   [sin(freq1*t + pi/2); v0y*t; 0]
-                </definition>
-              </SymbolicFunction>
-            </timeDependentTranslation>
-            <timeDependentRotation>
-              <CompositeFunction>
-                <outerFunction>
-                  <RotationAboutAxesXY/>
-                </outerFunction>
-                <innerFunction>
-                  <SymbolicFunction>
-                    <definition arg1="t">
+          </definition>
+        </SymbolicFunction>
+      </timeDependentTranslation>
+      <timeDependentRotation>
+        <CompositeFunction>
+          <outerFunction>
+            <RotationAboutAxesXY/>
+          </outerFunction>
+          <innerFunction>
+            <SymbolicFunction>
+              <definition arg1="t">
                       [t;2*t]
-                    </definition>
-                  </SymbolicFunction>
-                </innerFunction>
-              </CompositeFunction>
-            </timeDependentRotation>
-            <frames />
-            <contours />
-            <openMBVRigidBody>
-                <ombv:Cube name="Box1a">
-                    <ombv:initialTranslation>[0;0;0]</ombv:initialTranslation>
-                    <ombv:initialRotation>[0;0;0]</ombv:initialRotation>
-                    <ombv:scaleFactor>1</ombv:scaleFactor>
-                    <ombv:length>2</ombv:length>
-                </ombv:Cube>
-            </openMBVRigidBody>
-        </RigidBody>
-        <RigidBody name="Box2">
-            <frameOfReference ref="../Frame[I]" />
-            <frameForKinematics ref="Frame[C]" />
-            <mass>3</mass>
-            <inertiaTensor>[1,0,0;0,1,0;0,0,1]</inertiaTensor>
-            <stateDependentTranslation>
-              <SymbolicFunction>
-                <definition arg1="q" arg1Dim="1">
-                  <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                    <ele>5+cos(freq1*q(1))</ele>
-                    <ele>sin(freq1*q(1))</ele>
-                    <ele>0</ele>
-                  </xmlVector> 
-                </definition>
-              </SymbolicFunction>
-            </stateDependentTranslation>
-            <frames />
-            <contours />
-            <openMBVRigidBody>
-                <ombv:Cube name="Box2">
-                    <ombv:initialTranslation>[0;0;0]</ombv:initialTranslation>
-                    <ombv:initialRotation>[0;0;0]</ombv:initialRotation>
-                    <ombv:scaleFactor>1</ombv:scaleFactor>
-                    <ombv:length>1</ombv:length>
-                </ombv:Cube>
-            </openMBVRigidBody>
-        </RigidBody>
-        <RigidBody name="Box3">
-            <generalizedInitialVelocity>[0;1]</generalizedInitialVelocity>
-            <frameOfReference ref="../Frame[I]" />
-            <frameForKinematics ref="Frame[C]" />
-            <mass>3</mass>
-            <inertiaTensor>[1,0,0;0,1,0;0,0,1]</inertiaTensor>
-            <generalTranslation>
-              <SymbolicFunction>
-                <!-- SymbolicFunction does not distinguish between scalar, vector and matrix. Hence we can also write
+              </definition>
+            </SymbolicFunction>
+          </innerFunction>
+        </CompositeFunction>
+      </timeDependentRotation>
+      <frames/>
+      <contours/>
+      <openMBVRigidBody>
+        <ombv:Cube name="Box1a">
+          <ombv:initialTranslation>[0;0;0]</ombv:initialTranslation>
+          <ombv:initialRotation>[0;0;0]</ombv:initialRotation>
+          <ombv:scaleFactor>1</ombv:scaleFactor>
+          <ombv:length>2</ombv:length>
+        </ombv:Cube>
+      </openMBVRigidBody>
+    </RigidBody>
+    <RigidBody name="Box2">
+      <frameOfReference ref="../Frame[I]"/>
+      <frameForKinematics ref="Frame[C]"/>
+      <mass>3</mass>
+      <inertiaTensor>[1,0,0;0,1,0;0,0,1]</inertiaTensor>
+      <stateDependentTranslation>
+        <SymbolicFunction>
+          <definition arg1="q" arg1Dim="1">
+            <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <ele>5+cos(freq1*q(1))</ele>
+              <ele>sin(freq1*q(1))</ele>
+              <ele>0</ele>
+            </xmlVector>
+          </definition>
+        </SymbolicFunction>
+      </stateDependentTranslation>
+      <frames/>
+      <contours/>
+      <openMBVRigidBody>
+        <ombv:Cube name="Box2">
+          <ombv:initialTranslation>[0;0;0]</ombv:initialTranslation>
+          <ombv:initialRotation>[0;0;0]</ombv:initialRotation>
+          <ombv:scaleFactor>1</ombv:scaleFactor>
+          <ombv:length>1</ombv:length>
+        </ombv:Cube>
+      </openMBVRigidBody>
+    </RigidBody>
+    <RigidBody name="Box3">
+      <generalizedInitialVelocity>[0;1]</generalizedInitialVelocity>
+      <frameOfReference ref="../Frame[I]"/>
+      <frameForKinematics ref="Frame[C]"/>
+      <mass>3</mass>
+      <inertiaTensor>[1,0,0;0,1,0;0,0,1]</inertiaTensor>
+      <generalTranslation>
+        <SymbolicFunction>
+          <!-- SymbolicFunction does not distinguish between scalar, vector and matrix. Hence we can also write
                      <xmlMatrix>
                        <row><ele>x</ele></row>
                        <row><ele>x</ele></row>
                        <row><ele>x</ele></row>
                      </xmlMatrix>
                      here -->
-                <definition arg1="q" arg1Dim="2" arg2="t">
-                  <pv:xmlVector>
-                    <pv:ele>10+t+cos(freq1*q(1))</pv:ele>
-                    <pv:ele>sin(freq1*q(1))</pv:ele>
-                    <pv:ele>q(2)</pv:ele>
-                  </pv:xmlVector>
-                </definition>
-              </SymbolicFunction>
-            </generalTranslation>
-            <frames />
-            <contours />
-            <openMBVRigidBody>
-                <ombv:Cube name="Box3">
-                    <ombv:initialTranslation>[0;0;0]</ombv:initialTranslation>
-                    <ombv:initialRotation>[0;0;0]</ombv:initialRotation>
-                    <ombv:scaleFactor>1</ombv:scaleFactor>
-                    <ombv:length>1</ombv:length>
-                </ombv:Cube>
-            </openMBVRigidBody>
-        </RigidBody>
-        <RigidBody name="Box4">
-            <plotFeatureRecursive value="position">true</plotFeatureRecursive>
-            <frameOfReference ref="../Frame[I]" />
-            <frameForKinematics ref="Frame[C]" />
-            <mass>3</mass>
-            <inertiaTensor>[1,0,0;0,1,0;0,0,1]</inertiaTensor>
-            <timeDependentTranslation>
-              <SymbolicFunction>
-                <definition arg1="t">
-                  <pv:xmlVector>
-                    <pv:ele>
+          <definition arg1="q" arg1Dim="2" arg2="t">
+            <pv:xmlVector>
+              <pv:ele>10+t+cos(freq1*q(1))</pv:ele>
+              <pv:ele>sin(freq1*q(1))</pv:ele>
+              <pv:ele>q(2)</pv:ele>
+            </pv:xmlVector>
+          </definition>
+        </SymbolicFunction>
+      </generalTranslation>
+      <frames/>
+      <contours/>
+      <openMBVRigidBody>
+        <ombv:Cube name="Box3">
+          <ombv:initialTranslation>[0;0;0]</ombv:initialTranslation>
+          <ombv:initialRotation>[0;0;0]</ombv:initialRotation>
+          <ombv:scaleFactor>1</ombv:scaleFactor>
+          <ombv:length>1</ombv:length>
+        </ombv:Cube>
+      </openMBVRigidBody>
+    </RigidBody>
+    <RigidBody name="Box4">
+      <plotFeatureRecursive value="position">true</plotFeatureRecursive>
+      <frameOfReference ref="../Frame[I]"/>
+      <frameForKinematics ref="Frame[C]"/>
+      <mass>3</mass>
+      <inertiaTensor>[1,0,0;0,1,0;0,0,1]</inertiaTensor>
+      <timeDependentTranslation>
+        <SymbolicFunction>
+          <definition arg1="t">
+            <pv:xmlVector>
+              <pv:ele>
                       condition(-t+2, 1, condition(-t+4, max([2.5;t]), condition(-t+6, 3, condition(t-9, 0.5, 0))))
-                    </pv:ele>
-                    <pv:ele>0</pv:ele>
-                    <pv:ele>0</pv:ele>
-                  </pv:xmlVector>
-                </definition>
-              </SymbolicFunction>
-            </timeDependentTranslation>
-            <frames />
-            <contours />
-            <openMBVRigidBody>
-                <ombv:Cube name="Box4">
-                    <ombv:initialTranslation>[0;0;0]</ombv:initialTranslation>
-                    <ombv:initialRotation>[0;0;0]</ombv:initialRotation>
-                    <ombv:scaleFactor>1</ombv:scaleFactor>
-                    <ombv:length>1</ombv:length>
-                </ombv:Cube>
-            </openMBVRigidBody>
-        </RigidBody>
-    </objects>
-    <links />
-    <constraints />
-    <observers />
-    <environments>
-        <MBSimEnvironment>
-            <accelerationOfGravity>[0;-9.81;0]</accelerationOfGravity>
-        </MBSimEnvironment>
-    </environments>
-    <embedOmbvxInH5>true</embedOmbvxInH5>
+              </pv:ele>
+              <pv:ele>0</pv:ele>
+              <pv:ele>0</pv:ele>
+            </pv:xmlVector>
+          </definition>
+        </SymbolicFunction>
+      </timeDependentTranslation>
+      <frames/>
+      <contours/>
+      <openMBVRigidBody>
+        <ombv:Cube name="Box4">
+          <ombv:initialTranslation>[0;0;0]</ombv:initialTranslation>
+          <ombv:initialRotation>[0;0;0]</ombv:initialRotation>
+          <ombv:scaleFactor>1</ombv:scaleFactor>
+          <ombv:length>1</ombv:length>
+        </ombv:Cube>
+      </openMBVRigidBody>
+    </RigidBody>
+  </objects>
+  <links/>
+  <constraints/>
+  <observers/>
+  <environments>
+    <MBSimEnvironment>
+      <accelerationOfGravity>[0;-9.81;0]</accelerationOfGravity>
+    </MBSimEnvironment>
+  </environments>
+  <embedOmbvxInH5>true</embedOmbvxInH5>
 </DynamicSystemSolver>

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
-
   <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
     <Parameter>
       <scalarParameter name="dz_daempfer">0.025</scalarParameter>
@@ -25,12 +24,14 @@
             </cardan>
           </relativeOrientation>
         </FixedRelativeFrame>
-      </frames><contours>
+      </frames>
+      <contours>
         <Plane name="Plane">
           <frameOfReference ref="../Frame[B]"/>
           <enableOpenMBV/>
         </Plane>
-      </contours><groups>
+      </contours>
+      <groups>
         <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
           <Parameter>
             <scalarParameter name="J">0.0000134</scalarParameter>
@@ -51,8 +52,7 @@
             <contours/>
             <groups>
               <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                <Parameter>
-                </Parameter>
+                <Parameter/>
                 <Group xmlns="http://www.mbsim-env.de/MBSim" name="Regler">
                   <frames/>
                   <contours/>
@@ -103,7 +103,7 @@
                             <SymbolicFunction>
                               <definition arg1="s" arg1Dim="4">T = J*ratio*(P*(s(3)-s(1))+D*(s(4)-s(2)))
 ret = T*R/kM+kM*s(4)*ratio
-</definition>
+                              </definition>
                             </SymbolicFunction>
                           </innerFunction>
                         </CompositeFunction>
@@ -115,8 +115,7 @@ ret = T*R/kM+kM*s(4)*ratio
                 </Group>
               </Embed>
               <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                <Parameter>
-                </Parameter>
+                <Parameter/>
                 <Group xmlns="http://www.mbsim-env.de/MBSim" name="Elektronik">
                   <frames/>
                   <contours/>
@@ -140,7 +139,8 @@ ret = T*R/kM+kM*s(4)*ratio
                           <innerFunction>
                             <SymbolicFunction>
                               <definition arg1="s" arg1Dim="2">I = (s(2)-kM*s(1))/R
-ret = kM*I</definition>
+ret = kM*I
+                              </definition>
                             </SymbolicFunction>
                           </innerFunction>
                         </CompositeFunction>
@@ -281,7 +281,8 @@ ret = kM*I</definition>
                       </xmlVector>
                     </relativePosition>
                   </FixedRelativeFrame>
-                </frames><contours/>
+                </frames>
+                <contours/>
                 <openMBVRigidBody>
                   <Cylinder xmlns="http://www.mbsim-env.de/OpenMBV" name="Cylinder2">
                     <diffuseColor>
@@ -311,7 +312,7 @@ ret = kM*I</definition>
                     <height unit="m">l</height>
                   </Cylinder>
                 </openMBVRigidBody>
-                </RigidBody>
+              </RigidBody>
               <RigidBody name="Ausgang">
                 <frameOfReference ref="../Object[Stator]/Frame[Q]"/>
                 <frameForKinematics ref="Frame[P]"/>
@@ -357,7 +358,8 @@ ret = kM*I</definition>
                       </xmlVector>
                     </relativePosition>
                   </FixedRelativeFrame>
-                </frames><contours/>
+                </frames>
+                <contours/>
                 <openMBVRigidBody>
                   <Cylinder xmlns="http://www.mbsim-env.de/OpenMBV" name="Cylinder2">
                     <diffuseColor>
@@ -387,8 +389,9 @@ ret = kM*I</definition>
                     <height unit="m">l</height>
                   </Cylinder>
                 </openMBVRigidBody>
-                </RigidBody>
-            </objects><links>
+              </RigidBody>
+            </objects>
+            <links>
               <GeneralizedVelocitySensor xmlns="http://www.mbsim-env.de/MBSimControl" name="om">
                 <object ref="../Object[Rotor]"/>
               </GeneralizedVelocitySensor>
@@ -412,13 +415,15 @@ ret = kM*I</definition>
                     <returnSignal ref="../../Group[Elektronik]/Link[M]"/>
                   </SignalFunction>
                 </momentFunction>
-              </KineticExcitation></links>
+              </KineticExcitation>
+            </links>
             <constraints>
               <GeneralizedGearConstraint name="Gear">
                 <dependentRigidBody ref="../Object[Rotor]"/>
                 <independentRigidBody ratio="ratio" ref="../Object[Ausgang]"/>
               </GeneralizedGearConstraint>
-            </constraints><observers/>
+            </constraints>
+            <observers/>
           </Group>
         </Embed>
         <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -441,8 +446,7 @@ ret = kM*I</definition>
             <contours/>
             <groups>
               <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                <Parameter>
-                </Parameter>
+                <Parameter/>
                 <Group xmlns="http://www.mbsim-env.de/MBSim" name="Regler">
                   <frames/>
                   <contours/>
@@ -493,7 +497,7 @@ ret = kM*I</definition>
                             <SymbolicFunction>
                               <definition arg1="s" arg1Dim="4">T = J*ratio*(P*(s(3)-s(1))+D*(s(4)-s(2)))
 ret = T*R/kM+kM*s(4)*ratio
-</definition>
+                              </definition>
                             </SymbolicFunction>
                           </innerFunction>
                         </CompositeFunction>
@@ -505,8 +509,7 @@ ret = T*R/kM+kM*s(4)*ratio
                 </Group>
               </Embed>
               <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                <Parameter>
-                </Parameter>
+                <Parameter/>
                 <Group xmlns="http://www.mbsim-env.de/MBSim" name="Elektronik">
                   <frames/>
                   <contours/>
@@ -530,7 +533,8 @@ ret = T*R/kM+kM*s(4)*ratio
                           <innerFunction>
                             <SymbolicFunction>
                               <definition arg1="s" arg1Dim="2">I = (s(2)-kM*s(1))/R
-ret = kM*I</definition>
+ret = kM*I
+                              </definition>
                             </SymbolicFunction>
                           </innerFunction>
                         </CompositeFunction>
@@ -594,7 +598,8 @@ ret = kM*I</definition>
                       </xmlVector>
                     </relativePosition>
                   </FixedRelativeFrame>
-                </frames><contours/>
+                </frames>
+                <contours/>
                 <openMBVRigidBody>
                   <Cylinder xmlns="http://www.mbsim-env.de/OpenMBV" name="Cylinder2">
                     <diffuseColor>
@@ -624,7 +629,7 @@ ret = kM*I</definition>
                     <height unit="m">l</height>
                   </Cylinder>
                 </openMBVRigidBody>
-                </RigidBody>
+              </RigidBody>
               <RigidBody name="Rotor">
                 <frameOfReference ref="../Object[Stator]/Frame[R]"/>
                 <frameForKinematics ref="Frame[P]"/>
@@ -670,7 +675,8 @@ ret = kM*I</definition>
                       </xmlVector>
                     </relativePosition>
                   </FixedRelativeFrame>
-                </frames><contours/>
+                </frames>
+                <contours/>
                 <openMBVRigidBody>
                   <Cylinder xmlns="http://www.mbsim-env.de/OpenMBV" name="Cylinder2">
                     <diffuseColor>
@@ -700,7 +706,7 @@ ret = kM*I</definition>
                     <height unit="m">l</height>
                   </Cylinder>
                 </openMBVRigidBody>
-                </RigidBody>
+              </RigidBody>
               <RigidBody name="Ausgang">
                 <frameOfReference ref="../Object[Stator]/Frame[Q]"/>
                 <frameForKinematics ref="Frame[P]"/>
@@ -746,7 +752,8 @@ ret = kM*I</definition>
                       </xmlVector>
                     </relativePosition>
                   </FixedRelativeFrame>
-                </frames><contours/>
+                </frames>
+                <contours/>
                 <openMBVRigidBody>
                   <Cylinder xmlns="http://www.mbsim-env.de/OpenMBV" name="Cylinder2">
                     <diffuseColor>
@@ -802,13 +809,15 @@ ret = kM*I</definition>
                     <returnSignal ref="../../Group[Elektronik]/Link[M]"/>
                   </SignalFunction>
                 </momentFunction>
-              </KineticExcitation></links>
+              </KineticExcitation>
+            </links>
             <constraints>
               <GeneralizedGearConstraint name="Gear">
                 <dependentRigidBody ref="../Object[Rotor]"/>
                 <independentRigidBody ratio="ratio" ref="../Object[Ausgang]"/>
               </GeneralizedGearConstraint>
-            </constraints><observers/>
+            </constraints>
+            <observers/>
           </Group>
         </Embed>
         <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -825,14 +834,14 @@ ret = kM*I</definition>
             <scalarParameter name="Umax">48</scalarParameter>
             <scalarParameter name="Umin">-48</scalarParameter>
             <scalarParameter name="Mmax">2.5</scalarParameter>
-            <stringParameter name="table">'data/MR3.asc'</stringParameter></Parameter>
+            <stringParameter name="table">'data/MR3.asc'</stringParameter>
+          </Parameter>
           <Group xmlns="http://www.mbsim-env.de/MBSim" name="MotorB00">
             <frames/>
             <contours/>
             <groups>
               <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                <Parameter>
-                </Parameter>
+                <Parameter/>
                 <Group xmlns="http://www.mbsim-env.de/MBSim" name="Regler">
                   <frames/>
                   <contours/>
@@ -883,7 +892,7 @@ ret = kM*I</definition>
                             <SymbolicFunction>
                               <definition arg1="s" arg1Dim="4">T = J*ratio*(P*(s(3)-s(1))+D*(s(4)-s(2)))
 ret = T*R/kM+kM*s(4)*ratio
-</definition>
+                              </definition>
                             </SymbolicFunction>
                           </innerFunction>
                         </CompositeFunction>
@@ -895,8 +904,7 @@ ret = T*R/kM+kM*s(4)*ratio
                 </Group>
               </Embed>
               <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                <Parameter>
-                </Parameter>
+                <Parameter/>
                 <Group xmlns="http://www.mbsim-env.de/MBSim" name="Elektronik">
                   <frames/>
                   <contours/>
@@ -920,7 +928,8 @@ ret = T*R/kM+kM*s(4)*ratio
                           <innerFunction>
                             <SymbolicFunction>
                               <definition arg1="s" arg1Dim="2">I = (s(2)-kM*s(1))/R
-ret = kM*I</definition>
+ret = kM*I
+                              </definition>
                             </SymbolicFunction>
                           </innerFunction>
                         </CompositeFunction>
@@ -946,8 +955,9 @@ ret = kM*I</definition>
                           <definition arg1="om" arg1Dim="1" xmlns="http://www.mbsim-env.de/MBSim">
                             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                               <ele>om(1)*30/pi</ele>
-                        </xmlVector>
-                      </definition>  </SymbolicFunction>
+                            </xmlVector>
+                          </definition>
+                        </SymbolicFunction>
                       </function>
                     </SignalOperation>
                     <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="nabs">
@@ -957,8 +967,9 @@ ret = kM*I</definition>
                           <definition arg1="n" arg1Dim="1" xmlns="http://www.mbsim-env.de/MBSim">
                             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                               <ele>abs(n(1))</ele>
-                        </xmlVector>
-                      </definition>  </SymbolicFunction>
+                            </xmlVector>
+                          </definition>
+                        </SymbolicFunction>
                       </function>
                     </SignalOperation>
                     <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="Mabs">
@@ -968,8 +979,9 @@ ret = kM*I</definition>
                           <definition arg1="M" arg1Dim="1" xmlns="http://www.mbsim-env.de/MBSim">
                             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                               <ele>abs(M(1))</ele>
-                        </xmlVector>
-                      </definition>  </SymbolicFunction>
+                            </xmlVector>
+                          </definition>
+                        </SymbolicFunction>
                       </function>
                     </SignalOperation>
                     <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="MReib">
@@ -979,16 +991,16 @@ ret = kM*I</definition>
                         <TwoDimensionalTabularFunction xmlns="http://www.mbsim-env.de/MBSim">
                           <xyz>
                             <fromFile xmlns="http://www.mbsim-env.de/MBXMLUtils" href="{table}"/>
-                        </xyz>
-                      </TwoDimensionalTabularFunction>
-                    </function>
-                  </SignalOperation>
+                          </xyz>
+                        </TwoDimensionalTabularFunction>
+                      </function>
+                    </SignalOperation>
                     <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="nsign">
                       <inputSignal ref="../Link[n]"/>
                       <function>
                         <SignumFunction xmlns="http://www.mbsim-env.de/MBSim"/>
-                    </function>
-                  </SignalOperation>
+                      </function>
+                    </SignalOperation>
                     <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="M">
                       <inputSignal ref="../Link[MReib]"/>
                       <inputSignal ref="../Link[nsign]"/>
@@ -997,8 +1009,9 @@ ret = kM*I</definition>
                           <definition arg1="M" arg1Dim="1" arg2="nsign" arg2Dim="1" xmlns="http://www.mbsim-env.de/MBSim">
                             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                               <ele>nsign(1)*M(1)</ele>
-                        </xmlVector>
-                      </definition>  </SymbolicFunction>
+                            </xmlVector>
+                          </definition>
+                        </SymbolicFunction>
                       </function>
                     </SignalOperation>
                     <KineticExcitation name="Reibmoment">
@@ -1007,21 +1020,22 @@ ret = kM*I</definition>
                         <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
                           <row>
                             <ele>0</ele>
-                        </row>
+                          </row>
                           <row>
                             <ele>0</ele>
-                        </row>
+                          </row>
                           <row>
                             <ele>-1</ele>
-                        </row>
-                      </xmlMatrix>
-                    </momentDirection>
+                          </row>
+                        </xmlMatrix>
+                      </momentDirection>
                       <momentFunction>
                         <SignalFunction xmlns="http://www.mbsim-env.de/MBSimControl">
                           <returnSignal ref="../../Link[M]"/>
-                      </SignalFunction>
-                    </momentFunction>
-                  </KineticExcitation></links>
+                        </SignalFunction>
+                      </momentFunction>
+                    </KineticExcitation>
+                  </links>
                   <constraints/>
                   <observers/>
                 </Group>
@@ -1079,7 +1093,8 @@ ret = kM*I</definition>
                       </xmlVector>
                     </relativePosition>
                   </FixedRelativeFrame>
-                </frames><contours/>
+                </frames>
+                <contours/>
                 <openMBVRigidBody>
                   <Cylinder xmlns="http://www.mbsim-env.de/OpenMBV" name="Cylinder2">
                     <diffuseColor>
@@ -1155,7 +1170,8 @@ ret = kM*I</definition>
                       </xmlVector>
                     </relativePosition>
                   </FixedRelativeFrame>
-                </frames><contours/>
+                </frames>
+                <contours/>
                 <openMBVRigidBody>
                   <Cylinder xmlns="http://www.mbsim-env.de/OpenMBV" name="Cylinder2">
                     <diffuseColor>
@@ -1185,7 +1201,7 @@ ret = kM*I</definition>
                     <height unit="m">l</height>
                   </Cylinder>
                 </openMBVRigidBody>
-                </RigidBody>
+              </RigidBody>
               <RigidBody name="Ausgang">
                 <frameOfReference ref="../Object[Stator]/Frame[Q]"/>
                 <frameForKinematics ref="Frame[P]"/>
@@ -1231,7 +1247,8 @@ ret = kM*I</definition>
                       </xmlVector>
                     </relativePosition>
                   </FixedRelativeFrame>
-                </frames><contours/>
+                </frames>
+                <contours/>
                 <openMBVRigidBody>
                   <Cylinder xmlns="http://www.mbsim-env.de/OpenMBV" name="Cylinder2">
                     <diffuseColor>
@@ -1287,13 +1304,15 @@ ret = kM*I</definition>
                     <returnSignal ref="../../Group[Elektronik]/Link[M]"/>
                   </SignalFunction>
                 </momentFunction>
-              </KineticExcitation></links>
+              </KineticExcitation>
+            </links>
             <constraints>
               <GeneralizedGearConstraint name="Gear">
                 <dependentRigidBody ref="../Object[Rotor]"/>
                 <independentRigidBody ratio="ratio" ref="../Object[Ausgang]"/>
               </GeneralizedGearConstraint>
-            </constraints><observers/>
+            </constraints>
+            <observers/>
           </Group>
         </Embed>
         <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -1310,14 +1329,14 @@ ret = kM*I</definition>
             <scalarParameter name="Umax">48</scalarParameter>
             <scalarParameter name="Umin">-48</scalarParameter>
             <scalarParameter name="Mmax">2.5</scalarParameter>
-            <stringParameter name="table">'data/MR3.asc'</stringParameter></Parameter>
+            <stringParameter name="table">'data/MR3.asc'</stringParameter>
+          </Parameter>
           <Group xmlns="http://www.mbsim-env.de/MBSim" name="MotorB01">
             <frames/>
             <contours/>
             <groups>
               <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                <Parameter>
-                </Parameter>
+                <Parameter/>
                 <Group xmlns="http://www.mbsim-env.de/MBSim" name="Regler">
                   <frames/>
                   <contours/>
@@ -1368,7 +1387,7 @@ ret = kM*I</definition>
                             <SymbolicFunction>
                               <definition arg1="s" arg1Dim="4">T = J*ratio*(P*(s(3)-s(1))+D*(s(4)-s(2)))
 ret = T*R/kM+kM*s(4)*ratio
-</definition>
+                              </definition>
                             </SymbolicFunction>
                           </innerFunction>
                         </CompositeFunction>
@@ -1380,8 +1399,7 @@ ret = T*R/kM+kM*s(4)*ratio
                 </Group>
               </Embed>
               <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                <Parameter>
-                </Parameter>
+                <Parameter/>
                 <Group xmlns="http://www.mbsim-env.de/MBSim" name="Elektronik">
                   <frames/>
                   <contours/>
@@ -1405,7 +1423,8 @@ ret = T*R/kM+kM*s(4)*ratio
                           <innerFunction>
                             <SymbolicFunction>
                               <definition arg1="s" arg1Dim="2">I = (s(2)-kM*s(1))/R
-ret = kM*I</definition>
+ret = kM*I
+                              </definition>
                             </SymbolicFunction>
                           </innerFunction>
                         </CompositeFunction>
@@ -1431,8 +1450,9 @@ ret = kM*I</definition>
                           <definition arg1="om" arg1Dim="1" xmlns="http://www.mbsim-env.de/MBSim">
                             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                               <ele>om(1)*30/pi</ele>
-                        </xmlVector>
-                      </definition>  </SymbolicFunction>
+                            </xmlVector>
+                          </definition>
+                        </SymbolicFunction>
                       </function>
                     </SignalOperation>
                     <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="nabs">
@@ -1442,8 +1462,9 @@ ret = kM*I</definition>
                           <definition arg1="n" arg1Dim="1" xmlns="http://www.mbsim-env.de/MBSim">
                             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                               <ele>abs(n(1))</ele>
-                        </xmlVector>
-                      </definition>  </SymbolicFunction>
+                            </xmlVector>
+                          </definition>
+                        </SymbolicFunction>
                       </function>
                     </SignalOperation>
                     <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="Mabs">
@@ -1453,8 +1474,9 @@ ret = kM*I</definition>
                           <definition arg1="M" arg1Dim="1" xmlns="http://www.mbsim-env.de/MBSim">
                             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                               <ele>abs(M(1))</ele>
-                        </xmlVector>
-                      </definition>  </SymbolicFunction>
+                            </xmlVector>
+                          </definition>
+                        </SymbolicFunction>
                       </function>
                     </SignalOperation>
                     <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="MReib">
@@ -1464,16 +1486,16 @@ ret = kM*I</definition>
                         <TwoDimensionalTabularFunction xmlns="http://www.mbsim-env.de/MBSim">
                           <xyz>
                             <fromFile xmlns="http://www.mbsim-env.de/MBXMLUtils" href="{table}"/>
-                        </xyz>
-                      </TwoDimensionalTabularFunction>
-                    </function>
-                  </SignalOperation>
+                          </xyz>
+                        </TwoDimensionalTabularFunction>
+                      </function>
+                    </SignalOperation>
                     <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="nsign">
                       <inputSignal ref="../Link[n]"/>
                       <function>
                         <SignumFunction xmlns="http://www.mbsim-env.de/MBSim"/>
-                    </function>
-                  </SignalOperation>
+                      </function>
+                    </SignalOperation>
                     <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="M">
                       <inputSignal ref="../Link[MReib]"/>
                       <inputSignal ref="../Link[nsign]"/>
@@ -1482,8 +1504,9 @@ ret = kM*I</definition>
                           <definition arg1="M" arg1Dim="1" arg2="nsign" arg2Dim="1" xmlns="http://www.mbsim-env.de/MBSim">
                             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                               <ele>nsign(1)*M(1)</ele>
-                        </xmlVector>
-                      </definition>  </SymbolicFunction>
+                            </xmlVector>
+                          </definition>
+                        </SymbolicFunction>
                       </function>
                     </SignalOperation>
                     <KineticExcitation name="Reibmoment">
@@ -1492,21 +1515,22 @@ ret = kM*I</definition>
                         <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
                           <row>
                             <ele>0</ele>
-                        </row>
+                          </row>
                           <row>
                             <ele>0</ele>
-                        </row>
+                          </row>
                           <row>
                             <ele>-1</ele>
-                        </row>
-                      </xmlMatrix>
-                    </momentDirection>
+                          </row>
+                        </xmlMatrix>
+                      </momentDirection>
                       <momentFunction>
                         <SignalFunction xmlns="http://www.mbsim-env.de/MBSimControl">
                           <returnSignal ref="../../Link[M]"/>
-                      </SignalFunction>
-                    </momentFunction>
-                  </KineticExcitation></links>
+                        </SignalFunction>
+                      </momentFunction>
+                    </KineticExcitation>
+                  </links>
                   <constraints/>
                   <observers/>
                 </Group>
@@ -1672,7 +1696,7 @@ ret = kM*I</definition>
                     <height unit="m">l</height>
                   </Cylinder>
                 </openMBVRigidBody>
-                </RigidBody>
+              </RigidBody>
               <RigidBody name="Ausgang">
                 <frameOfReference ref="../Object[Stator]/Frame[Q]"/>
                 <frameForKinematics ref="Frame[P]"/>
@@ -1775,12 +1799,15 @@ ret = kM*I</definition>
                     <returnSignal ref="../../Group[Elektronik]/Link[M]"/>
                   </SignalFunction>
                 </momentFunction>
-              </KineticExcitation></links><constraints>
+              </KineticExcitation>
+            </links>
+            <constraints>
               <GeneralizedGearConstraint name="Gear">
                 <dependentRigidBody ref="../Object[Rotor]"/>
                 <independentRigidBody ratio="ratio" ref="../Object[Ausgang]"/>
               </GeneralizedGearConstraint>
-            </constraints><observers/>
+            </constraints>
+            <observers/>
           </Group>
         </Embed>
         <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -1797,14 +1824,14 @@ ret = kM*I</definition>
             <scalarParameter name="Umax">48</scalarParameter>
             <scalarParameter name="Umin">-48</scalarParameter>
             <scalarParameter name="Mmax">2.5</scalarParameter>
-            <stringParameter name="table">'data/MR2.asc'</stringParameter></Parameter>
+            <stringParameter name="table">'data/MR2.asc'</stringParameter>
+          </Parameter>
           <Group xmlns="http://www.mbsim-env.de/MBSim" name="MotorB02">
             <frames/>
             <contours/>
             <groups>
               <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                <Parameter>
-                </Parameter>
+                <Parameter/>
                 <Group xmlns="http://www.mbsim-env.de/MBSim" name="Regler">
                   <frames/>
                   <contours/>
@@ -1855,7 +1882,7 @@ ret = kM*I</definition>
                             <SymbolicFunction>
                               <definition arg1="s" arg1Dim="4">T = J*ratio*(P*(s(3)-s(1))+D*(s(4)-s(2)))
 ret = T*R/kM+kM*s(4)*ratio
-</definition>
+                              </definition>
                             </SymbolicFunction>
                           </innerFunction>
                         </CompositeFunction>
@@ -1867,8 +1894,7 @@ ret = T*R/kM+kM*s(4)*ratio
                 </Group>
               </Embed>
               <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                <Parameter>
-                </Parameter>
+                <Parameter/>
                 <Group xmlns="http://www.mbsim-env.de/MBSim" name="Elektronik">
                   <frames/>
                   <contours/>
@@ -1892,7 +1918,8 @@ ret = T*R/kM+kM*s(4)*ratio
                           <innerFunction>
                             <SymbolicFunction>
                               <definition arg1="s" arg1Dim="2">I = (s(2)-kM*s(1))/R
-ret = kM*I</definition>
+ret = kM*I
+                              </definition>
                             </SymbolicFunction>
                           </innerFunction>
                         </CompositeFunction>
@@ -1918,8 +1945,9 @@ ret = kM*I</definition>
                           <definition arg1="om" arg1Dim="1" xmlns="http://www.mbsim-env.de/MBSim">
                             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                               <ele>om(1)*30/pi</ele>
-                        </xmlVector>
-                      </definition>  </SymbolicFunction>
+                            </xmlVector>
+                          </definition>
+                        </SymbolicFunction>
                       </function>
                     </SignalOperation>
                     <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="nabs">
@@ -1929,8 +1957,9 @@ ret = kM*I</definition>
                           <definition arg1="n" arg1Dim="1" xmlns="http://www.mbsim-env.de/MBSim">
                             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                               <ele>abs(n(1))</ele>
-                        </xmlVector>
-                      </definition>  </SymbolicFunction>
+                            </xmlVector>
+                          </definition>
+                        </SymbolicFunction>
                       </function>
                     </SignalOperation>
                     <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="Mabs">
@@ -1940,8 +1969,9 @@ ret = kM*I</definition>
                           <definition arg1="M" arg1Dim="1" xmlns="http://www.mbsim-env.de/MBSim">
                             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                               <ele>abs(M(1))</ele>
-                        </xmlVector>
-                      </definition>  </SymbolicFunction>
+                            </xmlVector>
+                          </definition>
+                        </SymbolicFunction>
                       </function>
                     </SignalOperation>
                     <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="MReib">
@@ -1951,16 +1981,16 @@ ret = kM*I</definition>
                         <TwoDimensionalTabularFunction xmlns="http://www.mbsim-env.de/MBSim">
                           <xyz>
                             <fromFile xmlns="http://www.mbsim-env.de/MBXMLUtils" href="{table}"/>
-                        </xyz>
-                      </TwoDimensionalTabularFunction>
-                    </function>
-                  </SignalOperation>
+                          </xyz>
+                        </TwoDimensionalTabularFunction>
+                      </function>
+                    </SignalOperation>
                     <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="nsign">
                       <inputSignal ref="../Link[n]"/>
                       <function>
                         <SignumFunction xmlns="http://www.mbsim-env.de/MBSim"/>
-                    </function>
-                  </SignalOperation>
+                      </function>
+                    </SignalOperation>
                     <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="M">
                       <inputSignal ref="../Link[MReib]"/>
                       <inputSignal ref="../Link[nsign]"/>
@@ -1969,8 +1999,9 @@ ret = kM*I</definition>
                           <definition arg1="M" arg1Dim="1" arg2="nsign" arg2Dim="1" xmlns="http://www.mbsim-env.de/MBSim">
                             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                               <ele>nsign(1)*M(1)</ele>
-                        </xmlVector>
-                      </definition>  </SymbolicFunction>
+                            </xmlVector>
+                          </definition>
+                        </SymbolicFunction>
                       </function>
                     </SignalOperation>
                     <KineticExcitation name="Reibmoment">
@@ -1979,21 +2010,21 @@ ret = kM*I</definition>
                         <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
                           <row>
                             <ele>0</ele>
-                        </row>
+                          </row>
                           <row>
                             <ele>0</ele>
-                        </row>
+                          </row>
                           <row>
                             <ele>-1</ele>
-                        </row>
-                      </xmlMatrix>
-                    </momentDirection>
+                          </row>
+                        </xmlMatrix>
+                      </momentDirection>
                       <momentFunction>
                         <SignalFunction xmlns="http://www.mbsim-env.de/MBSimControl">
                           <returnSignal ref="../../Link[M]"/>
-                      </SignalFunction>
-                    </momentFunction>
-                  </KineticExcitation>
+                        </SignalFunction>
+                      </momentFunction>
+                    </KineticExcitation>
                   </links>
                   <constraints/>
                   <observers/>
@@ -2052,7 +2083,8 @@ ret = kM*I</definition>
                       </xmlVector>
                     </relativePosition>
                   </FixedRelativeFrame>
-                </frames><contours/>
+                </frames>
+                <contours/>
                 <openMBVRigidBody>
                   <Cylinder xmlns="http://www.mbsim-env.de/OpenMBV" name="Cylinder2">
                     <diffuseColor>
@@ -2128,7 +2160,8 @@ ret = kM*I</definition>
                       </xmlVector>
                     </relativePosition>
                   </FixedRelativeFrame>
-                </frames><contours/>
+                </frames>
+                <contours/>
                 <openMBVRigidBody>
                   <Cylinder xmlns="http://www.mbsim-env.de/OpenMBV" name="Cylinder2">
                     <diffuseColor>
@@ -2158,7 +2191,7 @@ ret = kM*I</definition>
                     <height unit="m">l</height>
                   </Cylinder>
                 </openMBVRigidBody>
-                </RigidBody>
+              </RigidBody>
               <RigidBody name="Ausgang">
                 <frameOfReference ref="../Object[Stator]/Frame[Q]"/>
                 <frameForKinematics ref="Frame[P]"/>
@@ -2204,7 +2237,8 @@ ret = kM*I</definition>
                       </xmlVector>
                     </relativePosition>
                   </FixedRelativeFrame>
-                </frames><contours/>
+                </frames>
+                <contours/>
                 <openMBVRigidBody>
                   <Cylinder xmlns="http://www.mbsim-env.de/OpenMBV" name="Cylinder2">
                     <diffuseColor>
@@ -2235,7 +2269,8 @@ ret = kM*I</definition>
                   </Cylinder>
                 </openMBVRigidBody>
               </RigidBody>
-            </objects><links>
+            </objects>
+            <links>
               <GeneralizedVelocitySensor xmlns="http://www.mbsim-env.de/MBSimControl" name="om">
                 <object ref="../Object[Rotor]"/>
               </GeneralizedVelocitySensor>
@@ -2259,12 +2294,15 @@ ret = kM*I</definition>
                     <returnSignal ref="../../Group[Elektronik]/Link[M]"/>
                   </SignalFunction>
                 </momentFunction>
-              </KineticExcitation></links><constraints>
+              </KineticExcitation>
+            </links>
+            <constraints>
               <GeneralizedGearConstraint name="Gear">
                 <dependentRigidBody ref="../Object[Rotor]"/>
                 <independentRigidBody ratio="ratio" ref="../Object[Ausgang]"/>
               </GeneralizedGearConstraint>
-            </constraints><observers/>
+            </constraints>
+            <observers/>
           </Group>
         </Embed>
         <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -2281,14 +2319,14 @@ ret = kM*I</definition>
             <scalarParameter name="Umax">48</scalarParameter>
             <scalarParameter name="Umin">-48</scalarParameter>
             <scalarParameter name="Mmax">2.5</scalarParameter>
-            <stringParameter name="table">'data/MR2.asc'</stringParameter></Parameter>
+            <stringParameter name="table">'data/MR2.asc'</stringParameter>
+          </Parameter>
           <Group xmlns="http://www.mbsim-env.de/MBSim" name="MotorB03">
             <frames/>
             <contours/>
             <groups>
               <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                <Parameter>
-                </Parameter>
+                <Parameter/>
                 <Group xmlns="http://www.mbsim-env.de/MBSim" name="Regler">
                   <frames/>
                   <contours/>
@@ -2339,7 +2377,7 @@ ret = kM*I</definition>
                             <SymbolicFunction>
                               <definition arg1="s" arg1Dim="4">T = J*ratio*(P*(s(3)-s(1))+D*(s(4)-s(2)))
 ret = T*R/kM+kM*s(4)*ratio
-</definition>
+                              </definition>
                             </SymbolicFunction>
                           </innerFunction>
                         </CompositeFunction>
@@ -2351,8 +2389,7 @@ ret = T*R/kM+kM*s(4)*ratio
                 </Group>
               </Embed>
               <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                <Parameter>
-                </Parameter>
+                <Parameter/>
                 <Group xmlns="http://www.mbsim-env.de/MBSim" name="Elektronik">
                   <frames/>
                   <contours/>
@@ -2376,7 +2413,8 @@ ret = T*R/kM+kM*s(4)*ratio
                           <innerFunction>
                             <SymbolicFunction>
                               <definition arg1="s" arg1Dim="2">I = (s(2)-kM*s(1))/R
-ret = kM*I</definition>
+ret = kM*I
+                              </definition>
                             </SymbolicFunction>
                           </innerFunction>
                         </CompositeFunction>
@@ -2402,8 +2440,9 @@ ret = kM*I</definition>
                           <definition arg1="om" arg1Dim="1" xmlns="http://www.mbsim-env.de/MBSim">
                             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                               <ele>om(1)*30/pi</ele>
-                        </xmlVector>
-                      </definition>  </SymbolicFunction>
+                            </xmlVector>
+                          </definition>
+                        </SymbolicFunction>
                       </function>
                     </SignalOperation>
                     <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="nabs">
@@ -2413,8 +2452,9 @@ ret = kM*I</definition>
                           <definition arg1="n" arg1Dim="1" xmlns="http://www.mbsim-env.de/MBSim">
                             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                               <ele>abs(n(1))</ele>
-                        </xmlVector>
-                      </definition>  </SymbolicFunction>
+                            </xmlVector>
+                          </definition>
+                        </SymbolicFunction>
                       </function>
                     </SignalOperation>
                     <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="Mabs">
@@ -2424,8 +2464,9 @@ ret = kM*I</definition>
                           <definition arg1="M" arg1Dim="1" xmlns="http://www.mbsim-env.de/MBSim">
                             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                               <ele>abs(M(1))</ele>
-                        </xmlVector>
-                      </definition>  </SymbolicFunction>
+                            </xmlVector>
+                          </definition>
+                        </SymbolicFunction>
                       </function>
                     </SignalOperation>
                     <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="MReib">
@@ -2435,16 +2476,16 @@ ret = kM*I</definition>
                         <TwoDimensionalTabularFunction xmlns="http://www.mbsim-env.de/MBSim">
                           <xyz>
                             <fromFile xmlns="http://www.mbsim-env.de/MBXMLUtils" href="{table}"/>
-                        </xyz>
-                      </TwoDimensionalTabularFunction>
-                    </function>
-                  </SignalOperation>
+                          </xyz>
+                        </TwoDimensionalTabularFunction>
+                      </function>
+                    </SignalOperation>
                     <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="nsign">
                       <inputSignal ref="../Link[n]"/>
                       <function>
                         <SignumFunction xmlns="http://www.mbsim-env.de/MBSim"/>
-                    </function>
-                  </SignalOperation>
+                      </function>
+                    </SignalOperation>
                     <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="M">
                       <inputSignal ref="../Link[MReib]"/>
                       <inputSignal ref="../Link[nsign]"/>
@@ -2453,8 +2494,9 @@ ret = kM*I</definition>
                           <definition arg1="M" arg1Dim="1" arg2="nsign" arg2Dim="1" xmlns="http://www.mbsim-env.de/MBSim">
                             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                               <ele>nsign(1)*M(1)</ele>
-                        </xmlVector>
-                      </definition>  </SymbolicFunction>
+                            </xmlVector>
+                          </definition>
+                        </SymbolicFunction>
                       </function>
                     </SignalOperation>
                     <KineticExcitation name="Reibmoment">
@@ -2463,21 +2505,21 @@ ret = kM*I</definition>
                         <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
                           <row>
                             <ele>0</ele>
-                        </row>
+                          </row>
                           <row>
                             <ele>0</ele>
-                        </row>
+                          </row>
                           <row>
                             <ele>-1</ele>
-                        </row>
-                      </xmlMatrix>
-                    </momentDirection>
+                          </row>
+                        </xmlMatrix>
+                      </momentDirection>
                       <momentFunction>
                         <SignalFunction xmlns="http://www.mbsim-env.de/MBSimControl">
                           <returnSignal ref="../../Link[M]"/>
-                      </SignalFunction>
-                    </momentFunction>
-                  </KineticExcitation>
+                        </SignalFunction>
+                      </momentFunction>
+                    </KineticExcitation>
                   </links>
                   <constraints/>
                   <observers/>
@@ -2536,7 +2578,8 @@ ret = kM*I</definition>
                       </xmlVector>
                     </relativePosition>
                   </FixedRelativeFrame>
-                </frames><contours/>
+                </frames>
+                <contours/>
                 <openMBVRigidBody>
                   <Cylinder xmlns="http://www.mbsim-env.de/OpenMBV" name="Cylinder2">
                     <diffuseColor>
@@ -2612,7 +2655,8 @@ ret = kM*I</definition>
                       </xmlVector>
                     </relativePosition>
                   </FixedRelativeFrame>
-                </frames><contours/>
+                </frames>
+                <contours/>
                 <openMBVRigidBody>
                   <Cylinder xmlns="http://www.mbsim-env.de/OpenMBV" name="Cylinder2">
                     <diffuseColor>
@@ -2642,7 +2686,7 @@ ret = kM*I</definition>
                     <height unit="m">l</height>
                   </Cylinder>
                 </openMBVRigidBody>
-                </RigidBody>
+              </RigidBody>
               <RigidBody name="Ausgang">
                 <frameOfReference ref="../Object[Stator]/Frame[Q]"/>
                 <frameForKinematics ref="Frame[P]"/>
@@ -2688,7 +2732,8 @@ ret = kM*I</definition>
                       </xmlVector>
                     </relativePosition>
                   </FixedRelativeFrame>
-                </frames><contours/>
+                </frames>
+                <contours/>
                 <openMBVRigidBody>
                   <Cylinder xmlns="http://www.mbsim-env.de/OpenMBV" name="Cylinder2">
                     <diffuseColor>
@@ -2719,7 +2764,8 @@ ret = kM*I</definition>
                   </Cylinder>
                 </openMBVRigidBody>
               </RigidBody>
-            </objects><links>
+            </objects>
+            <links>
               <GeneralizedVelocitySensor xmlns="http://www.mbsim-env.de/MBSimControl" name="om">
                 <object ref="../Object[Rotor]"/>
               </GeneralizedVelocitySensor>
@@ -2743,12 +2789,15 @@ ret = kM*I</definition>
                     <returnSignal ref="../../Group[Elektronik]/Link[M]"/>
                   </SignalFunction>
                 </momentFunction>
-              </KineticExcitation></links><constraints>
+              </KineticExcitation>
+            </links>
+            <constraints>
               <GeneralizedGearConstraint name="Gear">
                 <dependentRigidBody ref="../Object[Rotor]"/>
                 <independentRigidBody ratio="ratio" ref="../Object[Ausgang]"/>
               </GeneralizedGearConstraint>
-            </constraints><observers/>
+            </constraints>
+            <observers/>
           </Group>
         </Embed>
         <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -2765,14 +2814,14 @@ ret = kM*I</definition>
             <scalarParameter name="Umax">48</scalarParameter>
             <scalarParameter name="Umin">-48</scalarParameter>
             <scalarParameter name="Mmax">2.5</scalarParameter>
-            <stringParameter name="table">'data/MR3.asc'</stringParameter></Parameter>
+            <stringParameter name="table">'data/MR3.asc'</stringParameter>
+          </Parameter>
           <Group xmlns="http://www.mbsim-env.de/MBSim" name="MotorB10">
             <frames/>
             <contours/>
             <groups>
               <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                <Parameter>
-                </Parameter>
+                <Parameter/>
                 <Group xmlns="http://www.mbsim-env.de/MBSim" name="Regler">
                   <frames/>
                   <contours/>
@@ -2823,7 +2872,7 @@ ret = kM*I</definition>
                             <SymbolicFunction>
                               <definition arg1="s" arg1Dim="4">T = J*ratio*(P*(s(3)-s(1))+D*(s(4)-s(2)))
 ret = T*R/kM+kM*s(4)*ratio
-</definition>
+                              </definition>
                             </SymbolicFunction>
                           </innerFunction>
                         </CompositeFunction>
@@ -2835,8 +2884,7 @@ ret = T*R/kM+kM*s(4)*ratio
                 </Group>
               </Embed>
               <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                <Parameter>
-                </Parameter>
+                <Parameter/>
                 <Group xmlns="http://www.mbsim-env.de/MBSim" name="Elektronik">
                   <frames/>
                   <contours/>
@@ -2860,7 +2908,8 @@ ret = T*R/kM+kM*s(4)*ratio
                           <innerFunction>
                             <SymbolicFunction>
                               <definition arg1="s" arg1Dim="2">I = (s(2)-kM*s(1))/R
-ret = kM*I</definition>
+ret = kM*I
+                              </definition>
                             </SymbolicFunction>
                           </innerFunction>
                         </CompositeFunction>
@@ -2886,8 +2935,9 @@ ret = kM*I</definition>
                           <definition arg1="om" arg1Dim="1" xmlns="http://www.mbsim-env.de/MBSim">
                             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                               <ele>om(1)*30/pi</ele>
-                        </xmlVector>
-                      </definition>  </SymbolicFunction>
+                            </xmlVector>
+                          </definition>
+                        </SymbolicFunction>
                       </function>
                     </SignalOperation>
                     <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="nabs">
@@ -2897,8 +2947,9 @@ ret = kM*I</definition>
                           <definition arg1="n" arg1Dim="1" xmlns="http://www.mbsim-env.de/MBSim">
                             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                               <ele>abs(n(1))</ele>
-                        </xmlVector>
-                      </definition>  </SymbolicFunction>
+                            </xmlVector>
+                          </definition>
+                        </SymbolicFunction>
                       </function>
                     </SignalOperation>
                     <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="Mabs">
@@ -2908,8 +2959,9 @@ ret = kM*I</definition>
                           <definition arg1="M" arg1Dim="1" xmlns="http://www.mbsim-env.de/MBSim">
                             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                               <ele>abs(M(1))</ele>
-                        </xmlVector>
-                      </definition>  </SymbolicFunction>
+                            </xmlVector>
+                          </definition>
+                        </SymbolicFunction>
                       </function>
                     </SignalOperation>
                     <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="MReib">
@@ -2919,16 +2971,16 @@ ret = kM*I</definition>
                         <TwoDimensionalTabularFunction xmlns="http://www.mbsim-env.de/MBSim">
                           <xyz>
                             <fromFile xmlns="http://www.mbsim-env.de/MBXMLUtils" href="{table}"/>
-                        </xyz>
-                      </TwoDimensionalTabularFunction>
-                    </function>
-                  </SignalOperation>
+                          </xyz>
+                        </TwoDimensionalTabularFunction>
+                      </function>
+                    </SignalOperation>
                     <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="nsign">
                       <inputSignal ref="../Link[n]"/>
                       <function>
                         <SignumFunction xmlns="http://www.mbsim-env.de/MBSim"/>
-                    </function>
-                  </SignalOperation>
+                      </function>
+                    </SignalOperation>
                     <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="M">
                       <inputSignal ref="../Link[MReib]"/>
                       <inputSignal ref="../Link[nsign]"/>
@@ -2937,8 +2989,9 @@ ret = kM*I</definition>
                           <definition arg1="M" arg1Dim="1" arg2="nsign" arg2Dim="1" xmlns="http://www.mbsim-env.de/MBSim">
                             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                               <ele>nsign(1)*M(1)</ele>
-                        </xmlVector>
-                      </definition>  </SymbolicFunction>
+                            </xmlVector>
+                          </definition>
+                        </SymbolicFunction>
                       </function>
                     </SignalOperation>
                     <KineticExcitation name="Reibmoment">
@@ -2947,21 +3000,22 @@ ret = kM*I</definition>
                         <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
                           <row>
                             <ele>0</ele>
-                        </row>
+                          </row>
                           <row>
                             <ele>0</ele>
-                        </row>
+                          </row>
                           <row>
                             <ele>-1</ele>
-                        </row>
-                      </xmlMatrix>
-                    </momentDirection>
+                          </row>
+                        </xmlMatrix>
+                      </momentDirection>
                       <momentFunction>
                         <SignalFunction xmlns="http://www.mbsim-env.de/MBSimControl">
                           <returnSignal ref="../../Link[M]"/>
-                      </SignalFunction>
-                    </momentFunction>
-                  </KineticExcitation></links>
+                        </SignalFunction>
+                      </momentFunction>
+                    </KineticExcitation>
+                  </links>
                   <constraints/>
                   <observers/>
                 </Group>
@@ -3019,7 +3073,8 @@ ret = kM*I</definition>
                       </xmlVector>
                     </relativePosition>
                   </FixedRelativeFrame>
-                </frames><contours/>
+                </frames>
+                <contours/>
                 <openMBVRigidBody>
                   <Cylinder xmlns="http://www.mbsim-env.de/OpenMBV" name="Cylinder2">
                     <diffuseColor>
@@ -3095,7 +3150,8 @@ ret = kM*I</definition>
                       </xmlVector>
                     </relativePosition>
                   </FixedRelativeFrame>
-                </frames><contours/>
+                </frames>
+                <contours/>
                 <openMBVRigidBody>
                   <Cylinder xmlns="http://www.mbsim-env.de/OpenMBV" name="Cylinder2">
                     <diffuseColor>
@@ -3125,7 +3181,7 @@ ret = kM*I</definition>
                     <height unit="m">l</height>
                   </Cylinder>
                 </openMBVRigidBody>
-                </RigidBody>
+              </RigidBody>
               <RigidBody name="Ausgang">
                 <frameOfReference ref="../Object[Stator]/Frame[Q]"/>
                 <frameForKinematics ref="Frame[P]"/>
@@ -3171,7 +3227,8 @@ ret = kM*I</definition>
                       </xmlVector>
                     </relativePosition>
                   </FixedRelativeFrame>
-                </frames><contours/>
+                </frames>
+                <contours/>
                 <openMBVRigidBody>
                   <Cylinder xmlns="http://www.mbsim-env.de/OpenMBV" name="Cylinder2">
                     <diffuseColor>
@@ -3202,7 +3259,8 @@ ret = kM*I</definition>
                   </Cylinder>
                 </openMBVRigidBody>
               </RigidBody>
-            </objects><links>
+            </objects>
+            <links>
               <GeneralizedVelocitySensor xmlns="http://www.mbsim-env.de/MBSimControl" name="om">
                 <object ref="../Object[Rotor]"/>
               </GeneralizedVelocitySensor>
@@ -3226,12 +3284,15 @@ ret = kM*I</definition>
                     <returnSignal ref="../../Group[Elektronik]/Link[M]"/>
                   </SignalFunction>
                 </momentFunction>
-              </KineticExcitation></links><constraints>
+              </KineticExcitation>
+            </links>
+            <constraints>
               <GeneralizedGearConstraint name="Gear">
                 <dependentRigidBody ref="../Object[Rotor]"/>
                 <independentRigidBody ratio="ratio" ref="../Object[Ausgang]"/>
               </GeneralizedGearConstraint>
-            </constraints><observers/>
+            </constraints>
+            <observers/>
           </Group>
         </Embed>
         <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -3248,14 +3309,14 @@ ret = kM*I</definition>
             <scalarParameter name="Umax">48</scalarParameter>
             <scalarParameter name="Umin">-48</scalarParameter>
             <scalarParameter name="Mmax">2.5</scalarParameter>
-            <stringParameter name="table">'data/MR3.asc'</stringParameter></Parameter>
+            <stringParameter name="table">'data/MR3.asc'</stringParameter>
+          </Parameter>
           <Group xmlns="http://www.mbsim-env.de/MBSim" name="MotorB11">
             <frames/>
             <contours/>
             <groups>
               <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                <Parameter>
-                </Parameter>
+                <Parameter/>
                 <Group xmlns="http://www.mbsim-env.de/MBSim" name="Regler">
                   <frames/>
                   <contours/>
@@ -3306,7 +3367,7 @@ ret = kM*I</definition>
                             <SymbolicFunction>
                               <definition arg1="s" arg1Dim="4">T = J*ratio*(P*(s(3)-s(1))+D*(s(4)-s(2)))
 ret = T*R/kM+kM*s(4)*ratio
-</definition>
+                              </definition>
                             </SymbolicFunction>
                           </innerFunction>
                         </CompositeFunction>
@@ -3318,8 +3379,7 @@ ret = T*R/kM+kM*s(4)*ratio
                 </Group>
               </Embed>
               <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                <Parameter>
-                </Parameter>
+                <Parameter/>
                 <Group xmlns="http://www.mbsim-env.de/MBSim" name="Elektronik">
                   <frames/>
                   <contours/>
@@ -3343,7 +3403,8 @@ ret = T*R/kM+kM*s(4)*ratio
                           <innerFunction>
                             <SymbolicFunction>
                               <definition arg1="s" arg1Dim="2">I = (s(2)-kM*s(1))/R
-ret = kM*I</definition>
+ret = kM*I
+                              </definition>
                             </SymbolicFunction>
                           </innerFunction>
                         </CompositeFunction>
@@ -3369,8 +3430,9 @@ ret = kM*I</definition>
                           <definition arg1="om" arg1Dim="1" xmlns="http://www.mbsim-env.de/MBSim">
                             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                               <ele>om(1)*30/pi</ele>
-                        </xmlVector>
-                      </definition>  </SymbolicFunction>
+                            </xmlVector>
+                          </definition>
+                        </SymbolicFunction>
                       </function>
                     </SignalOperation>
                     <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="nabs">
@@ -3380,8 +3442,9 @@ ret = kM*I</definition>
                           <definition arg1="n" arg1Dim="1" xmlns="http://www.mbsim-env.de/MBSim">
                             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                               <ele>abs(n(1))</ele>
-                        </xmlVector>
-                      </definition>  </SymbolicFunction>
+                            </xmlVector>
+                          </definition>
+                        </SymbolicFunction>
                       </function>
                     </SignalOperation>
                     <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="Mabs">
@@ -3391,8 +3454,9 @@ ret = kM*I</definition>
                           <definition arg1="M" arg1Dim="1" xmlns="http://www.mbsim-env.de/MBSim">
                             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                               <ele>abs(M(1))</ele>
-                        </xmlVector>
-                      </definition>  </SymbolicFunction>
+                            </xmlVector>
+                          </definition>
+                        </SymbolicFunction>
                       </function>
                     </SignalOperation>
                     <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="MReib">
@@ -3402,16 +3466,16 @@ ret = kM*I</definition>
                         <TwoDimensionalTabularFunction xmlns="http://www.mbsim-env.de/MBSim">
                           <xyz>
                             <fromFile xmlns="http://www.mbsim-env.de/MBXMLUtils" href="{table}"/>
-                        </xyz>
-                      </TwoDimensionalTabularFunction>
-                    </function>
-                  </SignalOperation>
+                          </xyz>
+                        </TwoDimensionalTabularFunction>
+                      </function>
+                    </SignalOperation>
                     <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="nsign">
                       <inputSignal ref="../Link[n]"/>
                       <function>
                         <SignumFunction xmlns="http://www.mbsim-env.de/MBSim"/>
-                    </function>
-                  </SignalOperation>
+                      </function>
+                    </SignalOperation>
                     <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="M">
                       <inputSignal ref="../Link[MReib]"/>
                       <inputSignal ref="../Link[nsign]"/>
@@ -3420,8 +3484,9 @@ ret = kM*I</definition>
                           <definition arg1="M" arg1Dim="1" arg2="nsign" arg2Dim="1" xmlns="http://www.mbsim-env.de/MBSim">
                             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                               <ele>nsign(1)*M(1)</ele>
-                        </xmlVector>
-                      </definition>  </SymbolicFunction>
+                            </xmlVector>
+                          </definition>
+                        </SymbolicFunction>
                       </function>
                     </SignalOperation>
                     <KineticExcitation name="Reibmoment">
@@ -3430,21 +3495,22 @@ ret = kM*I</definition>
                         <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
                           <row>
                             <ele>0</ele>
-                        </row>
+                          </row>
                           <row>
                             <ele>0</ele>
-                        </row>
+                          </row>
                           <row>
                             <ele>-1</ele>
-                        </row>
-                      </xmlMatrix>
-                    </momentDirection>
+                          </row>
+                        </xmlMatrix>
+                      </momentDirection>
                       <momentFunction>
                         <SignalFunction xmlns="http://www.mbsim-env.de/MBSimControl">
                           <returnSignal ref="../../Link[M]"/>
-                      </SignalFunction>
-                    </momentFunction>
-                  </KineticExcitation></links>
+                        </SignalFunction>
+                      </momentFunction>
+                    </KineticExcitation>
+                  </links>
                   <constraints/>
                   <observers/>
                 </Group>
@@ -3502,7 +3568,8 @@ ret = kM*I</definition>
                       </xmlVector>
                     </relativePosition>
                   </FixedRelativeFrame>
-                </frames><contours/>
+                </frames>
+                <contours/>
                 <openMBVRigidBody>
                   <Cylinder xmlns="http://www.mbsim-env.de/OpenMBV" name="Cylinder2">
                     <diffuseColor>
@@ -3578,7 +3645,8 @@ ret = kM*I</definition>
                       </xmlVector>
                     </relativePosition>
                   </FixedRelativeFrame>
-                </frames><contours/>
+                </frames>
+                <contours/>
                 <openMBVRigidBody>
                   <Cylinder xmlns="http://www.mbsim-env.de/OpenMBV" name="Cylinder2">
                     <diffuseColor>
@@ -3608,7 +3676,7 @@ ret = kM*I</definition>
                     <height unit="m">l</height>
                   </Cylinder>
                 </openMBVRigidBody>
-                </RigidBody>
+              </RigidBody>
               <RigidBody name="Ausgang">
                 <frameOfReference ref="../Object[Stator]/Frame[Q]"/>
                 <frameForKinematics ref="Frame[P]"/>
@@ -3654,7 +3722,8 @@ ret = kM*I</definition>
                       </xmlVector>
                     </relativePosition>
                   </FixedRelativeFrame>
-                </frames><contours/>
+                </frames>
+                <contours/>
                 <openMBVRigidBody>
                   <Cylinder xmlns="http://www.mbsim-env.de/OpenMBV" name="Cylinder2">
                     <diffuseColor>
@@ -3685,7 +3754,8 @@ ret = kM*I</definition>
                   </Cylinder>
                 </openMBVRigidBody>
               </RigidBody>
-            </objects><links>
+            </objects>
+            <links>
               <GeneralizedVelocitySensor xmlns="http://www.mbsim-env.de/MBSimControl" name="om">
                 <object ref="../Object[Rotor]"/>
               </GeneralizedVelocitySensor>
@@ -3709,12 +3779,15 @@ ret = kM*I</definition>
                     <returnSignal ref="../../Group[Elektronik]/Link[M]"/>
                   </SignalFunction>
                 </momentFunction>
-              </KineticExcitation></links><constraints>
+              </KineticExcitation>
+            </links>
+            <constraints>
               <GeneralizedGearConstraint name="Gear">
                 <dependentRigidBody ref="../Object[Rotor]"/>
                 <independentRigidBody ratio="ratio" ref="../Object[Ausgang]"/>
               </GeneralizedGearConstraint>
-            </constraints><observers/>
+            </constraints>
+            <observers/>
           </Group>
         </Embed>
         <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -3731,14 +3804,14 @@ ret = kM*I</definition>
             <scalarParameter name="Umax">48</scalarParameter>
             <scalarParameter name="Umin">-48</scalarParameter>
             <scalarParameter name="Mmax">2.5</scalarParameter>
-            <stringParameter name="table">'data/MR2.asc'</stringParameter></Parameter>
+            <stringParameter name="table">'data/MR2.asc'</stringParameter>
+          </Parameter>
           <Group xmlns="http://www.mbsim-env.de/MBSim" name="MotorB12">
             <frames/>
             <contours/>
             <groups>
               <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                <Parameter>
-                </Parameter>
+                <Parameter/>
                 <Group xmlns="http://www.mbsim-env.de/MBSim" name="Regler">
                   <frames/>
                   <contours/>
@@ -3789,7 +3862,7 @@ ret = kM*I</definition>
                             <SymbolicFunction>
                               <definition arg1="s" arg1Dim="4">T = J*ratio*(P*(s(3)-s(1))+D*(s(4)-s(2)))
 ret = T*R/kM+kM*s(4)*ratio
-</definition>
+                              </definition>
                             </SymbolicFunction>
                           </innerFunction>
                         </CompositeFunction>
@@ -3801,8 +3874,7 @@ ret = T*R/kM+kM*s(4)*ratio
                 </Group>
               </Embed>
               <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                <Parameter>
-                </Parameter>
+                <Parameter/>
                 <Group xmlns="http://www.mbsim-env.de/MBSim" name="Elektronik">
                   <frames/>
                   <contours/>
@@ -3826,7 +3898,8 @@ ret = T*R/kM+kM*s(4)*ratio
                           <innerFunction>
                             <SymbolicFunction>
                               <definition arg1="s" arg1Dim="2">I = (s(2)-kM*s(1))/R
-ret = kM*I</definition>
+ret = kM*I
+                              </definition>
                             </SymbolicFunction>
                           </innerFunction>
                         </CompositeFunction>
@@ -3852,8 +3925,9 @@ ret = kM*I</definition>
                           <definition arg1="om" arg1Dim="1" xmlns="http://www.mbsim-env.de/MBSim">
                             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                               <ele>om(1)*30/pi</ele>
-                        </xmlVector>
-                      </definition>  </SymbolicFunction>
+                            </xmlVector>
+                          </definition>
+                        </SymbolicFunction>
                       </function>
                     </SignalOperation>
                     <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="nabs">
@@ -3863,8 +3937,9 @@ ret = kM*I</definition>
                           <definition arg1="n" arg1Dim="1" xmlns="http://www.mbsim-env.de/MBSim">
                             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                               <ele>abs(n(1))</ele>
-                        </xmlVector>
-                      </definition>  </SymbolicFunction>
+                            </xmlVector>
+                          </definition>
+                        </SymbolicFunction>
                       </function>
                     </SignalOperation>
                     <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="Mabs">
@@ -3874,8 +3949,9 @@ ret = kM*I</definition>
                           <definition arg1="M" arg1Dim="1" xmlns="http://www.mbsim-env.de/MBSim">
                             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                               <ele>abs(M(1))</ele>
-                        </xmlVector>
-                      </definition>  </SymbolicFunction>
+                            </xmlVector>
+                          </definition>
+                        </SymbolicFunction>
                       </function>
                     </SignalOperation>
                     <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="MReib">
@@ -3885,16 +3961,16 @@ ret = kM*I</definition>
                         <TwoDimensionalTabularFunction xmlns="http://www.mbsim-env.de/MBSim">
                           <xyz>
                             <fromFile xmlns="http://www.mbsim-env.de/MBXMLUtils" href="{table}"/>
-                        </xyz>
-                      </TwoDimensionalTabularFunction>
-                    </function>
-                  </SignalOperation>
+                          </xyz>
+                        </TwoDimensionalTabularFunction>
+                      </function>
+                    </SignalOperation>
                     <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="nsign">
                       <inputSignal ref="../Link[n]"/>
                       <function>
                         <SignumFunction xmlns="http://www.mbsim-env.de/MBSim"/>
-                    </function>
-                  </SignalOperation>
+                      </function>
+                    </SignalOperation>
                     <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="M">
                       <inputSignal ref="../Link[MReib]"/>
                       <inputSignal ref="../Link[nsign]"/>
@@ -3903,8 +3979,9 @@ ret = kM*I</definition>
                           <definition arg1="M" arg1Dim="1" arg2="nsign" arg2Dim="1" xmlns="http://www.mbsim-env.de/MBSim">
                             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                               <ele>nsign(1)*M(1)</ele>
-                        </xmlVector>
-                      </definition>  </SymbolicFunction>
+                            </xmlVector>
+                          </definition>
+                        </SymbolicFunction>
                       </function>
                     </SignalOperation>
                     <KineticExcitation name="Reibmoment">
@@ -3913,21 +3990,21 @@ ret = kM*I</definition>
                         <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
                           <row>
                             <ele>0</ele>
-                        </row>
+                          </row>
                           <row>
                             <ele>0</ele>
-                        </row>
+                          </row>
                           <row>
                             <ele>-1</ele>
-                        </row>
-                      </xmlMatrix>
-                    </momentDirection>
+                          </row>
+                        </xmlMatrix>
+                      </momentDirection>
                       <momentFunction>
                         <SignalFunction xmlns="http://www.mbsim-env.de/MBSimControl">
                           <returnSignal ref="../../Link[M]"/>
-                      </SignalFunction>
-                    </momentFunction>
-                  </KineticExcitation>
+                        </SignalFunction>
+                      </momentFunction>
+                    </KineticExcitation>
                   </links>
                   <constraints/>
                   <observers/>
@@ -3986,7 +4063,8 @@ ret = kM*I</definition>
                       </xmlVector>
                     </relativePosition>
                   </FixedRelativeFrame>
-                </frames><contours/>
+                </frames>
+                <contours/>
                 <openMBVRigidBody>
                   <Cylinder xmlns="http://www.mbsim-env.de/OpenMBV" name="Cylinder2">
                     <diffuseColor>
@@ -4062,7 +4140,8 @@ ret = kM*I</definition>
                       </xmlVector>
                     </relativePosition>
                   </FixedRelativeFrame>
-                </frames><contours/>
+                </frames>
+                <contours/>
                 <openMBVRigidBody>
                   <Cylinder xmlns="http://www.mbsim-env.de/OpenMBV" name="Cylinder2">
                     <diffuseColor>
@@ -4092,7 +4171,7 @@ ret = kM*I</definition>
                     <height unit="m">l</height>
                   </Cylinder>
                 </openMBVRigidBody>
-                </RigidBody>
+              </RigidBody>
               <RigidBody name="Ausgang">
                 <frameOfReference ref="../Object[Stator]/Frame[Q]"/>
                 <frameForKinematics ref="Frame[P]"/>
@@ -4138,7 +4217,8 @@ ret = kM*I</definition>
                       </xmlVector>
                     </relativePosition>
                   </FixedRelativeFrame>
-                </frames><contours/>
+                </frames>
+                <contours/>
                 <openMBVRigidBody>
                   <Cylinder xmlns="http://www.mbsim-env.de/OpenMBV" name="Cylinder2">
                     <diffuseColor>
@@ -4169,7 +4249,8 @@ ret = kM*I</definition>
                   </Cylinder>
                 </openMBVRigidBody>
               </RigidBody>
-            </objects><links>
+            </objects>
+            <links>
               <GeneralizedVelocitySensor xmlns="http://www.mbsim-env.de/MBSimControl" name="om">
                 <object ref="../Object[Rotor]"/>
               </GeneralizedVelocitySensor>
@@ -4193,12 +4274,15 @@ ret = kM*I</definition>
                     <returnSignal ref="../../Group[Elektronik]/Link[M]"/>
                   </SignalFunction>
                 </momentFunction>
-              </KineticExcitation></links><constraints>
+              </KineticExcitation>
+            </links>
+            <constraints>
               <GeneralizedGearConstraint name="Gear">
                 <dependentRigidBody ref="../Object[Rotor]"/>
                 <independentRigidBody ratio="ratio" ref="../Object[Ausgang]"/>
               </GeneralizedGearConstraint>
-            </constraints><observers/>
+            </constraints>
+            <observers/>
           </Group>
         </Embed>
         <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -4215,14 +4299,14 @@ ret = kM*I</definition>
             <scalarParameter name="Umax">48</scalarParameter>
             <scalarParameter name="Umin">-48</scalarParameter>
             <scalarParameter name="Mmax">2.5</scalarParameter>
-            <stringParameter name="table">'data/MR2.asc'</stringParameter></Parameter>
+            <stringParameter name="table">'data/MR2.asc'</stringParameter>
+          </Parameter>
           <Group xmlns="http://www.mbsim-env.de/MBSim" name="MotorB13">
             <frames/>
             <contours/>
             <groups>
               <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                <Parameter>
-                </Parameter>
+                <Parameter/>
                 <Group xmlns="http://www.mbsim-env.de/MBSim" name="Regler">
                   <frames/>
                   <contours/>
@@ -4273,7 +4357,7 @@ ret = kM*I</definition>
                             <SymbolicFunction>
                               <definition arg1="s" arg1Dim="4">T = J*ratio*(P*(s(3)-s(1))+D*(s(4)-s(2)))
 ret = T*R/kM+kM*s(4)*ratio
-</definition>
+                              </definition>
                             </SymbolicFunction>
                           </innerFunction>
                         </CompositeFunction>
@@ -4285,8 +4369,7 @@ ret = T*R/kM+kM*s(4)*ratio
                 </Group>
               </Embed>
               <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                <Parameter>
-                </Parameter>
+                <Parameter/>
                 <Group xmlns="http://www.mbsim-env.de/MBSim" name="Elektronik">
                   <frames/>
                   <contours/>
@@ -4310,7 +4393,8 @@ ret = T*R/kM+kM*s(4)*ratio
                           <innerFunction>
                             <SymbolicFunction>
                               <definition arg1="s" arg1Dim="2">I = (s(2)-kM*s(1))/R
-ret = kM*I</definition>
+ret = kM*I
+                              </definition>
                             </SymbolicFunction>
                           </innerFunction>
                         </CompositeFunction>
@@ -4336,8 +4420,9 @@ ret = kM*I</definition>
                           <definition arg1="om" arg1Dim="1" xmlns="http://www.mbsim-env.de/MBSim">
                             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                               <ele>om(1)*30/pi</ele>
-                        </xmlVector>
-                      </definition>  </SymbolicFunction>
+                            </xmlVector>
+                          </definition>
+                        </SymbolicFunction>
                       </function>
                     </SignalOperation>
                     <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="nabs">
@@ -4347,8 +4432,9 @@ ret = kM*I</definition>
                           <definition arg1="n" arg1Dim="1" xmlns="http://www.mbsim-env.de/MBSim">
                             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                               <ele>abs(n(1))</ele>
-                        </xmlVector>
-                      </definition>  </SymbolicFunction>
+                            </xmlVector>
+                          </definition>
+                        </SymbolicFunction>
                       </function>
                     </SignalOperation>
                     <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="Mabs">
@@ -4358,8 +4444,9 @@ ret = kM*I</definition>
                           <definition arg1="M" arg1Dim="1" xmlns="http://www.mbsim-env.de/MBSim">
                             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                               <ele>abs(M(1))</ele>
-                        </xmlVector>
-                      </definition>  </SymbolicFunction>
+                            </xmlVector>
+                          </definition>
+                        </SymbolicFunction>
                       </function>
                     </SignalOperation>
                     <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="MReib">
@@ -4369,16 +4456,16 @@ ret = kM*I</definition>
                         <TwoDimensionalTabularFunction xmlns="http://www.mbsim-env.de/MBSim">
                           <xyz>
                             <fromFile xmlns="http://www.mbsim-env.de/MBXMLUtils" href="{table}"/>
-                        </xyz>
-                      </TwoDimensionalTabularFunction>
-                    </function>
-                  </SignalOperation>
+                          </xyz>
+                        </TwoDimensionalTabularFunction>
+                      </function>
+                    </SignalOperation>
                     <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="nsign">
                       <inputSignal ref="../Link[n]"/>
                       <function>
                         <SignumFunction xmlns="http://www.mbsim-env.de/MBSim"/>
-                    </function>
-                  </SignalOperation>
+                      </function>
+                    </SignalOperation>
                     <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="M">
                       <inputSignal ref="../Link[MReib]"/>
                       <inputSignal ref="../Link[nsign]"/>
@@ -4387,8 +4474,9 @@ ret = kM*I</definition>
                           <definition arg1="M" arg1Dim="1" arg2="nsign" arg2Dim="1" xmlns="http://www.mbsim-env.de/MBSim">
                             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                               <ele>nsign(1)*M(1)</ele>
-                        </xmlVector>
-                      </definition>  </SymbolicFunction>
+                            </xmlVector>
+                          </definition>
+                        </SymbolicFunction>
                       </function>
                     </SignalOperation>
                     <KineticExcitation name="Reibmoment">
@@ -4397,21 +4485,21 @@ ret = kM*I</definition>
                         <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
                           <row>
                             <ele>0</ele>
-                        </row>
+                          </row>
                           <row>
                             <ele>0</ele>
-                        </row>
+                          </row>
                           <row>
                             <ele>-1</ele>
-                        </row>
-                      </xmlMatrix>
-                    </momentDirection>
+                          </row>
+                        </xmlMatrix>
+                      </momentDirection>
                       <momentFunction>
                         <SignalFunction xmlns="http://www.mbsim-env.de/MBSimControl">
                           <returnSignal ref="../../Link[M]"/>
-                      </SignalFunction>
-                    </momentFunction>
-                  </KineticExcitation>
+                        </SignalFunction>
+                      </momentFunction>
+                    </KineticExcitation>
                   </links>
                   <constraints/>
                   <observers/>
@@ -4470,7 +4558,8 @@ ret = kM*I</definition>
                       </xmlVector>
                     </relativePosition>
                   </FixedRelativeFrame>
-                </frames><contours/>
+                </frames>
+                <contours/>
                 <openMBVRigidBody>
                   <Cylinder xmlns="http://www.mbsim-env.de/OpenMBV" name="Cylinder2">
                     <diffuseColor>
@@ -4546,7 +4635,8 @@ ret = kM*I</definition>
                       </xmlVector>
                     </relativePosition>
                   </FixedRelativeFrame>
-                </frames><contours/>
+                </frames>
+                <contours/>
                 <openMBVRigidBody>
                   <Cylinder xmlns="http://www.mbsim-env.de/OpenMBV" name="Cylinder2">
                     <diffuseColor>
@@ -4576,7 +4666,7 @@ ret = kM*I</definition>
                     <height unit="m">l</height>
                   </Cylinder>
                 </openMBVRigidBody>
-                </RigidBody>
+              </RigidBody>
               <RigidBody name="Ausgang">
                 <frameOfReference ref="../Object[Stator]/Frame[Q]"/>
                 <frameForKinematics ref="Frame[P]"/>
@@ -4622,7 +4712,8 @@ ret = kM*I</definition>
                       </xmlVector>
                     </relativePosition>
                   </FixedRelativeFrame>
-                </frames><contours/>
+                </frames>
+                <contours/>
                 <openMBVRigidBody>
                   <Cylinder xmlns="http://www.mbsim-env.de/OpenMBV" name="Cylinder2">
                     <diffuseColor>
@@ -4653,7 +4744,8 @@ ret = kM*I</definition>
                   </Cylinder>
                 </openMBVRigidBody>
               </RigidBody>
-            </objects><links>
+            </objects>
+            <links>
               <GeneralizedVelocitySensor xmlns="http://www.mbsim-env.de/MBSimControl" name="om">
                 <object ref="../Object[Rotor]"/>
               </GeneralizedVelocitySensor>
@@ -4677,12 +4769,15 @@ ret = kM*I</definition>
                     <returnSignal ref="../../Group[Elektronik]/Link[M]"/>
                   </SignalFunction>
                 </momentFunction>
-              </KineticExcitation></links><constraints>
+              </KineticExcitation>
+            </links>
+            <constraints>
               <GeneralizedGearConstraint name="Gear">
                 <dependentRigidBody ref="../Object[Rotor]"/>
                 <independentRigidBody ratio="ratio" ref="../Object[Ausgang]"/>
               </GeneralizedGearConstraint>
-            </constraints><observers/>
+            </constraints>
+            <observers/>
           </Group>
         </Embed>
         <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -4699,14 +4794,14 @@ ret = kM*I</definition>
             <scalarParameter name="Umax">48</scalarParameter>
             <scalarParameter name="Umin">-48</scalarParameter>
             <scalarParameter name="Mmax">2.5</scalarParameter>
-            <stringParameter name="table">'data/MR1.asc'</stringParameter></Parameter>
+            <stringParameter name="table">'data/MR1.asc'</stringParameter>
+          </Parameter>
           <Group xmlns="http://www.mbsim-env.de/MBSim" name="MotorBecken">
             <frames/>
             <contours/>
             <groups>
               <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                <Parameter>
-                </Parameter>
+                <Parameter/>
                 <Group xmlns="http://www.mbsim-env.de/MBSim" name="Regler">
                   <frames/>
                   <contours/>
@@ -4757,7 +4852,7 @@ ret = kM*I</definition>
                             <SymbolicFunction>
                               <definition arg1="s" arg1Dim="4">T = J*ratio*(P*(s(3)-s(1))+D*(s(4)-s(2)))
 ret = T*R/kM+kM*s(4)*ratio
-</definition>
+                              </definition>
                             </SymbolicFunction>
                           </innerFunction>
                         </CompositeFunction>
@@ -4769,8 +4864,7 @@ ret = T*R/kM+kM*s(4)*ratio
                 </Group>
               </Embed>
               <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                <Parameter>
-                </Parameter>
+                <Parameter/>
                 <Group xmlns="http://www.mbsim-env.de/MBSim" name="Elektronik">
                   <frames/>
                   <contours/>
@@ -4794,7 +4888,8 @@ ret = T*R/kM+kM*s(4)*ratio
                           <innerFunction>
                             <SymbolicFunction>
                               <definition arg1="s" arg1Dim="2">I = (s(2)-kM*s(1))/R
-ret = kM*I</definition>
+ret = kM*I
+                              </definition>
                             </SymbolicFunction>
                           </innerFunction>
                         </CompositeFunction>
@@ -4820,8 +4915,9 @@ ret = kM*I</definition>
                           <definition arg1="om" arg1Dim="1" xmlns="http://www.mbsim-env.de/MBSim">
                             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                               <ele>om(1)*30/pi</ele>
-                        </xmlVector>
-                      </definition>  </SymbolicFunction>
+                            </xmlVector>
+                          </definition>
+                        </SymbolicFunction>
                       </function>
                     </SignalOperation>
                     <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="nabs">
@@ -4831,8 +4927,9 @@ ret = kM*I</definition>
                           <definition arg1="n" arg1Dim="1" xmlns="http://www.mbsim-env.de/MBSim">
                             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                               <ele>abs(n(1))</ele>
-                        </xmlVector>
-                      </definition>  </SymbolicFunction>
+                            </xmlVector>
+                          </definition>
+                        </SymbolicFunction>
                       </function>
                     </SignalOperation>
                     <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="Mabs">
@@ -4842,8 +4939,9 @@ ret = kM*I</definition>
                           <definition arg1="M" arg1Dim="1" xmlns="http://www.mbsim-env.de/MBSim">
                             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                               <ele>abs(M(1))</ele>
-                        </xmlVector>
-                      </definition>  </SymbolicFunction>
+                            </xmlVector>
+                          </definition>
+                        </SymbolicFunction>
                       </function>
                     </SignalOperation>
                     <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="MReib">
@@ -4853,16 +4951,16 @@ ret = kM*I</definition>
                         <TwoDimensionalTabularFunction xmlns="http://www.mbsim-env.de/MBSim">
                           <xyz>
                             <fromFile xmlns="http://www.mbsim-env.de/MBXMLUtils" href="{table}"/>
-                        </xyz>
-                      </TwoDimensionalTabularFunction>
-                    </function>
-                  </SignalOperation>
+                          </xyz>
+                        </TwoDimensionalTabularFunction>
+                      </function>
+                    </SignalOperation>
                     <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="nsign">
                       <inputSignal ref="../Link[n]"/>
                       <function>
                         <SignumFunction xmlns="http://www.mbsim-env.de/MBSim"/>
-                    </function>
-                  </SignalOperation>
+                      </function>
+                    </SignalOperation>
                     <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="M">
                       <inputSignal ref="../Link[MReib]"/>
                       <inputSignal ref="../Link[nsign]"/>
@@ -4871,8 +4969,9 @@ ret = kM*I</definition>
                           <definition arg1="M" arg1Dim="1" arg2="nsign" arg2Dim="1" xmlns="http://www.mbsim-env.de/MBSim">
                             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                               <ele>nsign(1)*M(1)</ele>
-                        </xmlVector>
-                      </definition>  </SymbolicFunction>
+                            </xmlVector>
+                          </definition>
+                        </SymbolicFunction>
                       </function>
                     </SignalOperation>
                     <KineticExcitation name="Reibmoment">
@@ -4881,21 +4980,22 @@ ret = kM*I</definition>
                         <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
                           <row>
                             <ele>0</ele>
-                        </row>
+                          </row>
                           <row>
                             <ele>0</ele>
-                        </row>
+                          </row>
                           <row>
                             <ele>-1</ele>
-                        </row>
-                      </xmlMatrix>
-                    </momentDirection>
+                          </row>
+                        </xmlMatrix>
+                      </momentDirection>
                       <momentFunction>
                         <SignalFunction xmlns="http://www.mbsim-env.de/MBSimControl">
                           <returnSignal ref="../../Link[M]"/>
-                      </SignalFunction>
-                    </momentFunction>
-                  </KineticExcitation></links>
+                        </SignalFunction>
+                      </momentFunction>
+                    </KineticExcitation>
+                  </links>
                   <constraints/>
                   <observers/>
                 </Group>
@@ -4953,7 +5053,8 @@ ret = kM*I</definition>
                       </xmlVector>
                     </relativePosition>
                   </FixedRelativeFrame>
-                </frames><contours/>
+                </frames>
+                <contours/>
                 <openMBVRigidBody>
                   <Cylinder xmlns="http://www.mbsim-env.de/OpenMBV" name="Cylinder2">
                     <diffuseColor>
@@ -5029,7 +5130,8 @@ ret = kM*I</definition>
                       </xmlVector>
                     </relativePosition>
                   </FixedRelativeFrame>
-                </frames><contours/>
+                </frames>
+                <contours/>
                 <openMBVRigidBody>
                   <Cylinder xmlns="http://www.mbsim-env.de/OpenMBV" name="Cylinder2">
                     <diffuseColor>
@@ -5059,7 +5161,7 @@ ret = kM*I</definition>
                     <height unit="m">l</height>
                   </Cylinder>
                 </openMBVRigidBody>
-                </RigidBody>
+              </RigidBody>
               <RigidBody name="Ausgang">
                 <frameOfReference ref="../Object[Stator]/Frame[Q]"/>
                 <frameForKinematics ref="Frame[P]"/>
@@ -5105,7 +5207,8 @@ ret = kM*I</definition>
                       </xmlVector>
                     </relativePosition>
                   </FixedRelativeFrame>
-                </frames><contours/>
+                </frames>
+                <contours/>
                 <openMBVRigidBody>
                   <Cylinder xmlns="http://www.mbsim-env.de/OpenMBV" name="Cylinder2">
                     <diffuseColor>
@@ -5136,7 +5239,8 @@ ret = kM*I</definition>
                   </Cylinder>
                 </openMBVRigidBody>
               </RigidBody>
-            </objects><links>
+            </objects>
+            <links>
               <GeneralizedVelocitySensor xmlns="http://www.mbsim-env.de/MBSimControl" name="om">
                 <object ref="../Object[Rotor]"/>
               </GeneralizedVelocitySensor>
@@ -5160,12 +5264,15 @@ ret = kM*I</definition>
                     <returnSignal ref="../../Group[Elektronik]/Link[M]"/>
                   </SignalFunction>
                 </momentFunction>
-              </KineticExcitation></links><constraints>
+              </KineticExcitation>
+            </links>
+            <constraints>
               <GeneralizedGearConstraint name="Gear">
                 <dependentRigidBody ref="../Object[Rotor]"/>
                 <independentRigidBody ratio="ratio" ref="../Object[Ausgang]"/>
               </GeneralizedGearConstraint>
-            </constraints><observers/>
+            </constraints>
+            <observers/>
           </Group>
         </Embed>
         <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -5193,8 +5300,7 @@ ret = kM*I</definition>
             <contours/>
             <groups>
               <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                <Parameter>
-                </Parameter>
+                <Parameter/>
                 <Group xmlns="http://www.mbsim-env.de/MBSim" name="Regler">
                   <frames/>
                   <contours/>
@@ -5245,7 +5351,7 @@ ret = kM*I</definition>
                             <SymbolicFunction>
                               <definition arg1="s" arg1Dim="4">T = J*ratio*(P*(s(3)-s(1))+D*(s(4)-s(2)))
 ret = T*R/kM+kM*s(4)*ratio
-</definition>
+                              </definition>
                             </SymbolicFunction>
                           </innerFunction>
                         </CompositeFunction>
@@ -5257,8 +5363,7 @@ ret = T*R/kM+kM*s(4)*ratio
                 </Group>
               </Embed>
               <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                <Parameter>
-                </Parameter>
+                <Parameter/>
                 <Group xmlns="http://www.mbsim-env.de/MBSim" name="Elektronik">
                   <frames/>
                   <contours/>
@@ -5282,7 +5387,8 @@ ret = T*R/kM+kM*s(4)*ratio
                           <innerFunction>
                             <SymbolicFunction>
                               <definition arg1="s" arg1Dim="2">I = (s(2)-kM*s(1))/R
-ret = kM*I</definition>
+ret = kM*I
+                              </definition>
                             </SymbolicFunction>
                           </innerFunction>
                         </CompositeFunction>
@@ -5301,7 +5407,7 @@ ret = kM*I</definition>
                   <scalarParameter name="alpha">atan(lead/(diameter*pi))</scalarParameter>
                   <scalarParameter name="eta_direct">0.9*tan(alpha)/tan(alpha+0.35/180*pi)*eta_belt</scalarParameter>
                   <scalarParameter name="eta_indirect">0.9*tan(alpha-0.35/180*pi)/tan(alpha)*eta_belt</scalarParameter>
-          </Parameter>
+                </Parameter>
                 <Group xmlns="http://www.mbsim-env.de/MBSim" name="Reibung">
                   <frames/>
                   <contours/>
@@ -5316,14 +5422,15 @@ ret = kM*I</definition>
                           <definition arg1="om" arg1Dim="1" arg2="M" arg2Dim="1" xmlns="http://www.mbsim-env.de/MBSim">
                             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                               <ele>om(1)*M(1)</ele>
-                          </xmlVector>
-                        </definition></SymbolicFunction>
+                            </xmlVector>
+                          </definition>
+                        </SymbolicFunction>
                       </function>
                     </SignalOperation>
                     <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
                       <Parameter>
                         <scalarParameter name="k">10</scalarParameter>
-          </Parameter>
+                      </Parameter>
                       <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="Happrox">
                         <inputSignal ref="../Link[omM]"/>
                         <function>
@@ -5333,8 +5440,9 @@ ret = kM*I</definition>
                                 <definition arg1="x" arg1Dim="1" arg2="y" arg2Dim="1">
                                   <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                                     <ele>x(1)*y(1)+0.5</ele>
-                    </xmlVector>
-                  </definition>            </SymbolicFunction>
+                                  </xmlVector>
+                                </definition>
+                              </SymbolicFunction>
                             </outerFunction>
                             <innerFunctions>
                               <SignumFunction/>
@@ -5342,8 +5450,9 @@ ret = kM*I</definition>
                                 <definition arg1="x" arg1Dim="1">
                                   <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                                     <ele>0.5 * (1 - exp(-k * abs(x(1))))</ele>
-                    </xmlVector>
-                  </definition>            </SymbolicFunction>
+                                  </xmlVector>
+                                </definition>
+                              </SymbolicFunction>
                             </innerFunctions>
                           </CompositeFunction>
                         </function>
@@ -5356,10 +5465,11 @@ ret = kM*I</definition>
                           <definition arg1="Happrox" arg1Dim="1" xmlns="http://www.mbsim-env.de/MBSim">
                             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                               <ele>eta_direct+(eta_indirect-eta_direct)*Happrox(1)</ele>
-              </xmlVector>
-            </definition>            </SymbolicFunction>
+                            </xmlVector>
+                          </definition>
+                        </SymbolicFunction>
                       </function>
-                    </SignalOperation>      
+                    </SignalOperation>
                     <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="zw0">
                       <inputSignal ref="../Link[eta]"/>
                       <inputSignal ref="../../Group[Elektronik]/Link[M]"/>
@@ -5368,14 +5478,15 @@ ret = kM*I</definition>
                           <definition arg1="eta" arg1Dim="1" arg2="M" arg2Dim="1" xmlns="http://www.mbsim-env.de/MBSim">
                             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                               <ele>(eta(1)-1)*M(1)</ele>
-                          </xmlVector>
-                        </definition></SymbolicFunction>
+                            </xmlVector>
+                          </definition>
+                        </SymbolicFunction>
                       </function>
                     </SignalOperation>
                     <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
                       <Parameter>
                         <scalarParameter name="k">100</scalarParameter>
-          </Parameter>
+                      </Parameter>
                       <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="Signapproxzw0">
                         <inputSignal ref="../Link[zw0]"/>
                         <function>
@@ -5385,8 +5496,9 @@ ret = kM*I</definition>
                                 <definition arg1="x" arg1Dim="1" arg2="y" arg2Dim="1">
                                   <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                                     <ele>x(1)*y(1)</ele>
-                    </xmlVector>
-                  </definition>            </SymbolicFunction>
+                                  </xmlVector>
+                                </definition>
+                              </SymbolicFunction>
                             </outerFunction>
                             <innerFunctions>
                               <SignumFunction/>
@@ -5394,8 +5506,9 @@ ret = kM*I</definition>
                                 <definition arg1="x" arg1Dim="1">
                                   <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                                     <ele>(1 - exp(-k * abs(x(1))))</ele>
-                    </xmlVector>
-                  </definition>            </SymbolicFunction>
+                                  </xmlVector>
+                                </definition>
+                              </SymbolicFunction>
                             </innerFunctions>
                           </CompositeFunction>
                         </function>
@@ -5409,14 +5522,15 @@ ret = kM*I</definition>
                           <definition arg1="x" arg1Dim="1" arg2="y" arg2Dim="1" xmlns="http://www.mbsim-env.de/MBSim">
                             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                               <ele>x(1)*y(1)</ele>
-              </xmlVector>
-            </definition>            </SymbolicFunction>
+                            </xmlVector>
+                          </definition>
+                        </SymbolicFunction>
                       </function>
                     </SignalOperation>
                     <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
                       <Parameter>
                         <scalarParameter name="k">100</scalarParameter>
-          </Parameter>
+                      </Parameter>
                       <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="SignapproxOm">
                         <inputSignal ref="../../Link[om]"/>
                         <function>
@@ -5426,8 +5540,9 @@ ret = kM*I</definition>
                                 <definition arg1="x" arg1Dim="1" arg2="y" arg2Dim="1">
                                   <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                                     <ele>x(1)*y(1)</ele>
-                                </xmlVector>
-                              </definition></SymbolicFunction>
+                                  </xmlVector>
+                                </definition>
+                              </SymbolicFunction>
                             </outerFunction>
                             <innerFunctions>
                               <SignumFunction/>
@@ -5435,8 +5550,9 @@ ret = kM*I</definition>
                                 <definition arg1="x" arg1Dim="1">
                                   <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                                     <ele>(1 - exp(-k * abs(x(1))))</ele>
-                                </xmlVector>
-                              </definition></SymbolicFunction>
+                                  </xmlVector>
+                                </definition>
+                              </SymbolicFunction>
                             </innerFunctions>
                           </CompositeFunction>
                         </function>
@@ -5445,7 +5561,7 @@ ret = kM*I</definition>
                     <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
                       <Parameter>
                         <scalarParameter name="k">100</scalarParameter>
-          </Parameter>
+                      </Parameter>
                       <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="MReib">
                         <inputSignal ref="../Link[zw]"/>
                         <inputSignal ref="../Link[SignapproxOm]"/>
@@ -5454,8 +5570,9 @@ ret = kM*I</definition>
                             <definition arg1="x" arg1Dim="1" arg2="y" arg2Dim="1" xmlns="http://www.mbsim-env.de/MBSim">
                               <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                                 <ele>x(1)*y(1)</ele>
-                </xmlVector>
-              </definition>            </SymbolicFunction>
+                              </xmlVector>
+                            </definition>
+                          </SymbolicFunction>
                         </function>
                       </SignalOperation>
                     </Embed>
@@ -5484,7 +5601,6 @@ ret = kM*I</definition>
                   <constraints/>
                   <observers/>
                 </Group>
-
               </Embed>
             </groups>
             <objects>
@@ -5790,28 +5906,30 @@ ret = kM*I</definition>
                     <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
                       <row>
                         <ele>0</ele>
-                    </row>
+                      </row>
                       <row>
                         <ele>0</ele>
-                    </row>
+                      </row>
                       <row>
                         <ele>-1</ele>
-                    </row>
-                  </xmlMatrix>
-                </momentDirection>
+                      </row>
+                    </xmlMatrix>
+                  </momentDirection>
                   <momentFunction>
                     <SignalFunction xmlns="http://www.mbsim-env.de/MBSimControl">
                       <returnSignal ref="../../Group[Elektronik]/Link[M]"/>
-                  </SignalFunction>
-                </momentFunction>
-              </KineticExcitation></Embed>
+                    </SignalFunction>
+                  </momentFunction>
+                </KineticExcitation>
+              </Embed>
             </links>
             <constraints>
               <GeneralizedGearConstraint name="Gear">
                 <dependentRigidBody ref="../Object[Rotor]"/>
                 <independentRigidBody ratio="ratio" ref="../Object[Ausgang]"/>
               </GeneralizedGearConstraint>
-            </constraints><observers/>
+            </constraints>
+            <observers/>
           </Group>
         </Embed>
         <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -5839,8 +5957,7 @@ ret = kM*I</definition>
             <contours/>
             <groups>
               <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                <Parameter>
-                </Parameter>
+                <Parameter/>
                 <Group xmlns="http://www.mbsim-env.de/MBSim" name="Regler">
                   <frames/>
                   <contours/>
@@ -5891,7 +6008,7 @@ ret = kM*I</definition>
                             <SymbolicFunction>
                               <definition arg1="s" arg1Dim="4">T = J*ratio*(P*(s(3)-s(1))+D*(s(4)-s(2)))
 ret = T*R/kM+kM*s(4)*ratio
-</definition>
+                              </definition>
                             </SymbolicFunction>
                           </innerFunction>
                         </CompositeFunction>
@@ -5903,8 +6020,7 @@ ret = T*R/kM+kM*s(4)*ratio
                 </Group>
               </Embed>
               <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                <Parameter>
-                </Parameter>
+                <Parameter/>
                 <Group xmlns="http://www.mbsim-env.de/MBSim" name="Elektronik">
                   <frames/>
                   <contours/>
@@ -5928,7 +6044,8 @@ ret = T*R/kM+kM*s(4)*ratio
                           <innerFunction>
                             <SymbolicFunction>
                               <definition arg1="s" arg1Dim="2">I = (s(2)-kM*s(1))/R
-ret = kM*I</definition>
+ret = kM*I
+                              </definition>
                             </SymbolicFunction>
                           </innerFunction>
                         </CompositeFunction>
@@ -5947,7 +6064,7 @@ ret = kM*I</definition>
                   <scalarParameter name="alpha">atan(lead/(diameter*pi))</scalarParameter>
                   <scalarParameter name="eta_direct">0.9*tan(alpha)/tan(alpha+0.35/180*pi)*eta_belt</scalarParameter>
                   <scalarParameter name="eta_indirect">0.9*tan(alpha-0.35/180*pi)/tan(alpha)*eta_belt</scalarParameter>
-          </Parameter>
+                </Parameter>
                 <Group xmlns="http://www.mbsim-env.de/MBSim" name="Reibung">
                   <frames/>
                   <contours/>
@@ -5962,14 +6079,15 @@ ret = kM*I</definition>
                           <definition arg1="om" arg1Dim="1" arg2="M" arg2Dim="1" xmlns="http://www.mbsim-env.de/MBSim">
                             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                               <ele>om(1)*M(1)</ele>
-                          </xmlVector>
-                        </definition></SymbolicFunction>
+                            </xmlVector>
+                          </definition>
+                        </SymbolicFunction>
                       </function>
                     </SignalOperation>
                     <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
                       <Parameter>
                         <scalarParameter name="k">10</scalarParameter>
-          </Parameter>
+                      </Parameter>
                       <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="Happrox">
                         <inputSignal ref="../Link[omM]"/>
                         <function>
@@ -5979,8 +6097,9 @@ ret = kM*I</definition>
                                 <definition arg1="x" arg1Dim="1" arg2="y" arg2Dim="1">
                                   <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                                     <ele>x(1)*y(1)+0.5</ele>
-                    </xmlVector>
-                  </definition>            </SymbolicFunction>
+                                  </xmlVector>
+                                </definition>
+                              </SymbolicFunction>
                             </outerFunction>
                             <innerFunctions>
                               <SignumFunction/>
@@ -5988,8 +6107,9 @@ ret = kM*I</definition>
                                 <definition arg1="x" arg1Dim="1">
                                   <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                                     <ele>0.5 * (1 - exp(-k * abs(x(1))))</ele>
-                    </xmlVector>
-                  </definition>            </SymbolicFunction>
+                                  </xmlVector>
+                                </definition>
+                              </SymbolicFunction>
                             </innerFunctions>
                           </CompositeFunction>
                         </function>
@@ -6002,10 +6122,11 @@ ret = kM*I</definition>
                           <definition arg1="Happrox" arg1Dim="1" xmlns="http://www.mbsim-env.de/MBSim">
                             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                               <ele>eta_direct+(eta_indirect-eta_direct)*Happrox(1)</ele>
-              </xmlVector>
-            </definition>            </SymbolicFunction>
+                            </xmlVector>
+                          </definition>
+                        </SymbolicFunction>
                       </function>
-                    </SignalOperation>      
+                    </SignalOperation>
                     <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="zw0">
                       <inputSignal ref="../Link[eta]"/>
                       <inputSignal ref="../../Group[Elektronik]/Link[M]"/>
@@ -6014,14 +6135,15 @@ ret = kM*I</definition>
                           <definition arg1="eta" arg1Dim="1" arg2="M" arg2Dim="1" xmlns="http://www.mbsim-env.de/MBSim">
                             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                               <ele>(eta(1)-1)*M(1)</ele>
-                          </xmlVector>
-                        </definition></SymbolicFunction>
+                            </xmlVector>
+                          </definition>
+                        </SymbolicFunction>
                       </function>
                     </SignalOperation>
                     <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
                       <Parameter>
                         <scalarParameter name="k">100</scalarParameter>
-          </Parameter>
+                      </Parameter>
                       <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="Signapproxzw0">
                         <inputSignal ref="../Link[zw0]"/>
                         <function>
@@ -6031,8 +6153,9 @@ ret = kM*I</definition>
                                 <definition arg1="x" arg1Dim="1" arg2="y" arg2Dim="1">
                                   <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                                     <ele>x(1)*y(1)</ele>
-                    </xmlVector>
-                  </definition>            </SymbolicFunction>
+                                  </xmlVector>
+                                </definition>
+                              </SymbolicFunction>
                             </outerFunction>
                             <innerFunctions>
                               <SignumFunction/>
@@ -6040,8 +6163,9 @@ ret = kM*I</definition>
                                 <definition arg1="x" arg1Dim="1">
                                   <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                                     <ele>(1 - exp(-k * abs(x(1))))</ele>
-                    </xmlVector>
-                  </definition>            </SymbolicFunction>
+                                  </xmlVector>
+                                </definition>
+                              </SymbolicFunction>
                             </innerFunctions>
                           </CompositeFunction>
                         </function>
@@ -6055,14 +6179,15 @@ ret = kM*I</definition>
                           <definition arg1="x" arg1Dim="1" arg2="y" arg2Dim="1" xmlns="http://www.mbsim-env.de/MBSim">
                             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                               <ele>x(1)*y(1)</ele>
-              </xmlVector>
-            </definition>            </SymbolicFunction>
+                            </xmlVector>
+                          </definition>
+                        </SymbolicFunction>
                       </function>
                     </SignalOperation>
                     <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
                       <Parameter>
                         <scalarParameter name="k">100</scalarParameter>
-          </Parameter>
+                      </Parameter>
                       <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="SignapproxOm">
                         <inputSignal ref="../../Link[om]"/>
                         <function>
@@ -6072,8 +6197,9 @@ ret = kM*I</definition>
                                 <definition arg1="x" arg1Dim="1" arg2="y" arg2Dim="1">
                                   <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                                     <ele>x(1)*y(1)</ele>
-                                </xmlVector>
-                              </definition></SymbolicFunction>
+                                  </xmlVector>
+                                </definition>
+                              </SymbolicFunction>
                             </outerFunction>
                             <innerFunctions>
                               <SignumFunction/>
@@ -6081,8 +6207,9 @@ ret = kM*I</definition>
                                 <definition arg1="x" arg1Dim="1">
                                   <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                                     <ele>(1 - exp(-k * abs(x(1))))</ele>
-                                </xmlVector>
-                              </definition></SymbolicFunction>
+                                  </xmlVector>
+                                </definition>
+                              </SymbolicFunction>
                             </innerFunctions>
                           </CompositeFunction>
                         </function>
@@ -6091,7 +6218,7 @@ ret = kM*I</definition>
                     <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
                       <Parameter>
                         <scalarParameter name="k">100</scalarParameter>
-          </Parameter>
+                      </Parameter>
                       <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="MReib">
                         <inputSignal ref="../Link[zw]"/>
                         <inputSignal ref="../Link[SignapproxOm]"/>
@@ -6100,8 +6227,9 @@ ret = kM*I</definition>
                             <definition arg1="x" arg1Dim="1" arg2="y" arg2Dim="1" xmlns="http://www.mbsim-env.de/MBSim">
                               <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                                 <ele>x(1)*y(1)</ele>
-                </xmlVector>
-              </definition>            </SymbolicFunction>
+                              </xmlVector>
+                            </definition>
+                          </SymbolicFunction>
                         </function>
                       </SignalOperation>
                     </Embed>
@@ -6130,7 +6258,6 @@ ret = kM*I</definition>
                   <constraints/>
                   <observers/>
                 </Group>
-
               </Embed>
             </groups>
             <objects>
@@ -6437,28 +6564,30 @@ ret = kM*I</definition>
                     <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
                       <row>
                         <ele>0</ele>
-                    </row>
+                      </row>
                       <row>
                         <ele>0</ele>
-                    </row>
+                      </row>
                       <row>
                         <ele>-1</ele>
-                    </row>
-                  </xmlMatrix>
-                </momentDirection>
+                      </row>
+                    </xmlMatrix>
+                  </momentDirection>
                   <momentFunction>
                     <SignalFunction xmlns="http://www.mbsim-env.de/MBSimControl">
                       <returnSignal ref="../../Group[Elektronik]/Link[M]"/>
-                  </SignalFunction>
-                </momentFunction>
-              </KineticExcitation></Embed>
+                    </SignalFunction>
+                  </momentFunction>
+                </KineticExcitation>
+              </Embed>
             </links>
             <constraints>
               <GeneralizedGearConstraint name="Gear">
                 <dependentRigidBody ref="../Object[Rotor]"/>
                 <independentRigidBody ratio="ratio" ref="../Object[Ausgang]"/>
               </GeneralizedGearConstraint>
-            </constraints><observers/>
+            </constraints>
+            <observers/>
           </Group>
         </Embed>
         <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -6486,8 +6615,7 @@ ret = kM*I</definition>
             <contours/>
             <groups>
               <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                <Parameter>
-                </Parameter>
+                <Parameter/>
                 <Group xmlns="http://www.mbsim-env.de/MBSim" name="Regler">
                   <frames/>
                   <contours/>
@@ -6538,7 +6666,7 @@ ret = kM*I</definition>
                             <SymbolicFunction>
                               <definition arg1="s" arg1Dim="4">T = J*ratio*(P*(s(3)-s(1))+D*(s(4)-s(2)))
 ret = T*R/kM+kM*s(4)*ratio
-</definition>
+                              </definition>
                             </SymbolicFunction>
                           </innerFunction>
                         </CompositeFunction>
@@ -6550,8 +6678,7 @@ ret = T*R/kM+kM*s(4)*ratio
                 </Group>
               </Embed>
               <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                <Parameter>
-                </Parameter>
+                <Parameter/>
                 <Group xmlns="http://www.mbsim-env.de/MBSim" name="Elektronik">
                   <frames/>
                   <contours/>
@@ -6575,7 +6702,8 @@ ret = T*R/kM+kM*s(4)*ratio
                           <innerFunction>
                             <SymbolicFunction>
                               <definition arg1="s" arg1Dim="2">I = (s(2)-kM*s(1))/R
-ret = kM*I</definition>
+ret = kM*I
+                              </definition>
                             </SymbolicFunction>
                           </innerFunction>
                         </CompositeFunction>
@@ -6594,7 +6722,7 @@ ret = kM*I</definition>
                   <scalarParameter name="alpha">atan(lead/(diameter*pi))</scalarParameter>
                   <scalarParameter name="eta_direct">0.9*tan(alpha)/tan(alpha+0.35/180*pi)*eta_belt</scalarParameter>
                   <scalarParameter name="eta_indirect">0.9*tan(alpha-0.35/180*pi)/tan(alpha)*eta_belt</scalarParameter>
-          </Parameter>
+                </Parameter>
                 <Group xmlns="http://www.mbsim-env.de/MBSim" name="Reibung">
                   <frames/>
                   <contours/>
@@ -6609,14 +6737,15 @@ ret = kM*I</definition>
                           <definition arg1="om" arg1Dim="1" arg2="M" arg2Dim="1" xmlns="http://www.mbsim-env.de/MBSim">
                             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                               <ele>om(1)*M(1)</ele>
-                          </xmlVector>
-                        </definition></SymbolicFunction>
+                            </xmlVector>
+                          </definition>
+                        </SymbolicFunction>
                       </function>
                     </SignalOperation>
                     <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
                       <Parameter>
                         <scalarParameter name="k">10</scalarParameter>
-          </Parameter>
+                      </Parameter>
                       <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="Happrox">
                         <inputSignal ref="../Link[omM]"/>
                         <function>
@@ -6626,8 +6755,9 @@ ret = kM*I</definition>
                                 <definition arg1="x" arg1Dim="1" arg2="y" arg2Dim="1">
                                   <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                                     <ele>x(1)*y(1)+0.5</ele>
-                    </xmlVector>
-                  </definition>            </SymbolicFunction>
+                                  </xmlVector>
+                                </definition>
+                              </SymbolicFunction>
                             </outerFunction>
                             <innerFunctions>
                               <SignumFunction/>
@@ -6635,8 +6765,9 @@ ret = kM*I</definition>
                                 <definition arg1="x" arg1Dim="1">
                                   <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                                     <ele>0.5 * (1 - exp(-k * abs(x(1))))</ele>
-                    </xmlVector>
-                  </definition>            </SymbolicFunction>
+                                  </xmlVector>
+                                </definition>
+                              </SymbolicFunction>
                             </innerFunctions>
                           </CompositeFunction>
                         </function>
@@ -6649,10 +6780,11 @@ ret = kM*I</definition>
                           <definition arg1="Happrox" arg1Dim="1" xmlns="http://www.mbsim-env.de/MBSim">
                             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                               <ele>eta_direct+(eta_indirect-eta_direct)*Happrox(1)</ele>
-              </xmlVector>
-            </definition>            </SymbolicFunction>
+                            </xmlVector>
+                          </definition>
+                        </SymbolicFunction>
                       </function>
-                    </SignalOperation>      
+                    </SignalOperation>
                     <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="zw0">
                       <inputSignal ref="../Link[eta]"/>
                       <inputSignal ref="../../Group[Elektronik]/Link[M]"/>
@@ -6661,14 +6793,15 @@ ret = kM*I</definition>
                           <definition arg1="eta" arg1Dim="1" arg2="M" arg2Dim="1" xmlns="http://www.mbsim-env.de/MBSim">
                             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                               <ele>(eta(1)-1)*M(1)</ele>
-                          </xmlVector>
-                        </definition></SymbolicFunction>
+                            </xmlVector>
+                          </definition>
+                        </SymbolicFunction>
                       </function>
                     </SignalOperation>
                     <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
                       <Parameter>
                         <scalarParameter name="k">100</scalarParameter>
-          </Parameter>
+                      </Parameter>
                       <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="Signapproxzw0">
                         <inputSignal ref="../Link[zw0]"/>
                         <function>
@@ -6678,8 +6811,9 @@ ret = kM*I</definition>
                                 <definition arg1="x" arg1Dim="1" arg2="y" arg2Dim="1">
                                   <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                                     <ele>x(1)*y(1)</ele>
-                    </xmlVector>
-                  </definition>            </SymbolicFunction>
+                                  </xmlVector>
+                                </definition>
+                              </SymbolicFunction>
                             </outerFunction>
                             <innerFunctions>
                               <SignumFunction/>
@@ -6687,8 +6821,9 @@ ret = kM*I</definition>
                                 <definition arg1="x" arg1Dim="1">
                                   <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                                     <ele>(1 - exp(-k * abs(x(1))))</ele>
-                    </xmlVector>
-                  </definition>            </SymbolicFunction>
+                                  </xmlVector>
+                                </definition>
+                              </SymbolicFunction>
                             </innerFunctions>
                           </CompositeFunction>
                         </function>
@@ -6702,14 +6837,15 @@ ret = kM*I</definition>
                           <definition arg1="x" arg1Dim="1" arg2="y" arg2Dim="1" xmlns="http://www.mbsim-env.de/MBSim">
                             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                               <ele>x(1)*y(1)</ele>
-              </xmlVector>
-            </definition>            </SymbolicFunction>
+                            </xmlVector>
+                          </definition>
+                        </SymbolicFunction>
                       </function>
                     </SignalOperation>
                     <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
                       <Parameter>
                         <scalarParameter name="k">100</scalarParameter>
-          </Parameter>
+                      </Parameter>
                       <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="SignapproxOm">
                         <inputSignal ref="../../Link[om]"/>
                         <function>
@@ -6719,8 +6855,9 @@ ret = kM*I</definition>
                                 <definition arg1="x" arg1Dim="1" arg2="y" arg2Dim="1">
                                   <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                                     <ele>x(1)*y(1)</ele>
-                                </xmlVector>
-                              </definition></SymbolicFunction>
+                                  </xmlVector>
+                                </definition>
+                              </SymbolicFunction>
                             </outerFunction>
                             <innerFunctions>
                               <SignumFunction/>
@@ -6728,8 +6865,9 @@ ret = kM*I</definition>
                                 <definition arg1="x" arg1Dim="1">
                                   <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                                     <ele>(1 - exp(-k * abs(x(1))))</ele>
-                                </xmlVector>
-                              </definition></SymbolicFunction>
+                                  </xmlVector>
+                                </definition>
+                              </SymbolicFunction>
                             </innerFunctions>
                           </CompositeFunction>
                         </function>
@@ -6738,7 +6876,7 @@ ret = kM*I</definition>
                     <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
                       <Parameter>
                         <scalarParameter name="k">100</scalarParameter>
-          </Parameter>
+                      </Parameter>
                       <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="MReib">
                         <inputSignal ref="../Link[zw]"/>
                         <inputSignal ref="../Link[SignapproxOm]"/>
@@ -6747,8 +6885,9 @@ ret = kM*I</definition>
                             <definition arg1="x" arg1Dim="1" arg2="y" arg2Dim="1" xmlns="http://www.mbsim-env.de/MBSim">
                               <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                                 <ele>x(1)*y(1)</ele>
-                </xmlVector>
-              </definition>            </SymbolicFunction>
+                              </xmlVector>
+                            </definition>
+                          </SymbolicFunction>
                         </function>
                       </SignalOperation>
                     </Embed>
@@ -6777,7 +6916,6 @@ ret = kM*I</definition>
                   <constraints/>
                   <observers/>
                 </Group>
-
               </Embed>
             </groups>
             <objects>
@@ -7083,28 +7221,30 @@ ret = kM*I</definition>
                     <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
                       <row>
                         <ele>0</ele>
-                    </row>
+                      </row>
                       <row>
                         <ele>0</ele>
-                    </row>
+                      </row>
                       <row>
                         <ele>-1</ele>
-                    </row>
-                  </xmlMatrix>
-                </momentDirection>
+                      </row>
+                    </xmlMatrix>
+                  </momentDirection>
                   <momentFunction>
                     <SignalFunction xmlns="http://www.mbsim-env.de/MBSimControl">
                       <returnSignal ref="../../Group[Elektronik]/Link[M]"/>
-                  </SignalFunction>
-                </momentFunction>
-              </KineticExcitation></Embed>
+                    </SignalFunction>
+                  </momentFunction>
+                </KineticExcitation>
+              </Embed>
             </links>
             <constraints>
               <GeneralizedGearConstraint name="Gear">
                 <dependentRigidBody ref="../Object[Rotor]"/>
                 <independentRigidBody ratio="ratio" ref="../Object[Ausgang]"/>
               </GeneralizedGearConstraint>
-            </constraints><observers/>
+            </constraints>
+            <observers/>
           </Group>
         </Embed>
         <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -7132,8 +7272,7 @@ ret = kM*I</definition>
             <contours/>
             <groups>
               <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                <Parameter>
-                </Parameter>
+                <Parameter/>
                 <Group xmlns="http://www.mbsim-env.de/MBSim" name="Regler">
                   <frames/>
                   <contours/>
@@ -7184,7 +7323,7 @@ ret = kM*I</definition>
                             <SymbolicFunction>
                               <definition arg1="s" arg1Dim="4">T = J*ratio*(P*(s(3)-s(1))+D*(s(4)-s(2)))
 ret = T*R/kM+kM*s(4)*ratio
-</definition>
+                              </definition>
                             </SymbolicFunction>
                           </innerFunction>
                         </CompositeFunction>
@@ -7196,8 +7335,7 @@ ret = T*R/kM+kM*s(4)*ratio
                 </Group>
               </Embed>
               <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                <Parameter>
-                </Parameter>
+                <Parameter/>
                 <Group xmlns="http://www.mbsim-env.de/MBSim" name="Elektronik">
                   <frames/>
                   <contours/>
@@ -7221,7 +7359,8 @@ ret = T*R/kM+kM*s(4)*ratio
                           <innerFunction>
                             <SymbolicFunction>
                               <definition arg1="s" arg1Dim="2">I = (s(2)-kM*s(1))/R
-ret = kM*I</definition>
+ret = kM*I
+                              </definition>
                             </SymbolicFunction>
                           </innerFunction>
                         </CompositeFunction>
@@ -7240,7 +7379,7 @@ ret = kM*I</definition>
                   <scalarParameter name="alpha">atan(lead/(diameter*pi))</scalarParameter>
                   <scalarParameter name="eta_direct">0.9*tan(alpha)/tan(alpha+0.35/180*pi)*eta_belt</scalarParameter>
                   <scalarParameter name="eta_indirect">0.9*tan(alpha-0.35/180*pi)/tan(alpha)*eta_belt</scalarParameter>
-          </Parameter>
+                </Parameter>
                 <Group xmlns="http://www.mbsim-env.de/MBSim" name="Reibung">
                   <frames/>
                   <contours/>
@@ -7255,14 +7394,15 @@ ret = kM*I</definition>
                           <definition arg1="om" arg1Dim="1" arg2="M" arg2Dim="1" xmlns="http://www.mbsim-env.de/MBSim">
                             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                               <ele>om(1)*M(1)</ele>
-                          </xmlVector>
-                        </definition></SymbolicFunction>
+                            </xmlVector>
+                          </definition>
+                        </SymbolicFunction>
                       </function>
                     </SignalOperation>
                     <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
                       <Parameter>
                         <scalarParameter name="k">10</scalarParameter>
-          </Parameter>
+                      </Parameter>
                       <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="Happrox">
                         <inputSignal ref="../Link[omM]"/>
                         <function>
@@ -7272,8 +7412,9 @@ ret = kM*I</definition>
                                 <definition arg1="x" arg1Dim="1" arg2="y" arg2Dim="1">
                                   <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                                     <ele>x(1)*y(1)+0.5</ele>
-                    </xmlVector>
-                  </definition>            </SymbolicFunction>
+                                  </xmlVector>
+                                </definition>
+                              </SymbolicFunction>
                             </outerFunction>
                             <innerFunctions>
                               <SignumFunction/>
@@ -7281,8 +7422,9 @@ ret = kM*I</definition>
                                 <definition arg1="x" arg1Dim="1">
                                   <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                                     <ele>0.5 * (1 - exp(-k * abs(x(1))))</ele>
-                    </xmlVector>
-                  </definition>            </SymbolicFunction>
+                                  </xmlVector>
+                                </definition>
+                              </SymbolicFunction>
                             </innerFunctions>
                           </CompositeFunction>
                         </function>
@@ -7295,10 +7437,11 @@ ret = kM*I</definition>
                           <definition arg1="Happrox" arg1Dim="1" xmlns="http://www.mbsim-env.de/MBSim">
                             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                               <ele>eta_direct+(eta_indirect-eta_direct)*Happrox(1)</ele>
-              </xmlVector>
-            </definition>            </SymbolicFunction>
+                            </xmlVector>
+                          </definition>
+                        </SymbolicFunction>
                       </function>
-                    </SignalOperation>      
+                    </SignalOperation>
                     <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="zw0">
                       <inputSignal ref="../Link[eta]"/>
                       <inputSignal ref="../../Group[Elektronik]/Link[M]"/>
@@ -7307,14 +7450,15 @@ ret = kM*I</definition>
                           <definition arg1="eta" arg1Dim="1" arg2="M" arg2Dim="1" xmlns="http://www.mbsim-env.de/MBSim">
                             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                               <ele>(eta(1)-1)*M(1)</ele>
-                          </xmlVector>
-                        </definition></SymbolicFunction>
+                            </xmlVector>
+                          </definition>
+                        </SymbolicFunction>
                       </function>
                     </SignalOperation>
                     <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
                       <Parameter>
                         <scalarParameter name="k">100</scalarParameter>
-          </Parameter>
+                      </Parameter>
                       <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="Signapproxzw0">
                         <inputSignal ref="../Link[zw0]"/>
                         <function>
@@ -7324,8 +7468,9 @@ ret = kM*I</definition>
                                 <definition arg1="x" arg1Dim="1" arg2="y" arg2Dim="1">
                                   <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                                     <ele>x(1)*y(1)</ele>
-                    </xmlVector>
-                  </definition>            </SymbolicFunction>
+                                  </xmlVector>
+                                </definition>
+                              </SymbolicFunction>
                             </outerFunction>
                             <innerFunctions>
                               <SignumFunction/>
@@ -7333,8 +7478,9 @@ ret = kM*I</definition>
                                 <definition arg1="x" arg1Dim="1">
                                   <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                                     <ele>(1 - exp(-k * abs(x(1))))</ele>
-                    </xmlVector>
-                  </definition>            </SymbolicFunction>
+                                  </xmlVector>
+                                </definition>
+                              </SymbolicFunction>
                             </innerFunctions>
                           </CompositeFunction>
                         </function>
@@ -7348,14 +7494,15 @@ ret = kM*I</definition>
                           <definition arg1="x" arg1Dim="1" arg2="y" arg2Dim="1" xmlns="http://www.mbsim-env.de/MBSim">
                             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                               <ele>x(1)*y(1)</ele>
-              </xmlVector>
-            </definition>            </SymbolicFunction>
+                            </xmlVector>
+                          </definition>
+                        </SymbolicFunction>
                       </function>
                     </SignalOperation>
                     <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
                       <Parameter>
                         <scalarParameter name="k">100</scalarParameter>
-          </Parameter>
+                      </Parameter>
                       <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="SignapproxOm">
                         <inputSignal ref="../../Link[om]"/>
                         <function>
@@ -7365,8 +7512,9 @@ ret = kM*I</definition>
                                 <definition arg1="x" arg1Dim="1" arg2="y" arg2Dim="1">
                                   <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                                     <ele>x(1)*y(1)</ele>
-                                </xmlVector>
-                              </definition></SymbolicFunction>
+                                  </xmlVector>
+                                </definition>
+                              </SymbolicFunction>
                             </outerFunction>
                             <innerFunctions>
                               <SignumFunction/>
@@ -7374,8 +7522,9 @@ ret = kM*I</definition>
                                 <definition arg1="x" arg1Dim="1">
                                   <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                                     <ele>(1 - exp(-k * abs(x(1))))</ele>
-                                </xmlVector>
-                              </definition></SymbolicFunction>
+                                  </xmlVector>
+                                </definition>
+                              </SymbolicFunction>
                             </innerFunctions>
                           </CompositeFunction>
                         </function>
@@ -7384,7 +7533,7 @@ ret = kM*I</definition>
                     <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
                       <Parameter>
                         <scalarParameter name="k">100</scalarParameter>
-          </Parameter>
+                      </Parameter>
                       <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="MReib">
                         <inputSignal ref="../Link[zw]"/>
                         <inputSignal ref="../Link[SignapproxOm]"/>
@@ -7393,8 +7542,9 @@ ret = kM*I</definition>
                             <definition arg1="x" arg1Dim="1" arg2="y" arg2Dim="1" xmlns="http://www.mbsim-env.de/MBSim">
                               <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                                 <ele>x(1)*y(1)</ele>
-                </xmlVector>
-              </definition>            </SymbolicFunction>
+                              </xmlVector>
+                            </definition>
+                          </SymbolicFunction>
                         </function>
                       </SignalOperation>
                     </Embed>
@@ -7423,7 +7573,6 @@ ret = kM*I</definition>
                   <constraints/>
                   <observers/>
                 </Group>
-
               </Embed>
             </groups>
             <objects>
@@ -7729,31 +7878,34 @@ ret = kM*I</definition>
                     <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
                       <row>
                         <ele>0</ele>
-                    </row>
+                      </row>
                       <row>
                         <ele>0</ele>
-                    </row>
+                      </row>
                       <row>
                         <ele>-1</ele>
-                    </row>
-                  </xmlMatrix>
-                </momentDirection>
+                      </row>
+                    </xmlMatrix>
+                  </momentDirection>
                   <momentFunction>
                     <SignalFunction xmlns="http://www.mbsim-env.de/MBSimControl">
                       <returnSignal ref="../../Group[Elektronik]/Link[M]"/>
-                  </SignalFunction>
-                </momentFunction>
-              </KineticExcitation></Embed>
+                    </SignalFunction>
+                  </momentFunction>
+                </KineticExcitation>
+              </Embed>
             </links>
             <constraints>
               <GeneralizedGearConstraint name="Gear">
                 <dependentRigidBody ref="../Object[Rotor]"/>
                 <independentRigidBody ratio="ratio" ref="../Object[Ausgang]"/>
               </GeneralizedGearConstraint>
-            </constraints><observers/>
+            </constraints>
+            <observers/>
           </Group>
         </Embed>
-      </groups><objects>
+      </groups>
+      <objects>
         <RigidBody name="Oberkoerper">
           <generalizedInitialPosition>
             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -7782,7 +7934,7 @@ ret = kM*I</definition>
               <row>
                 <ele>-4.276e-4</ele>
                 <ele>0</ele>
-                <ele>8.479e-2 </ele>
+                <ele>8.479e-2</ele>
               </row>
             </xmlMatrix>
           </inertiaTensor>
@@ -7843,7 +7995,8 @@ ret = kM*I</definition>
                 <aboutZ xmlns="http://www.mbsim-env.de/MBXMLUtils" unit="degree">180</aboutZ>
               </relativeOrientation>
             </FixedRelativeFrame>
-          </frames><contours/>
+          </frames>
+          <contours/>
           <openMBVRigidBody>
             <IvBody xmlns="http://www.mbsim-env.de/OpenMBV" name="IvBody2">
               <transparency unit="-">0.3</transparency>
@@ -7934,7 +8087,8 @@ ret = kM*I</definition>
                 </cardan>
               </relativeOrientation>
             </FixedRelativeFrame>
-          </frames><contours/>
+          </frames>
+          <contours/>
           <openMBVRigidBody>
             <IvBody xmlns="http://www.mbsim-env.de/OpenMBV" name="IvBody2">
               <transparency unit="-">0.3</transparency>
@@ -8006,7 +8160,8 @@ ret = kM*I</definition>
                 <aboutY xmlns="http://www.mbsim-env.de/MBXMLUtils" unit="degree">90</aboutY>
               </relativeOrientation>
             </FixedRelativeFrame>
-          </frames><contours/>
+          </frames>
+          <contours/>
           <openMBVRigidBody>
             <IvBody xmlns="http://www.mbsim-env.de/OpenMBV" name="IvBody2">
               <transparency unit="-">0.3</transparency>
@@ -8089,7 +8244,8 @@ ret = kM*I</definition>
                 </cardan>
               </relativeOrientation>
             </FixedRelativeFrame>
-          </frames><contours/>
+          </frames>
+          <contours/>
           <openMBVRigidBody>
             <IvBody xmlns="http://www.mbsim-env.de/OpenMBV" name="IvBody2">
               <transparency unit="-">0.3</transparency>
@@ -8165,7 +8321,8 @@ ret = kM*I</definition>
                 </xmlVector>
               </relativePosition>
             </FixedRelativeFrame>
-          </frames><contours/>
+          </frames>
+          <contours/>
           <openMBVRigidBody>
             <IvBody xmlns="http://www.mbsim-env.de/OpenMBV" name="IvBody2">
               <transparency unit="-">0.3</transparency>
@@ -8363,7 +8520,8 @@ ret = kM*I</definition>
                 </cardan>
               </relativeOrientation>
             </FixedRelativeFrame>
-          </frames><contours/>
+          </frames>
+          <contours/>
           <openMBVRigidBody>
             <IvBody xmlns="http://www.mbsim-env.de/OpenMBV" name="IvBody2">
               <transparency unit="-">0.3</transparency>
@@ -8515,7 +8673,8 @@ ret = kM*I</definition>
                 <pointSize>5</pointSize>
               </enableOpenMBV>
             </Point>
-          </contours><openMBVRigidBody>
+          </contours>
+          <openMBVRigidBody>
             <IvBody xmlns="http://www.mbsim-env.de/OpenMBV" name="IvBody2">
               <transparency unit="-">0.3</transparency>
               <initialTranslation unit="m">
@@ -8586,7 +8745,8 @@ ret = kM*I</definition>
                 <aboutY xmlns="http://www.mbsim-env.de/MBXMLUtils" unit="degree">90</aboutY>
               </relativeOrientation>
             </FixedRelativeFrame>
-          </frames><contours/>
+          </frames>
+          <contours/>
           <openMBVRigidBody>
             <IvBody xmlns="http://www.mbsim-env.de/OpenMBV" name="IvBody2">
               <transparency unit="-">0.3</transparency>
@@ -8669,7 +8829,8 @@ ret = kM*I</definition>
                 </cardan>
               </relativeOrientation>
             </FixedRelativeFrame>
-          </frames><contours/>
+          </frames>
+          <contours/>
           <openMBVRigidBody>
             <IvBody xmlns="http://www.mbsim-env.de/OpenMBV" name="IvBody2">
               <transparency unit="-">0.3</transparency>
@@ -8745,7 +8906,8 @@ ret = kM*I</definition>
                 </xmlVector>
               </relativePosition>
             </FixedRelativeFrame>
-          </frames><contours/>
+          </frames>
+          <contours/>
           <openMBVRigidBody>
             <IvBody xmlns="http://www.mbsim-env.de/OpenMBV" name="IvBody2">
               <transparency unit="-">0.3</transparency>
@@ -8938,7 +9100,8 @@ ret = kM*I</definition>
                 </cardan>
               </relativeOrientation>
             </FixedRelativeFrame>
-          </frames><contours/>
+          </frames>
+          <contours/>
           <openMBVRigidBody>
             <IvBody xmlns="http://www.mbsim-env.de/OpenMBV" name="IvBody2">
               <transparency unit="-">0.3</transparency>
@@ -9090,7 +9253,8 @@ ret = kM*I</definition>
                 <pointSize>5</pointSize>
               </enableOpenMBV>
             </Point>
-          </contours><openMBVRigidBody>
+          </contours>
+          <openMBVRigidBody>
             <IvBody xmlns="http://www.mbsim-env.de/OpenMBV" name="IvBody2">
               <transparency unit="-">0.3</transparency>
               <initialTranslation unit="m">
@@ -9150,7 +9314,8 @@ ret = kM*I</definition>
                 </xmlVector>
               </relativePosition>
             </FixedRelativeFrame>
-          </frames><contours/>
+          </frames>
+          <contours/>
           <openMBVRigidBody>
             <IvBody xmlns="http://www.mbsim-env.de/OpenMBV" name="IvBody2">
               <transparency unit="-">0.3</transparency>
@@ -9211,7 +9376,8 @@ ret = kM*I</definition>
                 </xmlVector>
               </relativePosition>
             </FixedRelativeFrame>
-          </frames><contours/>
+          </frames>
+          <contours/>
           <openMBVRigidBody>
             <IvBody xmlns="http://www.mbsim-env.de/OpenMBV" name="IvBody2">
               <transparency unit="-">0.3</transparency>
@@ -9235,7 +9401,8 @@ ret = kM*I</definition>
           </openMBVRigidBody>
           <openMBVFrameOfReference ref="Frame[K]"/>
         </RigidBody>
-      </objects><links>
+      </objects>
+      <links>
         <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="4" counterName="n">
           <Parameter/>
           <Contact xmlns="http://www.mbsim-env.de/MBSim" name="ContactB05_{n}">
@@ -9286,7 +9453,8 @@ ret = kM*I</definition>
             </tangentialForceLaw>
           </Contact>
         </Embed>
-      </links><constraints>
+      </links>
+      <constraints>
         <GeneralizedConnectionConstraint name="ContraintA0">
           <dependentRigidBody ref="../Group[MotorA0]/Object[Ausgang]"/>
           <independentRigidBody ref="../Object[A0]"/>
@@ -9310,7 +9478,8 @@ ret = kM*I</definition>
         <GeneralizedConnectionConstraint name="ContraintB03">
           <dependentRigidBody ref="../Group[MotorB03]/Object[Ausgang]"/>
           <independentRigidBody ref="../Object[B03]"/>
-        </GeneralizedConnectionConstraint><GeneralizedConnectionConstraint name="ContraintB10">
+        </GeneralizedConnectionConstraint>
+        <GeneralizedConnectionConstraint name="ContraintB10">
           <dependentRigidBody ref="../Group[MotorB10]/Object[Ausgang]"/>
           <independentRigidBody ref="../Object[B10]"/>
         </GeneralizedConnectionConstraint>
@@ -9458,7 +9627,8 @@ ret = kM*I</definition>
             </xmlVector>
           </initialGuess>
         </JointConstraint>
-      </constraints><observers/>
+      </constraints>
+      <observers/>
       <environments>
         <MBSimEnvironment>
           <accelerationOfGravity unit="m/s^2">
@@ -9472,11 +9642,9 @@ ret = kM*I</definition>
       </environments>
     </DynamicSystemSolver>
   </Embed>
-
   <LSODEIntegrator xmlns="http://www.mbsim-env.de/MBSim">
     <startTime unit="s">0</startTime>
     <endTime unit="s">2.5</endTime>
     <plotStepSize unit="s">1e-2</plotStepSize>
   </LSODEIntegrator>
-
 </MBSimProject>

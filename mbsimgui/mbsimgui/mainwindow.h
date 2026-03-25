@@ -207,8 +207,6 @@ namespace MBSimGUI {
       std::shared_ptr<MBXMLUtils::DOMParser> mbxmlparser;
       std::shared_ptr<MBXMLUtils::DOMParser> mbxmlparserNoVal;
       std::shared_ptr<MBXMLUtils::Eval> eval;
-      xercesc::DOMImplementation *impl;
-      xercesc::DOMLSSerializer *serializer;
       const boost::filesystem::path& getUniqueTempDir() const { return uniqueTempDir; }
       void addParameter(Parameter *parameter, EmbedItemData *parent);
       void addFrame(Frame *frame, Element *parent);

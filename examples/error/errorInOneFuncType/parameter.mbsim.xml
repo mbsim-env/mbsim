@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <Parameter xmlns="http://www.mbsim-env.de/MBXMLUtils">
   <import action="addAllVarsAsParams">from math import pi</import>
   <scalarParameter name="freq1">pi</scalarParameter>

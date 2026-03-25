@@ -1,20 +1,19 @@
-<DynamicSystemSolver name="TS" xmlns="http://www.mbsim-env.de/MBSim">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="TS">
   <plotFeatureRecursive value="generalizedRelativePosition">true</plotFeatureRecursive>
   <plotFeatureRecursive value="generalizedRelativeVelocity">true</plotFeatureRecursive>
   <plotFeatureRecursive value="generalizedForce">true</plotFeatureRecursive>
   <plotFeatureRecursive value="generalizedPosition">true</plotFeatureRecursive>
   <plotFeatureRecursive value="generalizedVelocity">true</plotFeatureRecursive>
-  <frames>
-  </frames>
-  <contours>
-  </contours>
+  <frames/>
+  <contours/>
   <groups>
-    <Embed href="M.xml" count="1" counterName="xxx" xmlns="http://www.mbsim-env.de/MBXMLUtils">
+    <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="1" counterName="xxx" href="M.xml">
       <Parameter xmlns="http://www.mbsim-env.de/MBXMLUtils">
         <scalarParameter name="c">2/3</scalarParameter>
       </Parameter>
     </Embed>
-    <Embed href="B.xml" count="1" counterName="xxx" xmlns="http://www.mbsim-env.de/MBXMLUtils">
+    <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="1" counterName="xxx" href="B.xml">
       <Parameter xmlns="http://www.mbsim-env.de/MBXMLUtils">
         <scalarParameter name="c">7/8</scalarParameter>
         <scalarParameter name="hx">x*(1-c)</scalarParameter>
@@ -22,7 +21,7 @@
         <scalarParameter name="h">sqrt(hx^2+hy^2)</scalarParameter>
       </Parameter>
     </Embed>
-    <Embed href="S.xml" count="1" counterName="xxx" xmlns="http://www.mbsim-env.de/MBXMLUtils">
+    <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="1" counterName="xxx" href="S.xml">
       <Parameter xmlns="http://www.mbsim-env.de/MBXMLUtils">
         <scalarParameter name="c">7/8</scalarParameter>
         <scalarParameter name="hx">x*(1-c)</scalarParameter>
@@ -30,12 +29,12 @@
         <scalarParameter name="h">sqrt(hx^2+hy^2)</scalarParameter>
       </Parameter>
     </Embed>
-    <Embed href="i.xml" count="1" counterName="xxx" xmlns="http://www.mbsim-env.de/MBXMLUtils">
+    <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="1" counterName="xxx" href="i.xml">
       <Parameter xmlns="http://www.mbsim-env.de/MBXMLUtils">
         <scalarParameter name="y">y/sqrt(2)</scalarParameter>
       </Parameter>
     </Embed>
-    <Embed href="_m.xml" count="1" counterName="xxx" xmlns="http://www.mbsim-env.de/MBXMLUtils">
+    <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="1" counterName="xxx" href="_m.xml">
       <Parameter xmlns="http://www.mbsim-env.de/MBXMLUtils">
         <scalarParameter name="c">7/8</scalarParameter>
         <scalarParameter name="hx">x*(1-c)</scalarParameter>
@@ -62,53 +61,52 @@
       </stateDependentRotation>
       <frames>
         <FixedRelativeFrame name="FM">
-          <enableOpenMBV> 
+          <enableOpenMBV>
             <size>frameSize</size>
             <offset>1.</offset>
           </enableOpenMBV>
-          <frameOfReference ref="../Frame[C]"/> 
+          <frameOfReference ref="../Frame[C]"/>
           <relativePosition>[-(5*x)/2; 0; 0]</relativePosition>
           <relativeOrientation>eye(3)</relativeOrientation>
         </FixedRelativeFrame>
         <FixedRelativeFrame name="FB">
-          <enableOpenMBV> 
+          <enableOpenMBV>
             <size>frameSize</size>
             <offset>1.</offset>
           </enableOpenMBV>
-          <frameOfReference ref="../Frame[FM]"/> 
+          <frameOfReference ref="../Frame[FM]"/>
           <relativePosition>[1.2*x; 0; 0]</relativePosition>
           <relativeOrientation>eye(3)</relativeOrientation>
         </FixedRelativeFrame>
         <FixedRelativeFrame name="FS">
-          <enableOpenMBV> 
+          <enableOpenMBV>
             <size>frameSize</size>
             <offset>1.</offset>
           </enableOpenMBV>
-          <frameOfReference ref="../Frame[FB]"/> 
+          <frameOfReference ref="../Frame[FB]"/>
           <relativePosition>[1.2*x; 0; 0]</relativePosition>
           <relativeOrientation>eye(3)</relativeOrientation>
         </FixedRelativeFrame>
         <FixedRelativeFrame name="Fi">
-          <enableOpenMBV> 
+          <enableOpenMBV>
             <size>frameSize</size>
             <offset>1.</offset>
           </enableOpenMBV>
-          <frameOfReference ref="../Frame[FS]"/> 
+          <frameOfReference ref="../Frame[FS]"/>
           <relativePosition>[1.2*x; 0; 0]</relativePosition>
           <relativeOrientation>eye(3)</relativeOrientation>
         </FixedRelativeFrame>
         <FixedRelativeFrame name="Fm">
-          <enableOpenMBV> 
+          <enableOpenMBV>
             <size>frameSize</size>
             <offset>1.</offset>
           </enableOpenMBV>
-          <frameOfReference ref="../Frame[FS]"/> 
+          <frameOfReference ref="../Frame[FS]"/>
           <relativePosition>[1.4*x; 0; 0]</relativePosition>
           <relativeOrientation>eye(3)</relativeOrientation>
         </FixedRelativeFrame>
       </frames>
-      <contours>
-      </contours>
+      <contours/>
     </RigidBody>
   </objects>
   <links>
@@ -138,8 +136,8 @@
       </momentLaw>
       <integrateGeneralizedRelativeVelocityOfRotation>true</integrateGeneralizedRelativeVelocityOfRotation>
     </Joint>
-    <Embed count="2" counterName="nr" xmlns="http://www.mbsim-env.de/MBXMLUtils">
-      <Contact name="ContactBS{nr}" xmlns="http://www.mbsim-env.de/MBSim">
+    <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="2" counterName="nr">
+      <Contact xmlns="http://www.mbsim-env.de/MBSim" name="ContactBS{nr}">
         <connect ref1="../Group[B]/Object[S10]/Contour[CSide]" ref2="../Group[S]/Object[S7]/Contour[C{nr}]"/>
         <normalForceLaw>
           <RegularizedUnilateralConstraint xmlns="http://www.mbsim-env.de/MBSim">
@@ -153,8 +151,8 @@
         </normalForceLaw>
       </Contact>
     </Embed>
-    <Embed count="2" counterName="nr" xmlns="http://www.mbsim-env.de/MBXMLUtils">
-      <Contact name="ContactMB{nr}" xmlns="http://www.mbsim-env.de/MBSim">
+    <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="2" counterName="nr">
+      <Contact xmlns="http://www.mbsim-env.de/MBSim" name="ContactMB{nr}">
         <connect ref1="../Group[B]/Object[S1]/Contour[CSide]" ref2="../Group[M]/Object[S4]/Contour[C{nr}]"/>
         <normalForceLaw>
           <RegularizedUnilateralConstraint xmlns="http://www.mbsim-env.de/MBSim">
@@ -168,43 +166,43 @@
         </normalForceLaw>
       </Contact>
     </Embed>
-      <Contact name="ContactSi" xmlns="http://www.mbsim-env.de/MBSim">
-        <connect ref1="../Group[S]/Object[S9]/Contour[CTop]" ref2="../Group[i]/Object[S2]/Contour[CCircle]"/>
-        <normalForceLaw>
-          <RegularizedUnilateralConstraint xmlns="http://www.mbsim-env.de/MBSim">
-            <forceFunction>
-              <LinearRegularizedUnilateralConstraint xmlns="http://www.mbsim-env.de/MBSim">
-                <stiffnessCoefficient>cc</stiffnessCoefficient>
-                <dampingCoefficient>cd</dampingCoefficient>
-              </LinearRegularizedUnilateralConstraint>
-            </forceFunction>
-          </RegularizedUnilateralConstraint>
-        </normalForceLaw>
-      </Contact>
+    <Contact name="ContactSi" xmlns="http://www.mbsim-env.de/MBSim">
+      <connect ref1="../Group[S]/Object[S9]/Contour[CTop]" ref2="../Group[i]/Object[S2]/Contour[CCircle]"/>
+      <normalForceLaw>
+        <RegularizedUnilateralConstraint xmlns="http://www.mbsim-env.de/MBSim">
+          <forceFunction>
+            <LinearRegularizedUnilateralConstraint xmlns="http://www.mbsim-env.de/MBSim">
+              <stiffnessCoefficient>cc</stiffnessCoefficient>
+              <dampingCoefficient>cd</dampingCoefficient>
+            </LinearRegularizedUnilateralConstraint>
+          </forceFunction>
+        </RegularizedUnilateralConstraint>
+      </normalForceLaw>
+    </Contact>
   </links>
   <constraints/>
   <observers>
-    <Embed count="2" counterName="nr" xmlns="http://www.mbsim-env.de/MBXMLUtils">
-      <ContactObserver name="ContactObserverBS{nr}" xmlns="http://www.mbsim-env.de/MBSim">
+    <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="2" counterName="nr">
+      <ContactObserver xmlns="http://www.mbsim-env.de/MBSim" name="ContactObserverBS{nr}">
         <contact ref="../Link[ContactBS{nr}]"/>
         <enableOpenMBVContactPoints>
           <size>frameSize</size>
-        </enableOpenMBVContactPoints> 
+        </enableOpenMBVContactPoints>
       </ContactObserver>
     </Embed>
-    <Embed count="2" counterName="nr" xmlns="http://www.mbsim-env.de/MBXMLUtils">
-      <ContactObserver name="ContactObserverMB{nr}" xmlns="http://www.mbsim-env.de/MBSim">
+    <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="2" counterName="nr">
+      <ContactObserver xmlns="http://www.mbsim-env.de/MBSim" name="ContactObserverMB{nr}">
         <contact ref="../Link[ContactMB{nr}]"/>
         <enableOpenMBVContactPoints>
           <size>frameSize</size>
-        </enableOpenMBVContactPoints> 
+        </enableOpenMBVContactPoints>
       </ContactObserver>
     </Embed>
     <ContactObserver name="ContactObserverSi">
       <contact ref="../Link[ContactSi]"/>
       <enableOpenMBVContactPoints>
         <size>frameSize</size>
-      </enableOpenMBVContactPoints> 
+      </enableOpenMBVContactPoints>
     </ContactObserver>
   </observers>
   <environments>
@@ -216,4 +214,3 @@
   <impactSolver>"fixedpoint"</impactSolver>
   <maximumNumberOfIterations>10000</maximumNumberOfIterations>
 </DynamicSystemSolver>
-

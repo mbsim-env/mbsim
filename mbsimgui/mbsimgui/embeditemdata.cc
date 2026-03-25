@@ -48,9 +48,14 @@ namespace MBSimGUI {
   }
 
   void EmbedItemData::createParameters() {
-    auto param = Parameter::createParameters(createParameterXMLElement());
+    auto parEle = createParameterXMLElement();
+    auto param = Parameter::createParameters(parEle);
     for(auto & i : param)
       addParameter(i);
+    // if no parameters exist in parEle then remove this element again
+    // (just to avoid that the XML file is populated with useless PV%"Parameter" elements)
+    if(!parEle->getFirstElementChild())
+      parEle->getParentNode()->removeChild(parEle)->release();
   }
 
   void EmbedItemData::clearParameters() {

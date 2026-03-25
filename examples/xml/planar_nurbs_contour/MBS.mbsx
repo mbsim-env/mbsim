@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
-
   <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
     <plotFeatureRecursive value="generalizedRelativePosition">true</plotFeatureRecursive>
     <plotFeatureRecursive value="generalizedRelativeVelocity">true</plotFeatureRecursive>
@@ -49,7 +48,8 @@
             <knotVector> [0.00000   0.00000   0.00000   0.00000   0.25000   0.50000   0.75000   1.00000   1.00000   1.00000   1.00000]'</knotVector>
             <enableOpenMBV/>
           </PlanarNurbsContour>
-        </contours><enableOpenMBVFrameC/>
+        </contours>
+        <enableOpenMBVFrameC/>
       </RigidBody>
       <RigidBody name="RigidBody2">
         <generalizedInitialPosition>
@@ -88,9 +88,11 @@
               <transparency unit="-">0.5</transparency>
             </enableOpenMBV>
           </Point>
-        </contours><enableOpenMBVFrameC>
+        </contours>
+        <enableOpenMBVFrameC>
           <size unit="dm">1</size>
-        </enableOpenMBVFrameC></RigidBody>
+        </enableOpenMBVFrameC>
+      </RigidBody>
     </objects>
     <links>
       <Contact name="Contact">
@@ -104,7 +106,8 @@
           </UnilateralNewtonImpact>
         </normalImpactLaw>
       </Contact>
-    </links><constraints/>
+    </links>
+    <constraints/>
     <observers>
       <ContactObserver name="ContactObserver">
         <contact ref="../Link[Contact]"/>
@@ -112,7 +115,8 @@
           <size unit="dm">1</size>
         </enableOpenMBVContactPoints>
       </ContactObserver>
-    </observers><enableOpenMBVFrameI/>
+    </observers>
+    <enableOpenMBVFrameI/>
     <environments>
       <MBSimEnvironment>
         <accelerationOfGravity unit="m/s^2">
@@ -131,12 +135,10 @@
     <generalizedForceTolerance>1e-8</generalizedForceTolerance>
     <generalizedImpulseTolerance>1e-6</generalizedImpulseTolerance>
   </DynamicSystemSolver>
-
   <LSODEIntegrator xmlns="http://www.mbsim-env.de/MBSim">
     <startTime unit="s">0</startTime>
     <endTime unit="s">2</endTime>
     <plotStepSize unit="s">1e-2</plotStepSize>
     <initialStepSize>1e-8</initialStepSize>
   </LSODEIntegrator>
-
 </MBSimProject>

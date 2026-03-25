@@ -1,7 +1,7 @@
 <root>
   <span class="MBSIMGUI_ERROR">
     <span class="MBXMLUTILS_ERROROUTPUT">
-      <a href="submodel/Untergruppe.xml?xpath=/{http://www.mbsim-env.de/MBSim}Group[1]/{http://www.mbsim-env.de/MBSim}objects[1]/{http://www.mbsim-env.de/MBSim}RigidBody[1]/{http://www.mbsim-env.de/MBSim}plotFeature[1]/@value&amp;line=11">submodel/Untergruppe.xml:11:/Group[1]/objects[1]/RigidBody[1]/plotFeature[1]/@value</a>:<br />
+      <a href="submodel/Untergruppe.xml?xpath=/{http://www.mbsim-env.de/MBSim}Group[1]/{http://www.mbsim-env.de/MBSim}objects[1]/{http://www.mbsim-env.de/MBSim}RigidBody[1]/{http://www.mbsim-env.de/MBSim}plotFeature[1]/@value&amp;line=9">submodel/Untergruppe.xml:9:/Group[1]/objects[1]/RigidBody[1]/plotFeature[1]/@value</a>:<br />
       <span class="MBXMLUTILS_MSG">QName attribute value defined by '[uri]localname' syntax but no ] found.
 </span>
       <span class="MBSIMGUI_ERROR" />

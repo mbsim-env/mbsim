@@ -1,8 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Group name="HydraulicActor" xmlns="http://www.mbsim-env.de/MBSim">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<Group xmlns="http://www.mbsim-env.de/MBSim" name="HydraulicActor">
   <frameOfReference ref="../Frame[FJack]"/>
-  <frames>
-  </frames>
+  <frames/>
   <contours/>
   <groups/>
   <objects>
@@ -44,7 +43,7 @@
       </frames>
       <contours/>
       <openMBVRigidBody>
-        <CompoundRigidBody name="x" xmlns="http://www.mbsim-env.de/OpenMBV">
+        <CompoundRigidBody xmlns="http://www.mbsim-env.de/OpenMBV" name="x">
           <diffuseColor>.4*ones(3,1)</diffuseColor>
           <initialTranslation>[0; 0; 0]</initialTranslation>
           <initialRotation>[0; 0; 0]</initialRotation>
@@ -105,7 +104,7 @@
       </frames>
       <contours/>
       <openMBVRigidBody>
-        <CompoundRigidBody name="x" xmlns="http://www.mbsim-env.de/OpenMBV">
+        <CompoundRigidBody xmlns="http://www.mbsim-env.de/OpenMBV" name="x">
           <diffuseColor>.1*ones(3,1)</diffuseColor>
           <initialTranslation>[0; 0; 0]</initialTranslation>
           <initialRotation>[0; 0; 0]</initialRotation>
@@ -149,7 +148,7 @@
     -->
   </objects>
   <links>
-    <RigidNodeMec name="nA" xmlns="http://www.mbsim-env.de/MBSimHydraulics">
+    <RigidNodeMec xmlns="http://www.mbsim-env.de/MBSimHydraulics" name="nA">
       <!--
       <outflow ref="../Object[Leckage]"/>
       -->
@@ -170,7 +169,8 @@
         <normal>[0; -1; 0]</normal>
         <area>pi*(.03^2-.01^2)</area>
       </translatorialBoundarySourface>
-      <enableOpenMBVArrows> <!-- optional -->
+      <enableOpenMBVArrows>
+        <!-- optional -->
         <size>.01</size>
       </enableOpenMBVArrows>
       <!--
@@ -178,7 +178,7 @@
       <fracAir>.05</fracAir>
       -->
     </RigidNodeMec>
-    <RigidNodeMec name="nB" xmlns="http://www.mbsim-env.de/MBSimHydraulics">
+    <RigidNodeMec xmlns="http://www.mbsim-env.de/MBSimHydraulics" name="nB">
       <!--
       <inflow ref="../Object[Leckage]"/>
       -->
@@ -207,7 +207,7 @@
       <fracAir>.05</fracAir>
       -->
     </RigidNodeMec>
-    <EnvironmentNodeMec name="nPlungerEnvironment" xmlns="http://www.mbsim-env.de/MBSimHydraulics">
+    <EnvironmentNodeMec xmlns="http://www.mbsim-env.de/MBSimHydraulics" name="nPlungerEnvironment">
       <initialVolume>0</initialVolume>
       <translatorialBoundarySourface>
         <frameOfReference ref="../Object[Plunger]/Frame[FTop]"/>

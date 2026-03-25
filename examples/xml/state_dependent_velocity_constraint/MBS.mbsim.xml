@@ -1,137 +1,144 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no" ?><DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS" xmlns:ctl="http://www.mbsim-env.de/MBSimControl" xmlns:flex="http://www.mbsim-env.de/MBSimFlexibleBody" xmlns:hyd="http://www.mbsim-env.de/MBSimHydraulics" xmlns:ns_1="http://www.mbsim-env.de/OpenMBV" xmlns:ombv="http://www.mbsim-env.de/OpenMBV" xmlns:pv="http://www.mbsim-env.de/MBXMLUtils" xmlns:xi="http://www.w3.org/2001/XInclude">
-    <plotFeatureRecursive value="generalizedRelativePosition">true</plotFeatureRecursive>
-    <plotFeatureRecursive value="generalizedRelativeVelocity">true</plotFeatureRecursive>
-    <plotFeatureRecursive value="generalizedForce">true</plotFeatureRecursive>
-    <plotFeatureRecursive value="generalizedPosition">true</plotFeatureRecursive>
-    <plotFeatureRecursive value="generalizedVelocity">true</plotFeatureRecursive>
-    <frames/>
-    <contours/>
-    <groups/>
-    <objects>
-        <RigidBody name="RigidBody1">
-            <mass unit="kg">1</mass>
-            <inertiaTensor unit="kg*m^2">
-                <pv:xmlMatrix>
-                    <pv:row>
-                        <pv:ele>0.01</pv:ele>
-                        <pv:ele>0</pv:ele>
-                        <pv:ele>0</pv:ele>
-                    </pv:row>
-                    <pv:row>
-                        <pv:ele>0</pv:ele>
-                        <pv:ele>0.01</pv:ele>
-                        <pv:ele>0</pv:ele>
-                    </pv:row>
-                    <pv:row>
-                        <pv:ele>0</pv:ele>
-                        <pv:ele>0</pv:ele>
-                        <pv:ele>0.01</pv:ele>
-                    </pv:row>
-                </pv:xmlMatrix>
-            </inertiaTensor>
-            <stateDependentTranslation>
-              <SymbolicFunction><definition arg1="x">[x;-c*x^2;0]</definition></SymbolicFunction>
-            </stateDependentTranslation>
-            <stateDependentRotation>
-              <CompositeFunction>
-                <outerFunction>
-                  <RotationAboutFixedAxis>
-                      <axisOfRotation unit="-">
-                          <pv:xmlVector>
-                              <pv:ele>0</pv:ele>
-                              <pv:ele>0</pv:ele>
-                              <pv:ele>1</pv:ele>
-                          </pv:xmlVector>
-                      </axisOfRotation>
-                  </RotationAboutFixedAxis>
-                </outerFunction>
-                <innerFunction>
-                  <SymbolicFunction><definition arg1="x">atan(-c*2*x)</definition></SymbolicFunction>
-                </innerFunction>
-              </CompositeFunction>
-            </stateDependentRotation>
-            <translationDependentRotation>true</translationDependentRotation>
-            <frames/>
-            <contours/>
-            <openMBVRigidBody>
-                <ns_1:Cube name="NOTSET">
-                    <ns_1:initialTranslation unit="m">
-                        <pv:xmlVector>
-                            <pv:ele>0</pv:ele>
-                            <pv:ele>0</pv:ele>
-                            <pv:ele>0</pv:ele>
-                        </pv:xmlVector>
-                    </ns_1:initialTranslation>
-                    <ns_1:initialRotation unit="rad">
-                        <pv:xmlVector>
-                            <pv:ele>0</pv:ele>
-                            <pv:ele>0</pv:ele>
-                            <pv:ele>0</pv:ele>
-                        </pv:xmlVector>
-                    </ns_1:initialRotation>
-                    <ns_1:scaleFactor unit="-">1</ns_1:scaleFactor>
-                    <ns_1:length unit="m">1</ns_1:length>
-                </ns_1:Cube>
-            </openMBVRigidBody>
-            <enableOpenMBVFrameC>
-                <size unit="m">1</size>
-                <offset unit="-">1</offset>
-            </enableOpenMBVFrameC>
-        </RigidBody>
-    </objects>
-    <links/>
-    <constraints>
-        <GeneralizedVelocityConstraint name="KinematicConstraint2">
-            <dependentRigidBody ref="../Object[RigidBody1]"/>
-            <initialState>
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS" xmlns:ctl="http://www.mbsim-env.de/MBSimControl" xmlns:flex="http://www.mbsim-env.de/MBSimFlexibleBody" xmlns:hyd="http://www.mbsim-env.de/MBSimHydraulics" xmlns:ns_1="http://www.mbsim-env.de/OpenMBV" xmlns:ombv="http://www.mbsim-env.de/OpenMBV" xmlns:pv="http://www.mbsim-env.de/MBXMLUtils" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <plotFeatureRecursive value="generalizedRelativePosition">true</plotFeatureRecursive>
+  <plotFeatureRecursive value="generalizedRelativeVelocity">true</plotFeatureRecursive>
+  <plotFeatureRecursive value="generalizedForce">true</plotFeatureRecursive>
+  <plotFeatureRecursive value="generalizedPosition">true</plotFeatureRecursive>
+  <plotFeatureRecursive value="generalizedVelocity">true</plotFeatureRecursive>
+  <frames/>
+  <contours/>
+  <groups/>
+  <objects>
+    <RigidBody name="RigidBody1">
+      <mass unit="kg">1</mass>
+      <inertiaTensor unit="kg*m^2">
+        <pv:xmlMatrix>
+          <pv:row>
+            <pv:ele>0.01</pv:ele>
+            <pv:ele>0</pv:ele>
+            <pv:ele>0</pv:ele>
+          </pv:row>
+          <pv:row>
+            <pv:ele>0</pv:ele>
+            <pv:ele>0.01</pv:ele>
+            <pv:ele>0</pv:ele>
+          </pv:row>
+          <pv:row>
+            <pv:ele>0</pv:ele>
+            <pv:ele>0</pv:ele>
+            <pv:ele>0.01</pv:ele>
+          </pv:row>
+        </pv:xmlMatrix>
+      </inertiaTensor>
+      <stateDependentTranslation>
+        <SymbolicFunction>
+          <definition arg1="x">[x;-c*x^2;0]</definition>
+        </SymbolicFunction>
+      </stateDependentTranslation>
+      <stateDependentRotation>
+        <CompositeFunction>
+          <outerFunction>
+            <RotationAboutFixedAxis>
+              <axisOfRotation unit="-">
                 <pv:xmlVector>
-                    <pv:ele>-l/2</pv:ele>
+                  <pv:ele>0</pv:ele>
+                  <pv:ele>0</pv:ele>
+                  <pv:ele>1</pv:ele>
                 </pv:xmlVector>
-            </initialState>
-            <stateDependentConstraintFunction>
-              <SymbolicFunction><definition arg1="q" arg1Dim="1">v0/sqrt(1+4*c*c*q(1)*q(1));</definition></SymbolicFunction>
-            </stateDependentConstraintFunction>
-        </GeneralizedVelocityConstraint>
-    </constraints>
-    <observers>
-        <FrameObserver name="FrameObserver1">
-            <frame ref="../Object[RigidBody1]/Frame[C]"/>
-            <enableOpenMBVVelocity>
-               <scaleLength unit="-">0.1</scaleLength>
-            </enableOpenMBVVelocity>
-        </FrameObserver>
-        <RigidBodyObserver name="RigidBodyObserver1">
-            <rigidBody ref="../Object[RigidBody1]"/>
-            <enableOpenMBVWeight>
-              <scaleLength unit="-">1</scaleLength>
-            </enableOpenMBVWeight>
-            <enableOpenMBVJointForce>
-              <colorRepresentation>'absoluteValue'</colorRepresentation>
-              <scaleLength unit="-">1</scaleLength>
-            </enableOpenMBVJointForce>
-        </RigidBodyObserver>
-        <MechanicalConstraintObserver name="MechanicalConstraintObserver1">
-            <mechanicalConstraint ref="../Constraint[KinematicConstraint2]"/>
-            <enableOpenMBVForce>
-              <colorRepresentation>'absoluteValue'</colorRepresentation>
-              <scaleLength unit="-">1</scaleLength>
-            </enableOpenMBVForce>
-        </MechanicalConstraintObserver>
-    </observers>
-    <enableOpenMBVFrameI>
+              </axisOfRotation>
+            </RotationAboutFixedAxis>
+          </outerFunction>
+          <innerFunction>
+            <SymbolicFunction>
+              <definition arg1="x">atan(-c*2*x)</definition>
+            </SymbolicFunction>
+          </innerFunction>
+        </CompositeFunction>
+      </stateDependentRotation>
+      <translationDependentRotation>true</translationDependentRotation>
+      <frames/>
+      <contours/>
+      <openMBVRigidBody>
+        <ns_1:Cube name="NOTSET">
+          <ns_1:initialTranslation unit="m">
+            <pv:xmlVector>
+              <pv:ele>0</pv:ele>
+              <pv:ele>0</pv:ele>
+              <pv:ele>0</pv:ele>
+            </pv:xmlVector>
+          </ns_1:initialTranslation>
+          <ns_1:initialRotation unit="rad">
+            <pv:xmlVector>
+              <pv:ele>0</pv:ele>
+              <pv:ele>0</pv:ele>
+              <pv:ele>0</pv:ele>
+            </pv:xmlVector>
+          </ns_1:initialRotation>
+          <ns_1:scaleFactor unit="-">1</ns_1:scaleFactor>
+          <ns_1:length unit="m">1</ns_1:length>
+        </ns_1:Cube>
+      </openMBVRigidBody>
+      <enableOpenMBVFrameC>
         <size unit="m">1</size>
         <offset unit="-">1</offset>
-    </enableOpenMBVFrameI>
-    <environments>
-        <MBSimEnvironment>
-            <accelerationOfGravity unit="m/s^2">
-                <pv:xmlVector>
-                    <pv:ele>0</pv:ele>
-                    <pv:ele>-g</pv:ele>
-                    <pv:ele>0</pv:ele>
-                </pv:xmlVector>
-            </accelerationOfGravity>
-        </MBSimEnvironment>
-    </environments>
-    <inverseKinetics>1</inverseKinetics>
+      </enableOpenMBVFrameC>
+    </RigidBody>
+  </objects>
+  <links/>
+  <constraints>
+    <GeneralizedVelocityConstraint name="KinematicConstraint2">
+      <dependentRigidBody ref="../Object[RigidBody1]"/>
+      <initialState>
+        <pv:xmlVector>
+          <pv:ele>-l/2</pv:ele>
+        </pv:xmlVector>
+      </initialState>
+      <stateDependentConstraintFunction>
+        <SymbolicFunction>
+          <definition arg1="q" arg1Dim="1">v0/sqrt(1+4*c*c*q(1)*q(1));</definition>
+        </SymbolicFunction>
+      </stateDependentConstraintFunction>
+    </GeneralizedVelocityConstraint>
+  </constraints>
+  <observers>
+    <FrameObserver name="FrameObserver1">
+      <frame ref="../Object[RigidBody1]/Frame[C]"/>
+      <enableOpenMBVVelocity>
+        <scaleLength unit="-">0.1</scaleLength>
+      </enableOpenMBVVelocity>
+    </FrameObserver>
+    <RigidBodyObserver name="RigidBodyObserver1">
+      <rigidBody ref="../Object[RigidBody1]"/>
+      <enableOpenMBVWeight>
+        <scaleLength unit="-">1</scaleLength>
+      </enableOpenMBVWeight>
+      <enableOpenMBVJointForce>
+        <colorRepresentation>'absoluteValue'</colorRepresentation>
+        <scaleLength unit="-">1</scaleLength>
+      </enableOpenMBVJointForce>
+    </RigidBodyObserver>
+    <MechanicalConstraintObserver name="MechanicalConstraintObserver1">
+      <mechanicalConstraint ref="../Constraint[KinematicConstraint2]"/>
+      <enableOpenMBVForce>
+        <colorRepresentation>'absoluteValue'</colorRepresentation>
+        <scaleLength unit="-">1</scaleLength>
+      </enableOpenMBVForce>
+    </MechanicalConstraintObserver>
+  </observers>
+  <enableOpenMBVFrameI>
+    <size unit="m">1</size>
+    <offset unit="-">1</offset>
+  </enableOpenMBVFrameI>
+  <environments>
+    <MBSimEnvironment>
+      <accelerationOfGravity unit="m/s^2">
+        <pv:xmlVector>
+          <pv:ele>0</pv:ele>
+          <pv:ele>-g</pv:ele>
+          <pv:ele>0</pv:ele>
+        </pv:xmlVector>
+      </accelerationOfGravity>
+    </MBSimEnvironment>
+  </environments>
+  <inverseKinetics>1</inverseKinetics>
 </DynamicSystemSolver>

@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
-
   <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
-      <plotFeatureRecursive value="generalizedRelativePosition">true</plotFeatureRecursive>
-      <plotFeatureRecursive value="generalizedRelativeVelocity">true</plotFeatureRecursive>
-      <plotFeatureRecursive value="generalizedForce">true</plotFeatureRecursive>
-      <plotFeatureRecursive value="generalizedPosition">true</plotFeatureRecursive>
-      <plotFeatureRecursive value="generalizedVelocity">true</plotFeatureRecursive>
+    <plotFeatureRecursive value="generalizedRelativePosition">true</plotFeatureRecursive>
+    <plotFeatureRecursive value="generalizedRelativeVelocity">true</plotFeatureRecursive>
+    <plotFeatureRecursive value="generalizedForce">true</plotFeatureRecursive>
+    <plotFeatureRecursive value="generalizedPosition">true</plotFeatureRecursive>
+    <plotFeatureRecursive value="generalizedVelocity">true</plotFeatureRecursive>
     <frames/>
     <contours/>
     <groups/>
@@ -18,7 +17,8 @@
             <enableOpenMBV xmlns="http://www.mbsim-env.de/MBSim"/>
             <nodeNumber>138</nodeNumber>
           </NodeFrame>
-        </frames><contours/>
+        </frames>
+        <contours/>
         <enableOpenMBV>
           <pointSize xmlns="http://www.mbsim-env.de/MBSim">3</pointSize>
         </enableOpenMBV>
@@ -67,7 +67,6 @@
       </MBSimEnvironment>
     </environments>
   </DynamicSystemSolver>
-
   <LinearSystemAnalyzer xmlns="http://www.mbsim-env.de/MBSimControl">
     <normalModeScaleFactor>10</normalModeScaleFactor>
     <visualizeNormalModes>
@@ -82,5 +81,4 @@
     <plotStepSize unit="s">1e-2</plotStepSize>
     <loops>1</loops>
   </LinearSystemAnalyzer>
-
 </MBSimProject>

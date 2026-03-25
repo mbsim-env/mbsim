@@ -1,10 +1,8 @@
-<Group name="i" xmlns="http://www.mbsim-env.de/MBSim">
-  <frames>
-  </frames>
-  <contours>
-  </contours>
-  <groups>
-  </groups>
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<Group xmlns="http://www.mbsim-env.de/MBSim" name="i">
+  <frames/>
+  <contours/>
+  <groups/>
   <objects>
     <RigidBody name="S1" xmlns="http://www.mbsim-env.de/MBSim">
       <generalizedInitialPosition>pi/2</generalizedInitialPosition>
@@ -19,31 +17,31 @@
       </stateDependentRotation>
       <frames>
         <FixedRelativeFrame name="F1">
-          <enableOpenMBV> 
+          <enableOpenMBV>
             <size>frameSize</size>
             <offset>1.</offset>
           </enableOpenMBV>
-          <frameOfReference ref="../Frame[C]"/> 
+          <frameOfReference ref="../Frame[C]"/>
           <relativePosition>[-y/2; 0; 0]</relativePosition>
           <relativeOrientation>eye(3)</relativeOrientation>
         </FixedRelativeFrame>
         <FixedRelativeFrame name="F2">
-          <enableOpenMBV> 
+          <enableOpenMBV>
             <size>frameSize</size>
             <offset>1.</offset>
           </enableOpenMBV>
-          <frameOfReference ref="../Frame[C]"/> 
+          <frameOfReference ref="../Frame[C]"/>
           <relativePosition>[y/2; 0; 0]</relativePosition>
           <relativeOrientation>eye(3)</relativeOrientation>
         </FixedRelativeFrame>
       </frames>
       <contours>
         <Line name="CTop" xmlns="http://www.mbsim-env.de/MBSim">
-          <frameOfReference ref="../Frame[F2]"/> 
+          <frameOfReference ref="../Frame[F2]"/>
         </Line>
       </contours>
-      <openMBVRigidBody> 
-        <Frustum name="dummy" xmlns="http://www.mbsim-env.de/OpenMBV">
+      <openMBVRigidBody>
+        <Frustum xmlns="http://www.mbsim-env.de/OpenMBV" name="dummy">
           <diffuseColor>[0;1;0.6666]</diffuseColor>
           <initialTranslation>[0; 0; 0]</initialTranslation>
           <initialRotation>[0; -pi/2; 0]</initialRotation>
@@ -55,8 +53,8 @@
           <innerTopRadius>0</innerTopRadius>
         </Frustum>
       </openMBVRigidBody>
-      <openMBVFrameOfReference ref="Frame[F1]"/> 
-      <enableOpenMBVFrameC> 
+      <openMBVFrameOfReference ref="Frame[F1]"/>
+      <enableOpenMBVFrameC>
         <size>frameSize</size>
         <offset>1.</offset>
       </enableOpenMBVFrameC>
@@ -72,16 +70,15 @@
           <translationVectors>[1; 0; 0]</translationVectors>
         </LinearTranslation>
       </stateDependentTranslation>
-      <frames>
-      </frames>
+      <frames/>
       <contours>
         <Circle name="CCircle" xmlns="http://www.mbsim-env.de/MBSim">
-          <frameOfReference ref="../Frame[C]"/> 
+          <frameOfReference ref="../Frame[C]"/>
           <radius>2*r</radius>
         </Circle>
       </contours>
-      <openMBVRigidBody> 
-        <Sphere name="dummy" xmlns="http://www.mbsim-env.de/OpenMBV">
+      <openMBVRigidBody>
+        <Sphere xmlns="http://www.mbsim-env.de/OpenMBV" name="dummy">
           <diffuseColor>[0;1;0.6666]</diffuseColor>
           <initialTranslation>[0; 0; 0]</initialTranslation>
           <initialRotation>[0; -pi/2; 0]</initialRotation>
@@ -89,7 +86,7 @@
           <radius>2*r</radius>
         </Sphere>
       </openMBVRigidBody>
-      <enableOpenMBVFrameC> 
+      <enableOpenMBVFrameC>
         <size>frameSize</size>
         <offset>1.</offset>
       </enableOpenMBVFrameC>
@@ -128,4 +125,3 @@
   <constraints/>
   <observers/>
 </Group>
-

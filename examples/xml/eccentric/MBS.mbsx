@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
-
   <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
     <Parameter>
       <scalarParameter name="m" unit="-">1</scalarParameter>
@@ -24,8 +23,7 @@
       <plotFeatureRecursive value="generalizedVelocity">true</plotFeatureRecursive>
       <frames>
         <FixedRelativeFrame name="P1">
-          <enableOpenMBV>
-          </enableOpenMBV>
+          <enableOpenMBV/>
           <relativePosition unit="m">
             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
               <ele>l01+a/2</ele>
@@ -35,8 +33,7 @@
           </relativePosition>
         </FixedRelativeFrame>
         <FixedRelativeFrame name="P2">
-          <enableOpenMBV>
-          </enableOpenMBV>
+          <enableOpenMBV/>
           <relativePosition unit="m">
             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
               <ele>l01+a+l02+r</ele>
@@ -46,8 +43,7 @@
           </relativePosition>
         </FixedRelativeFrame>
         <FixedRelativeFrame name="P3">
-          <enableOpenMBV>
-          </enableOpenMBV>
+          <enableOpenMBV/>
           <relativePosition unit="m">
             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
               <ele>l01+a+l02</ele>
@@ -87,8 +83,7 @@
           </stateDependentTranslation>
           <frames>
             <FixedRelativeFrame name="P1">
-              <enableOpenMBV>
-              </enableOpenMBV>
+              <enableOpenMBV/>
               <relativePosition unit="m">
                 <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                   <ele>-a/2</ele>
@@ -98,8 +93,7 @@
               </relativePosition>
             </FixedRelativeFrame>
             <FixedRelativeFrame name="P2">
-              <enableOpenMBV>
-              </enableOpenMBV>
+              <enableOpenMBV/>
               <relativePosition unit="m">
                 <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                   <ele>a/2</ele>
@@ -131,8 +125,7 @@
               <length unit="m">a</length>
             </Cube>
           </openMBVRigidBody>
-          <enableOpenMBVFrameC>
-          </enableOpenMBVFrameC>
+          <enableOpenMBVFrameC/>
         </RigidBody>
         <RigidBody name="Eccentric">
           <frameOfReference ref="../Frame[P2]"/>
@@ -171,8 +164,7 @@
           </timeDependentRotation>
           <frames>
             <FixedRelativeFrame name="P1">
-              <enableOpenMBV>
-              </enableOpenMBV>
+              <enableOpenMBV/>
               <relativePosition unit="m">
                 <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                   <ele>0</ele>
@@ -185,8 +177,7 @@
           <contours>
             <Circle name="Circle3">
               <radius unit="m">r</radius>
-              <enableOpenMBV>
-              </enableOpenMBV>
+              <enableOpenMBV/>
             </Circle>
           </contours>
           <openMBVRigidBody>
@@ -214,8 +205,7 @@
               <innerTopRadius unit="m">0</innerTopRadius>
             </Frustum>
           </openMBVRigidBody>
-          <enableOpenMBVFrameC>
-          </enableOpenMBVFrameC>
+          <enableOpenMBVFrameC/>
         </RigidBody>
         <RigidBody name="RigidBody">
           <frameOfReference ref="../Frame[P3]"/>
@@ -245,8 +235,7 @@
           <frames/>
           <contours>
             <Line name="Line3">
-              <enableOpenMBV>
-              </enableOpenMBV>
+              <enableOpenMBV/>
             </Line>
           </contours>
           <openMBVRigidBody>
@@ -276,8 +265,7 @@
               </length>
             </Cuboid>
           </openMBVRigidBody>
-          <enableOpenMBVFrameC>
-          </enableOpenMBVFrameC>
+          <enableOpenMBVFrameC/>
         </RigidBody>
       </objects>
       <links>
@@ -323,8 +311,7 @@
       </links>
       <constraints/>
       <observers/>
-      <enableOpenMBVFrameI>
-      </enableOpenMBVFrameI>
+      <enableOpenMBVFrameI/>
       <environments>
         <MBSimEnvironment>
           <accelerationOfGravity unit="m/s^2">
@@ -338,7 +325,6 @@
       </environments>
     </DynamicSystemSolver>
   </Embed>
-
   <DOPRI5Integrator xmlns="http://www.mbsim-env.de/MBSim">
     <startTime unit="s">0</startTime>
     <endTime unit="s">20</endTime>
@@ -348,5 +334,4 @@
     <initialStepSize unit="s">0</initialStepSize>
     <maximumStepSize unit="s">0</maximumStepSize>
   </DOPRI5Integrator>
-
 </MBSimProject>

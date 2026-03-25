@@ -1,13 +1,10 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <Group xmlns="http://www.mbsim-env.de/MBSim" name="CrankMechanism">
-  <frames>
-  </frames>
-  <contours>
-  </contours>
-  <groups>
-  </groups>
+  <frames/>
+  <contours/>
+  <groups/>
   <objects>
-    <RigidBody xmlns="http://www.mbsim-env.de/MBSim" name="Carrier">
+    <RigidBody name="Carrier" xmlns="http://www.mbsim-env.de/MBSim">
       <frameOfReference ref="../Frame[I]"/>
       <frameForKinematics ref="Frame[C]"/>
       <mass>carrier_Mass</mass>
@@ -62,7 +59,7 @@
         <offset>1.</offset>
       </enableOpenMBVFrameC>
     </RigidBody>
-    <RigidBody xmlns="http://www.mbsim-env.de/MBSim" name="Motor">
+    <RigidBody name="Motor" xmlns="http://www.mbsim-env.de/MBSim">
       <generalizedInitialPosition>153.874/180*pi</generalizedInitialPosition>
       <frameOfReference ref="../Object[Carrier]/Frame[fMotor]"/>
       <frameForKinematics ref="Frame[C]"/>
@@ -94,7 +91,7 @@
         <offset>1.</offset>
       </enableOpenMBVFrameC>
     </RigidBody>
-    <RigidBody xmlns="http://www.mbsim-env.de/MBSim" name="Crank">
+    <RigidBody name="Crank" xmlns="http://www.mbsim-env.de/MBSim">
       <frameOfReference ref="../Object[Carrier]/Frame[fI]"/>
       <frameForKinematics ref="Frame[C]"/>
       <mass>crank_Mass</mass>
@@ -122,7 +119,7 @@
           <initialTranslation>[0; 0; 0]</initialTranslation>
           <initialRotation>[0; 0; 0]</initialRotation>
           <scaleFactor>1.</scaleFactor>
-          <Frustum xmlns="http://www.mbsim-env.de/OpenMBV" name="frustum">
+          <Frustum name="frustum" xmlns="http://www.mbsim-env.de/OpenMBV">
             <initialTranslation>[0; 0; -cylinder_Radius/3/2]</initialTranslation>
             <initialRotation>[0; 0; 0]</initialRotation>
             <scaleFactor>1.</scaleFactor>
@@ -132,7 +129,7 @@
             <innerBaseRadius>0</innerBaseRadius>
             <innerTopRadius>0</innerTopRadius>
           </Frustum>
-          <Cuboid xmlns="http://www.mbsim-env.de/OpenMBV" name="cuboid">
+          <Cuboid name="cuboid" xmlns="http://www.mbsim-env.de/OpenMBV">
             <initialTranslation>[crank_Radius/2; 0; 0]</initialTranslation>
             <initialRotation>[0; 0; 0]</initialRotation>
             <scaleFactor>1.</scaleFactor>
@@ -146,7 +143,7 @@
         <offset>1.</offset>
       </enableOpenMBVFrameC>
     </RigidBody>
-    <RigidBody xmlns="http://www.mbsim-env.de/MBSim" name="Rocker">
+    <RigidBody name="Rocker" xmlns="http://www.mbsim-env.de/MBSim">
       <frameOfReference ref="../Object[Crank]/Frame[fRocker]"/>
       <frameForKinematics ref="Frame[fCrank]"/>
       <mass>rocker_Mass</mass>
@@ -192,7 +189,7 @@
         <offset>1.</offset>
       </enableOpenMBVFrameC>
     </RigidBody>
-    <RigidBody xmlns="http://www.mbsim-env.de/MBSim" name="Piston">
+    <RigidBody name="Piston" xmlns="http://www.mbsim-env.de/MBSim">
       <frameOfReference ref="../Object[Carrier]/Frame[fPiston]"/>
       <frameForKinematics ref="Frame[fCylinder]"/>
       <mass>piston_Mass</mass>
@@ -244,7 +241,7 @@
     </RigidBody>
   </objects>
   <links>
-    <KineticExcitation xmlns="http://www.mbsim-env.de/MBSim" name="MotorTorque">
+    <KineticExcitation name="MotorTorque" xmlns="http://www.mbsim-env.de/MBSim">
       <connect ref2="../Object[Motor]/Frame[C]"/>
       <momentDirection>[0 0 1]'</momentDirection>
       <momentFunction>
@@ -254,11 +251,11 @@
         </TabularFunction>
       </momentFunction>
       <enableOpenMBV>
-          <colorRepresentation>'absoluteValue'</colorRepresentation>
-          <scaleLength>.1</scaleLength>
+        <colorRepresentation>'absoluteValue'</colorRepresentation>
+        <scaleLength>.1</scaleLength>
       </enableOpenMBV>
     </KineticExcitation>
-    <Joint xmlns="http://www.mbsim-env.de/MBSim" name="Friction_Crank_Rocker">
+    <Joint name="Friction_Crank_Rocker" xmlns="http://www.mbsim-env.de/MBSim">
       <connect ref1="../Object[Crank]/Frame[fRocker]" ref2="../Object[Rocker]/Frame[fCrank]"/>
       <momentDirection>[0 0 1]'</momentDirection>
       <momentLaw>
@@ -273,7 +270,7 @@
       </momentLaw>
       <integrateGeneralizedRelativeVelocityOfRotation>true</integrateGeneralizedRelativeVelocityOfRotation>
     </Joint>
-    <Joint xmlns="http://www.mbsim-env.de/MBSim" name="Friction_Rocker_Piston">
+    <Joint name="Friction_Rocker_Piston" xmlns="http://www.mbsim-env.de/MBSim">
       <connect ref1="../Object[Piston]/Frame[fRocker]" ref2="../Object[Rocker]/Frame[fPiston]"/>
       <momentDirection>[0 0 1]'</momentDirection>
       <momentLaw>
@@ -290,11 +287,11 @@
     </Joint>
   </links>
   <constraints>
-    <GeneralizedGearConstraint xmlns="http://www.mbsim-env.de/MBSim" name="Constraint_Motor_Crank">
+    <GeneralizedGearConstraint name="Constraint_Motor_Crank" xmlns="http://www.mbsim-env.de/MBSim">
       <dependentRigidBody ref="../Object[Crank]"/>
-      <independentRigidBody ref="../Object[Motor]" ratio="-motor_TransmissionRadius/crank_TransmissionRadius"/>
+      <independentRigidBody ratio="-motor_TransmissionRadius/crank_TransmissionRadius" ref="../Object[Motor]"/>
     </GeneralizedGearConstraint>
-    <JointConstraint xmlns="http://www.mbsim-env.de/MBSim" name="Constraint_Rocker_Piston">
+    <JointConstraint name="Constraint_Rocker_Piston" xmlns="http://www.mbsim-env.de/MBSim">
       <dependentRigidBodyOnFirstSide ref="../Object[Rocker]"/>
       <dependentRigidBodyOnSecondSide ref="../Object[Piston]"/>
       <independentRigidBody ref="../Object[Crank]"/>

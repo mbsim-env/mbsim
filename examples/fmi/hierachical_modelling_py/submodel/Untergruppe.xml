@@ -1,7 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Group name="Untergruppe" xmlns="http://www.mbsim-env.de/MBSim"
-    xmlns:pv="http://www.mbsim-env.de/MBXMLUtils"
-    xmlns:ombv="http://www.mbsim-env.de/OpenMBV">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<Group xmlns="http://www.mbsim-env.de/MBSim" name="Untergruppe" xmlns:ombv="http://www.mbsim-env.de/OpenMBV" xmlns:pv="http://www.mbsim-env.de/MBXMLUtils">
   <frameOfReference ref="../Frame[Q]"/>
   <frames/>
   <contours/>
@@ -12,8 +10,7 @@
       <generalizedInitialVelocity>[0]</generalizedInitialVelocity>
       <frameOfReference ref="../Frame[I]"/>
       <frameForKinematics ref="Frame[C]"/>
-      <mass>
-        <![CDATA[# If more than one python statement is given, the value for the
+      <mass><![CDATA[# If more than one python statement is given, the value for the
           # element is taken from the python variable named 'ret'.
           # Note that the characters '<', '>' and '&' are not allowed in XML text
           # elements. You must quote them with '&lt;', '&gt;' and '&amp;' or use
@@ -37,8 +34,7 @@
           # just a dummy statement to check for "inline" imports
           import os.path
           os.path.basename('abc/cde.txt')
-        ]]>
-      </mass>
+        ]]></mass>
       <inertiaTensor>[[1,0,0] , [0,1,0] , [0,0,1]]</inertiaTensor>
       <stateDependentTranslation>
         <LinearTranslation>
@@ -98,7 +94,7 @@
       </frames>
       <contours/>
       <openMBVRigidBody>
-        <IvBody name="dummy" xmlns="http://www.mbsim-env.de/OpenMBV">
+        <IvBody xmlns="http://www.mbsim-env.de/OpenMBV" name="dummy">
           <diffuseColor>[0.3333,1,0.3333]</diffuseColor>
           <initialTranslation>[0,0,0]</initialTranslation>
           <initialRotation>[0,0,0]</initialRotation>

@@ -151,7 +151,7 @@ namespace MBSimGUI {
     QString oldText = frame->currentText();
     for(int i=0, k=0; i<element->getNumberOfFrames(); i++) {
       if(omitFrame!=element->getFrame(i)) {
-        frame->addItem("Frame["+element->getFrame(i)->getName()+"]");
+        frame->addItem("Frame["+element->getFrame(i)->getXMLName()+"]");
         if(element->getFrame(i) == selectedFrame)
           oldIndex = k;
         k++;
@@ -206,7 +206,7 @@ namespace MBSimGUI {
     QString oldText = frame->currentText();
     for(int i=0, k=0; i<element->getParent()->getNumberOfFrames(); i++) {
       if(omitFrame!=element->getParent()->getFrame(i)) {
-        frame->addItem("../Frame["+element->getParent()->getFrame(i)->getName()+"]");
+        frame->addItem("../Frame["+element->getParent()->getFrame(i)->getXMLName()+"]");
         if(element->getParent()->getFrame(i) == selectedFrame)
           oldIndex = k;
         k++;
@@ -415,7 +415,8 @@ namespace MBSimGUI {
     E(ele)->setAttribute("ref",item->text(0).toStdString());
     if(tree->columnCount()==2)
       E(ele)->setAttribute("ratio",item->text(1).toStdString());
-    string text = X()%mw->serializer->writeToString(embed.get());
+    string text;
+    DOMParser::serializeToString(embed.get(), text, true);
     item->setData(0, Qt::UserRole, text.c_str());
 
     item->setFlags(item->flags() & ~Qt::ItemIsEditable);
@@ -499,7 +500,8 @@ namespace MBSimGUI {
         item->setText(0, "<Array/Pattern>");
         auto icon = Utils::QIconCached(QString::fromStdString((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"embed-active.svg").string()));
         item->setIcon(0, icon);
-        string text = X()%mw->serializer->writeToString(e);
+        string text;
+        DOMParser::serializeToString(e, text, true);
         item->setData(0, Qt::UserRole, text.c_str());
       }
       tree->addTopLevelItem(item);
@@ -613,7 +615,9 @@ namespace MBSimGUI {
     DOMText *text = E(element)->getFirstTextChild();
     if(text) {
       value->blockSignals(true);
-      setValue(boost::lexical_cast<int>(X()%text->getData()));
+      auto str = X()%text->getData();
+      boost::trim(str);
+      setValue(boost::lexical_cast<int>(str));
       value->blockSignals(false);
       return element;
     }
@@ -706,12 +710,12 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    text = new QTextEdit;
+    text = new CodeEditor;
     text->setMinimumSize(300,200);
-    text->setText(text_);
+    text->setPlainText(text_);
     text->setReadOnly(readOnly);
     layout->addWidget(text);
-    connect(text,&QTextEdit::textChanged,this,&Widget::widgetChanged);
+    connect(text,&QPlainTextEdit::textChanged,this,&Widget::widgetChanged);
   }
 
   DOMElement* TextEditorWidget::initializeUsingXML(DOMElement *element) {
@@ -721,14 +725,8 @@ namespace MBSimGUI {
     return ele;
   }
 
-  void TextEditorWidget::enableMonospaceFont() {
-    static const QFont fixedFont=QFontDatabase::systemFont(QFontDatabase::FixedFont);
-    text->setFont(fixedFont);
-    text->setLineWrapMode(QTextEdit::NoWrap);
-  }
-
   void TextEditorWidget::enableSyntaxHighlighter() {
-    Evaluator::installSyntaxHighlighter(text, text);
+    Evaluator::installSyntaxHighlighter(text);
   }
 
   TextListWidget::TextListWidget(const QString &label_, const FQN &xmlName_, bool allowEmbed_) : EmbedableListWidget(nullptr, xmlName_, allowEmbed_), label(label_) {
@@ -779,7 +777,8 @@ namespace MBSimGUI {
     auto *ele = D(doc)->createElement(xmlName);
     embed->insertBefore(ele, nullptr);
     ele->insertBefore(doc->createTextNode(X()%item->text(0).toStdString()), nullptr);
-    string text = X()%mw->serializer->writeToString(embed.get());
+    string text;
+    DOMParser::serializeToString(embed.get(), text, true);
     item->setData(0, Qt::UserRole, text.c_str());
 
     item->setFlags(item->flags() & ~Qt::ItemIsEditable);
@@ -871,7 +870,8 @@ namespace MBSimGUI {
         item->setText(0, "<Array/Pattern>");
         auto icon = Utils::QIconCached(QString::fromStdString((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"embed-active.svg").string()));
         item->setIcon(0, icon);
-        string text = X()%mw->serializer->writeToString(e);
+        string text;
+        DOMParser::serializeToString(e, text, true);
         item->setData(0, Qt::UserRole, text.c_str());
       }
       tree->addTopLevelItem(item);
@@ -1111,7 +1111,9 @@ namespace MBSimGUI {
         item->setText(3, QString::fromStdString(E(e)->getAttributeQName("value").first));
       }
       else {
-        item->setText(1, (X()%mw->serializer->writeToString(e)).c_str());
+        string text;
+        DOMParser::serializeToString(e, text, true);
+        item->setText(1, text.c_str());
         item->setText(2, "");
         item->setText(3, "");
       }
@@ -1155,7 +1157,9 @@ namespace MBSimGUI {
         item->setText(3, QString::fromStdString(E(e)->getAttributeQName("value").first));
       }
       else {
-        item->setText(1, (X()%mw->serializer->writeToString(e)).c_str());
+        string text;
+        DOMParser::serializeToString(e, text, true);
+        item->setText(1, text.c_str());
         item->setText(2, "");
         item->setText(3, "");
       }
@@ -1229,18 +1233,17 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    edit = new QTextEdit;
+    edit = new CodeEditor;
     edit->setMinimumSize(300,200);
     setText(text);
     if(syntax) new XMLHighlighter(edit->document());
-    static const QFont fixedFont=QFontDatabase::systemFont(QFontDatabase::FixedFont);
-    edit->setFont(fixedFont);
     layout->addWidget(edit);
   }
 
   DOMElement* XMLEditorWidget::initializeUsingXML(DOMElement *element) {
-    string text = X()%mw->serializer->writeToString(element);
-    edit->setText(QString::fromStdString(text));
+    string text;
+    DOMParser::serializeToString(element, text, true);
+    edit->setPlainText(QString::fromStdString(text));
     return element;
   }
 
@@ -1642,9 +1645,9 @@ namespace MBSimGUI {
   }
 
   namespace {
-    QTextEdit* createCodeWidget(QWidget *parent) {
-      auto *c=new QTextEdit(parent);
-      Evaluator::installSyntaxHighlighter(c, c);
+    CodeEditor* createCodeWidget(QWidget *parent) {
+      auto *c=new CodeEditor(parent);
+      Evaluator::installSyntaxHighlighter(c);
       return c;
     }
   }

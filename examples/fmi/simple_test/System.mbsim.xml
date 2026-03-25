@@ -1,7 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Group name="System{n}" xmlns="http://www.mbsim-env.de/MBSim"
-  xmlns:control="http://www.mbsim-env.de/MBSimControl"
-  xmlns:pv="http://www.mbsim-env.de/MBXMLUtils">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<Group xmlns="http://www.mbsim-env.de/MBSim" name="System{n}" xmlns:control="http://www.mbsim-env.de/MBSimControl" xmlns:pv="http://www.mbsim-env.de/MBXMLUtils">
   <frameOfReference ref="../Frame[Q{n}]"/>
   <frames>
     <FixedRelativeFrame name="SpringMount">
@@ -47,13 +45,16 @@
         </UnilateralNewtonImpact>
       </normalImpactLaw>
     </Contact>
-    <control:ExternSignalSource name="ExternForce"> <!-- only used in FMI case -->
+    <control:ExternSignalSource name="ExternForce">
+      <!-- only used in FMI case -->
       <control:sourceSize>1</control:sourceSize>
     </control:ExternSignalSource>
-    <control:GeneralizedRelativePositionSensor name="SpringDistance"> <!-- only used in FMI case -->
+    <control:GeneralizedRelativePositionSensor name="SpringDistance">
+      <!-- only used in FMI case -->
       <control:link ref="../Link[EXTERN]"/>
     </control:GeneralizedRelativePositionSensor>
-    <control:ExternSignalSink name="SpringDistanceSink"> <!-- only used in FMI case -->
+    <control:ExternSignalSink name="SpringDistanceSink">
+      <!-- only used in FMI case -->
       <control:inputSignal ref="../Link[SpringDistance]"/>
     </control:ExternSignalSink>
     <pv:Embed href="{extern}"/>

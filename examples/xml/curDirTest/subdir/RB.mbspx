@@ -6,12 +6,14 @@
     if not os.path.exists("./RB.mbspx"):
       raise RuntimeError(f"File './RB.mbspx' not found; cwd={os.getcwd()} should be '.../subdir'")
   </stringParameter>
-  <stringParameter name="hidden"><?MBSIMGUI_HIDDEN #
+  <stringParameter name="hidden">
+    <?MBSIMGUI_HIDDEN #
     import os
     if not os.path.exists("./RB.mbspx"):
       raise RuntimeError(f"File './RB.mbspx' not found; cwd={os.getcwd()} should be '.../subdir'")
     ret=False
     ?>
     ret="dummyhidden"
+  
   </stringParameter>
 </Parameter>

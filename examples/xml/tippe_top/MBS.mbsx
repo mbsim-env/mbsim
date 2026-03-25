@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
-
   <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
     <Parameter>
       <scalarParameter name="r1" unit="-">1.5</scalarParameter>
@@ -35,7 +34,8 @@
             </cardan>
           </relativeOrientation>
         </FixedRelativeFrame>
-      </frames><contours>
+      </frames>
+      <contours>
         <Plane name="Plane">
           <frameOfReference ref="../Frame[P]"/>
           <enableOpenMBV>
@@ -136,21 +136,20 @@
             <Sphere name="Sphere1">
               <frameOfReference ref="../Frame[P1]"/>
               <radius unit="cm">r1</radius>
-              <enableOpenMBV>
-              </enableOpenMBV>
+              <enableOpenMBV/>
             </Sphere>
             <Sphere name="Sphere2">
               <frameOfReference ref="../Frame[P2]"/>
               <radius unit="cm">r2</radius>
-              <enableOpenMBV>
-              </enableOpenMBV>
+              <enableOpenMBV/>
             </Sphere>
           </contours>
           <enableOpenMBVFrameC>
             <size unit="m">0.01</size>
           </enableOpenMBVFrameC>
         </RigidBody>
-      </objects><links>
+      </objects>
+      <links>
         <Contact name="Contact1">
           <connect ref1="../Contour[Plane]" ref2="../Object[Body]/Contour[Sphere1]"/>
           <normalForceLaw>
@@ -193,7 +192,8 @@
             </SpatialCoulombImpact>
           </tangentialImpactLaw>
         </Contact>
-      </links><constraints/>
+      </links>
+      <constraints/>
       <observers>
         <ContactObserver name="ContactObserver1">
           <contact ref="../Link[Contact1]"/>
@@ -213,11 +213,12 @@
             <scaleLength>0.2</scaleLength>
           </enableOpenMBVTangentialForce>
         </ContactObserver>
-      </observers><enableOpenMBVFrameI>
+      </observers>
+      <enableOpenMBVFrameI>
         <size unit="cm">3</size>
-      </enableOpenMBVFrameI><environments>
+      </enableOpenMBVFrameI>
+      <environments>
         <MBSimEnvironment>
-          
           <accelerationOfGravity unit="m/s^2">
             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
               <ele>0</ele>
@@ -235,7 +236,6 @@
       <generalizedImpulseTolerance>1e-8</generalizedImpulseTolerance>
     </DynamicSystemSolver>
   </Embed>
-
   <LSODEIntegrator xmlns="http://www.mbsim-env.de/MBSim">
     <startTime unit="s">0</startTime>
     <endTime unit="s">4</endTime>
@@ -244,5 +244,4 @@
     <toleranceForVelocityConstraints>1e-5</toleranceForVelocityConstraints>
     <initialStepSize unit="s">1e-8</initialStepSize>
   </LSODEIntegrator>
-
 </MBSimProject>

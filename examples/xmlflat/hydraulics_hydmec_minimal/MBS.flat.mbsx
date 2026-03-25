@@ -1,9 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<MBSimProject name="MBSPRJ" xmlns="http://www.mbsim-env.de/MBSimXML">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="MBSPRJ">
   <evaluator xmlns="http://www.mbsim-env.de/MBXMLUtils">xmlflat</evaluator>
-  <DynamicSystemSolver name="TS" xmlns="http://www.mbsim-env.de/MBSim"
-    xmlns:ombv="http://www.mbsim-env.de/OpenMBV"
-    xmlns:h="http://www.mbsim-env.de/MBSimHydraulics">
+  <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="TS" xmlns:h="http://www.mbsim-env.de/MBSimHydraulics" xmlns:ombv="http://www.mbsim-env.de/OpenMBV">
     <plotFeatureRecursive value="generalizedRelativePosition">true</plotFeatureRecursive>
     <plotFeatureRecursive value="generalizedRelativeVelocity">true</plotFeatureRecursive>
     <plotFeatureRecursive value="generalizedForce">true</plotFeatureRecursive>

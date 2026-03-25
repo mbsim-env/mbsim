@@ -839,7 +839,7 @@ namespace MBSimGUI {
 	if(hasVisitedPage(pageList.at(i)))
 	  page<WizardPage>(pageList.at(i))->writeXMLFile(element);
       }
-      mw->serializer->writeToURI(doc.get(), MBXMLUtils::X()%file.toStdString());
+      MBXMLUtils::DOMParser::serialize(doc.get(), file.toStdString(), true);
     }
   }
 

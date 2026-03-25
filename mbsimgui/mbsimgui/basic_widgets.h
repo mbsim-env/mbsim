@@ -26,9 +26,9 @@
 #include "utils.h"
 #include "dialogs.h"
 #include "namespace.h"
+#include "variable_widgets.h"
 #include <QLineEdit>
 #include <QPlainTextEdit>
-#include <QTextEdit>
 #include <QSpinBox>
 #include <QFileDialog>
 #include <mbxmlutilshelper/dom.h>
@@ -288,11 +288,10 @@ namespace MBSimGUI {
       void setText(const QString &text_) override { text->setPlainText(text_); }
       void setReadOnly(bool readOnly) { text->setReadOnly(readOnly); }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      void enableMonospaceFont();
       void enableSyntaxHighlighter();
 
     protected:
-      QTextEdit *text;
+      CodeEditor *text;
   };
 
   class TextListWidget : public EmbedableListWidget {
@@ -392,10 +391,10 @@ namespace MBSimGUI {
       void setText(const QString &text) { edit->setPlainText(text); }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
-      QTextEdit *getEditor() { return edit; }
+      CodeEditor *getEditor() { return edit; }
 
     protected:
-      QTextEdit *edit;
+      CodeEditor *edit;
   };
 
   class CloneWidget : public Widget {

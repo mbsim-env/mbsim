@@ -1,6 +1,5 @@
-<DynamicSystemSolver name="MBS" xmlns="http://www.mbsim-env.de/MBSim"
-    xmlns:pv="http://www.mbsim-env.de/MBXMLUtils"
-    xmlns:ombv="http://www.mbsim-env.de/OpenMBV">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS" xmlns:ombv="http://www.mbsim-env.de/OpenMBV" xmlns:pv="http://www.mbsim-env.de/MBXMLUtils">
   <plotFeatureRecursive value="generalizedRelativePosition">true</plotFeatureRecursive>
   <plotFeatureRecursive value="generalizedRelativeVelocity">true</plotFeatureRecursive>
   <plotFeatureRecursive value="generalizedForce">true</plotFeatureRecursive>
@@ -15,9 +14,8 @@
   <contours/>
   <groups/>
   <objects>
-    <RigidBody name="Stab1" xmlns="http://www.mbsim-env.de/MBSim"
-      xmlns:ombv="http://www.mbsim-env.de/OpenMBV">
-    <generalizedInitialPosition>[0;-lO;pi/50*1]</generalizedInitialPosition>
+    <RigidBody name="Stab1" xmlns="http://www.mbsim-env.de/MBSim" xmlns:ombv="http://www.mbsim-env.de/OpenMBV">
+      <generalizedInitialPosition>[0;-lO;pi/50*1]</generalizedInitialPosition>
       <generalizedInitialVelocity>[0;0;0]</generalizedInitialVelocity>
       <frameOfReference ref="../Frame[I]"/>
       <frameForKinematics ref="Frame[C]"/>
@@ -55,14 +53,12 @@
         </ombv:Frustum>
       </openMBVRigidBody>
     </RigidBody>
-    <pv:Embed href="Stab_n.xml" count="N-1+1" counterName="n_pendel"/>
+    <pv:Embed count="N-1+1" counterName="n_pendel" href="Stab_n.xml"/>
     <pv:Embed count="4" counterName="n_pendel_">
       <pv:Parameter xmlns:pv="http://www.mbsim-env.de/MBXMLUtils">
         <pv:scalarParameter name="n_pendel">n_pendel_+5</pv:scalarParameter>
       </pv:Parameter>
-      <RigidBody name="Stab{n_pendel+1}" xmlns="http://www.mbsim-env.de/MBSim"
-        xmlns:pv="http://www.mbsim-env.de/MBXMLUtils"
-        xmlns:ombv="http://www.mbsim-env.de/OpenMBV">
+      <RigidBody name="Stab{n_pendel+1}" xmlns="http://www.mbsim-env.de/MBSim" xmlns:ombv="http://www.mbsim-env.de/OpenMBV" xmlns:pv="http://www.mbsim-env.de/MBXMLUtils">
         <generalizedInitialPosition>
           if n_pendel==6
             ret=0.8-4*pi/50
@@ -119,7 +115,7 @@
         <BilateralConstraint/>
       </forceLaw>
     </Joint>
-    <pv:Embed href="Joint_n.xml" count="N" counterName="n"/>
+    <pv:Embed count="N" counterName="n" href="Joint_n.xml"/>
   </links>
   <constraints/>
   <observers/>

@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no" ?><MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
-
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
   <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
     <Parameter>
       <scalarParameter name="y0" unit="-">0.02</scalarParameter>
@@ -29,30 +29,33 @@
                   <limitedFunctions>
                     <LimitedFunction>
                       <function>
-                        <SymbolicFunction><definition arg1="s">[l/2-s;r;0]
-
-</definition></SymbolicFunction>
+                        <SymbolicFunction>
+                          <definition arg1="s">[l/2-s;r;0]</definition>
+                        </SymbolicFunction>
                       </function>
                       <limit>l</limit>
                     </LimitedFunction>
                     <LimitedFunction>
                       <function>
-                        <SymbolicFunction><definition arg1="s">[-l/2-r*sin((s-l)/r);r*cos((s-l)/r);0]
-</definition></SymbolicFunction>
+                        <SymbolicFunction>
+                          <definition arg1="s">[-l/2-r*sin((s-l)/r);r*cos((s-l)/r);0]</definition>
+                        </SymbolicFunction>
                       </function>
                       <limit>l+pi*r</limit>
                     </LimitedFunction>
                     <LimitedFunction>
                       <function>
-                        <SymbolicFunction><definition arg1="s">[s-(3/2*l+pi*r); -r; 0]
-</definition></SymbolicFunction>
+                        <SymbolicFunction>
+                          <definition arg1="s">[s-(3/2*l+pi*r); -r; 0]</definition>
+                        </SymbolicFunction>
                       </function>
                       <limit>2*l+pi*r</limit>
                     </LimitedFunction>
                     <LimitedFunction>
                       <function>
-                        <SymbolicFunction><definition arg1="s">[l/2+r*sin((s-2*l+pi*r)/r);-r*cos((s-2*l+pi*r)/r);0]
-</definition></SymbolicFunction>
+                        <SymbolicFunction>
+                          <definition arg1="s">[l/2+r*sin((s-2*l+pi*r)/r);-r*cos((s-2*l+pi*r)/r);0]</definition>
+                        </SymbolicFunction>
                       </function>
                       <limit>2*l+2*pi*r</limit>
                     </LimitedFunction>
@@ -67,8 +70,7 @@
             </ContinuedFunction>
           </contourFunction>
           <enableOpenMBV>
-            <nodes unit="-">[0:0.0005:2*l+2*pi*r]';
-</nodes>
+            <nodes unit="-">[0:0.0005:2*l+2*pi*r]';</nodes>
           </enableOpenMBV>
         </PlanarContour>
       </contours>
@@ -113,8 +115,7 @@
           <frames/>
           <contours>
             <Point name="Point1">
-              <enableOpenMBV>
-              </enableOpenMBV>
+              <enableOpenMBV/>
             </Point>
           </contours>
           <enableOpenMBVFrameC>
@@ -154,7 +155,6 @@
       </environments>
     </DynamicSystemSolver>
   </Embed>
-
   <LSODAIntegrator xmlns="http://www.mbsim-env.de/MBSim">
     <startTime unit="s">0</startTime>
     <endTime unit="s">1</endTime>
@@ -164,5 +164,4 @@
     <initialStepSize unit="s">1e-8</initialStepSize>
     <maximumStepSize unit="s">1e-2</maximumStepSize>
   </LSODAIntegrator>
-
 </MBSimProject>

@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no" ?><MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
-
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
   <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
     <Parameter>
       <scalarParameter name="rho">700</scalarParameter>
@@ -84,8 +84,8 @@
             <RotationAboutAxesXYZ/>
           </stateDependentRotation>
           <generalizedVelocityOfRotation>"coordinatesOfAngularVelocityWrtFrameOfReference"</generalizedVelocityOfRotation>
-          <frames>
-          </frames><contours>
+          <frames/>
+          <contours>
             <SpatialContour name="SpatialContour3">
               <etaNodes>
                 <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -100,13 +100,15 @@
                 </xmlVector>
               </xiNodes>
               <contourFunction>
-                <SymbolicFunction><definition arg1="zeta" arg1Dim="2">
-                  <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                    <ele>a*cos(zeta(1))*cos(zeta(2))</ele>
-                    <ele>b*sin(zeta(1))*cos(zeta(2))</ele>
-                    <ele>c*sin(zeta(2))</ele>
-                  </xmlVector>
-                </definition></SymbolicFunction>
+                <SymbolicFunction>
+                  <definition arg1="zeta" arg1Dim="2">
+                    <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                      <ele>a*cos(zeta(1))*cos(zeta(2))</ele>
+                      <ele>b*sin(zeta(1))*cos(zeta(2))</ele>
+                      <ele>c*sin(zeta(2))</ele>
+                    </xmlVector>
+                  </definition>
+                </SymbolicFunction>
               </contourFunction>
               <enableOpenMBV>
                 <diffuseColor>
@@ -119,9 +121,11 @@
                 <transparency unit="-">0.3</transparency>
               </enableOpenMBV>
             </SpatialContour>
-          </contours><enableOpenMBVFrameC>
+          </contours>
+          <enableOpenMBVFrameC>
             <size unit="cm">1</size>
-          </enableOpenMBVFrameC></RigidBody>
+          </enableOpenMBVFrameC>
+        </RigidBody>
       </objects>
       <links>
         <Contact name="Contact">
@@ -162,9 +166,11 @@
             <size unit="cm">1</size>
           </enableOpenMBVContactPoints>
         </ContactObserver>
-      </observers><enableOpenMBVFrameI>
+      </observers>
+      <enableOpenMBVFrameI>
         <size unit="cm">1</size>
-      </enableOpenMBVFrameI><environments>
+      </enableOpenMBVFrameI>
+      <environments>
         <MBSimEnvironment>
           <accelerationOfGravity unit="m/s^2">
             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -183,7 +189,6 @@
       <generalizedImpulseTolerance>1e-6</generalizedImpulseTolerance>
     </DynamicSystemSolver>
   </Embed>
-
   <LSODEIntegrator xmlns="http://www.mbsim-env.de/MBSim">
     <startTime unit="s">0</startTime>
     <endTime unit="s">6</endTime>
@@ -193,5 +198,4 @@
     <absoluteToleranceScalar>1e-8</absoluteToleranceScalar>
     <relativeToleranceScalar>1e-8</relativeToleranceScalar>
   </LSODEIntegrator>
-
 </MBSimProject>

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
-
   <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
     <Parameter>
       <scalarParameter name="E">2e11</scalarParameter>
@@ -125,15 +124,16 @@
             <RotationAboutZAxis xmlns="http://www.mbsim-env.de/MBSim"/>
           </stateDependentRotation>
           <frames>
-             <NodeFrame name="Q">
-               <plotFeature xmlns="http://www.mbsim-env.de/MBSim" value="position">true</plotFeature>
-               <plotFeature xmlns="http://www.mbsim-env.de/MBSim" value="angle">true</plotFeature>
-               <enableOpenMBV xmlns="http://www.mbsim-env.de/MBSim">
-                 <size unit="cm">1</size>
-               </enableOpenMBV>
-               <nodeNumber unit="-">1822</nodeNumber>
-             </NodeFrame>
-           </frames><contours/>
+            <NodeFrame name="Q">
+              <plotFeature xmlns="http://www.mbsim-env.de/MBSim" value="position">true</plotFeature>
+              <plotFeature xmlns="http://www.mbsim-env.de/MBSim" value="angle">true</plotFeature>
+              <enableOpenMBV xmlns="http://www.mbsim-env.de/MBSim">
+                <size unit="cm">1</size>
+              </enableOpenMBV>
+              <nodeNumber unit="-">1822</nodeNumber>
+            </NodeFrame>
+          </frames>
+          <contours/>
           <enableOpenMBV>
             <colorRepresentation xmlns="http://www.mbsim-env.de/MBSim">"xxStress"</colorRepresentation>
             <minimalColorValue xmlns="http://www.mbsim-env.de/MBSim">-1e6</minimalColorValue>
@@ -142,7 +142,8 @@
           </enableOpenMBV>
           <enableOpenMBVFrameK>
             <size xmlns="http://www.mbsim-env.de/MBSim" unit="cm">1</size>
-          </enableOpenMBVFrameK></ExternalFlexibleFfrBody>
+          </enableOpenMBVFrameK>
+        </ExternalFlexibleFfrBody>
         <RigidBody name="RigidBody3">
           <plotFeature value="derivativeOfGeneralizedPosition">true</plotFeature>
           <plotFeature value="generalizedAcceleration">true</plotFeature>
@@ -257,7 +258,6 @@
       </environments>
     </DynamicSystemSolver>
   </Embed>
-
   <LSODEIntegrator xmlns="http://www.mbsim-env.de/MBSim">
     <startTime unit="s">0</startTime>
     <endTime unit="s">1</endTime>
@@ -266,5 +266,4 @@
     <absoluteToleranceScalar>1e-7</absoluteToleranceScalar>
     <relativeToleranceScalar>1e-7</relativeToleranceScalar>
   </LSODEIntegrator>
-
 </MBSimProject>

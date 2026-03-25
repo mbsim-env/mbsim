@@ -88,21 +88,14 @@ int Evaluator::getImportActionOnlyOneNoneDepr() {
     return oneDeprIdx;
 }
 
-template<class T1, class T2>
-void Evaluator::installSyntaxHighlighter(T1 *t1, T2 *t2) {
+void Evaluator::installSyntaxHighlighter(QPlainTextEdit *t) {
   if(mw->getProject()->getEvaluator()=="octave")
-    new OctaveHighlighter(t1);
+    new OctaveHighlighter(t->document());
   else if(mw->getProject()->getEvaluator()=="python")
-    new PythonHighlighter(t1);
+    new PythonHighlighter(t->document());
   else
     cerr<<"No syntax hightlighter for current evaluator "+mw->getProject()->getEvaluator()+" available."<<endl;
-  static const QFont fixedFont=QFontDatabase::systemFont(QFontDatabase::FixedFont);
-  t2->setFont(fixedFont);
-  t2->setLineWrapMode(T2::NoWrap);
 }
-
-template void Evaluator::installSyntaxHighlighter<QTextEdit, QTextEdit>(QTextEdit *t1, QTextEdit *t2);
-template void Evaluator::installSyntaxHighlighter<QTextDocument, QPlainTextEdit>(QTextDocument *t1, QPlainTextEdit *t2);
 
 pair<string, string> Evaluator::getInitCode(const std::string &evaluator) {
   if(evaluator=="python")

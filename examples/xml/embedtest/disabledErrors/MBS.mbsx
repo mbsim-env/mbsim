@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
-<MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" xmlns:p="http://www.mbsim-env.de/MBXMLUtils" name="Project">
-
+<MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project" xmlns:p="http://www.mbsim-env.de/MBXMLUtils">
   <evaluator xmlns="http://www.mbsim-env.de/MBXMLUtils">python</evaluator>
-
   <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
     <frames/>
     <contours/>
     <groups>
-      <p:Embed counterName="i" count="0">
+      <p:Embed count="0" counterName="i">
         <Group name="Group_with_count_0__id_{i}">
           <frames/>
           <contours/>
@@ -38,7 +36,7 @@
           <observers/>
         </Group>
       </p:Embed>
-      <p:Embed counterName="i" count="1-1">
+      <p:Embed count="1-1" counterName="i">
         <Group name="Group_with_count_1-1__id_{i}">
           <frames/>
           <contours/>
@@ -73,7 +71,7 @@
     <objects>
       <RigidBody name="DummyBodyWith1DOF_JustToEnableIntegration">
         <mass unit="kg">1</mass>
-        <inertiaTensor unit="kg*m^2">[[1,0,0],[0,1,0],[0,0,1]] </inertiaTensor>
+        <inertiaTensor unit="kg*m^2">[[1,0,0],[0,1,0],[0,0,1]]</inertiaTensor>
         <stateDependentTranslation>
           <TranslationAlongXAxis/>
         </stateDependentTranslation>
@@ -92,12 +90,9 @@
       </MBSimEnvironment>
     </environments>
   </DynamicSystemSolver>
-
   <DOPRI5Integrator xmlns="http://www.mbsim-env.de/MBSim">
     <startTime unit="s">0</startTime>
     <endTime unit="s">1</endTime>
     <plotStepSize unit="s">1e-2</plotStepSize>
   </DOPRI5Integrator>
-
-
 </MBSimProject>

@@ -1,6 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<SpringDamper name="EXTERN" xmlns="http://www.mbsim-env.de/MBSim"
-  xmlns:control="http://www.mbsim-env.de/MBSimControl">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<SpringDamper xmlns="http://www.mbsim-env.de/MBSim" name="EXTERN" xmlns:control="http://www.mbsim-env.de/MBSimControl">
   <connect ref1="../Frame[SpringMount]" ref2="../Object[Ball]/Frame[C]"/>
   <forceFunction>
     <control:SignalFunction>

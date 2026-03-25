@@ -132,6 +132,7 @@ libmbsimgui_la_SOURCES = \
   C3D20.cc \
   C3D20R.cc \
   plot_attribute_store.cc \
+  codeeditor.cc \
   evaluator/evaluator.cc
 nodist_libmbsimgui_la_SOURCES=$(libmbsimgui_QT_BUILT_SOURCES)
 
@@ -249,11 +250,13 @@ mbsimguiinclude_HEADERS = analyzer.h \
   C3D20.h \
   C3D20R.h \
   plot_attribute_store.h \
+  codeeditor.h \
   evaluator/evaluator.h
 
 # C++ source file to build automatically (e.g. abc.moc.cc by abc.h)
 libmbsimgui_QT_BUILT_SOURCES = \
   widget.moc.cc \
+  codeeditor.moc.cc \
   basic_widgets.moc.cc \
   variable_widgets.moc.cc \
   extended_widgets.moc.cc \

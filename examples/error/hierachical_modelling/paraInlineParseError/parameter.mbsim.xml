@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <Parameter xmlns="http://www.mbsim-env.de/MBXMLUtils">
   <vectorParameter name="rHG">[0;2]</vectorParameter>
   <vectorParameter name="alphaHG">
@@ -19,9 +20,21 @@
   <scalarParameter name="l02">l01</scalarParameter>
   <matrixParameter name="identHalf">
     <xmlMatrix>
-      <row><ele>0.5</ele><ele>0</ele><ele>0</ele></row>
-      <row><ele>0</ele><ele>a=1;ret=a/2</ele><ele>0</ele></row>
-      <row><ele>0</ele><ele>0</ele><ele>m2/4</ele></row>
+      <row>
+        <ele>0.5</ele>
+        <ele>0</ele>
+        <ele>0</ele>
+      </row>
+      <row>
+        <ele>0</ele>
+        <ele>a=1;ret=a/2</ele>
+        <ele>0</ele>
+      </row>
+      <row>
+        <ele>0</ele>
+        <ele>0</ele>
+        <ele>m2/4</ele>
+      </row>
     </xmlMatrix>
   </matrixParameter>
   <stringParameter name="grav">'gravity.txt'</stringParameter>

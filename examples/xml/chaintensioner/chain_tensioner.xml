@@ -1,11 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Group name="ChainTensioner"
-  xmlns="http://www.mbsim-env.de/MBSim"
-  xmlns:ombv="http://www.mbsim-env.de/OpenMBV"
-  xmlns:v="http://www.mbsim-env.de/MBSimValvetrain"
-  xmlns:pv="http://www.mbsim-env.de/MBXMLUtils"
-  xmlns:h="http://www.mbsim-env.de/MBSimHydraulics"
-  xmlns:c="http://www.mbsim-env.de/MBSimControl">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<Group xmlns="http://www.mbsim-env.de/MBSim" name="ChainTensioner" xmlns:c="http://www.mbsim-env.de/MBSimControl" xmlns:h="http://www.mbsim-env.de/MBSimHydraulics" xmlns:ombv="http://www.mbsim-env.de/OpenMBV" xmlns:pv="http://www.mbsim-env.de/MBXMLUtils" xmlns:v="http://www.mbsim-env.de/MBSimValvetrain">
   <frames/>
   <contours/>
   <groups>
@@ -81,9 +75,9 @@
         </FixedRelativeFrame>
         <FixedRelativeFrame name="CVMount">
           <enableOpenMBV>
-             <size>3e-3</size>
-             <offset>1</offset>
-           </enableOpenMBV>
+            <size>3e-3</size>
+            <offset>1</offset>
+          </enableOpenMBV>
           <frameOfReference ref="../Frame[Bottom]"/>
           <relativePosition>[0; 0.0105; 0]</relativePosition>
           <relativeOrientation>[0,1,0; -1,0,0; 0,0,1]'</relativeOrientation>
@@ -201,7 +195,7 @@
       <unloadedLength unit="cm">6</unloadedLength>
       <enableOpenMBV>
         <colorRepresentation>"absoluteForce"</colorRepresentation>
-<!--        <minimalColorValue>-88</minimalColorValue>
+        <!--        <minimalColorValue>-88</minimalColorValue>
         <maximalColorValue>-92</maximalColorValue> -->
         <numberOfCoils>11</numberOfCoils>
         <springRadius>.00525</springRadius>

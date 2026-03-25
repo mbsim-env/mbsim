@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
-
   <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
     <Parameter>
       <scalarParameter name="E">2e11</scalarParameter>
@@ -42,14 +41,16 @@
               </enableOpenMBV>
               <nodeNumber>1</nodeNumber>
             </NodeFrame>
-          </frames><contours/>
+          </frames>
+          <contours/>
           <enableOpenMBV>
             <lineWidth xmlns="http://www.mbsim-env.de/MBSim">5</lineWidth>
             <visualization>"lines"</visualization>
           </enableOpenMBV>
           <enableOpenMBVFrameK>
             <size xmlns="http://www.mbsim-env.de/MBSim" unit="cm">1</size>
-          </enableOpenMBVFrameK></ExternalFlexibleFfrBody>
+          </enableOpenMBVFrameK>
+        </ExternalFlexibleFfrBody>
       </objects>
       <links>
         <KineticExcitation name="KineticExcitation1">
@@ -125,7 +126,8 @@
       <observers/>
       <enableOpenMBVFrameI>
         <size unit="cm">1</size>
-      </enableOpenMBVFrameI><environments>
+      </enableOpenMBVFrameI>
+      <environments>
         <MBSimEnvironment>
           <accelerationOfGravity unit="m/s^2">
             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -139,11 +141,9 @@
       <determineEquilibriumState>false</determineEquilibriumState>
     </DynamicSystemSolver>
   </Embed>
-
   <DOPRI5Integrator xmlns="http://www.mbsim-env.de/MBSim">
     <startTime unit="s">0</startTime>
     <endTime unit="s">0.005</endTime>
     <plotStepSize unit="s">1e-4</plotStepSize>
   </DOPRI5Integrator>
-
 </MBSimProject>

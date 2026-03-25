@@ -1,19 +1,19 @@
 <root>
   <span class="MBSIMGUI_ERROR">
     <span class="MBXMLUTILS_ERROROUTPUT">
-      <a href="submodel/Untergruppe.xml?xpath=/{http://www.mbsim-env.de/MBSim}Group[1]/{http://www.mbsim-env.de/MBSim}objects[1]/{http://www.mbsim-env.de/MBSim}RigidBody[1]/{http://www.mbsim-env.de/MBSim}frameForKinematics[1]&amp;line=15">Untergruppe.xml:.../objects[1]/RigidBody[1]/frameForKinematics[1]</a>:<br />
+      <a href="submodel/Untergruppe.xml?xpath=/{http://www.mbsim-env.de/MBSim}Group[1]/{http://www.mbsim-env.de/MBSim}objects[1]/{http://www.mbsim-env.de/MBSim}RigidBody[1]/{http://www.mbsim-env.de/MBSim}frameForKinematics[1]&amp;line=13">Untergruppe.xml:.../objects[1]/RigidBody[1]/frameForKinematics[1]</a>:<br />
       <span class="MBXMLUTILS_MSG">Error: no declaration found for element 'massERROR'
 </span>
       <span class="MBSIMGUI_ERROR" />
     </span>
     <span class="MBXMLUTILS_ERROROUTPUT MBXMLUTILS_SSE">
-      <a href="Hauptgruppe.xml?xpath=/{http://www.mbsim-env.de/MBSim}Group[1]/{http://www.mbsim-env.de/MBSim}groups[1]/{http://www.mbsim-env.de/MBXMLUtils}Embed[2]&amp;line=38">Hauptgruppe.xml:/Group[1]/groups[1]/p:Embed[2]</a>:<br />
+      <a href="Hauptgruppe.xml?xpath=/{http://www.mbsim-env.de/MBSim}Group[1]/{http://www.mbsim-env.de/MBSim}groups[1]/{http://www.mbsim-env.de/MBXMLUtils}Embed[2]&amp;line=35">Hauptgruppe.xml:/Group[1]/groups[1]/p:Embed[2]</a>:<br />
       <span class="MBXMLUTILS_MSG">included from here
 </span>
       <span class="MBSIMGUI_ERROR" />
     </span>
     <span class="MBXMLUTILS_ERROROUTPUT MBXMLUTILS_SSE">
-      <a href="MBS.mbsim.xml?xpath=/{http://www.mbsim-env.de/MBSim}DynamicSystemSolver[1]/{http://www.mbsim-env.de/MBSim}groups[1]/{http://www.mbsim-env.de/MBXMLUtils}Embed[1]&amp;line=18">MBS.mbsim.xml:/DynamicSystemSolver[1]/groups[1]/p:Embed[1]</a>:<br />
+      <a href="MBS.mbsim.xml?xpath=/{http://www.mbsim-env.de/MBSim}DynamicSystemSolver[1]/{http://www.mbsim-env.de/MBSim}groups[1]/{http://www.mbsim-env.de/MBXMLUtils}Embed[1]&amp;line=21">MBS.mbsim.xml:/DynamicSystemSolver[1]/groups[1]/p:Embed[1]</a>:<br />
       <span class="MBXMLUTILS_MSG">included from here
 </span>
       <span class="MBSIMGUI_ERROR" />
@@ -25,19 +25,19 @@
   </span>
   <span class="MBSIMGUI_ERROR">
     <span class="MBXMLUTILS_ERROROUTPUT">
-      <a href="submodel/Untergruppe.xml?xpath=/{http://www.mbsim-env.de/MBSim}Group[1]/{http://www.mbsim-env.de/MBSim}objects[1]/{http://www.mbsim-env.de/MBSim}RigidBody[1]/{http://www.mbsim-env.de/MBSim}frameForKinematics[1]&amp;line=15">Untergruppe.xml:.../objects[1]/RigidBody[1]/frameForKinematics[1]</a>:<br />
+      <a href="submodel/Untergruppe.xml?xpath=/{http://www.mbsim-env.de/MBSim}Group[1]/{http://www.mbsim-env.de/MBSim}objects[1]/{http://www.mbsim-env.de/MBSim}RigidBody[1]/{http://www.mbsim-env.de/MBSim}frameForKinematics[1]&amp;line=13">Untergruppe.xml:.../objects[1]/RigidBody[1]/frameForKinematics[1]</a>:<br />
       <span class="MBXMLUTILS_MSG">Error: no declaration found for element 'massERROR'
 </span>
       <span class="MBSIMGUI_ERROR" />
     </span>
     <span class="MBXMLUTILS_ERROROUTPUT MBXMLUTILS_SSE">
-      <a href="Hauptgruppe.xml?xpath=/{http://www.mbsim-env.de/MBSim}Group[1]/{http://www.mbsim-env.de/MBSim}groups[1]/{http://www.mbsim-env.de/MBXMLUtils}Embed[2]&amp;line=38">Hauptgruppe.xml:/Group[1]/groups[1]/p:Embed[2]</a>:<br />
+      <a href="Hauptgruppe.xml?xpath=/{http://www.mbsim-env.de/MBSim}Group[1]/{http://www.mbsim-env.de/MBSim}groups[1]/{http://www.mbsim-env.de/MBXMLUtils}Embed[2]&amp;line=35">Hauptgruppe.xml:/Group[1]/groups[1]/p:Embed[2]</a>:<br />
       <span class="MBXMLUTILS_MSG">included from here
 </span>
       <span class="MBSIMGUI_ERROR" />
     </span>
     <span class="MBXMLUTILS_ERROROUTPUT MBXMLUTILS_SSE">
-      <a href="MBS.mbsim.xml?xpath=/{http://www.mbsim-env.de/MBSim}DynamicSystemSolver[1]/{http://www.mbsim-env.de/MBSim}groups[1]/{http://www.mbsim-env.de/MBXMLUtils}Embed[1]&amp;line=18">MBS.mbsim.xml:/DynamicSystemSolver[1]/groups[1]/p:Embed[1]</a>:<br />
+      <a href="MBS.mbsim.xml?xpath=/{http://www.mbsim-env.de/MBSim}DynamicSystemSolver[1]/{http://www.mbsim-env.de/MBSim}groups[1]/{http://www.mbsim-env.de/MBXMLUtils}Embed[1]&amp;line=21">MBS.mbsim.xml:/DynamicSystemSolver[1]/groups[1]/p:Embed[1]</a>:<br />
       <span class="MBXMLUTILS_MSG">included from here
 </span>
       <span class="MBSIMGUI_ERROR" />

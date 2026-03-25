@@ -1,7 +1,7 @@
 <root>
   <span class="MBSIMGUI_ERROR">
     <span class="MBXMLUTILS_ERROROUTPUT">
-      <a href="submodel/Untergruppe.xml?xpath=/{http://www.mbsim-env.de/MBSim}Group[1]/{http://www.mbsim-env.de/MBSim}objects[1]/{http://www.mbsim-env.de/MBSim}RigidBody[1]&amp;line=10">Untergruppe.xml:/Group[1]/objects[1]/RigidBody[1]</a>:<br />
+      <a href="submodel/Untergruppe.xml?xpath=/{http://www.mbsim-env.de/MBSim}Group[1]/{http://www.mbsim-env.de/MBSim}objects[1]/{http://www.mbsim-env.de/MBSim}RigidBody[1]&amp;line=8">Untergruppe.xml:/Group[1]/objects[1]/RigidBody[1]</a>:<br />
       <span class="MBXMLUTILS_MSG">The diagonal elements of the inertia tensor must be nonnegative.
 </span>
       <span class="MBSIMGUI_ERROR">(At MBSim element /Group[Hauptgruppe1]/Group[Untergruppe]/Object[Box1])
@@ -21,7 +21,7 @@
   </span>
   <span class="MBSIMGUI_ERROR">
     <span class="MBXMLUTILS_ERROROUTPUT">
-      <a href="submodel/Untergruppe.xml?xpath=/{http://www.mbsim-env.de/MBSim}Group[1]/{http://www.mbsim-env.de/MBSim}objects[1]/{http://www.mbsim-env.de/MBSim}RigidBody[1]&amp;line=10">Untergruppe.xml:/Group[1]/objects[1]/RigidBody[1]</a>:<br />
+      <a href="submodel/Untergruppe.xml?xpath=/{http://www.mbsim-env.de/MBSim}Group[1]/{http://www.mbsim-env.de/MBSim}objects[1]/{http://www.mbsim-env.de/MBSim}RigidBody[1]&amp;line=8">Untergruppe.xml:/Group[1]/objects[1]/RigidBody[1]</a>:<br />
       <span class="MBXMLUTILS_MSG">The diagonal elements of the inertia tensor must be nonnegative.
 </span>
       <span class="MBSIMGUI_ERROR">(At MBSim element /Group[Hauptgruppe1]/Group[Untergruppe]/Object[Box1])
