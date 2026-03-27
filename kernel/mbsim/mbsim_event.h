@@ -70,13 +70,17 @@ namespace MBSim {
 
       // domEvalError stores the DOM stack of this error, if available.
       // It is used in what() to generated the message for whatMsg.
-      mutable MBXMLUtils::DOMEvalException domEvalError;
+      mutable std::optional<MBXMLUtils::DOMEvalException> domEvalError;
 
       // just a string to store the memory which is returned by the what() function
       mutable std::string whatMsg;
   };
 
-  class SilentError : public std::exception {
+  class SilentMBSimError : public MBSimError {
+    public:
+      SilentMBSimError(std::string mbsim_error_message_ = {}) noexcept : MBSimError(static_cast<Element*>(nullptr), std::move(mbsim_error_message_)) {}
+      SilentMBSimError(const Element *context, std::string mbsim_error_message_) noexcept : MBSimError(context, std::move(mbsim_error_message_)) {}
+      SilentMBSimError(const Solver *context, std::string mbsim_error_message_) noexcept : MBSimError(context, std::move(mbsim_error_message_)) {}
   };
 
 }
