@@ -34,7 +34,7 @@ CodeEditor::CodeEditor(QWidget *parent) : QPlainTextEdit(parent) {
   setLineWrapMode(QPlainTextEdit::NoWrap);
 }
 
-void CodeEditor::enableSyntaxHighlighter(const std::string &name) {
+void CodeEditor::enableSyntaxHighlighter(const std::string &name, std::string nameIs) {
 #ifdef KF5_FOUND
   auto *highlighter = new KSyntaxHighlighting::SyntaxHighlighter(document());
   static auto repository = std::make_unique<KSyntaxHighlighting::Repository>();
@@ -43,10 +43,17 @@ void CodeEditor::enableSyntaxHighlighter(const std::string &name) {
     QApplication::palette().color(QPalette::Window).lightness() < 128 ? KSyntaxHighlighting::Repository::DarkTheme : KSyntaxHighlighting::Repository::LightTheme
   ));
 
-  if(name=="EVALUATOR")
-    highlighter->setDefinition(repository->definitionForName(Evaluator::getKDESyntaxHighlighterName().c_str()));
-  else
-    highlighter->setDefinition(repository->definitionForName(name.c_str()));
+  boost::algorithm::to_lower(nameIs);
+  if(nameIs=="definitionname") {
+    if(name=="EVALUATOR")
+      highlighter->setDefinition(repository->definitionForName(Evaluator::getKDESyntaxHighlighterName().c_str()));
+    else
+      highlighter->setDefinition(repository->definitionForName(name.c_str()));
+  }
+  else if(nameIs=="filename")
+    highlighter->setDefinition(repository->definitionForFileName(name.c_str()));
+  else if(nameIs=="mimetype")
+    highlighter->setDefinition(repository->definitionForMimeType(name.c_str()));
 #endif
 }
 

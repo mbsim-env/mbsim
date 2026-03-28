@@ -270,11 +270,12 @@ namespace MBSimGUI {
       void setText(const QString &text);
       void appendText(const QString &text);
       void gotoLine(int n);
+      void enableSyntaxHighlighter(const std::string &name="EVALUATOR");
     private:
       void reset();
       void showEvent(QShowEvent *event) override;
       void hideEvent(QHideEvent *event) override;
-      QTextEdit *editor;
+      CodeEditor *editor;
   };
 
   class PlotFeatureDialog : public QDialog {

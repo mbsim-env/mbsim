@@ -2027,6 +2027,7 @@ DEF mbsimgui_outdated_switch Switch {
     if(file.open(QFile::ReadOnly)) {
       QTextStream out(&file);
       TextEditDialog dialog("Release notes","",true,this);
+      dialog.enableSyntaxHighlighter("Markdown");
       dialog.setText(out.readAll());
       dialog.exec();
     }

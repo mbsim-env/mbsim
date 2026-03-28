@@ -198,6 +198,7 @@ namespace MBSimGUI {
 
     protected:
       void selectFile();
+      void editFile();
       void changePath(int i);
       QLineEdit *filePath;
       QCheckBox *path;

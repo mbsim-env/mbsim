@@ -33,6 +33,7 @@
 #include <QLabel>
 #include <QColorDialog>
 #include <QApplication>
+#include <QDesktopServices>
 #include <boost/lexical_cast.hpp>
 #include <utility>
 #include <xercesc/dom/DOMDocument.hpp>
@@ -540,6 +541,15 @@ namespace MBSimGUI {
     QPushButton *button = new QPushButton("Browse");
     layout->addWidget(button);
     connect(button,&QPushButton::clicked,this,&FileWidget::selectFile);
+    if(mode==0) {
+      QPushButton *edit = new QPushButton("Edit");
+      layout->addWidget(edit);
+      edit->setToolTip("Edit the file using the program which is registered by the OS with this file.\n"
+                       "\n"
+                       "Note that saving the file in this program does not update mbsimgui automatically,\n"
+                       "you have to click on 'Refresh scene view' in mbsimgui for that.");
+      connect(edit,&QPushButton::clicked,this,&FileWidget::editFile);
+    }
     connect(filePath,&QLineEdit::textChanged,this,&FileWidget::valueChanged);
     path = new QCheckBox;
     setFile(file);
@@ -570,6 +580,14 @@ namespace MBSimGUI {
       else
         filePath->setText(quote?("\""+mw->getProjectDir().relativeFilePath(file)+"\""):mw->getProjectDir().relativeFilePath(file));
     }
+  }
+
+  void FileWidget::editFile() {
+    bool orgAbs = path->isChecked();
+    changePath(true);
+    QString file = getFile(true);
+    changePath(orgAbs);
+    QDesktopServices::openUrl(file);
   }
 
   DOMElement* FileWidget::initializeUsingXML(DOMElement *parent) {

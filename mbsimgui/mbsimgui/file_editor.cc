@@ -19,6 +19,7 @@
 
 #include <config.h>
 #include "file_editor.h"
+#include "codeeditor.h"
 #include <QTextEdit>
 #include <QGridLayout>
 #include <QFile>
@@ -36,7 +37,7 @@ namespace MBSimGUI {
 
     setWindowTitle(title);
 
-    edit=new QTextEdit(this);
+    edit=new CodeEditor(this);
     layout->addWidget(edit);
 
     auto *buttonBox = new QDialogButtonBox(Qt::Horizontal);
@@ -51,6 +52,7 @@ namespace MBSimGUI {
     }
     QTextStream in(&file);
     edit->setPlainText(in.readAll());
+    edit->enableSyntaxHighlighter(filename.toStdString(), "filename");
     for(int i=0; i<n-1; i++)
       edit->moveCursor(QTextCursor::Down);
   }

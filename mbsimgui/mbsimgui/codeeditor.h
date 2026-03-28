@@ -13,7 +13,13 @@ class CodeEditor : public QPlainTextEdit {
     CodeEditor(QWidget *parent = nullptr);
     void lineNumberAreaPaintEvent(QPaintEvent *event);
     int lineNumberAreaWidth();
-    void enableSyntaxHighlighter(const std::string &name="EVALUATOR");
+
+    /** Enables syntax highlighting.
+     * name: the definition name of the highlighter, if nameIs=="definitionName"
+     *       the mimetype name of the highlighter, if nameIs=="mimeType"
+     *       the highlighter which corresponds to the filename name, if nameIs=="filename"
+     */
+    void enableSyntaxHighlighter(const std::string &name="EVALUATOR", std::string nameIs="definitionName");
   
   protected:
     void resizeEvent(QResizeEvent *event) override;

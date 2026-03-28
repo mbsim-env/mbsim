@@ -1352,7 +1352,8 @@ namespace MBSimGUI {
     setWindowTitle(title);
     auto *layout = new QVBoxLayout;
     setLayout(layout);
-    editor = new QTextEdit(text);
+    editor = new CodeEditor();
+    editor->setPlainText(text);
     editor->setMinimumSize(400,400);
     editor->setReadOnly(readOnly);
     layout->addWidget(editor);
@@ -1370,16 +1371,20 @@ namespace MBSimGUI {
     }
   }
 
+  void TextEditDialog::enableSyntaxHighlighter(const std::string &name) {
+    editor->enableSyntaxHighlighter(name);
+  }
+
   QString TextEditDialog::getText() const {
     return editor->toPlainText();
   }
 
   void TextEditDialog::setText(const QString &text) {
-    editor->setText(text);
+    editor->setPlainText(text);
   }
 
   void TextEditDialog::appendText(const QString &text) {
-    editor->append(text);
+    editor->setPlainText(editor->toPlainText()+text);
   }
 
   void TextEditDialog::gotoLine(int n) {
