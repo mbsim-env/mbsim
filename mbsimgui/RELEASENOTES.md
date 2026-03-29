@@ -26,6 +26,7 @@ MBSimXML
 - Added buildInfo.json content to hdf5 output file. This way one can see the details software version which was used to create the file.
 - Added a "storage" attribute to plot attributes which allows to save plotAttributes as datasets in instead of attributes.
   This allows e.g. to use compression for plotAttributes (HDF5 uses compression only on datasets but not on attributes)
+- Avoid that the evaluator octave and python is not loaded in one "mbsimxml" "-" process since this is not possible, at least on Windows
 
 MBSimFMI
 --------
@@ -60,6 +61,10 @@ MBSimGUI
   Disabled elements get the hint "<disabled>:" in their name, similar to "<not used>:" for arrays of elements.
   Disabled elements as well as empty arrays of elements are displayed with grey color. This also holds for all of their child elements
   in order to distinguish active from non active elements deeper in the model tree more easily.
+- Avoid that the evaluator octave and python is not loaded in one mbsimgui process since this is not possible, at least on Windows
+- Improved evaluator code editor widget in dialogs
+- Use a unique pretty printing of the XML files in mbsimgui such that loading and saving the same model again in mbsimgui does
+  not change the binary representation of the XML files.
 
 H5Plotserie
 -----------
