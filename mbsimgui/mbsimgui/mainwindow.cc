@@ -619,7 +619,7 @@ namespace MBSimGUI {
     // on Windows if the signal and slot lives in different DLLs as it is for the following two connections.
     // Hence, we keep here the old macro base mechanism and use Q_OBJECT and moc for this class.
     connect(inlineOpenMBVMW, SIGNAL(objectSelected(std::string, OpenMBVGUI::Object*)), this, SLOT(selectElement(const std::string&, OpenMBVGUI::Object*)));
-    connect(inlineOpenMBVMW, SIGNAL(objectDoubleClicked(std::string, OpenMBVGUI::Object*)), this, SLOT(openElementEditor()));
+    connect(inlineOpenMBVMW, SIGNAL(objectDoubleClicked(std::string, OpenMBVGUI::Object*)), this, SLOT(openMBVObjectDoubleClicked(std::string, OpenMBVGUI::Object*)));
     connect(inlineOpenMBVMW, SIGNAL(fileReloaded(OpenMBVGUI::Group*)), this, SLOT(fileReloadedSlot()));
 
 #if BOOST_VERSION >= 107400
@@ -3469,6 +3469,12 @@ DEF mbsimgui_outdated_switch Switch {
   QString MainWindow::getProjectFilePath() const {
     auto docFilename = D(doc)->getDocumentFilename();
     return docFilename.string().c_str();
+  }
+
+  void MainWindow::openMBVObjectDoubleClicked(std::string name, OpenMBVGUI::Object* obj) {
+    if(!elementView->currentIndex().isValid())
+      selectElement(name, obj);
+    openElementEditor();
   }
 
   void MainWindow::openElementEditor(bool config) {
