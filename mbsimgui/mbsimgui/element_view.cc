@@ -60,6 +60,8 @@ namespace MBSimGUI {
   }
 
   void ElementView::mouseDoubleClickEvent(QMouseEvent *event) {
+    // a double click action must select the object, independent weather is was selected before or not
+    setCurrentIndex(indexAt(event->pos()));
     mw->openElementEditor();
   }
 
