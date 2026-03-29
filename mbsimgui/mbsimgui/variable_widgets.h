@@ -485,6 +485,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
+      void editFile();
       void selectFile();
       void changePath(int i);
       QLineEdit *relativeFilePath;

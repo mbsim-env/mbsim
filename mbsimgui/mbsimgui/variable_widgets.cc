@@ -32,6 +32,7 @@
 #include <QTableWidget>
 #include <QMessageBox>
 #include <QFileDialog>
+#include <QDesktopServices>
 #include <boost/algorithm/string.hpp>
 #include <evaluator/evaluator.h>
 
@@ -1294,6 +1295,13 @@ namespace MBSimGUI {
     QPushButton *button = new QPushButton("Browse");
     layout->addWidget(button);
     connect(button,&QPushButton::clicked,this,&FromFileWidget::selectFile);
+    QPushButton *edit = new QPushButton("Edit");
+    layout->addWidget(edit);
+    edit->setToolTip("Edit the file using the program which is registered by the OS with this file.\n"
+                     "\n"
+                     "Note that saving the file in this program does not update mbsimgui automatically,\n"
+                     "you have to click on 'Refresh scene view' in mbsimgui for that.");
+    connect(edit,&QPushButton::clicked,this,&FromFileWidget::editFile);
     path = new QCheckBox;
     layout->addWidget(new QLabel("Absolute"));
     layout->addWidget(path);
@@ -1303,6 +1311,14 @@ namespace MBSimGUI {
   void FromFileWidget::setFile(const QString &str) {
     relativeFilePath->setText(str);
     path->setChecked(QDir::isAbsolutePath(str));
+  }
+
+  void FromFileWidget::editFile() {
+    bool orgAbs = path->isChecked();
+    changePath(true);
+    QString file = getFile();
+    changePath(orgAbs);
+    QDesktopServices::openUrl(file);
   }
 
   void FromFileWidget::selectFile() {
