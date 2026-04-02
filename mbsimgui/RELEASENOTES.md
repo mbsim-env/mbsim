@@ -93,6 +93,9 @@ OpenMBV
 - Improved the performance for several flag changes of object like enable/disable, show outline, ...
 - Use float on HDF5 files since OpenGL used float only.
 - MBSim examples contains now a GPU shader example which emulates grass using gradient noise and domain wrapping
+- Added a new object DynamicAttributes which can be used to control the attributes of other object using the HDF5
+  data of the DynamicAttributes object. This can e.g. be used to controll the enable/disable or transparency of any
+  other object.
 
 fmatvec
 -------

@@ -62,6 +62,7 @@ class PySpringDamperPyScriptInit(mbsim.FixedFrameLink):
     self.nF=1
     self.warnCount=0
     self.coilspringOpenMBV=OpenMBV.ObjectFactory.create_CoilSpring()
+    self.dynamicAttributesOpenMBV=OpenMBV.ObjectFactory.create_DynamicAttributes()
 
   def updatelaF(self):
     if self.warnCount==0:
@@ -97,6 +98,12 @@ class PySpringDamperPyScriptInit(mbsim.FixedFrameLink):
       if self.getPlotFeature(mbsim.openMBV):
         self.coilspringOpenMBV.setName(self.name)
         self.parent.getOpenMBVGrp().addObject(self.coilspringOpenMBV)
+
+        self.dynamicAttributesOpenMBV.setName(self.name+"_DA")
+        self.dynamicAttributesOpenMBV.addObjectEnable("/MBS/objects/Box1/Box1")
+        self.dynamicAttributesOpenMBV.addObjectEnable("../objects/Box3/Box3")
+        self.dynamicAttributesOpenMBV.addDynamicColoredBodyTransparency("../objects/Box4/Box4")
+        self.parent.getOpenMBVGrp().addObject(self.dynamicAttributesOpenMBV)
       super(PySpringDamperPyScriptInit, self).init(stage, config)
     else:
       super(PySpringDamperPyScriptInit, self).init(stage, config)
@@ -118,6 +125,13 @@ class PySpringDamperPyScriptInit(mbsim.FixedFrameLink):
       data.append(WrOToPoint[2])
       data.append(0.5)
       self.coilspringOpenMBV.append(data)
+
+      data=[]
+      data.append(self.getTime())
+      data.append(self.getTime())
+      data.append(1-self.getTime())
+      data.append(self.getTime())
+      self.dynamicAttributesOpenMBV.append(data)
     super(PySpringDamperPyScriptInit, self).plot()
 
   @staticmethod
