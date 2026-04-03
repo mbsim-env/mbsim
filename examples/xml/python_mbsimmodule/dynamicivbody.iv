@@ -1,0 +1,39 @@
+#Inventor V2.0 ascii
+Separator {
+  Translation {
+    translation 0 -0.45 0
+  }
+  Scale {
+    scaleFactor 0.01 0.01 0.01
+  }
+  AsciiText {
+    string = StringFormatEngine {
+      f0 = SelectOne {
+        type MFFloat
+        input = USE openmbv_dynamicivbody_data.value
+        index 0
+      }.output
+      f1 = SelectOne {
+        type MFFloat
+        input = USE openmbv_dynamicivbody_data.value
+        index 1
+      }.output
+      i0 = SelectOne {
+        type MFInt32
+        input = USE openmbv_dynamicivbody_dataInt.value
+        index 0
+      }.output
+      s0 = SelectOne {
+        type MFString
+        input = USE openmbv_dynamicivbody_dataStr.geoSystem
+        index 0
+      }.output
+      s1 = SelectOne {
+        type MFString
+        input = USE openmbv_dynamicivbody_dataStr.geoSystem
+        index 1
+      }.output
+      format "f0=t=%f0$.2f, f1=%f1$.2f, i0=%i0%, s0=%s0%, s1=%s1%"
+    }.output
+  }
+}

@@ -1,0 +1,19 @@
+#Inventor V2.0 ascii
+Separator {
+  Translation {
+    translation 0 -0.3 0
+  }
+  Scale {
+    scaleFactor 0.01 0.01 0.01
+  }
+  AsciiText {
+    string = StringFormatEngine {
+      f0 = USE openmbv_dynamicivbody_data_0.value
+      f1 = USE openmbv_dynamicivbody_data_1.value
+      i0 = USE openmbv_dynamicivbody_dataInt_0.value
+      s0 = USE openmbv_dynamicivbody_dataStr_0.string
+      s1 = USE openmbv_dynamicivbody_dataStr_1.string
+      format "f0=t=%f0$.2f, f1=%f1$.2f, i0=%i0%, s0=%s0%, s1=%s1%"
+    }.output
+  }
+}
