@@ -1,0 +1,18 @@
+#Inventor V2.0 ascii
+Separator {
+  Translation {
+    translation -0.5 0 0
+  }
+  Scale {
+    scaleFactor 0.007 0.007 0.007
+  }
+  AsciiText {
+    string = StringFormatEngine {
+      f0 = USE ff0.value
+      i0 = USE ii0.value
+      s0 = USE ss0.string
+      s1 = USE ss1.string
+      format "ff0=%f0$.2f, ii0=%i0%, ss0=%s0%, ss1=%s1%"
+    }.output
+  }
+}

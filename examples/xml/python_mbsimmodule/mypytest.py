@@ -65,6 +65,7 @@ class PySpringDamperPyScriptInit(mbsim.FixedFrameLink):
     self.dynamicAttributesOpenMBV=OpenMBV.ObjectFactory.create_DynamicAttributes()
     self.dynamicIvBodyOpenMBV=OpenMBV.ObjectFactory.create_DynamicIvBody()
     self.dynamicIvBodySDOpenMBV=OpenMBV.ObjectFactory.create_DynamicIvBody()
+    self.ivScreenAnnotationOpenMBV=OpenMBV.ObjectFactory.create_IvScreenAnnotation()
 
   def updatelaF(self):
     if self.warnCount==0:
@@ -122,6 +123,15 @@ class PySpringDamperPyScriptInit(mbsim.FixedFrameLink):
         self.dynamicIvBodySDOpenMBV.setDataStrSize(2);
         self.dynamicIvBodySDOpenMBV.setIvFileName("dynamicivbodysd.iv");
         self.parent.getOpenMBVGrp().addObject(self.dynamicIvBodySDOpenMBV)
+
+        self.ivScreenAnnotationOpenMBV.setName(self.name+"_IVSA")
+        self.ivScreenAnnotationOpenMBV.setScale1To1At([1,1])
+        self.ivScreenAnnotationOpenMBV.addColumnLabel("ff0")
+        self.ivScreenAnnotationOpenMBV.addColumnIntLabel("ii0")
+        self.ivScreenAnnotationOpenMBV.addColumnStrLabel("ss0")
+        self.ivScreenAnnotationOpenMBV.addColumnStrLabel("ss1")
+        self.ivScreenAnnotationOpenMBV.setIvFileName("ivscreenannotation.iv");
+        self.parent.getOpenMBVGrp().addObject(self.ivScreenAnnotationOpenMBV)
       super(PySpringDamperPyScriptInit, self).init(stage, config)
     else:
       super(PySpringDamperPyScriptInit, self).init(stage, config)
@@ -174,6 +184,18 @@ class PySpringDamperPyScriptInit(mbsim.FixedFrameLink):
       dataStr.append(f"text1_{self.getTime():0.2}")
       dataStr.append(f"text2_{self.getTime():0.2}")
       self.dynamicIvBodySDOpenMBV.appendStr(dataStr)
+
+      data=[]
+      data.append(self.getTime())
+      data.append(self.getTime()/2)
+      self.ivScreenAnnotationOpenMBV.append(data)
+      dataInt=[]
+      dataInt.append(round(self.getTime()*10))
+      self.ivScreenAnnotationOpenMBV.appendInt(dataInt)
+      dataStr=[]
+      dataStr.append(f"text1_{self.getTime():0.2}")
+      dataStr.append(f"text2_{self.getTime():0.2}")
+      self.ivScreenAnnotationOpenMBV.appendStr(dataStr)
     super(PySpringDamperPyScriptInit, self).plot()
 
   @staticmethod
