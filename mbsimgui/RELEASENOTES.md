@@ -96,6 +96,8 @@ OpenMBV
 - Added a new object DynamicAttributes which can be used to control the attributes of other object using the HDF5
   data of the DynamicAttributes object. This can e.g. be used to controll the enable/disable or transparency of any
   other object.
+- Added RigidSpineExtrusion: the same as SpineExtrusion with a cardan based spine but a fixed shape which can move
+  rotate globally like a RigidBody.
 
 fmatvec
 -------
