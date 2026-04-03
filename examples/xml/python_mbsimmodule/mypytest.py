@@ -103,6 +103,7 @@ class PySpringDamperPyScriptInit(mbsim.FixedFrameLink):
         self.dynamicAttributesOpenMBV.addObjectEnable("/MBS/objects/Box1/Box1")
         self.dynamicAttributesOpenMBV.addObjectEnable("../objects/Box3/Box3")
         self.dynamicAttributesOpenMBV.addDynamicColoredBodyTransparency("../objects/Box4/Box4")
+        self.dynamicAttributesOpenMBV.addDynamicColoredBodyTransparency("../objects/Box3/Box3", True)
         self.parent.getOpenMBVGrp().addObject(self.dynamicAttributesOpenMBV)
       super(PySpringDamperPyScriptInit, self).init(stage, config)
     else:
@@ -128,8 +129,8 @@ class PySpringDamperPyScriptInit(mbsim.FixedFrameLink):
 
       data=[]
       data.append(self.getTime())
-      data.append(self.getTime())
-      data.append(1-self.getTime())
+      data.append(self.getTime()>0.5)
+      data.append(self.getTime()<=0.5)
       data.append(self.getTime())
       self.dynamicAttributesOpenMBV.append(data)
     super(PySpringDamperPyScriptInit, self).plot()
