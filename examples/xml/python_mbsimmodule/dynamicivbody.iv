@@ -25,12 +25,12 @@ Separator {
       }.output
       s0 = SelectOne {
         type MFString
-        input = USE openmbv_dynamicivbody_dataStr.geoSystem
+        input = USE openmbv_dynamicivbody_dataStr.string
         index 0
       }.output
       s1 = SelectOne {
         type MFString
-        input = USE openmbv_dynamicivbody_dataStr.geoSystem
+        input = USE openmbv_dynamicivbody_dataStr.string
         index 1
       }.output
       format "f0=t=%f0$.2f, f1=%f1$.2f, i0=%i0%, s0=%s0%, s1=%s1%"
