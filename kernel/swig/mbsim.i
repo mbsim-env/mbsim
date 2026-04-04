@@ -24,7 +24,6 @@ using namespace MBSim; // SWIGs namespace handling seems to be buggy -> this fix
 
 // wrap some std::vector<...> types used by the above wrapped classes
 %template(VectorElement) std::vector<MBSim::Element*>;
-%template(VectorString)  std::vector<std::string>;
 //MISSING%template(VectorMat)     std::vector<fmatvec::Mat>;
 //MISSING%template(VectorVec)     std::vector<fmatvec::Vec>;
 %template(VectorFrame)   std::vector<MBSim::Frame*>;
