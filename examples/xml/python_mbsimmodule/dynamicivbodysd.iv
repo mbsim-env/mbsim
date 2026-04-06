@@ -10,10 +10,13 @@ Separator {
     string = StringFormatEngine {
       f0 = USE openmbv_dynamicivbody_data_0.value
       f1 = USE openmbv_dynamicivbody_data_1.value
+      f2 = USE openmbv_mainwindow_time.value
+      f3 = ElapsedTime { }.timeOut
       i0 = USE openmbv_dynamicivbody_dataInt_0.value
+      i1 = USE openmbv_mainwindow_frame.index
       s0 = USE openmbv_dynamicivbody_dataStr_0.string
       s1 = USE openmbv_dynamicivbody_dataStr_1.string
-      format "f0=t=%f0$.2f, f1=%f1$.2f, i0=%i0%, s0=%s0%, s1=%s1%"
+      format "f0=t=%f0$.2f, f1=%f1$.2f, i0=%i0%, s0=%s0%, s1=%s1%, t=%f2$.2f, idx=%i1%, realTime=%f3$.2f"
     }.output
   }
 }
