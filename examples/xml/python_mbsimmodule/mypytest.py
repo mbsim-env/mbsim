@@ -103,8 +103,8 @@ class PySpringDamperPyScriptInit(mbsim.FixedFrameLink):
         self.parent.getOpenMBVGrp().addObject(self.coilspringOpenMBV)
 
         self.dynamicAttributesOpenMBV.setName(self.name+"_DA")
-        self.dynamicAttributesOpenMBV.addObjectEnable("/MBS/objects/Box1/Box1")
-        self.dynamicAttributesOpenMBV.addObjectEnable("../objects/Box3/Box3")
+        self.dynamicAttributesOpenMBV.addObjectEnable("//objects/Box1/Box1") # absolute path
+        self.dynamicAttributesOpenMBV.addObjectEnable("../objects/Box3/Box3") # relative path
         self.dynamicAttributesOpenMBV.addDynamicColoredBodyTransparency("../objects/Box4/Box4")
         self.dynamicAttributesOpenMBV.addDynamicColoredBodyTransparency("../objects/Box3/Box3", True)
         self.parent.getOpenMBVGrp().addObject(self.dynamicAttributesOpenMBV)
