@@ -1,0 +1,50 @@
+#VRML V1.0 ascii
+Separator {
+  Transform {
+    rotation = ComposeRotation {
+      axis 0 0 1
+      angle = ElapsedTime {
+        speed 4
+      }.timeOut
+    }.rotation
+    translation = ComposeVec3f {
+      z = Calculator {
+        a = ElapsedTime {
+          speed 4
+        }.timeOut
+        # ta: perios [s]
+        # tb: jump height [m]
+        expression "
+          ta = 4;
+          tb = 2;
+          tc = a-ta/2 - ta*floor(a/ta);
+          oa = -tc*tc * tb*4/(ta*ta);
+        "
+      }.oa
+    }.vector
+  }
+  Cylinder {
+    radius 0.8
+    height 0.1
+  }
+  Material {
+    diffuseColor 0 0 1
+  }
+  Transform {
+    translation 0 -0.1 -0.45
+    rotation 1 0 0 1.570796326794897
+    scaleFactor 0.1 0.1 0.1
+  }
+  AsciiText {
+    string "5"
+    justification CENTER
+  }
+  Transform {
+    translation 0 0 -2
+    rotation 0 1 0 3.141592653589793
+  }
+  AsciiText {
+    string "5"
+    justification CENTER
+  }
+}

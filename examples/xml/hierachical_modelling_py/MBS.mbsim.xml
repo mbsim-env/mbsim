@@ -31,6 +31,10 @@
       </accelerationOfGravity>
       <openMBVObject>
         <pv:Embed href="env.ombvx.py.xml"/>
+        <IvBody name="text" xmlns="http://www.mbsim-env.de/OpenMBV">
+          <initialTranslation>[12,0,0]</initialTranslation>
+          <ivFileName>"iv/text.wrl"</ivFileName>
+        </IvBody>
       </openMBVObject>
     </MBSimEnvironment>
   </environments>

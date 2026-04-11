@@ -120,7 +120,7 @@ class PySpringDamperPyScriptInit(mbsim.FixedFrameLink):
         self.dynamicIvBodySDOpenMBV.setScalarData(True);
         self.dynamicIvBodySDOpenMBV.setDataSize(2);
         self.dynamicIvBodySDOpenMBV.setDataIntSize(1);
-        self.dynamicIvBodySDOpenMBV.setDataStrSize(2);
+        self.dynamicIvBodySDOpenMBV.setDataStrSize(3);
         self.dynamicIvBodySDOpenMBV.setIvFileName("dynamicivbodysd.iv");
         self.parent.getOpenMBVGrp().addObject(self.dynamicIvBodySDOpenMBV)
 
@@ -183,6 +183,7 @@ class PySpringDamperPyScriptInit(mbsim.FixedFrameLink):
       dataStr=[]
       dataStr.append(f"text1_{self.getTime():0.2}")
       dataStr.append(f"text2_{self.getTime():0.2}")
+      dataStr.append(f"line1 {self.getTime():0.2}\nline2 {self.getTime():0.2}")
       self.dynamicIvBodySDOpenMBV.appendStr(dataStr)
 
       data=[]

@@ -19,4 +19,10 @@ Separator {
       format "f0=t=%f0$.2f, f1=%f1$.2f, i0=%i0%, s0=%s0%, s1=%s1%, t=%f2$.2f, idx=%i1%, realTime=%f3$.2f"
     }.output
   }
+  Translation {
+    translation 30 -50 0
+  }
+  AsciiText {
+    string = USE openmbv_dynamicivbody_dataStr_2.string
+  }
 }
