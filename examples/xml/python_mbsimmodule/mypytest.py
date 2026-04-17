@@ -120,7 +120,7 @@ class PySpringDamperPyScriptInit(mbsim.FixedFrameLink):
         self.dynamicIvBodySDOpenMBV.setScalarData(True);
         self.dynamicIvBodySDOpenMBV.setDataSize(2);
         self.dynamicIvBodySDOpenMBV.setDataIntSize(1);
-        self.dynamicIvBodySDOpenMBV.setDataStrSize(3);
+        self.dynamicIvBodySDOpenMBV.setDataStrSize(3, 25)
         self.dynamicIvBodySDOpenMBV.setIvFileName("dynamicivbodysd.iv");
         self.parent.getOpenMBVGrp().addObject(self.dynamicIvBodySDOpenMBV)
 
@@ -130,6 +130,7 @@ class PySpringDamperPyScriptInit(mbsim.FixedFrameLink):
         self.ivScreenAnnotationOpenMBV.addColumnIntLabel("ii0")
         self.ivScreenAnnotationOpenMBV.addColumnStrLabel("ss0")
         self.ivScreenAnnotationOpenMBV.addColumnStrLabel("ss1")
+        self.ivScreenAnnotationOpenMBV.setFixedStrSize(25)
         self.ivScreenAnnotationOpenMBV.setIvFileName("ivscreenannotation.iv");
         self.parent.getOpenMBVGrp().addObject(self.ivScreenAnnotationOpenMBV)
       super(PySpringDamperPyScriptInit, self).init(stage, config)
