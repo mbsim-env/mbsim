@@ -146,8 +146,10 @@
   <observers>
     <MechanicalLinkObserver name="Observer">
       <mechanicalLink ref="../Link[Feder1]"/>
+      <outputFrame ref="../Object[Box1]/Frame[P1]"/>
       <enableOpenMBVForce>
         <scaleLength>0.005</scaleLength>
+        <components>"componentsInLocal"</components>
       </enableOpenMBVForce>
     </MechanicalLinkObserver>
   </observers>

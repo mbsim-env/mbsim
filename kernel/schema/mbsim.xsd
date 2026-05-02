@@ -95,6 +95,7 @@
       <xs:element name="scaleLength" type="pv:nounitScalar" minOccurs="0"/>
       <xs:element name="scaleSize" type="pv:nounitScalar" minOccurs="0"/>
       <xs:element name="type" type="pv:stringFullEval" minOccurs="0"/>
+      <xs:element name="components" type="pv:stringFullEval" minOccurs="0"/>
       <xs:element name="referencePoint" type="pv:stringFullEval" minOccurs="0"/>
     </xs:sequence>
   </xs:group>

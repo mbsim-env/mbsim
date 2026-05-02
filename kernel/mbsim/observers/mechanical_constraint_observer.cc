@@ -23,6 +23,7 @@
 #include "mbsim/links/mechanical_link.h"
 #include "mbsim/frames/frame.h"
 #include "mbsim/dynamic_system_solver.h"
+#include "mbsim/utils/rotarymatrices.h"
 #include <openmbvcppinterface/arrow.h>
 #include <openmbvcppinterface/group.h>
 
@@ -109,10 +110,14 @@ namespace MBSim {
       }
     }
     if(plotFeature[openMBV]) {
+      Vec3 cardan;
+      if((!openMBVForce.empty() && openMBVForce[0]->getCreateLocalFrame()) ||
+         (!openMBVMoment.empty() && openMBVMoment[0]->getCreateLocalFrame()))
+        cardan = AIK2Cardan(outputFrame->evalOrientation());
       if(ombvForce) {
         int off = ombvForce->getSideOfInteraction()==0?constraint->getMechanicalLink()->getNumberOfForces()/2:0;
         for(size_t i=0; i<openMBVForce.size(); i++) {
-          array<OpenMBV::Float,8> data;
+          boost::container::small_vector<OpenMBV::Float,11> data(openMBVForce[i]->getCreateLocalFrame()?11:8);
           data[0] = getTime();
           Vec3 toPoint=constraint->getMechanicalLink()->getPointOfApplication(off+i)->evalPosition();
           data[1] = toPoint(0);
@@ -123,13 +128,18 @@ namespace MBSim {
           data[5] = WF(1);
           data[6] = WF(2);
           data[7] = (this->*evalOMBVForceColorRepresentation[ombvForce->getColorRepresentation()])();
+          if(openMBVForce[i]->getCreateLocalFrame()) {
+            data[8] = cardan(0);
+            data[9] = cardan(1);
+            data[10] = cardan(2);
+          }
           openMBVForce[i]->append(data);
         }
       }
       if(ombvMoment) {
         int off = ombvMoment->getSideOfInteraction()==0?constraint->getMechanicalLink()->getNumberOfForces()/2:0;
         for(size_t i=0; i<openMBVMoment.size(); i++) {
-          array<OpenMBV::Float,8> data;
+          boost::container::small_vector<OpenMBV::Float,11> data(openMBVMoment[i]->getCreateLocalFrame()?11:8);
           data[0] = getTime();
           Vec3 toPoint=constraint->getMechanicalLink()->getPointOfApplication(off+i)->evalPosition();
           data[1] = toPoint(0);
@@ -140,6 +150,11 @@ namespace MBSim {
           data[5] = WM(1);
           data[6] = WM(2);
           data[7] = (this->*evalOMBVMomentColorRepresentation[ombvMoment->getColorRepresentation()])();
+          if(openMBVMoment[i]->getCreateLocalFrame()) {
+            data[8] = cardan(0);
+            data[9] = cardan(1);
+            data[10] = cardan(2);
+          }
           openMBVMoment[i]->append(data);
         }
       }

@@ -32,6 +32,7 @@ namespace MBSim {
   BOOST_PARAMETER_NAME(scaleLength)
   BOOST_PARAMETER_NAME(scaleSize)
   BOOST_PARAMETER_NAME(type)
+  BOOST_PARAMETER_NAME(components)
   BOOST_PARAMETER_NAME(referencePoint)
   BOOST_PARAMETER_NAME(diffuseColor)
   BOOST_PARAMETER_NAME(transparency)

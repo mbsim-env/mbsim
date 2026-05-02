@@ -87,6 +87,11 @@ namespace MBSim {
         toDoubleHead,
         bothDoubleHeads
       };
+      enum Components {
+        vectorForm,
+        componentsInWorld,
+        componentsInLocal,
+      };
       enum ReferencePoint {
         toPoint,
         fromPoint,
@@ -99,9 +104,11 @@ namespace MBSim {
     protected:
       double sL, sS;
       OpenMBVArrow::Type type;
+      OpenMBVArrow::Components components;
       OpenMBVArrow::ReferencePoint refPoint;
+      bool createLocalFrame;
     public:
-      OpenMBVArrow(double sL_=1, double sS_=1, const OpenMBVArrow::Type &type_=OpenMBVArrow::toHead, const OpenMBVArrow::ReferencePoint &refPoint_=OpenMBVArrow::fromPoint, unsigned int cR=0, double minCol=0, double maxCol=1, const fmatvec::Vec3 &dc=fmatvec::Vec3(std::vector<double>{-1,1,1}), double tp=0, double ps=0, double lw=0);
+      OpenMBVArrow(double sL_=1, double sS_=1, const OpenMBVArrow::Type &type_=OpenMBVArrow::toHead, const OpenMBVArrow::ReferencePoint &refPoint_=OpenMBVArrow::fromPoint, unsigned int cR=0, double minCol=0, double maxCol=1, const fmatvec::Vec3 &dc=fmatvec::Vec3(std::vector<double>{-1,1,1}), double tp=0, double ps=0, double lw=0, const OpenMBVArrow::Components &components_=OpenMBVArrow::vectorForm, bool createLocalFrame_=false);
       void initializeUsingXML(xercesc::DOMElement *element);
       std::shared_ptr<OpenMBV::Arrow> createOpenMBV();
       double getsL() const { return sL; }
@@ -119,7 +126,7 @@ namespace MBSim {
     protected:
       unsigned int sI;
     public:
-      OpenMBVInteractionArrow(unsigned int sI_=0, double sL=1, double sS=1, const OpenMBVArrow::Type &type=OpenMBVArrow::toHead, const OpenMBVArrow::ReferencePoint &refPoint=OpenMBVArrow::fromPoint, unsigned int cR=0, double minCol=0, double maxCol=1, const fmatvec::Vec3 &dc=fmatvec::Vec3(std::vector<double>{-1,1,1}), double tp=0, double ps=0, double lw=0);
+      OpenMBVInteractionArrow(unsigned int sI_=0, double sL=1, double sS=1, const OpenMBVArrow::Type &type=OpenMBVArrow::toHead, const OpenMBVArrow::ReferencePoint &refPoint=OpenMBVArrow::fromPoint, unsigned int cR=0, double minCol=0, double maxCol=1, const fmatvec::Vec3 &dc=fmatvec::Vec3(std::vector<double>{-1,1,1}), double tp=0, double ps=0, double lw=0, const OpenMBVArrow::Components &components=OpenMBVArrow::vectorForm, bool createLocalFrame_=false);
       void initializeUsingXML(xercesc::DOMElement *element);
       unsigned int getSideOfInteraction() const { return sI; }
     protected:
@@ -134,7 +141,7 @@ namespace MBSim {
         stickslip
       };
     public:
-      OpenMBVFrictionArrow(unsigned int sI=0, double sL=1, double sS=1, const OpenMBVArrow::Type &type=OpenMBVArrow::toHead, const OpenMBVArrow::ReferencePoint &refPoint=OpenMBVArrow::fromPoint, unsigned int cR=0, double minCol=0, double maxCol=1, const fmatvec::Vec3 &dc=fmatvec::Vec3(std::vector<double>{-1,1,1}), double tp=0, double ps=0, double lw=0);
+      OpenMBVFrictionArrow(unsigned int sI=0, double sL=1, double sS=1, const OpenMBVArrow::Type &type=OpenMBVArrow::toHead, const OpenMBVArrow::ReferencePoint &refPoint=OpenMBVArrow::fromPoint, unsigned int cR=0, double minCol=0, double maxCol=1, const fmatvec::Vec3 &dc=fmatvec::Vec3(std::vector<double>{-1,1,1}), double tp=0, double ps=0, double lw=0, const OpenMBVArrow::Components &components=OpenMBVArrow::vectorForm, bool createLocalFrame_=false);
   };
 
   class OpenMBVRigidBody : public OpenMBVColoredBody {

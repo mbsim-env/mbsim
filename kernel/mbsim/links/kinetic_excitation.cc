@@ -22,6 +22,7 @@
 #include "mbsim/objectfactory.h"
 #include <openmbvcppinterface/group.h>
 #include <openmbvcppinterface/arrow.h>
+#include <mbsim/utils/rotarymatrices.h>
 
 using namespace std;
 using namespace fmatvec;
@@ -99,10 +100,14 @@ namespace MBSim {
 
   void KineticExcitation::plot() {
     if(plotFeature[openMBV]) {
+      Vec3 cardan;
+      if((!openMBVForce.empty() && openMBVForce[0]->getCreateLocalFrame()) ||
+         (!openMBVMoment.empty() && openMBVMoment[0]->getCreateLocalFrame()))
+        cardan = AIK2Cardan(frame[refFrame]->evalOrientation());
       if(openMBVForce.size()) {
         int off = ombvArrow->getSideOfInteraction()==0?getNumberOfForces()/2:0;
+        boost::container::small_vector<OpenMBV::Float,11> data(openMBVForce[0]->getCreateLocalFrame()?11:8);
         for(size_t i=0; i<openMBVForce.size(); i++) {
-          array<OpenMBV::Float,8> data;
           data[0] = getTime();
           Vec3 toPoint=getPointOfApplication(off+i)->evalPosition();
           data[1] = toPoint(0);
@@ -113,13 +118,18 @@ namespace MBSim {
           data[5] = WF(1);
           data[6] = WF(2);
           data[7] = (this->*evalOMBVForceColorRepresentation[ombvArrow->getColorRepresentation()])();
+          if(openMBVForce[i]->getCreateLocalFrame()) {
+            data[8] = cardan(0);
+            data[9] = cardan(1);
+            data[10] = cardan(2);
+          }
           openMBVForce[i]->append(data);
         }
       }
       if(openMBVMoment.size()) {
         int off = ombvArrow->getSideOfInteraction()==0?getNumberOfForces()/2:0;
+        boost::container::small_vector<OpenMBV::Float,11> data(openMBVMoment[0]->getCreateLocalFrame()?11:8);
         for(size_t i=0; i<openMBVMoment.size(); i++) {
-          array<OpenMBV::Float,8> data;
           data[0] = getTime();
           Vec3 toPoint=getPointOfApplication(off+i)->evalPosition();
           data[1] = toPoint(0);
@@ -130,6 +140,11 @@ namespace MBSim {
           data[5] = WM(1);
           data[6] = WM(2);
           data[7] = (this->*evalOMBVMomentColorRepresentation[ombvArrow->getColorRepresentation()])();
+          if(openMBVMoment[i]->getCreateLocalFrame()) {
+            data[8] = cardan(0);
+            data[9] = cardan(1);
+            data[10] = cardan(2);
+          }
           openMBVMoment[i]->append(data);
         }
       }

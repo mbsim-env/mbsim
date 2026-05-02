@@ -107,7 +107,7 @@ namespace MBSim {
     object->setMaximalColorValue(maxCol);
   }
 
-  OpenMBVArrow::OpenMBVArrow(double sL_, double sS_, const OpenMBVArrow::Type &type_, const OpenMBVArrow::ReferencePoint &refPoint_, unsigned int cR, double minCol, double maxCol, const fmatvec::Vec3 &dc, double tp, double ps, double lw) : OpenMBVDynamicColoredBody(cR,minCol,maxCol,dc,tp,ps,lw), sL(sL_), sS(sS_), type(type_), refPoint(refPoint_) {
+  OpenMBVArrow::OpenMBVArrow(double sL_, double sS_, const OpenMBVArrow::Type &type_, const OpenMBVArrow::ReferencePoint &refPoint_, unsigned int cR, double minCol, double maxCol, const fmatvec::Vec3 &dc, double tp, double ps, double lw, const OpenMBVArrow::Components &components_, bool createLocalFrame_) : OpenMBVDynamicColoredBody(cR,minCol,maxCol,dc,tp,ps,lw), sL(sL_), sS(sS_), type(type_), components(components_), refPoint(refPoint_), createLocalFrame(components==componentsInLocal?true:createLocalFrame_) {
     cRL.resize(2);
     cRL[0]="none";
     cRL[1]="absoluteValue";
@@ -130,6 +130,13 @@ namespace MBSim {
       else if(t=="toDoubleHead")    type=OpenMBVArrow::toDoubleHead;
       else if(t=="bothDoubleHeads") type=OpenMBVArrow::bothDoubleHeads;
     }
+    ee = E(e)->getFirstElementChildNamed(MBSIM%"components");
+    if(ee) {
+      string t=string(X()%E(ee)->getFirstTextChild()->getData()).substr(1,string(X()%E(ee)->getFirstTextChild()->getData()).length()-2);
+      if(t=="vectorForm")             { components=OpenMBVArrow::vectorForm; }
+      else if(t=="componentsInWorld") { components=OpenMBVArrow::componentsInWorld; }
+      else if(t=="componentsInLocal") { components=OpenMBVArrow::componentsInLocal; createLocalFrame=true; } // local frame is only possible when createLocalFrame is true
+    }
     ee = E(e)->getFirstElementChildNamed(MBSIM%"referencePoint");
     if(ee) {
       string rP=string(X()%E(ee)->getFirstTextChild()->getData()).substr(1,string(X()%E(ee)->getFirstTextChild()->getData()).length()-2);
@@ -151,11 +158,13 @@ namespace MBSim {
     object->setHeadDiameter(0.5*sS);
     object->setHeadLength(0.75*sS);
     object->setType(OpenMBV::Arrow::Type(type));
+    object->setComponents(OpenMBV::Arrow::Components(components));
     object->setReferencePoint(OpenMBV::Arrow::ReferencePoint(refPoint));
     object->setScaleLength(sL);
+    object->setCreateLocalFrame(components==componentsInLocal?true:false);
   }
 
-  OpenMBVInteractionArrow::OpenMBVInteractionArrow(unsigned int sI_, double sL, double sS, const OpenMBVArrow::Type &type, const OpenMBVArrow::ReferencePoint &refPoint, unsigned int cR, double minCol, double maxCol, const fmatvec::Vec3 &dc, double tp, double ps, double lw) : OpenMBVArrow(sL,sS,type,refPoint,cR,minCol,maxCol,dc,tp,ps,lw), sI(sI_) {
+  OpenMBVInteractionArrow::OpenMBVInteractionArrow(unsigned int sI_, double sL, double sS, const OpenMBVArrow::Type &type, const OpenMBVArrow::ReferencePoint &refPoint, unsigned int cR, double minCol, double maxCol, const fmatvec::Vec3 &dc, double tp, double ps, double lw, const OpenMBVArrow::Components &components, bool createLocalFrame) : OpenMBVArrow(sL,sS,type,refPoint,cR,minCol,maxCol,dc,tp,ps,lw,components, createLocalFrame), sI(sI_) {
   }
 
   void OpenMBVInteractionArrow::initializeUsingXML(DOMElement *e) {
@@ -175,7 +184,7 @@ namespace MBSim {
     OpenMBVArrow::initializeObject(object);
   }
 
-  OpenMBVFrictionArrow::OpenMBVFrictionArrow(unsigned int sI, double sL, double sS, const OpenMBVArrow::Type &type, const OpenMBVArrow::ReferencePoint &refPoint, unsigned int cR, double minCol, double maxCol, const fmatvec::Vec3 &dc, double tp, double ps, double lw) : OpenMBVInteractionArrow(sI,sL,sS,type,refPoint,cR,minCol,maxCol,dc,tp,ps,lw) {
+  OpenMBVFrictionArrow::OpenMBVFrictionArrow(unsigned int sI, double sL, double sS, const OpenMBVArrow::Type &type, const OpenMBVArrow::ReferencePoint &refPoint, unsigned int cR, double minCol, double maxCol, const fmatvec::Vec3 &dc, double tp, double ps, double lw, const OpenMBVArrow::Components &components, bool createLocalFrame) : OpenMBVInteractionArrow(sI,sL,sS,type,refPoint,cR,minCol,maxCol,dc,tp,ps,lw,components, createLocalFrame) {
     cRL.resize(3);
     cRL[0]="none";
     cRL[1]="absoluteValue";

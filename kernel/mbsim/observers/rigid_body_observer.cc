@@ -25,6 +25,7 @@
 #include "mbsim/environment.h"
 #include "mbsim/utils/eps.h"
 #include "mbsim/dynamic_system_solver.h"
+#include "mbsim/utils/rotarymatrices.h"
 #include <openmbvcppinterface/frame.h>
 #include <openmbvcppinterface/arrow.h>
 #include <openmbvcppinterface/group.h>
@@ -223,8 +224,9 @@ namespace MBSim {
       }
     }
     if(plotFeature[openMBV]) {
+      auto cardan = AIK2Cardan(outputFrame->evalOrientation());
       if(FWeight) {
-        array<OpenMBV::Float,8> data;
+        boost::container::small_vector<OpenMBV::Float,11> data(FWeight->getCreateLocalFrame()?11:8);
         data[0] = getTime();
         Vec3 G = body->getMass()*ds->getMBSimEnvironment()->getAccelerationOfGravity();
         data[1] = rOS(0);
@@ -234,12 +236,17 @@ namespace MBSim {
         data[5] = G(1);
         data[6] = G(2);
         data[7] = ombvWeight->getColorRepresentation()?nrm2(G):1.0;
+        if(FWeight->getCreateLocalFrame()) {
+          data[8] = cardan(0);
+          data[9] = cardan(1);
+          data[10] = cardan(2);
+        }
         FWeight->append(data);
       }
       if(ombvForce) {
         int off = ombvForce->getSideOfInteraction()==0?1:0;
         for(size_t i=0; i<FArrow.size(); i++) {
-          array<OpenMBV::Float,8> data;
+          boost::container::small_vector<OpenMBV::Float,11> data(FArrow[i]->getCreateLocalFrame()?11:8);
           data[0] = getTime();
           Vec3 toPoint=body->getJoint()->getPointOfApplication(off+i)->evalPosition();
           data[1] = toPoint(0);
@@ -250,13 +257,18 @@ namespace MBSim {
           data[5] = F(1);
           data[6] = F(2);
           data[7] = ombvForce->getColorRepresentation()?nrm2(F):1.0;
+          if(FArrow[i]->getCreateLocalFrame()) {
+            data[8] = cardan(0);
+            data[9] = cardan(1);
+            data[10] = cardan(2);
+          }
           FArrow[i]->append(data);
         }
       }
       if(ombvMoment) {
         int off = ombvMoment->getSideOfInteraction()==0?1:0;
         for(size_t i=0; i<MArrow.size(); i++) {
-          array<OpenMBV::Float,8> data;
+          boost::container::small_vector<OpenMBV::Float,11> data(MArrow[i]->getCreateLocalFrame()?11:8);
           data[0] = getTime();
           Vec3 toPoint=body->getJoint()->getPointOfApplication(off+i)->evalPosition();
           data[1] = toPoint(0);
@@ -267,11 +279,16 @@ namespace MBSim {
           data[5] = M(1);
           data[6] = M(2);
           data[7] = ombvMoment->getColorRepresentation()?nrm2(M):1.0;
+          if(MArrow[i]->getCreateLocalFrame()) {
+            data[8] = cardan(0);
+            data[9] = cardan(1);
+            data[10] = cardan(2);
+          }
           MArrow[i]->append(data);
         }
       }
       if(openMBVAxisOfRotation) {
-        array<OpenMBV::Float,8> data;
+        boost::container::small_vector<OpenMBV::Float,11> data(openMBVAxisOfRotation->getCreateLocalFrame()?11:8);
         data[0] = getTime();
         data[1] = r(0);
         data[2] = r(1);
@@ -280,10 +297,15 @@ namespace MBSim {
         data[5] = dir(1);
         data[6] = dir(2);
         data[7] = ombvAxisOfRotation->getColorRepresentation()?nrm2(dir):0;
+        if(openMBVAxisOfRotation->getCreateLocalFrame()) {
+          data[8] = cardan(0);
+          data[9] = cardan(1);
+          data[10] = cardan(2);
+        }
         openMBVAxisOfRotation->append(data);
       }
       if(openMBVMomentum) {
-        array<OpenMBV::Float,8> data;
+        boost::container::small_vector<OpenMBV::Float,11> data(openMBVMomentum->getCreateLocalFrame()?11:8);
         data[0] = getTime();
         data[1] = rOS(0);
         data[2] = rOS(1);
@@ -292,10 +314,15 @@ namespace MBSim {
         data[5] = p(1);
         data[6] = p(2);
         data[7] = ombvMomentum->getColorRepresentation()?nrm2(p):1;
+        if(openMBVMomentum->getCreateLocalFrame()) {
+          data[8] = cardan(0);
+          data[9] = cardan(1);
+          data[10] = cardan(2);
+        }
         openMBVMomentum->append(data);
       }
       if(openMBVAngularMomentum) {
-        array<OpenMBV::Float,8> data;
+        boost::container::small_vector<OpenMBV::Float,11> data(openMBVAngularMomentum->getCreateLocalFrame()?11:8);
         data[0] = getTime();
         data[1] = rOR(0);
         data[2] = rOR(1);
@@ -304,10 +331,15 @@ namespace MBSim {
         data[5] = L(1);
         data[6] = L(2);
         data[7] = ombvAngularMomentum->getColorRepresentation()?nrm2(L):1;
+        if(openMBVAngularMomentum->getCreateLocalFrame()) {
+          data[8] = cardan(0);
+          data[9] = cardan(1);
+          data[10] = cardan(2);
+        }
         openMBVAngularMomentum->append(data);
       }
       if(openMBVDerivativeOfMomentum) {
-        array<OpenMBV::Float,8> data;
+        boost::container::small_vector<OpenMBV::Float,11> data(openMBVDerivativeOfMomentum->getCreateLocalFrame()?11:8);
         data[0] = getTime();
         data[1] = rOS(0);
         data[2] = rOS(1);
@@ -316,10 +348,15 @@ namespace MBSim {
         data[5] = pd(1);
         data[6] = pd(2);
         data[7] = ombvDerivativeOfMomentum->getColorRepresentation()?nrm2(pd):1;
+        if(openMBVDerivativeOfMomentum->getCreateLocalFrame()) {
+          data[8] = cardan(0);
+          data[9] = cardan(1);
+          data[10] = cardan(2);
+        }
         openMBVDerivativeOfMomentum->append(data);
       }
       if(openMBVDerivativeOfAngularMomentum) {
-        array<OpenMBV::Float,8> data;
+        boost::container::small_vector<OpenMBV::Float,11> data(openMBVDerivativeOfAngularMomentum->getCreateLocalFrame()?11:8);
         data[0] = getTime();
         data[1] = rOR(0);
         data[2] = rOR(1);
@@ -328,6 +365,11 @@ namespace MBSim {
         data[5] = Ld(1);
         data[6] = Ld(2);
         data[7] = ombvDerivativeOfAngularMomentum->getColorRepresentation()?nrm2(Ld):1;
+        if(openMBVDerivativeOfAngularMomentum->getCreateLocalFrame()) {
+          data[8] = cardan(0);
+          data[9] = cardan(1);
+          data[10] = cardan(2);
+        }
         openMBVDerivativeOfAngularMomentum->append(data);
       }
     }

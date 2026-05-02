@@ -66,6 +66,7 @@ class PySpringDamperPyScriptInit(mbsim.FixedFrameLink):
     self.dynamicIvBodyOpenMBV=OpenMBV.ObjectFactory.create_DynamicIvBody()
     self.dynamicIvBodySDOpenMBV=OpenMBV.ObjectFactory.create_DynamicIvBody()
     self.ivScreenAnnotationOpenMBV=OpenMBV.ObjectFactory.create_IvScreenAnnotation()
+    self.arrowOpenMBV=OpenMBV.ObjectFactory.create_Arrow()
 
   def updatelaF(self):
     if self.warnCount==0:
@@ -133,6 +134,10 @@ class PySpringDamperPyScriptInit(mbsim.FixedFrameLink):
         self.ivScreenAnnotationOpenMBV.setFixedStrSize(25)
         self.ivScreenAnnotationOpenMBV.setIvFileName("ivscreenannotation.iv");
         self.parent.getOpenMBVGrp().addObject(self.ivScreenAnnotationOpenMBV)
+
+        self.arrowOpenMBV.setName(self.name+"_arrow")
+        self.arrowOpenMBV.setCreateLocalFrame(True)
+        self.parent.getOpenMBVGrp().addObject(self.arrowOpenMBV)
       super(PySpringDamperPyScriptInit, self).init(stage, config)
     else:
       super(PySpringDamperPyScriptInit, self).init(stage, config)
@@ -198,6 +203,9 @@ class PySpringDamperPyScriptInit(mbsim.FixedFrameLink):
       dataStr.append(f"text1_{self.getTime():0.2}")
       dataStr.append(f"text2_{self.getTime():0.2}")
       self.ivScreenAnnotationOpenMBV.appendStr(dataStr)
+
+      data=[self.getTime(), 0, 0, 0, 0.5-self.getTime(), 0.5-self.getTime()/2, 0, 1, 0,0,self.getTime()*math.pi/2]
+      self.arrowOpenMBV.append(data)
     super(PySpringDamperPyScriptInit, self).plot()
 
   @staticmethod

@@ -124,8 +124,9 @@ namespace MBSim {
         Element::plot(TWOut.T()*frame->evalAngularAcceleration());
     }
     if(plotFeature[openMBV]) {
+      auto cardan = AIK2Cardan(outputFrame->evalOrientation());
       if(openMBVPosition) {
-        array<OpenMBV::Float,8> data;
+        boost::container::small_vector<OpenMBV::Float,11> data(openMBVPosition->getCreateLocalFrame()?11:8);
         data[0] = getTime();
         data[1] = 0;
         data[2] = 0;
@@ -135,10 +136,15 @@ namespace MBSim {
         data[5] = r(1);
         data[6] = r(2);
         data[7] = (this->*evalOMBVPositionColorRepresentation[ombvPositionArrow->getColorRepresentation()])();
+        if(openMBVPosition->getCreateLocalFrame()) {
+          data[8] = cardan(0);
+          data[9] = cardan(1);
+          data[10] = cardan(2);
+        }
         openMBVPosition->append(data);
       }
       if(openMBVVelocity) {
-        array<OpenMBV::Float,8> data;
+        boost::container::small_vector<OpenMBV::Float,11> data(openMBVVelocity->getCreateLocalFrame()?11:8);
         data[0] = getTime();
         Vec3 r = frame->evalPosition();
         data[1] = r(0);
@@ -149,10 +155,15 @@ namespace MBSim {
         data[5] = v(1);
         data[6] = v(2);
         data[7] = (this->*evalOMBVVelocityColorRepresentation[ombvVelocityArrow->getColorRepresentation()])();
+        if(openMBVVelocity->getCreateLocalFrame()) {
+          data[8] = cardan(0);
+          data[9] = cardan(1);
+          data[10] = cardan(2);
+        }
         openMBVVelocity->append(data);
       }
       if(openMBVAngularVelocity) {
-        array<OpenMBV::Float,8> data;
+        boost::container::small_vector<OpenMBV::Float,11> data(openMBVAngularVelocity->getCreateLocalFrame()?11:8);
         data[0] = getTime();
         Vec3 r = frame->evalPosition();
         data[1] = r(0);
@@ -163,10 +174,15 @@ namespace MBSim {
         data[5] = om(1);
         data[6] = om(2);
         data[7] = (this->*evalOMBVAngularVelocityColorRepresentation[ombvAngularVelocityArrow->getColorRepresentation()])();
+        if(openMBVAngularVelocity->getCreateLocalFrame()) {
+          data[8] = cardan(0);
+          data[9] = cardan(1);
+          data[10] = cardan(2);
+        }
         openMBVAngularVelocity->append(data);
       }
       if(openMBVAcceleration) {
-        array<OpenMBV::Float,8> data;
+        boost::container::small_vector<OpenMBV::Float,11> data(openMBVAcceleration->getCreateLocalFrame()?11:8);
         data[0] = getTime();
         Vec3 r = frame->evalPosition();
         data[1] = r(0);
@@ -177,10 +193,15 @@ namespace MBSim {
         data[5] = a(1);
         data[6] = a(2);
         data[7] = (this->*evalOMBVAccelerationColorRepresentation[ombvAccelerationArrow->getColorRepresentation()])();
+        if(openMBVAcceleration->getCreateLocalFrame()) {
+          data[8] = cardan(0);
+          data[9] = cardan(1);
+          data[10] = cardan(2);
+        }
         openMBVAcceleration->append(data);
       }
       if(openMBVAngularAcceleration) {
-        array<OpenMBV::Float,8> data;
+        boost::container::small_vector<OpenMBV::Float,11> data(openMBVAngularAcceleration->getCreateLocalFrame()?11:8);
         data[0] = getTime();
         Vec3 r = frame->evalPosition();
         data[1] = r(0);
@@ -191,6 +212,11 @@ namespace MBSim {
         data[5] = psi(1);
         data[6] = psi(2);
         data[7] = (this->*evalOMBVAngularAccelerationColorRepresentation[ombvAngularAccelerationArrow->getColorRepresentation()])();
+        if(openMBVAngularAcceleration->getCreateLocalFrame()) {
+          data[8] = cardan(0);
+          data[9] = cardan(1);
+          data[10] = cardan(2);
+        }
         openMBVAngularAcceleration->append(data);
       }
     }
