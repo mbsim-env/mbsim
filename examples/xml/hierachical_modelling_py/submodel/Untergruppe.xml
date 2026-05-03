@@ -17,6 +17,10 @@
           # elements. You must quote them with '&lt;', '&gt;' and '&amp;' or use
           # a CDATA section as used here.
      # comments may be indented arbitarily as well as empty lines
+          # and continuation lines may also be indented arbitarily
+          dummyVar = [4,5,
+  5,
+             3]
        
           # This code for the element 'mass' is just the same as '<mass>m1</mass>'.
           # Take care of correct python indentation!
