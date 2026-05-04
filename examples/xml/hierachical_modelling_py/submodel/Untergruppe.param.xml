@@ -76,6 +76,9 @@
   </stringParameter>
   <scalarParameter name="h1">0.5</scalarParameter>
   <scalarParameter name="h2">h1</scalarParameter>
+  <import action="addAllVarsAsParams">
+    # just a comment but no code
+  </import>
   <import action="addAllVarsAsParams">import sys; sys.path.append('../'+pathPrefix+'modules'); import mymodule</import>
   <import action="addAllVarsAsParams">import mbxmlutils</import>
   <import action="addAllVarsAsParams">import numpy</import>
