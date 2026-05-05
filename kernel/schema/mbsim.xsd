@@ -5716,6 +5716,56 @@
     </xs:complexContent>
   </xs:complexType>   
 
+  <xs:element name="DemuxingArgumentFunction" substitutionGroup="Function" type="DemuxingArgumentFunctionType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        Scalar or vector-valued function \f$ F(v) \f$ evaluating a function <object class="inlineeqn">f_1 = f_1(x)</object> or <object class="inlineeqn">f_2 = f_2(x,y)</object>
+        with extraction of \f$ x \f$ and \f$ y \f$ from the in-going vector \f$ v \f$.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="DemuxingArgumentFunctionType">
+    <xs:complexContent>
+      <xs:extension base="FunctionType">
+        <xs:sequence>
+          <xs:element name="oneArgumentFunction" minOccurs="0" maxOccurs="1">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+            tbd
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:choice>
+                <xs:element ref="Function"/>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="twoArgumentFunction" minOccurs="0" maxOccurs="1">
+            <xs:complexType>
+              <xs:choice>
+                <xs:element ref="Function"/>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="argumentIndex1" type="pv:integerFullEval">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                First index in input vector to be taken for the first function argument.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="argumentIndex2" type="pv:integerFullEval" minOccurs="0" maxOccurs="1">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Second index in input vector to be taken for the first function argument.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
   <xs:element name="AbsoluteValueFunction" substitutionGroup="Function" type="AbsoluteValueFunctionType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
