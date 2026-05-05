@@ -139,7 +139,7 @@ namespace MBSim {
                   break;
                 case PlotAttributeStorage::dataset:
                   if constexpr (is_same_v<PlainType, string> )
-                    plotGroup->createChildObject<H5::SimpleDataset<vector<string>>>(name)(1, v.size())->write({v}); // we add a scalar string as a 1D dataset of fixed string length to enable compression
+                    plotGroup->createChildObject<H5::SimpleDataset<vector<string>>>(name)(1, H5::Options{}._fixedStrSize(v.size()))->write({v}); // we add a scalar string as a 1D dataset of fixed string length to enable compression
                   else
                     plotGroup->createChildObject<H5::SimpleDataset<PlainType>>(name)()->write(v);
                   break;
