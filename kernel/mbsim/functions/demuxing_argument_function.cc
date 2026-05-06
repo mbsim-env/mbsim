@@ -26,6 +26,6 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-//MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, DemuxingArgumentFunction<double(VecV)>)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, DemuxingArgumentFunction<double(VecV)>)
   MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, DemuxingArgumentFunction<VecV  (VecV)>)
 }

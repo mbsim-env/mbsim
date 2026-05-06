@@ -57,17 +57,44 @@ namespace MBSim {
         return (*fo2)(a2,a2);
       }
       typename B::DRetDArg parDer(const Arg &arg) override {
+        // we might need that return value for dimensioning
+        const auto& v1 = fo1 ? fo1->parDer(arg(argIdx1)) : fo2->parDer1(arg(argIdx1),arg(argIdx2));
+
+        // resize and initialize class member parDerMat
+        if(parDerMat.rows() == 0)
+        {
+          if constexpr (std::is_same_v<Ret, double>)
+            parDerMat.resize(/*      1,*/ arg.rows());
+          else
+            parDerMat.resize(v1.rows(),   arg.rows());
+          parDerMat.init(0.0);
+        }
+
         if( fo1 )
-          return fo1->parDer(arg(argIdx1));
-        return fo2->parDer1(arg(argIdx1),arg(argIdx2)) + fo2->parDer2(arg(argIdx1),arg(argIdx2));
+        {
+          if constexpr (std::is_same_v<Ret, double>)
+            parDerMat(argIdx1) = v1;
+          else
+            parDerMat.set(argIdx1, v1);
+        }
+        else
+        {
+          const auto& v2 = fo2->parDer2(arg(argIdx1),arg(argIdx2));
+          if constexpr (std::is_same_v<Ret, double>)
+          {
+            parDerMat(argIdx1) = v1;
+            parDerMat(argIdx2) = v2;
+          }
+          else
+          {
+            parDerMat.set(argIdx1, v1);
+            parDerMat.set(argIdx2, v2);
+          }
+        }
+        return parDerMat;
       }
       typename B::DRetDArg parDerDirDer(const Arg &argDir, const Arg &arg) override {
-        if( fo1 )
-          return fo1->parDerDirDer(argDir(argIdx1), arg(argIdx1));
-        return fo2->parDer1DirDer1(argDir(argIdx1), arg(argIdx1),arg(argIdx2)) * argDir(argIdx1) +
-               fo2->parDer1DirDer2(argDir(argIdx2), arg(argIdx1),arg(argIdx2)) * argDir(argIdx1) +
-               fo2->parDer2DirDer1(argDir(argIdx1), arg(argIdx1),arg(argIdx2)) * argDir(argIdx2) +
-               fo2->parDer2DirDer2(argDir(argIdx2), arg(argIdx1),arg(argIdx2)) * argDir(argIdx2);
+        throw "typename B::DRetDArg parDerDirDer(const Arg &argDir, const Arg &arg) not yet implemented for DemuxingArgumentFunction";
       }
       void setArgumentIndex1(size_t argIdx1_) { argIdx1 = argIdx1_; }
       void setArgumentIndex2(size_t argIdx2_) { argIdx2 = argIdx2_; }
@@ -105,6 +132,7 @@ namespace MBSim {
       Function<Ret(double,double)> *fo2{nullptr};
       size_t argIdx1;
       size_t argIdx2;
+      typename B::DRetDArg parDerMat;
   };
 }
 
