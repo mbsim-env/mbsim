@@ -152,11 +152,11 @@ namespace MBSim {
         coefs.clear();
       }
 
-      Ret operator()(const Arg &x) { return f(ToDouble<Arg>::cast(x)); }
+      Ret operator()(const Arg &x_) { return f(ToDouble<Arg>::cast(x_)); }
 
       // we do not use B::DRetDArg as return type here since SWIG cannot wrap the propably
       // -> hence we resolve B::DRetDArg manually here to fmatvec::Der<Ret, Arg>::type
-      typename fmatvec::Der<Ret, Arg>::type parDer(const Arg &x) { return fd(ToDouble<Arg>::cast(x)); }
+      typename fmatvec::Der<Ret, Arg>::type parDer(const Arg &x_) { return fd(ToDouble<Arg>::cast(x_)); }
       typename fmatvec::Der<Ret, Arg>::type parDerDirDer(const Arg &argDir, const Arg &arg) { return fdd(ToDouble<Arg>::cast(arg))*ToDouble<Arg>::cast(argDir); }
 
       /*!

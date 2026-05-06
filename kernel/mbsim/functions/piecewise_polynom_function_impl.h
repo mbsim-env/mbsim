@@ -278,8 +278,8 @@
 
     // read all coefficient and convert to coefs
     coefs.resize(allCoefs[0].cols());
-    for(auto &x : coefs)
-      x.resize(allCoefs[0].rows(),allCoefs.size());
+    for(auto &c : coefs)
+      c.resize(allCoefs[0].rows(),allCoefs.size());
     for(size_t c=0; c<allCoefs.size(); ++c) {
       if(allCoefs[c].cols()!=static_cast<int>(coefs.size()))
         this->throwError("The number of columns in the coefficients elements differ.");
@@ -299,10 +299,10 @@
       coefs.resize(coef.cols());
     if(static_cast<int>(coefs.size())!=coef.cols())
       this->throwError("The added coefficients have a different spline order.");
-    for(auto &x : coefs) {
-      auto xold(std::move(x));
-      x.resize(coef.rows(),xold.cols()+1);
-      x.set(fmatvec::RangeV(0,xold.rows()-1), fmatvec::RangeV(0,xold.cols()-1), std::move(xold));
+    for(auto &c : coefs) {
+      auto cOld(std::move(c));
+      c.resize(coef.rows(),cOld.cols()+1);
+      c.set(fmatvec::RangeV(0,cOld.rows()-1), fmatvec::RangeV(0,cOld.cols()-1), std::move(cOld));
     }
     if(coef.cols()!=static_cast<int>(coefs.size()))
       this->throwError("The number of columns in the coefficients elements differ.");
@@ -315,8 +315,6 @@
   template<typename Ret, typename Arg>
   void PiecewisePolynomFunction<Ret(Arg)>::initializeUsingXML(xercesc::DOMElement * element) {
     xercesc::DOMElement *e;
-    fmatvec::VecV x;
-    fmatvec::MatV y;
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"x");
     if (e) {
       setx(MBXMLUtils::E(e)->getText<fmatvec::Vec>());
@@ -325,7 +323,6 @@
     }
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"xy");
     if (e) {
-      e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"xy");
       setxy(MBXMLUtils::E(e)->getText<fmatvec::Mat>());
     }
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"interpolationMethod");
