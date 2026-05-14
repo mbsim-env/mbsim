@@ -105,7 +105,7 @@ SepNoPick {{
             float dot = dot(vertexWorldNormal, vec3(0, 0, 1));
             vec3 color;
             float transparency;
-            if(dot > 0) {{
+            if(!gl_FrontFacing) {{
               // grass color
               color.r = 0.1 + n * 0.15;
               color.g = 0.35 + n * 0.55;
