@@ -727,7 +727,6 @@ namespace MBSim {
       }
 
       if(ts) {
-	double Om = tyre->getFrame()->evalOrientation().col(1).T()*tyre->getFrame()->evalAngularVelocity();
 	double psid = contact->getContourFrame(1)->evalOrientation().col(2).T()*tyre->getFrame()->getAngularVelocity();
 	epsga = PECP1*(1+PECP2*dfz);
 	phit = -psid/vc;
@@ -798,7 +797,11 @@ namespace MBSim {
 
       Mx = R0*Fz*LMX*(QSX1*LVMX-QSX2*ga*(1+PPMX1*dpi)+QSX3*Fy/Fz0+QSX4*cos(QSX5*atan(pow(QSX6*Fz/Fz0,2)))*sin(QSX7*ga+QSX8*atan(QSX9*Fy/Fz0))+QSX10*atan(QSX11*Fz/Fz0)*ga) + R0*LMX*(Fy*(QSX13+QSX14*abs(ga))-Fz*QSX12*ga*abs(ga));
 
-      My = -R0*Fz0*LMY*(QSY1+QSY2*Fx/Fz0+QSY3*abs(vx/v0)+QSY4*pow(vx/v0,4)+(QSY5+QSY6*Fz/Fz0)*pow(ga,2))*pow(Fz/Fz0,QSY7)*pow(p/p0,QSY8);
+      double My0 = R0*Fz0*LMY*(QSY1+QSY2*Fx/Fz0+QSY3*abs(vx/v0)+QSY4*pow(vx/v0,4)+(QSY5+QSY6*Fz/Fz0)*pow(ga,2))*pow(Fz/Fz0,QSY7)*pow(p/p0,QSY8);
+      if(abs(Om)<OmLim)
+        My = -Om/OmLim*My0;
+      else
+        My = -sgn(Om)*My0;
 
       if(ts) {
 	double phiM = phiF;
