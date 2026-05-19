@@ -45,7 +45,7 @@ namespace MBSim {
         delete fo1;
         delete fo2;
       }
-      int getArgSize() const override { return 1; }
+      int getArgSize() const override { return argDim; }
       std::pair<int, int> getRetSize() const override {
         return fo1?fo1->getRetSize():fo2->getRetSize();
       }
@@ -54,47 +54,67 @@ namespace MBSim {
         if( fo1 )
           return (*fo1)(a1);
         const double& a2 = arg(argIdx2);
-        return (*fo2)(a2,a2);
+        return (*fo2)(a1,a2);
       }
       typename B::DRetDArg parDer(const Arg &arg) override {
         // we might need that return value for dimensioning
         const auto& v1 = fo1 ? fo1->parDer(arg(argIdx1)) : fo2->parDer1(arg(argIdx1),arg(argIdx2));
 
-        // resize and initialize class member parDerMat
-        if(parDerMat.rows() == 0)
-        {
-          if constexpr (std::is_same_v<Ret, double>)
-            parDerMat.resize(/*      1,*/ arg.rows());
-          else
-            parDerMat.resize(v1.rows(),   arg.rows());
-          parDerMat.init(0.0);
-        }
+        initTmp(v1, arg);
 
         if( fo1 )
         {
           if constexpr (std::is_same_v<Ret, double>)
-            parDerMat(argIdx1) = v1;
+            tmp(argIdx1) = v1;
           else
-            parDerMat.set(argIdx1, v1);
+            tmp.set(argIdx1, v1);
         }
         else
         {
           const auto& v2 = fo2->parDer2(arg(argIdx1),arg(argIdx2));
           if constexpr (std::is_same_v<Ret, double>)
           {
-            parDerMat(argIdx1) = v1;
-            parDerMat(argIdx2) = v2;
+            tmp(argIdx1) = v1;
+            tmp(argIdx2) = v2;
           }
           else
           {
-            parDerMat.set(argIdx1, v1);
-            parDerMat.set(argIdx2, v2);
+            tmp.set(argIdx1, v1);
+            tmp.set(argIdx2, v2);
           }
         }
-        return parDerMat;
+        return tmp;
       }
       typename B::DRetDArg parDerDirDer(const Arg &argDir, const Arg &arg) override {
-        throw "typename B::DRetDArg parDerDirDer(const Arg &argDir, const Arg &arg) not yet implemented for DemuxingArgumentFunction";
+        const auto& v11 = fo1 ? fo1->parDerDirDer(argDir(argIdx1), arg(argIdx1)) :
+                                fo2->parDer1DirDer1(argDir(argIdx1), arg(argIdx1),arg(argIdx2));
+
+        initTmp(v11, arg);
+
+        if( fo1 )
+        {
+          if constexpr (std::is_same_v<Ret, double>)
+            tmp(argIdx1) = v11;
+          else
+            tmp.set(argIdx1, v11);
+        }
+        else
+        {
+          const auto& v22 = fo2->parDer2DirDer2(argDir(argIdx2), arg(argIdx1),arg(argIdx2));
+          const auto& v12 = fo2->parDer1DirDer2(argDir(argIdx2), arg(argIdx1),arg(argIdx2));
+          const auto& v21 = fo2->parDer2DirDer1(argDir(argIdx1), arg(argIdx1),arg(argIdx2));
+          if constexpr (std::is_same_v<Ret, double>)
+          {
+            tmp(argIdx1) = v11 + v12;
+            tmp(argIdx2) = v21 + v22;
+          }
+          else
+          {
+            tmp.set(argIdx1, v11 + v12);
+            tmp.set(argIdx2, v21 + v22);
+          }
+        }
+        return tmp;
       }
       void setArgumentIndex1(size_t argIdx1_) { argIdx1 = argIdx1_; }
       void setArgumentIndex2(size_t argIdx2_) { argIdx2 = argIdx2_; }
@@ -108,7 +128,12 @@ namespace MBSim {
         fo2->setParent(this);
         fo2->setName("TwoArgumentFunction");
       }
+      void setArgDim(size_t d) {
+        argDim = d;
+      }
       void initializeUsingXML(xercesc::DOMElement *element) override {
+        if(MBXMLUtils::E(element)->hasAttribute("argDim"))
+          setArgDim(boost::lexical_cast<size_t>(MBXMLUtils::E(element)->getAttribute("argDim")));
         xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"oneArgumentFunction");
         if(e)
           set1ArgFunction(ObjectFactory::createAndInit<Function<Ret(double)>>(e->getFirstElementChild()));
@@ -117,10 +142,10 @@ namespace MBSim {
           set2ArgFunction(ObjectFactory::createAndInit<Function<Ret(double,double)>>(e->getFirstElementChild()));
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"argumentIndex1");
         if(e)
-          setArgumentIndex1(MBXMLUtils::E(e)->getText<size_t>());
+          setArgumentIndex1(MBXMLUtils::E(e)->getText<size_t>()-1);// flatxml is 1-based
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"argumentIndex2");
         if(e)
-          setArgumentIndex2(MBXMLUtils::E(e)->getText<size_t>());
+          setArgumentIndex2(MBXMLUtils::E(e)->getText<size_t>()-1);// flatxml is 1-based
       }
       void init(Element::InitStage stage, const InitConfigSet &config) override {
         Function<Ret(Arg)>::init(stage, config);
@@ -130,9 +155,21 @@ namespace MBSim {
     private:
       Function<Ret(double)>        *fo1{nullptr};
       Function<Ret(double,double)> *fo2{nullptr};
-      size_t argIdx1;
-      size_t argIdx2;
-      typename B::DRetDArg parDerMat;
+      size_t argDim { 0 };
+      size_t argIdx1 { 0 };
+      size_t argIdx2 { 0 };
+      typename B::DRetDArg tmp;
+      void initTmp(const typename std::remove_pointer_t<decltype(fo1)>::DRetDArg &s1, const Arg &s2) {
+        // resize and initialize class member tmp
+        if(tmp.rows() == 0 || tmp.cols() == 0)
+        {
+          if constexpr (std::is_same_v<Ret, double>)
+            tmp.resize(/*1       ,*/ s2.rows());
+          else
+            tmp.resize(s1.rows() ,   s2.rows());
+          tmp.init(0.0);
+        }
+      }
   };
 }
 

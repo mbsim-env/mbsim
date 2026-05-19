@@ -359,9 +359,23 @@ ret = A
                 </xmlMatrix>
               </inertiaTensor>
               <stateDependentRotation>
-                <RotationAboutAxesXY/>
+                <DemuxingArgumentFunction argDim="2">
+                  <twoArgumentFunction>
+                    <SymbolicFunction>
+                      <definition arg1="a" arg2="b">
+                        ret = rotateAboutX(a) * rotateAboutY(b)
+                      </definition>
+                    </SymbolicFunction>
+                  </twoArgumentFunction>
+                  <argumentIndex1>1</argumentIndex1>
+                  <argumentIndex2>2</argumentIndex2>
+                </DemuxingArgumentFunction>
               </stateDependentRotation>
               <frames>
+                <FixedRelativeFrame name="acceleration">
+                  <plotFeature value="acceleration">true</plotFeature>
+                  <plotFeature value="angularAcceleration">true</plotFeature>
+                </FixedRelativeFrame>
                 <FixedRelativeFrame name="Q">
                   <enableOpenMBV/>
                   <relativePosition unit="m">
@@ -476,9 +490,23 @@ ret = A
             </xmlMatrix>
           </inertiaTensor>
           <stateDependentTranslation>
-            <TranslationAlongXAxis/>
+            <DemuxingArgumentFunction argDim="1">
+              <oneArgumentFunction>
+                <SymbolicFunction>
+                  <definition arg1="q">
+                    ret = [q;0;0]
+                  </definition>
+                </SymbolicFunction>
+              </oneArgumentFunction>
+              <argumentIndex1>1</argumentIndex1>
+            </DemuxingArgumentFunction>
           </stateDependentTranslation>
-          <frames/>
+          <frames>
+            <FixedRelativeFrame name="acceleration">
+              <plotFeature value="acceleration">true</plotFeature>
+              <plotFeature value="angularAcceleration">true</plotFeature>
+            </FixedRelativeFrame>
+          </frames>
           <contours/>
           <enableOpenMBVFrameC/>
         </RigidBody>
