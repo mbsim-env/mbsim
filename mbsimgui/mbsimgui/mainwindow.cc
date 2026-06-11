@@ -670,18 +670,29 @@ namespace MBSimGUI {
   }
 
   MainWindow::~MainWindow() {
+    // delete the inline openmbv window very early to release the hdf5 read locks hold by it before the processRefresh process is tried to destroyed
+    centralWidget()->layout()->removeWidget(inlineOpenMBVMW);
+    delete inlineOpenMBVMW;
+
     disconnect(processRefreshFinishedConnection);
     disconnect(processSimulateFinishedConnection);
     for(auto *process : {&processSimulate, &processRefresh}) {
+      // try normal exit (wait 500ms)
       process->closeWriteChannel();
-      process->waitForFinished(-1);
+      process->waitForFinished(500);
+      if(process->state()!=QProcess::NotRunning) {
+        // send exit signal (wait 5000ms)
+        process->terminate();
+        process->waitForFinished(5000);
+        if(process->state()!=QProcess::NotRunning)
+          // send kill signal
+          process->kill();
+      }
       if(process->exitStatus()!=QProcess::NormalExit || process->exitCode()!=0)
         setErrorOccured();
     }
     if(lsa) delete lsa;
     if(st) delete st;
-    centralWidget()->layout()->removeWidget(inlineOpenMBVMW);
-    delete inlineOpenMBVMW;
     // use nothrow boost::filesystem functions to avoid exceptions in this dtor
     boost::system::error_code ec;
     bfs::remove_all(uniqueTempDir, ec);
