@@ -676,7 +676,7 @@ namespace MBSimGUI {
 
     disconnect(processRefreshFinishedConnection);
     disconnect(processSimulateFinishedConnection);
-    for(auto *process : {&processSimulate, &processRefresh}) {
+    for(auto *process : {&processSimulate, &processRefresh, &processCreateFMU}) {
       // try normal exit (wait 500ms)
       process->closeWriteChannel();
       process->waitForFinished(500);
