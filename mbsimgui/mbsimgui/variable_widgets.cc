@@ -1314,11 +1314,23 @@ namespace MBSimGUI {
   }
 
   void FromFileWidget::editFile() {
+    if(getFile().isEmpty()) // if no file is selected to nothing (note that changePath(true) will change getFile() to a abs path)
+      return;
     bool orgAbs = path->isChecked();
     changePath(true);
     QString file = getFile();
     changePath(orgAbs);
-    QDesktopServices::openUrl(file);
+
+    if(QFile::exists(file))
+      QDesktopServices::openUrl(file);
+    else {
+      if(QMessageBox::question(this, "Create File", "The file does not exist, create and edit a new empty file")==QMessageBox::Yes) {
+        QFile fileObj(file);
+        if(fileObj.open(QIODevice::WriteOnly | QIODevice::Append))
+          fileObj.close();
+        QDesktopServices::openUrl(file);
+      }
+    }
   }
 
   void FromFileWidget::selectFile() {

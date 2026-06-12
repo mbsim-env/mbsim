@@ -583,11 +583,23 @@ namespace MBSimGUI {
   }
 
   void FileWidget::editFile() {
+    if(getFile(true).isEmpty())
+      return;
     bool orgAbs = path->isChecked();
     changePath(true);
     QString file = getFile(true);
     changePath(orgAbs);
-    QDesktopServices::openUrl(file);
+
+    if(QFile::exists(file))
+      QDesktopServices::openUrl(file);
+    else {
+      if(QMessageBox::question(this, "Create File", "The file does not exist, create and edit a new empty file")==QMessageBox::Yes) {
+        QFile fileObj(file);
+        if(fileObj.open(QIODevice::WriteOnly | QIODevice::Append))
+          fileObj.close();
+        QDesktopServices::openUrl(file);
+      }
+    }
   }
 
   DOMElement* FileWidget::initializeUsingXML(DOMElement *parent) {
