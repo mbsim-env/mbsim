@@ -550,7 +550,7 @@ namespace MBSimGUI {
   GeneralizedElasticStructurePropertyDialog::GeneralizedElasticStructurePropertyDialog(Element *link) : RigidBodyLinkPropertyDialog(link) {
     addTab("Kinetics",1);
 
-    rigidBody = new ExtWidget("Rigid bodies",new ElementsOfReferenceWidget<RigidBody>(MBSIM%"rigidBody",link,1,100,true,this),false,false,"",true);
+    rigidBody = new ExtWidget("Rigid bodies",new ElementsOfReferenceWidget<RigidBody>(MBSIM%"rigidBody",link,1,100,false,this),false,false,"",true);
     addToTab("General",rigidBody);
 
     function = new ExtWidget("Generalized force function",new ChoiceWidget(new SpringDamperWidgetFactory(link,true,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"generalizedForceFunction");
