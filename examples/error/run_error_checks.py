@@ -43,11 +43,12 @@ def difftoolCmd(a, b):
   return diff
 difftoolCmd.diffcmd=None
 
-octErrRE=re.compile("Caught octave exception .*\n")
-octErrREreplace="Caught octave exception **octave version dependent**\n"
-
-mbsimIDPtrRE=re.compile("with_ID_0x[A-Fa-f0-9]+")
-mbsimIDPtrREreplace="with_ID_0xXXXXXX"
+mbsimREreplace=[
+  (re.compile("Caught octave exception .*\n")                         , "Caught octave exception **octave version dependent**\n"),
+  (re.compile("with_ID_0x[A-Fa-f0-9]+")                               , "with_ID_0xXXXXXX"),
+  (re.compile("Not shown are [0-9]+ of [0-9]+ ")                      , "Not shown are XX of XX "),
+  (re.compile("being the [0-9]+(..) of [0-9]+ possible object types")   , "being the XX\\1 of XX possible object types"),
+]
 
 def errorOutputExt(errorFormat):
   if errorFormat=="GCCNONE": return ".txt"
@@ -72,8 +73,8 @@ def checkErrorFormat(dir, errorFormat):
   except subprocess.CalledProcessError as ex:
     cur=ex.output
   cur=cur.decode("utf-8")
-  cur=octErrRE.sub(octErrREreplace, cur) # replace octave error output which may be octave version dependent
-  cur=mbsimIDPtrRE.sub(mbsimIDPtrREreplace, cur) # replace mbsim pointer IDs
+  for reRep in mbsimREreplace:
+    cur=reRep[0].sub(reRep[1], cur)
   cur=cur.replace("\\", "/") # convert windows path \ to unix path / to allow the same reference for win/linux
 
   if errorFormat == "HTMLXPATH":
@@ -131,8 +132,8 @@ def checkGUIError(dir):
   except subprocess.CalledProcessError as ex:
     cur=ex.output
   cur=cur.decode("utf-8")
-  cur=octErrRE.sub(octErrREreplace, cur) # replace octave error output which may be octave version dependent
-  cur=mbsimIDPtrRE.sub(mbsimIDPtrREreplace, cur) # replace mbsim pointer IDs
+  for reRep in mbsimREreplace:
+    cur=reRep[0].sub(reRep[1], cur)
   cur=cur.replace("\\", "/") # convert windows path \ to unix path / to allow the same reference for win/linux
 
   # get all elements, including and  after the first <span class="MBSIMGUI_ERROR"> element as childs of curRoot

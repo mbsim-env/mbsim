@@ -1,10 +1,10 @@
 MBS.mbsim.xml:20: No 'name' attribute allowed for Function's.
-Created by object of type MBSim::SymbolicFunction<fmatvec::Vector<fmatvec::Fixed<3>, double> (double)> being the 2nd of 28 possible object types.
+Created by object of type MBSim::SymbolicFunction<fmatvec::Vector<fmatvec::Fixed<3>, double> (double)> being the XXnd of XX possible object types.
 MBS.mbsx:4: [ecount=1] included from here
-*** Not shown are 27 of 28 objects which are not castable. Set envvar MBSIM_PRINT_NOT_CASTABLE to show these.
-  MBS.mbsim.xml:19: Created by object of type MBSim::BidirectionalFunction<fmatvec::Vector<fmatvec::Fixed<3>, double> (double)> being the 3rd of 4 possible object types.
+*** Not shown are XX of XX objects which are not castable. Set envvar MBSIM_PRINT_NOT_CASTABLE to show these.
+  MBS.mbsim.xml:19: Created by object of type MBSim::BidirectionalFunction<fmatvec::Vector<fmatvec::Fixed<3>, double> (double)> being the XXrd of XX possible object types.
   MBS.mbsx:4: [ecount=1] included from here
-  *** Not shown are 3 of 4 objects which are not castable. Set envvar MBSIM_PRINT_NOT_CASTABLE to show these.
+  *** Not shown are XX of XX objects which are not castable. Set envvar MBSIM_PRINT_NOT_CASTABLE to show these.
     MBS.mbsim.xml:17: Created by object of type MBSim::RigidBody
     MBS.mbsx:4: [ecount=1] included from here
       MBS.mbsim.xml:11: Created by object of type MBSim::DynamicSystemSolver

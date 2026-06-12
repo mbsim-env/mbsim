@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
-<IvBody xmlns="http://www.mbsim-env.de/OpenMBV" name="{name}">
+<IvBody name="{name}" xmlns="http://www.mbsim-env.de/OpenMBV">
   <initialTranslation>position</initialTranslation>
   <initialRotation>rotation</initialRotation>
-  <ivContent><![CDATA[
+  <ivContent>
+<![CDATA[
 ret=rf'''#VRML V2.0 utf8
 SepNoPick {{
   # These two materials are here to allow OpenMBV to adpat transparency values for highlighting.
@@ -105,7 +106,7 @@ SepNoPick {{
             float dot = dot(vertexWorldNormal, vec3(0, 0, 1));
             vec3 color;
             float transparency;
-            if(!gl_FrontFacing) {{
+            if({'' if transparency[1]==1 else '!'}gl_FrontFacing) {{
               // grass color
               color.r = 0.1 + n * 0.15;
               color.g = 0.35 + n * 0.55;
@@ -152,8 +153,8 @@ SepNoPick {{
                        (transparency[0]==1 and transparency[1]==0) else 0.5}
   }}
   ShapeHints {{
-    vertexOrdering { "COUNTERCLOCKWISE" if transparency[0]==0 and transparency[1]==1 else "CLOCKWISE" }
-    shapeType { "SOLID" if (transparency[0]==0 and transparency[1]==1) or (transparency[0]==1 and transparency[1]==0) else "UNKNOWN_SHAPE_TYPE" }
+    vertexOrdering { "COUNTERCLOCKWISE" if transparency[1]==1 else "CLOCKWISE" }
+    shapeType { "UNKNOWN_SHAPE_TYPE" if transparency[0]<1 and transparency[1]<1 else "SOLID" }
   }}
   Coordinate3 {{
     point [
@@ -169,5 +170,6 @@ SepNoPick {{
   }}
 }}
 '''
-]]></ivContent>
+]]>
+  </ivContent>
 </IvBody>
