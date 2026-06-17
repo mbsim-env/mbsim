@@ -1,0 +1,5 @@
+<span class="MBXMLUTILS_ERROROUTPUT"><a href="MBS.mbsx?line=10">MBS.mbsx:10:/mx:MBSimProject[1]/DynamicSystemSolver[1]/objects[1]/RigidBody[1]/mass[1]</a><br/><span class="MBXMLUTILS_MSG">Python exception at ../../../openmbv/mbxmlutils/mbxmlutils/pyeval.cc:592:
+Traceback (most recent call last):
+  File "&lt;inline Python code&gt;", line 24, in &lt;module&gt;
+NameError: name 'error' is not defined. Did you mean: 'OSError'?
+</span></span>

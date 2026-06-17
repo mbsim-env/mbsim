@@ -1,0 +1,5 @@
+MBS.mbsx:10: Python exception at ../../../openmbv/mbxmlutils/mbxmlutils/pyeval.cc:592:
+Traceback (most recent call last):
+  File "<inline Python code>", line 24, in <module>
+NameError: name 'error' is not defined. Did you mean: 'OSError'?
+

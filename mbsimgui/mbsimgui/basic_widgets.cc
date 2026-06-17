@@ -750,6 +750,7 @@ namespace MBSimGUI {
   DOMElement* TextEditorWidget::initializeUsingXML(DOMElement *element) {
     text->blockSignals(true);
     DOMElement *ele = BasicTextWidget::initializeUsingXML(element);
+    text->setStartLineNumber(max(1, E(element)->getTextLineNumber())); // if no linenr exits in the element 0 is returned -> use 1 in this case
     text->blockSignals(false);
     return ele;
   }
@@ -1273,6 +1274,7 @@ namespace MBSimGUI {
     string text;
     DOMParser::serializeToString(element, text, true);
     edit->setPlainText(QString::fromStdString(text));
+    edit->setStartLineNumber(max(1, E(element)->getTextLineNumber())); // if no linenr exits in the element 0 is returned -> use 1 in this case
     return element;
   }
 

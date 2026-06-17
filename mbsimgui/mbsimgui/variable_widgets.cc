@@ -161,6 +161,7 @@ namespace MBSimGUI {
     if(!text)
       return nullptr;
     setValue(QString::fromStdString(X()%text->getData()));
+    value->setStartLineNumber(max(1, E(element)->getTextLineNumber())); // if no linenr exits in the element 0 is returned -> use 1 in this case
     return element;
   }
 

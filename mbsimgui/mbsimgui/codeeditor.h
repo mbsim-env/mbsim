@@ -20,6 +20,7 @@ class CodeEditor : public QPlainTextEdit {
      *       the highlighter which corresponds to the filename name, if nameIs=="filename"
      */
     void enableSyntaxHighlighter(const std::string &name="EVALUATOR", std::string nameIs="definitionName");
+    void setStartLineNumber(int nr) { startLineNr = nr; }
   
   protected:
     void resizeEvent(QResizeEvent *event) override;
@@ -30,6 +31,7 @@ class CodeEditor : public QPlainTextEdit {
   
   private:
     QWidget *lineNumberArea;
+    int startLineNr { 1 };
 };
 
 class LineNumberArea : public QWidget {

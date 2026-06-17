@@ -59,7 +59,7 @@ void CodeEditor::enableSyntaxHighlighter(const std::string &name, std::string na
 
 int CodeEditor::lineNumberAreaWidth() {
   int digits = 1;
-  int max = qMax(1, blockCount());
+  int max = qMax(1, blockCount()+startLineNr-1);
   while(max >= 10) {
     max /= 10;
     ++digits;
@@ -96,7 +96,7 @@ void CodeEditor::lineNumberAreaPaintEvent(QPaintEvent *event) {
   painter.fillRect(event->rect(), QApplication::palette().color(QPalette::Active, QPalette::Window)); // background color
 
   QTextBlock block = firstVisibleBlock();
-  int blockNumber = block.blockNumber();
+  int blockNumber = block.blockNumber()+startLineNr-1;
   int top = qRound(blockBoundingGeometry(block).translated(contentOffset()).top());
   int bottom = top + qRound(blockBoundingRect(block).height());
 
