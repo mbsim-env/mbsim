@@ -20,7 +20,7 @@ class CodeEditor : public QPlainTextEdit {
      *       the highlighter which corresponds to the filename name, if nameIs=="filename"
      */
     void enableSyntaxHighlighter(const std::string &name="EVALUATOR", std::string nameIs="definitionName");
-    void setStartLineNumber(int nr) { startLineNr = nr; }
+    void setStartLineNumber(int nr);
   
   protected:
     void resizeEvent(QResizeEvent *event) override;

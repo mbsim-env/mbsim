@@ -57,6 +57,12 @@ void CodeEditor::enableSyntaxHighlighter(const std::string &name, std::string na
 #endif
 }
 
+void CodeEditor::setStartLineNumber(int nr) {
+  startLineNr = nr;
+  // reset the current text to emit a full update/repaint/resize since the number of digits of the linenumbers may change
+  setPlainText(toPlainText());
+}
+
 int CodeEditor::lineNumberAreaWidth() {
   int digits = 1;
   int max = qMax(1, blockCount()+startLineNr-1);
