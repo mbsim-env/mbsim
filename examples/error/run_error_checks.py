@@ -44,10 +44,11 @@ def difftoolCmd(a, b):
 difftoolCmd.diffcmd=None
 
 mbsimREreplace=[
-  (re.compile("Caught octave exception .*\n")                         , "Caught octave exception **octave version dependent**\n"),
-  (re.compile("with_ID_0x[A-Fa-f0-9]+")                               , "with_ID_0xXXXXXX"),
-  (re.compile("Not shown are [0-9]+ of [0-9]+ ")                      , "Not shown are XX of XX "),
-  (re.compile("being the [0-9]+(..) of [0-9]+ possible object types")   , "being the XX\\1 of XX possible object types"),
+  (re.compile("Caught octave exception .*\n")                         , "Caught octave exception **octave version dependent**\n"), # remove octave version
+  (re.compile("with_ID_0x[A-Fa-f0-9]+")                               , "with_ID_0xXXXXXX"), # replace memory ptr with XXX
+  (re.compile("Not shown are [0-9]+ of [0-9]+ ")                      , "Not shown are XX of XX "), # replace object factory indices with XX
+  (re.compile("being the [0-9]+(..) of [0-9]+ possible object types") , "being the XX\\1 of XX possible object types"), # replace object factory indices with XX
+  (re.compile("Python exception at .*:[0-9]+:")                       , "Python exception:"), # remove python debug specific code with release code output
 ]
 
 def errorOutputExt(errorFormat):

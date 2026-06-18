@@ -2,7 +2,7 @@
   <span class="MBSIMGUI_ERROR">
     <span class="MBXMLUTILS_ERROROUTPUT">
       <a href="MBS.mbsx?xpath=/{http://www.mbsim-env.de/MBSimXML}MBSimProject[1]/{http://www.mbsim-env.de/MBSim}DynamicSystemSolver[1]/{http://www.mbsim-env.de/MBSim}objects[1]/{http://www.mbsim-env.de/MBSim}RigidBody[1]/{http://www.mbsim-env.de/MBSim}mass[1]&amp;line=10">MBS.mbsx:10:/mx:MBSimProject[1]/DynamicSystemSolver[1]/objects[1]/RigidBody[1]/mass[1]</a>:<br />
-      <span class="MBXMLUTILS_MSG">Python exception at ../../../openmbv/mbxmlutils/mbxmlutils/pyeval.cc:592:
+      <span class="MBXMLUTILS_MSG">Python exception:
 </span>
       <span class="MBSIMGUI_ERROR">Traceback (most recent call last):
 </span>
