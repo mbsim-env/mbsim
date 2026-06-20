@@ -1,0 +1,17 @@
+#Inventor V2.0 ascii
+Separator {
+  Translation {
+    translation -0.98 -0.79 0
+  }
+  Scale {
+    scaleFactor 0.006 0.006 0.006
+  }
+  AsciiText {
+    string [
+      "Red arrow: wheel force"
+      "Blue arrow: spring force"
+      "Green arrow: damper force"
+      "Yellow arrow: bending moment"
+    ]
+  }
+}
