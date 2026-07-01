@@ -645,12 +645,21 @@ namespace MBSimGUI {
     bfs__copy_file(getInstallPath()/"share"/"mbsimgui"/"MBS_tmp.ombvx",  uniqueTempDir/"MBS_tmp.ombvx",  overwrite_existing);
     bfs__copy_file(getInstallPath()/"share"/"mbsimgui"/"MBS_tmp.ombvh5", uniqueTempDir/"MBS_tmp.ombvh5", overwrite_existing);
     inlineOpenMBVMW->openFile(uniqueTempDir.generic_string()+"/MBS_tmp.ombvh5");
+    // viewAllSlot is delayed to ensure that the scence graph if fully build and update before viewAllSlot is called
+    QTimer::singleShot(0, [this](){
+      inlineOpenMBVMW->viewAllSlot();
+    });
   }
 
   void MainWindow::fileReloadedSlot() {
     // call view all for the very first time
     if(callViewAllAfterFileReloaded)
-      inlineOpenMBVMW->viewAllSlot();
+      // viewAllSlot is delayed (two times, since openFileDialog is a slot itself) to ensure that the scence graph if fully build and update before viewAllSlot is called
+      QTimer::singleShot(0, [this](){
+        QTimer::singleShot(0, [this](){
+          inlineOpenMBVMW->viewAllSlot();
+        });
+      });
     callViewAllAfterFileReloaded = false;
 
     // re-highlight object
