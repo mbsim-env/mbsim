@@ -986,12 +986,21 @@ namespace MBSim {
   } 
 
   int DynamicSystemSolver::solveConstraintsNonlinearEquations() {
+    // The non-linear system is defined by the residuum
+    // 0 = W^T * M^-1 * ( V * la + r(la) ) + bc;
+    // where r(la) is just an optional additional non-linear part on top of the linear part V * la
+    // Hence, a good initial point for la for the iterative non-linear newton-solver of the residum equation
+    // is the linear solution of th residuum equation.
+    // This linear solution is solved by
+    solveConstraintsLinearEquations();
+    // and its resulting la is used as initial point for the newton-solver
     la = nonlinearConstraintNewtonSolver->solve(la);
+
     auto iter = nonlinearConstraintNewtonSolver->getNumberOfIterations();
     if(iter > ds->getHighIter())
-      msg(Warn) << "High number of iterations in DynamicSystemSolver::solveConstraintsNonelinearEquations: " << iter << endl;
+      msg(Warn) << "High number of iterations in DynamicSystemSolver::solveConstraintsNonlinearEquations: " << iter << endl;
     if(nonlinearConstraintNewtonSolver->getInfo()!=0)
-      throwError("Solving constraint variables failed in DynamicSystemSolver::solveConstraintsNonelinearEquations.");
+      throwError("Solving constraint variables failed in DynamicSystemSolver::solveConstraintsNonlinearEquations (info="+to_string(nonlinearConstraintNewtonSolver->getInfo())+").");
     return iter;
   }
 
