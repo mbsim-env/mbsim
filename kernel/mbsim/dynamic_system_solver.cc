@@ -73,8 +73,10 @@ namespace MBSim {
     public:
       ConstraintResiduum(DynamicSystemSolver *dss_) : dss(dss_) {}
       fmatvec::Vec operator()(const fmatvec::Vec &la) override;
+      void setAlpha(double a) { alpha = a; }
     private:
       DynamicSystemSolver *dss;
+      double alpha = 1;
   };
 
   class ConstraintJacobian : public Function<fmatvec::SqrMat(fmatvec::Vec)> {
@@ -974,7 +976,11 @@ namespace MBSim {
   Vec ConstraintResiduum::operator()(const Vec &la) {
     dss->setla(la);
     dss->getr(0, false) = dss->evalV() * la;
+    auto rLin = dss->getr(0, false);
     dss->Group::updater(); // adds all terms being nonlinear in la to r[0]
+    auto rFull = dss->getr(0, false);
+    auto rNonlin = rFull - rLin;
+    dss->getr(0, false) = rLin + alpha * rNonlin;
     return dss->evalW().T() * slvLLFac(dss->evalLLM(), dss->getr(0, false)) + dss->evalbc();
   } 
 
@@ -993,12 +999,35 @@ namespace MBSim {
     // is the linear solution of th residuum equation.
     // This linear solution is solved by
     solveConstraintsLinearEquations();
-    // and its resulting la is used as initial point for the newton-solver
-    la = nonlinearConstraintNewtonSolver->solve(la);
 
-    auto iter = nonlinearConstraintNewtonSolver->getNumberOfIterations();
-    if(iter > ds->getHighIter())
-      msg(Warn) << "High number of iterations in DynamicSystemSolver::solveConstraintsNonlinearEquations: " << iter << endl;
+    int iter;
+    double alpha = 1;
+    int continuationMethodIter = 1;
+    const int continuationMethodIterMax = 30;
+    while(true) {
+      if(continuationMethodIter>continuationMethodIterMax)
+        throwError("Solving constraint variables failed in DynamicSystemSolver::solveConstraintsNonlinearEquations: maximal number of continuation method iteration ("+to_string(continuationMethodIterMax)+") exceeded.");
+      constraintResiduum->setAlpha(alpha);
+      la = nonlinearConstraintNewtonSolver->solve(la);
+      iter = nonlinearConstraintNewtonSolver->getNumberOfIterations();
+      if(iter > ds->getHighIter())
+        msg(Warn) << "High number of iterations in DynamicSystemSolver::solveConstraintsNonlinearEquations: " << iter << endl;
+      if(nonlinearConstraintNewtonSolver->getInfo() == 0 && alpha > 1-1e-3)
+        break;
+      if(nonlinearConstraintNewtonSolver->getInfo() == -2)
+        alpha = alpha/2;
+      if(nonlinearConstraintNewtonSolver->getInfo() == 0)
+        alpha = (1+alpha)/2;
+      continuationMethodIter++;
+    }
+    if(alpha < 1-1e-10) {
+      constraintResiduum->setAlpha(1);
+      la = nonlinearConstraintNewtonSolver->solve(la);
+      iter = nonlinearConstraintNewtonSolver->getNumberOfIterations();
+      if(iter > ds->getHighIter())
+        msg(Warn) << "High number of iterations in DynamicSystemSolver::solveConstraintsNonlinearEquations: " << iter << endl;
+    }
+
     if(nonlinearConstraintNewtonSolver->getInfo()!=0)
       throwError("Solving constraint variables failed in DynamicSystemSolver::solveConstraintsNonlinearEquations (info="+to_string(nonlinearConstraintNewtonSolver->getInfo())+").");
     return iter;
