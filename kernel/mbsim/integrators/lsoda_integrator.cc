@@ -95,6 +95,9 @@ namespace MBSim {
 
     if(odePackInUse)
       throwError("(LSODAIntegrator::integrate): Only one integration with LSODEIntegrator, LSODAIntegrator and LSODIIntegrator at a time is possible.");
+    BOOST_SCOPE_EXIT(&odePackInUse) {
+      odePackInUse = false;
+    } BOOST_SCOPE_EXIT_END
     odePackInUse = true;
 
     int zSize=system->getzSize();
@@ -290,8 +293,6 @@ namespace MBSim {
     msg(Info)<<string("nrRHS")+(partiallyAnalyticalJacobian?" (excluding jac): ":" (including jac): ")<<iWork(11)<<endl;
     msg(Info)<<"nrJac: "<<iWork(12)<<endl;
     msg(Info)<<"nrSteps: "<<iWork(10)<<endl;
-
-    odePackInUse = false;
   }
 
   void LSODAIntegrator::init() {
