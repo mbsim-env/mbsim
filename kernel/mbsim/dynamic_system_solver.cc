@@ -73,18 +73,20 @@ namespace MBSim {
     public:
       ConstraintResiduum(DynamicSystemSolver *dss_) : dss(dss_) {}
       fmatvec::Vec operator()(const fmatvec::Vec &la) override;
-      void setAlpha(double a) { alpha = a; }
+      void setHomotopyParameter(double a) { alpha = a; }
     private:
       DynamicSystemSolver *dss;
-      double alpha = 1;
+      double alpha = 1; // homotopy-parameter
   };
 
   class ConstraintJacobian : public Function<fmatvec::SqrMat(fmatvec::Vec)> {
     public:
       ConstraintJacobian(DynamicSystemSolver *dss_) : dss(dss_) {}
       fmatvec::SqrMat operator()(const fmatvec::Vec &la) override;
+      void setHomotopyParameter(double a) { alpha = a; }
     private:
       DynamicSystemSolver *dss;
+      double alpha = 1; // homotopy-parameter
   };
 
   Vec DynamicSystemSolver::Residuum::operator()(const Vec &z) {
@@ -974,62 +976,107 @@ namespace MBSim {
   }
 
   Vec ConstraintResiduum::operator()(const Vec &la) {
+    // H(la,alpha) = W^T * M^-1 * ( V * la + alpha * r(la) ) + bc
+
     dss->setla(la);
-    dss->getr(0, false) = dss->evalV() * la;
-    auto rLin = dss->getr(0, false);
+    auto &r = dss->getr(0, false);
+
+    // linear part
+    auto rLin = dss->evalV() * la;
+
+    // nonlinear part
+    r.init(0.0);
     dss->Group::updater(); // adds all terms being nonlinear in la to r[0]
-    auto rFull = dss->getr(0, false);
-    auto rNonlin = rFull - rLin;
-    dss->getr(0, false) = rLin + alpha * rNonlin;
-    return dss->evalW().T() * slvLLFac(dss->evalLLM(), dss->getr(0, false)) + dss->evalbc();
+    auto rNonlin = r;
+
+    // homotopy function with alpha
+    r = rLin + alpha * rNonlin;
+    return dss->evalW().T() * slvLLFac(dss->evalLLM(), r) + dss->evalbc();
   } 
 
   SqrMat ConstraintJacobian::operator()(const Vec &la) {
+    // H(la,alpha) = W^T * M^-1 * ( V * la + alpha * r(la) ) + bc
+    // dHdla(la, alpha) = W^T * M^-1 * ( V + alpha * Jrla(la) )
+
     dss->setla(la);
-    dss->getJrla(0, false) = dss->evalV();
-    dss->Group::updateJrla(); // adds all terms being nonlinear in la to dr/dl = Jrla
-    return static_cast<SqrMat>(dss->evalW().T() * slvLLFac(dss->evalLLM(), dss->getJrla(0, false)));
+    auto &Jrla = dss->getJrla(0, false);
+
+    // linear part
+    auto JrlaLin = dss->evalV();
+
+    // nonlinear part
+    Jrla.init(0.0);
+    dss->Group::updateJrla(); // adds all terms being nonlinear in la to Jrla[0]
+    auto JrlaNonlin = Jrla;
+
+    // homotopy function with alpha
+    Jrla = JrlaLin + alpha * JrlaNonlin;
+    return static_cast<SqrMat>(   dss->evalW().T() * slvLLFac(dss->evalLLM(), Jrla)   );
   } 
 
   int DynamicSystemSolver::solveConstraintsNonlinearEquations() {
     // The non-linear system is defined by the residuum
-    // 0 = W^T * M^-1 * ( V * la + r(la) ) + bc;
+    // 0 = W^T * M^-1 * ( V * la + r(la) ) + bc
     // where r(la) is just an optional additional non-linear part on top of the linear part V * la
-    // Hence, a good initial point for la for the iterative non-linear newton-solver of the residum equation
-    // is the linear solution of th residuum equation.
-    // This linear solution is solved by
+    //
+    // We solve this nonlinear equation with a newton root-finding-solver of the homotopy function of the above equation.
+    // The simple function is the linear part
+    // s(la) = W^T * M^-1 * V * la + bc
+    // and the complex function the full function
+    // c(la) = W^T * M^-1 * ( V * la + r(la) ) + bc
+    // The homotopy function is hence defined by
+    // H(la,alpha) = (1-alpha) * s(la) + alpha * c(la) = W^T * M^-1 * V * la + bc + alpha * W^T * M^-1 * r(la) = W^T * M^-1 * ( V * la + alpha * r(la) ) + bc
+    // which is the linear equation superposed by the nonlinear-part scaled with the homotopy-parameter alpha
+    //
+    // We homotopy-parameter alpha is changed in an aggressive matter regarding performance:
+    // - alpha is set to 1 after every successful newton-solver
+    // - alpha is reduced if the newton-solver has diverge
+    // This is possible and feasible since most of the time a solution is found by solving with alpha=0 and then with alpha=1.
+
+    // calculate the initial value for la (alpha=0) = the solution of the linear system
     solveConstraintsLinearEquations();
 
+    // homotopy iteration
+    // START: THIS HOMOTOPY ITERATION IS TESTED EXPLICITLY in the test homotopysolver.cc (LCOV_EXCL_START)
+    const double dalphaMin = 0.05;
+    const int homotopyIterMax = 20;
+    int homotopyIter = 0;
     int iter;
+    double alphaLastSuccess = 0;
     double alpha = 1;
-    int continuationMethodIter = 1;
-    const int continuationMethodIterMax = 30;
     while(true) {
-      if(continuationMethodIter>continuationMethodIterMax)
-        throwError("Solving constraint variables failed in DynamicSystemSolver::solveConstraintsNonlinearEquations: maximal number of continuation method iteration ("+to_string(continuationMethodIterMax)+") exceeded.");
-      constraintResiduum->setAlpha(alpha);
+      constraintResiduum->setHomotopyParameter(alpha);
+      constraintJacobian->setHomotopyParameter(alpha);
+      if(alpha != 1)
+        msg(Info) << "Intermediate homotopy-parameter "<<alpha<<" needed in DynamicSystemSolver::solveConstraintsNonlinearEquations for convergence."<<endl;
       la = nonlinearConstraintNewtonSolver->solve(la);
       iter = nonlinearConstraintNewtonSolver->getNumberOfIterations();
       if(iter > ds->getHighIter())
-        msg(Warn) << "High number of iterations in DynamicSystemSolver::solveConstraintsNonlinearEquations: " << iter << endl;
-      if(nonlinearConstraintNewtonSolver->getInfo() == 0 && alpha > 1-1e-3)
-        break;
-      if(nonlinearConstraintNewtonSolver->getInfo() == -2)
-        alpha = alpha/2;
-      if(nonlinearConstraintNewtonSolver->getInfo() == 0)
-        alpha = (1+alpha)/2;
-      continuationMethodIter++;
-    }
-    if(alpha < 1-1e-10) {
-      constraintResiduum->setAlpha(1);
-      la = nonlinearConstraintNewtonSolver->solve(la);
-      iter = nonlinearConstraintNewtonSolver->getNumberOfIterations();
-      if(iter > ds->getHighIter())
-        msg(Warn) << "High number of iterations in DynamicSystemSolver::solveConstraintsNonlinearEquations: " << iter << endl;
-    }
+        msg(Warn) << "High number of newton-solver-iterations in DynamicSystemSolver::solveConstraintsNonlinearEquations (alpha="+to_string(alpha)+"): " << iter << endl;
 
-    if(nonlinearConstraintNewtonSolver->getInfo()!=0)
-      throwError("Solving constraint variables failed in DynamicSystemSolver::solveConstraintsNonlinearEquations (info="+to_string(nonlinearConstraintNewtonSolver->getInfo())+").");
+      // solution found -> break
+      if(nonlinearConstraintNewtonSolver->getInfo() == 0 && alpha == 1)
+        break;
+      // diverge -> decrease alpha
+      if(nonlinearConstraintNewtonSolver->getInfo() == -2 || nonlinearConstraintNewtonSolver->getInfo() == -3) {
+        if(alpha-alphaLastSuccess < dalphaMin)
+          throwError("Homotopy parameter change to small in DynamicSystemSolver::solveConstraintsNonlinearEquations (alpha="+to_string(alpha)+" alphaLastSuccess="+to_string(alphaLastSuccess)+").");
+        alpha = (alphaLastSuccess + alpha)/2;
+      }
+      // simplified solution found -> increase alpha to 1
+      else if(nonlinearConstraintNewtonSolver->getInfo() == 0) {
+        alphaLastSuccess = alpha;
+        alpha = 1;
+      }
+      else
+        throwError("Newton-solver failure in DynamicSystemSolver::solveConstraintsNonlinearEquations (alpha="+to_string(alpha)+" info="+to_string(nonlinearConstraintNewtonSolver->getInfo())+").");
+
+      homotopyIter++;
+      if(homotopyIter > homotopyIterMax)
+        throwError("To many homotopy iterations in DynamicSystemSolver::solveConstraintsNonlinearEquations (homotopyIter="+to_string(homotopyIter)+").");
+    }
+    // END: THIS HOMOTOPY ITERATION IS TESTED EXPLICITLY in the test homotopysolver.cc (LCOV_EXCL_STOP)
+
     return iter;
   }
 

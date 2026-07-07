@@ -37,6 +37,7 @@ kernel/mbsim/functions/kinematics/Makefile.in
 kernel/mbsim/functions/kinetics/Makefile.in
 kernel/mbsim/links/Makefile.in
 kernel/mbsim/objects/Makefile.in
+kernel/mbsim/check/Makefile.in
 kernel/missing
 kernel/schema/Makefile.in
 kernel/xmldoc/Makefile.in

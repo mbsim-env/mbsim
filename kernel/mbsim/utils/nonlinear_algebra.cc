@@ -222,7 +222,7 @@ namespace MBSim {
       Vec dx = slv(J,f);
 
       double nrmf = 1;
-      double alpha = 1;
+      double alpha = initialAlpha;
       xold = x;
       for (int k=0; k<kmax; k++) {
         x = xold - alpha*dx;

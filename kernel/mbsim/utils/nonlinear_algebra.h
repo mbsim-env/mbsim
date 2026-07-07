@@ -219,6 +219,7 @@ namespace MBSim {
       void setMaximumDampingSteps(int kmax_) { kmax = kmax_; }
       void setTolerance(double tol_) { tol = tol_; }
       void setLinearAlgebra(int linAlg_) { linAlg = linAlg_; }
+      void setInitialLineSearchStepSizeFactor(double f) { initialAlpha = f; }
       /***************************************************/
 
       /**
@@ -252,6 +253,8 @@ namespace MBSim {
        * \brief tolerance
        */
       double tol;
+
+      double initialAlpha { 1.0 };
 
       int linAlg;
   };
