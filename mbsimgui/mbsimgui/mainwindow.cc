@@ -766,7 +766,7 @@ namespace MBSimGUI {
     menu.setShowEmptyParameters(settings.value("mainwindow/options/showemptyparameters", true).toBool());
     bool oldShowEmptyParameters=menu.getShowEmptyParameters();
     menu.setParameterView(static_cast<OptionsDialog::ParameterView>(settings.value("mainwindow/options/parameterview", static_cast<int>(OptionsDialog::ParameterView::onlyForCurrentElement)).toInt()));
-    menu.setOpenPropertyDialogOnErrorLinks(settings.value("mainwindow/options/openPropertyDialogOnErrorLinks", true).toBool());
+    menu.setErrorLinkAction(static_cast<OptionsDialog::ErrorLinkAction>(settings.value("mainwindow/options/errorLinkAction", static_cast<int>(OptionsDialog::ErrorLinkAction::openElement)).toInt()));
     auto oldParameterView=menu.getParameterView();
     menu.setPlugins(settings.value("mainwindow/options/plugins", QString()).toString());
     menu.setDefaultEvaluator(settings.value("mainwindow/options/defaultevaluator", 0).toInt());
@@ -792,7 +792,7 @@ namespace MBSimGUI {
       settings.setValue("mainwindow/options/showhiddenelements"            , menu.getShowHiddenItems());
       settings.setValue("mainwindow/options/showemptyparameters"           , menu.getShowEmptyParameters());
       settings.setValue("mainwindow/options/parameterview"                 , static_cast<int>(menu.getParameterView()));
-      settings.setValue("mainwindow/options/openPropertyDialogOnErrorLinks", menu.getOpenPropertyDialogOnErrorLinks());
+      settings.setValue("mainwindow/options/errorLinkAction"               , static_cast<int>(menu.getErrorLinkAction()));
       settings.setValue("mainwindow/options/plugins"                       , menu.getPlugins());
       settings.setValue("mainwindow/options/defaultevaluator"              , menu.getDefaultEvaluator());
 

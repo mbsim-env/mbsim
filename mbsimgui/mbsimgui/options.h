@@ -56,8 +56,13 @@ namespace MBSimGUI {
       };
       ParameterView getParameterView() const;
       void setParameterView(ParameterView parView);
-      bool getOpenPropertyDialogOnErrorLinks() const;
-      void setOpenPropertyDialogOnErrorLinks(bool propertyDialog);
+      enum class ErrorLinkAction {
+        openElement,
+        viewXMLSource,
+        openXMLSource,
+      };
+      ErrorLinkAction getErrorLinkAction() const;
+      void setErrorLinkAction(ErrorLinkAction action);
       QString getPlugins() const;
       void setPlugins(const QString &path);
       int getDefaultEvaluator() const;
@@ -70,7 +75,7 @@ namespace MBSimGUI {
       void autoSaveChanged(int state);
       QCheckBox *autoSave, *saveStateVector, *showFilters, *showHiddenItems, *showEmptyParameters;
       QRadioButton *parameterViewOnlyForCurrentElement, *parameterViewAll;
-      QRadioButton *onErrorLinksOpenPropertyDialog, *onErrorLinksOpenXMLSource;
+      QRadioButton *errorLinkOpenElement, *errorLinkViewXMLSource, *errorLinkOpenXMLSource;
       QComboBox *defaultEvaluator;
       QSpinBox *autoSaveInterval, *maxUndo;
       QPushButton *button;
