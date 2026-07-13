@@ -25,6 +25,7 @@
 #include <QMainWindow>
 #include <QMutex>
 #include <QTextBrowser>
+#include <options.h>
 
 namespace MBSimGUI {
 
@@ -37,7 +38,7 @@ namespace MBSimGUI {
       bool debugEnabled() { return enableDebug->isChecked(); }
       void updateOutput(bool moveToErrorOrEnd=false);
     private:
-      void linkClicked(const QUrl &link, bool openPropertyDialog);
+      void linkClicked(const QUrl &link, OptionsDialog::ErrorLinkAction action);
       void linkRightClicked(const QUrl &link);
       void updateDebug();
       QTextBrowser *out;

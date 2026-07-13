@@ -91,16 +91,19 @@ namespace MBSimGUI {
     parameterViewLO->addWidget(parameterViewOnlyForCurrentElement);
     parameterViewLO->addWidget(parameterViewAll);
 
-    auto onErrorLinks = new QGroupBox("When a error link in 'Echo Area' is clicked open", this);
+    auto onErrorLinks = new QGroupBox("When a error link in 'Echo Area' is clicked open the", this);
     layout->addWidget(onErrorLinks);
     auto onErrorLinksLO = new QHBoxLayout(onErrorLinks);
     onErrorLinks->setLayout(onErrorLinksLO);
-    onErrorLinksOpenPropertyDialog = new QRadioButton("the property dialog");
-    onErrorLinksOpenPropertyDialog->setToolTip("The property dialog of the element is shown or, if its not found, the XML source");
-    onErrorLinksOpenXMLSource = new QRadioButton("the XML source");
-    onErrorLinksOpenPropertyDialog->setToolTip("The XML source view is shown");
-    onErrorLinksLO->addWidget(onErrorLinksOpenPropertyDialog);
-    onErrorLinksLO->addWidget(onErrorLinksOpenXMLSource);
+    errorLinkOpenElement = new QRadioButton("property dialog");
+    errorLinkOpenElement->setToolTip("The property dialog of the element is shown or, if its not found, the XML source");
+    errorLinkViewXMLSource = new QRadioButton("XML source");
+    errorLinkViewXMLSource->setToolTip("The XML source view is shown");
+    errorLinkOpenXMLSource = new QRadioButton("XML source in a external XML editor");
+    errorLinkOpenXMLSource->setToolTip("The XML source is shown in a external XML editor");
+    onErrorLinksLO->addWidget(errorLinkOpenElement);
+    onErrorLinksLO->addWidget(errorLinkViewXMLSource);
+    onErrorLinksLO->addWidget(errorLinkOpenXMLSource);
 
     layout->addWidget(new QLabel("MBSimGUI plugin search dirs (one directory per line; libmbsimgui-plugin-*.[so|dll]):"));
     plugins = new QTextEdit;
@@ -200,15 +203,19 @@ namespace MBSimGUI {
     if(flag == ParameterView::all                  ) parameterViewAll                  ->setChecked(true);
   }
 
-  bool OptionsDialog::getOpenPropertyDialogOnErrorLinks() const {
-    if(onErrorLinksOpenPropertyDialog->isChecked()) return true;
-    if(onErrorLinksOpenXMLSource     ->isChecked()) return false;
-    throw std::runtime_error("Internal error: 'OpenPropertyDialogOnErrorLinks' is not handled.");
+  OptionsDialog::ErrorLinkAction OptionsDialog::getErrorLinkAction() const {
+    if(errorLinkOpenElement  ->isChecked()) return ErrorLinkAction::openElement;
+    if(errorLinkViewXMLSource->isChecked()) return ErrorLinkAction::viewXMLSource;
+    if(errorLinkOpenXMLSource->isChecked()) return ErrorLinkAction::openElement;
+    throw std::runtime_error("Internal error: 'errorLinkAction' is not handled.");
   }
 
-  void OptionsDialog::setOpenPropertyDialogOnErrorLinks(bool propertyDialog) {
-    if( propertyDialog) onErrorLinksOpenPropertyDialog->setChecked(true);
-    if(!propertyDialog) onErrorLinksOpenXMLSource     ->setChecked(true);
+  void OptionsDialog::setErrorLinkAction(ErrorLinkAction action) {
+    switch(action) {
+      case ErrorLinkAction::openElement:   errorLinkOpenElement->setChecked(true); break;
+      case ErrorLinkAction::viewXMLSource: errorLinkViewXMLSource->setChecked(true); break;
+      case ErrorLinkAction::openXMLSource: errorLinkOpenXMLSource->setChecked(true); break;
+    }
   }
 
   QString OptionsDialog::getPlugins() const {

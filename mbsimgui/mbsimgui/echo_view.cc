@@ -20,6 +20,7 @@
 #include <config.h>
 #include <QtWidgets/QGridLayout>
 #include <QDesktopWidget>
+#include <QDesktopServices>
 #include <QScrollBar>
 #include <QToolBar>
 #include <QClipboard>
@@ -81,7 +82,7 @@ namespace MBSimGUI {
     out->setHorizontalScrollBarPolicy(Qt::ScrollBarPolicy::ScrollBarAlwaysOn); // if the bar appears/disappears then scrolling to the last line may fail (the very last is hidden by the bar)
     connect(out, &QTextBrowser::anchorClicked, [this](const QUrl &link){
       QSettings settings;
-      linkClicked(link, settings.value("mainwindow/options/openPropertyDialogOnErrorLinks", true).toBool());
+      linkClicked(link, static_cast<OptionsDialog::ErrorLinkAction>(settings.value("mainwindow/options/errorLinkAction", true).toInt()));
     });
     setCentralWidget(out);
     auto tb=new QToolBar(this);
@@ -272,11 +273,11 @@ R"+(</pre>
     return size;
   }
 
-  void EchoView::linkClicked(const QUrl &link, bool openPropertyDialog) {
+  void EchoView::linkClicked(const QUrl &link, OptionsDialog::ErrorLinkAction action) {
     // get the xpath
     auto xpath = QUrlQuery(link).queryItemValue("xpath").toStdString();
 
-    if(openPropertyDialog) {
+    if(action == OptionsDialog::ErrorLinkAction::openElement) {
       // help function to check for a element with the maximal match of the xpth
       size_t maxXPathFound = 0;
       TreeItemData *clickedTreeItemData = nullptr;
@@ -311,7 +312,7 @@ R"+(</pre>
         walk1(i);
 
       if(!clickedTreeItemData)
-        openPropertyDialog = false;
+        action = OptionsDialog::ErrorLinkAction::viewXMLSource;
       else {
         if(auto *pi = dynamic_cast<ParameterItem*>(clickedTreeItemData); pi) {
           if(auto mi = pi->getParent()->getModelIndex(); mi.isValid()) {
@@ -321,10 +322,10 @@ R"+(</pre>
               mw->openParameterEditor();
             }
             else
-              openPropertyDialog = false;
+              action = OptionsDialog::ErrorLinkAction::viewXMLSource;
           }
           else
-            openPropertyDialog = false;
+            action = OptionsDialog::ErrorLinkAction::viewXMLSource;
         }
         else {
           if(auto mi = clickedTreeItemData->getModelIndex(); mi.isValid()) {
@@ -332,12 +333,12 @@ R"+(</pre>
             mw->openElementEditor();
           }
           else
-            openPropertyDialog = false;
+            action = OptionsDialog::ErrorLinkAction::viewXMLSource;
         }
       }
     }
 
-    if(!openPropertyDialog) {
+    if(action == OptionsDialog::ErrorLinkAction::viewXMLSource) {
       // show the XML source code of doc and the line number of the error
 
       std::shared_ptr<xercesc::DOMDocument> doc;
@@ -393,22 +394,28 @@ R"+(</pre>
       dialog.highlightLine(lineNr-1);
       dialog.exec();
     }
+
+    if(action == OptionsDialog::ErrorLinkAction::openXMLSource)
+      QDesktopServices::openUrl(link.path());
   }
 
   void EchoView::linkRightClicked(const QUrl &link) {
     QSettings settings;
-    bool openProperyDialog = settings.value("mainwindow/options/openPropertyDialogOnErrorLinks", true).toBool();
+    auto action = static_cast<OptionsDialog::ErrorLinkAction>(settings.value("mainwindow/options/errorLinkAction", true).toInt());
     QMenu menu;
-    menu.addAction(openProperyDialog ? "Open element (or, if not found, XML source)..." : "Open XML source...",
-      [this, openProperyDialog, &link](){
-        linkClicked(link, openProperyDialog);
+    menu.addAction("Default open action",
+      [this, action, &link](){
+        linkClicked(link, action);
     });
     menu.addSeparator();
     menu.addAction("Open element...", [this, &link](){
-      linkClicked(link, true);
+      linkClicked(link, OptionsDialog::ErrorLinkAction::openElement);
     }),
-    menu.addAction("Open XML source...", [this, &link](){
-      linkClicked(link, false);
+    menu.addAction("View XML source...", [this, &link](){
+      linkClicked(link, OptionsDialog::ErrorLinkAction::viewXMLSource);
+    }),
+    menu.addAction("Open XML source (in external editor)...", [this, &link](){
+      linkClicked(link, OptionsDialog::ErrorLinkAction::openXMLSource);
     }),
     menu.addSeparator();
     menu.addAction("Copy link location", [&link](){
