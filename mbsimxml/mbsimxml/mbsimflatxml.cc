@@ -297,10 +297,13 @@ void MBSimXML::main(const unique_ptr<Solver>& solver, const unique_ptr<DynamicSy
       if(stopAfterFirstStep)
         MBSimXML::plotInitialState(solver);
       else {
-        auto start=std::chrono::high_resolution_clock::now();
+        std::chrono::system_clock::time_point start;
+        BOOST_SCOPE_EXIT(&start) {
+          auto end=std::chrono::high_resolution_clock::now();
+          Atom::msgStatic(Atom::Info)<<"Integration CPU times: "<<std::chrono::duration<double>(end-start).count()<<endl;
+        } BOOST_SCOPE_EXIT_END
+        start=std::chrono::high_resolution_clock::now();
         solver->execute();
-        auto end=std::chrono::high_resolution_clock::now();
-        Atom::msgStatic(Atom::Info)<<"Integration CPU times: "<<std::chrono::duration<double>(end-start).count()<<endl;
       }
     }
     executePassed=true;
