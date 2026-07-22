@@ -158,18 +158,18 @@ try:
       finally:
         os.unlink(path)
 
-    def deleteKey(root, sub):
-      try:
-        with winreg.OpenKey(root, sub, 0, winreg.KEY_ALL_ACCESS) as key:
-          while True:
-            num, _, _=winreg.QueryInfoKey(key)
-            if num==0:
-              break
-            child=winreg.EnumKey(key, 0)
-            deleteKey(key, child)
-          winreg.DeleteKey(key, "")
-      except FileNotFoundError:
-        pass
+    #def deleteKey(root, sub):
+    #  try:
+    #    with winreg.OpenKey(root, sub, 0, winreg.KEY_ALL_ACCESS) as key:
+    #      while True:
+    #        num, _, _=winreg.QueryInfoKey(key)
+    #        if num==0:
+    #          break
+    #        child=winreg.EnumKey(key, 0)
+    #        deleteKey(key, child)
+    #      winreg.DeleteKey(key, "")
+    #  except FileNotFoundError:
+    #    pass
   
     # registry
     with winreg.CreateKey(winreg.HKEY_CURRENT_USER, r'Software\Classes') as classes:
@@ -202,7 +202,7 @@ try:
                 raise RuntimeError("glob "+ext+" for mimetype "+mimeType+" is not supported");
               winreg.SetValue(classes, ext[1:], winreg.REG_SZ, progID)
           if not addedAssociation:
-            deleteKey(classes, progID)
+            #deleteKey(classes, progID)
             winreg.SetValue(classes, progID, winreg.REG_SZ, de["Name"])
             winreg.SetValue(classes, progID+r'\FriendlyTypeName', winreg.REG_SZ, de["Name"])
             winreg.SetValue(classes, progID+r'\Infotipp', winreg.REG_SZ, de["Comment"])
