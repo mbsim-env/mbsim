@@ -115,18 +115,18 @@ try:
   
   
     # source dirs
-    PREFIX=f"{os.path.dirname(__file__)}/.."
-    WINDOWSDIR=f"{PREFIX}/share/mbsim-env/windows"
-    BINDIR=f"{PREFIX}/bin"
-    FREEDESKTOPORGDIR=f"{PREFIX}/share/mbsim-env/freedesktop.org"
+    PREFIX=rf"{os.path.dirname(__file__)}\..".replace("/", "\\")
+    WINDOWSDIR=rf"{PREFIX}\share\mbsim-env\windows"
+    BINDIR=rf"{PREFIX}\bin"
+    FREEDESKTOPORGDIR=rf"{PREFIX}\share\mbsim-env\freedesktop.org"
   
     # destination dirs
-    STARTMENU=f"{os.environ['APPDATA']}/Microsoft/Windows/Start Menu/Programs"
-    DESKTOP=f"{os.environ['USERPROFILE']}/Desktop"
+    STARTMENU=rf"{os.environ['APPDATA']}\Microsoft\Windows\Start Menu\Programs"
+    DESKTOP=rf"{os.environ['USERPROFILE']}\Desktop"
   
     # mimetype -> extension
     mimeTypeExt={}
-    for F in glob.glob(f"{FREEDESKTOPORGDIR}/mbsim-env.*.xml"):
+    for F in glob.glob(rf"{FREEDESKTOPORGDIR}\mbsim-env.*.xml"):
       for mimeTypeEle in xml.etree.ElementTree.parse(F).getroot().findall("{http://www.freedesktop.org/standards/shared-mime-info}mime-type"):
         for globEle in mimeTypeEle.findall("{http://www.freedesktop.org/standards/shared-mime-info}glob"):
           mimeTypeExt.setdefault(mimeTypeEle.attrib["type"], []).append(globEle.attrib["pattern"])
@@ -134,7 +134,7 @@ try:
     # default associations
     cp=configparser.ConfigParser(delimiters=('='), comment_prefixes=('#'), strict=False, interpolation=None)
     cp.optionxform=str
-    cp.read(glob.glob(f"{FREEDESKTOPORGDIR}/mimeapps-*.list"))
+    cp.read(glob.glob(rf"{FREEDESKTOPORGDIR}\mimeapps-*.list"))
     da=cp["Default Applications"]
   
     def createShortcut(shortcutFile, target, iconFile, workingDir=''):
@@ -173,7 +173,7 @@ try:
   
     # registry
     with winreg.CreateKey(winreg.HKEY_CURRENT_USER, r'Software\Classes') as classes:
-      for F in glob.glob(f"{FREEDESKTOPORGDIR}/mbsim-env.*.desktop"):
+      for F in glob.glob(rf"{FREEDESKTOPORGDIR}\mbsim-env.*.desktop"):
         progID=os.path.splitext(os.path.basename(F))[0]
         cp=configparser.ConfigParser(delimiters=('='), comment_prefixes=('#'), strict=False, interpolation=None)
         cp.optionxform=str
@@ -221,22 +221,22 @@ try:
   
             # desktop
             if copyToDesktop:
-              createShortcut(fr'{DESKTOP}/{de["Name"]}.lnk', execFile, execFile+".exe,0")
+              createShortcut(fr'{DESKTOP}\{de["Name"]}.lnk', execFile, execFile+".exe,0")
   
             # start menu
             if copyToMenu:
-              createShortcut(fr'{STARTMENU}/{de["Name"]}.lnk', execFile, execFile+".exe,0")
+              createShortcut(fr'{STARTMENU}\{de["Name"]}.lnk', execFile, execFile+".exe,0")
         if de["Type"]=="Link":
           url=de["URL"]
           if url.startswith("file://"):
             url=url[7:]
           # desktop
           if copyToDesktop:
-            createShortcut(fr'{DESKTOP}/{de["Name"]}.lnk', url, de["IconWindows"])
+            createShortcut(fr'{DESKTOP}\{de["Name"]}.lnk', url, de["IconWindows"])
   
           # start menu
           if copyToMenu:
-            createShortcut(fr'{STARTMENU}/{de["Name"]}.lnk', url, de["IconWindows"])
+            createShortcut(fr'{STARTMENU}\{de["Name"]}.lnk', url, de["IconWindows"])
 
     if addToPATH:
       with winreg.CreateKey(winreg.HKEY_CURRENT_USER, r'Environment') as env:
