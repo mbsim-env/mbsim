@@ -67,7 +67,7 @@ namespace MBSim {
       const fmatvec::Vec3& getAccelerationOfGravity() const { return grav; }
 
       void addOpenMBVObject(const std::shared_ptr<OpenMBV::Object> &object);
-      std::vector<std::shared_ptr<OpenMBV::Object>> getOpenMBVObjects();
+      const std::vector<std::shared_ptr<OpenMBV::Object>>& getOpenMBVObjects() const;
       /***************************************************/
 
       /**

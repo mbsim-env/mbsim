@@ -53,7 +53,7 @@ namespace MBSim {
     openMBVObject.emplace_back(object);
   }
 
-  std::vector<std::shared_ptr<OpenMBV::Object>> MBSimEnvironment::getOpenMBVObjects() {
+  const std::vector<std::shared_ptr<OpenMBV::Object>>& MBSimEnvironment::getOpenMBVObjects() const {
     return openMBVObject;
   }
 
