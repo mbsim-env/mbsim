@@ -1,9 +1,9 @@
 [Desktop Entry]
 Type=Application
-Name=MBSimXML
+Name=Simulate with MBSimXML
 Comment=Multi Body Simulation - Modeling multi body and multi domain simulations
 Icon=mbsim-env.mbsimxml
-Exec=bash -c '"@bindir@/mbsimxml" --CC %f; echo PRESS ENTER TO CLOSE; read'
+Exec=bash -c 'F="%f" && echo -ne "\033]0;MBSimXML Simulate \"$F\"\007" && "@bindir@/mbsimxml" --CC "$F" && echo -e "\033[32mPROGRAM SUCCEEDED\033[0m - PRESS ENTER TO CLOSE" || echo -e "\033[31mPROGRAM FAILED\033[0m - PRESS ENTER TO CLOSE"; read'
 NoDisplay=true
 Terminal=true
 MimeType=application/vnd.mbsim-env.mbsimflatxml;application/vnd.mbsim-env.mbsimxml;

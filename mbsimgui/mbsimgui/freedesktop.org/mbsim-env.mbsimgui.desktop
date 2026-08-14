@@ -13,7 +13,7 @@ Categories=Science;ComputerScience;NumericalAnalysis;Physics;Math;Robotics;
 [Windows-shell-1]
 ID=simulate
 Name=Simulate with MBSimXML
-Exec=cmd /c title MBSimXML "%1" & call "@bindir@/mbsimxml.exe" --CC "%1" && echo [32mPROGRAM SUCCEEDED[0m - PRESS ENTER TO CLOSE || echo [31mPROGRAM FAILED[0m - PRESS ENTER TO CLOSE & set /p "id="
+Exec=cmd /c title MBSimXML Simulate "%1" & call "@bindir@/mbsimxml.exe" --CC "%1" && echo [32mPROGRAM SUCCEEDED[0m - PRESS ENTER TO CLOSE || echo [31mPROGRAM FAILED[0m - PRESS ENTER TO CLOSE & set /p "id="
 
 [Windows-shell-2]
 ID=createmefmu
