@@ -7,6 +7,7 @@ try:
   import subprocess
   import platform
   import configparser
+  import re
   
   # Install all mbsim-env freedesktop.org modules
 
@@ -89,13 +90,16 @@ try:
     subprocess.check_call(["update-mime-database", f"{DATAHOME}/mime"])
 
     if addToPATH:
+      pathRE = re.compile(r" *export +PATH *=(.*)")
       def addPath(file):
         skip=False
         with open(file, "rt") as f:
           for line in f:
-            if line.rstrip()=="export PATH=$PATH:"+BINDIR:
-              skip=True
-              break
+            m = pathRE.match(line)
+            if m is not None:
+              if BINDIR in m.group(1).split(":"):
+                skip=True
+                break
         if not skip:
           with open(file, "at") as f:
             print("export PATH=$PATH:"+BINDIR, file=f)
