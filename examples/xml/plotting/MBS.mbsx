@@ -14,10 +14,8 @@
       fileName = mbxmlutils.getOriginalFilename()
       if platform.system() == "Windows":
         subprocess.Popen([mbxmlutils.utils.getDefaultOpenExeForExt(".txt"), fileName], creationflags=subprocess.CREATE_NO_WINDOW)
-      elif platform.system() == "Linux":
-        subprocess.Popen([mbxmlutils.utils.getDefaultOpenExeForExt(".txt"), fileName])
       else:
-        raise RuntimeError("Unknown platform")
+        subprocess.Popen([mbxmlutils.utils.getDefaultOpenExeForExt(".txt"), fileName])
     ?>
     <pv:evaluator>python</pv:evaluator>
     <pv:Embed>
