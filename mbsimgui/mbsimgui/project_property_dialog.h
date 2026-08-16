@@ -28,6 +28,7 @@ namespace MBSimGUI {
   class Project;
   class ExtWidget;
   class CommentWidget;
+  class MBSimGUIContextAction;
 
   class ProjectPropertyDialog : public EmbedItemPropertyDialog {
 
@@ -38,6 +39,7 @@ namespace MBSimGUI {
     protected:
       ExtWidget *name, *evalSelect;
       CommentWidget *comment;
+      MBSimGUIContextAction *mbsimguiContextAction;
   };
 
 }

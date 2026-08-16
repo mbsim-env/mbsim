@@ -4,6 +4,21 @@
     <pv:scalarParameter name="showPlot">False</pv:scalarParameter>
   </pv:Parameter>
   <MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project" xmlns:pv="http://www.mbsim-env.de/MBXMLUtils">
+    <?MBSIMGUI_CONTEXT_ACTION name="user project action"
+      print("some output from user project action")
+      print("and open the project file using the default text editor")
+
+      import subprocess
+      import mbxmlutils.utils
+      import platform
+      fileName = mbxmlutils.getOriginalFilename()
+      if platform.system() == "Windows":
+        subprocess.Popen([mbxmlutils.utils.getDefaultOpenExeForExt(".txt"), fileName], creationflags=subprocess.CREATE_NO_WINDOW)
+      elif platform.system() == "Linux":
+        subprocess.Popen([mbxmlutils.utils.getDefaultOpenExeForExt(".txt"), fileName])
+      else:
+        raise RuntimeError("Unknown platform")
+    ?>
     <pv:evaluator>python</pv:evaluator>
     <pv:Embed>
       <pv:Parameter>
@@ -53,6 +68,9 @@
         </pv:anyParameter>
       </pv:Parameter>
       <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
+        <?MBSIMGUI_CONTEXT_ACTION name="user dss action"
+          print("some output from user dss action")
+        ?>
         <!-- a multi line
              comment -->
         <plotFeatureRecursive value="position">True</plotFeatureRecursive>
@@ -63,6 +81,9 @@
         <groups>
           <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="3" counterName="g" onlyif="g!=1">
             <Group xmlns="http://www.mbsim-env.de/MBSim" name="Group1_{g}">
+              <?MBSIMGUI_CONTEXT_ACTION name="user group action"
+                print("some output from user group action")
+              ?>
               <frames/>
               <contours/>
               <groups>

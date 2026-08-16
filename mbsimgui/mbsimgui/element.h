@@ -115,7 +115,6 @@ namespace MBSimGUI {
       bool isDisabled() const { return disabled; }
       bool isActive() const override;
       EmbedItemData *getDedicatedItem() override { return dedicatedFileItem?(fileItem?this:parent->getDedicatedItem()):this; }
-      void setParameterValue(const std::string &parName, const std::string &code);
   };
 
   template<class T>

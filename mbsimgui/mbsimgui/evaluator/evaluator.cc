@@ -110,7 +110,7 @@ del _local
   return {};
 }
 
-string Evaluator::getElementObjCode(Element *e) {
+string Evaluator::getElementObjCode(EmbedItemData *e) {
   if(mw->getProject()->getEvaluator()=="python")
     return (boost::format(R"(
 import mbsimgui

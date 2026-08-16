@@ -46,7 +46,7 @@ namespace MBSimGUI {
       virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
       void create() override;
       ProjectPropertyDialog* createPropertyDialog() override { return new ProjectPropertyDialog(this); }
-      QMenu* createContextMenu() override { return new ProjectContextMenu; }
+      QMenu* createContextMenu() override { return new ProjectContextMenu(this); }
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
       void setDynamicSystemSolver(DynamicSystemSolver *dss_);
       void setSolver(Solver *solver_);

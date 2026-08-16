@@ -51,11 +51,16 @@ namespace MBSimGUI {
     addTab("Comment");
     comment = new CommentWidget;
     addToTab("Comment", comment);
+
+    addTab("Misc");
+    mbsimguiContextAction = new MBSimGUIContextAction;
+    addToTab("Misc", mbsimguiContextAction);
   }
 
   DOMElement* ProjectPropertyDialog::initializeUsingXML(DOMElement *parent) {
     name->getWidget<TextWidget>()->setText(item->getName());
     comment->initializeUsingXML(item->getXMLElement());
+    mbsimguiContextAction->initializeUsingXML(item->getXMLElement());
     evalSelect->initializeUsingXML(item->getXMLElement());
     return parent;
   }
@@ -64,6 +69,7 @@ namespace MBSimGUI {
     item->removeXMLElements();
     E(item->getXMLElement())->setAttribute("name",name->getWidget<TextWidget>()->getText().toStdString());
     comment->writeXMLFile(item->getXMLElement(),ref);
+    mbsimguiContextAction->writeXMLFile(item->getXMLElement(),ref);
     item->updateName();
     evalSelect->writeXMLFile(item->getXMLElement(),item->getXMLElement()->getFirstElementChild());
 

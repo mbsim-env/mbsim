@@ -37,7 +37,6 @@
 #include <xercesc/dom/DOMLSSerializer.hpp>
 #include <QDir>
 #include <xercesc/dom/DOMProcessingInstruction.hpp>
-#include <boost/range/adaptor/reversed.hpp>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -235,33 +234,6 @@ namespace MBSimGUI {
     if(parent and not parent->isActive())
       return false;
     return not isDisabled();
-  }
-
-  void Element::setParameterValue(const std::string &parName, const std::string &code) {
-    vector<EmbedItemData*> parents = getEmbedItemParents();
-    parents.emplace_back(this);
-    for(auto & parent : boost::adaptors::reverse(parents))
-      for(int j=parent->getNumberOfParameters()-1; j>=0; j--) {
-        auto parameter=parent->getParameter(j);
-        if(parameter->getName().toStdString()==parName) {
-          // pre set parameter value
-          mw->updateUndos();
-
-          // set parameter value
-          auto e=parameter->getXMLElement();
-          // remove all existing child nodes
-          while(e->getFirstChild())
-            e->removeChild(e->getFirstChild());
-          // and insert the code as (the only) text node
-          e->insertBefore(e->getOwnerDocument()->createTextNode(X()%code), nullptr);
-          // update parameter tree
-          parameter->updateValue();
-
-          // post set parameter value
-          MainWindow::updateNameOfCorrespondingElementAndItsChilds(parameter->getParent()->getModelIndex());
-          return;
-        }
-      }
   }
 
   void Element::processIDAndHrefOfUnknownElements(DOMElement *element) {

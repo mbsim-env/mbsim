@@ -28,7 +28,7 @@ namespace MBSimGUI {
 
   class ProjectContextMenu : public QMenu {
     public:
-      ProjectContextMenu(QWidget *parent=nullptr);
+      ProjectContextMenu(Project *prj, QWidget *parent=nullptr);
   };
 
 }

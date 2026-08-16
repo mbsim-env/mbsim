@@ -95,6 +95,7 @@ namespace MBSimGUI {
       virtual void updateName();
       virtual void updateNames() { updateName(); }
       virtual void updateValues();
+      void setParameterValue(const std::string &parName, const std::string &code);
   };
 
 }

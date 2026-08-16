@@ -3795,7 +3795,7 @@ extern "C" {
     }
   }
 
-  void mbsimgui_Element_setParameterValue(MBSimGUI::Element *element, const char* parName, const char *code) noexcept {
+  void mbsimgui_Element_setParameterValue(MBSimGUI::EmbedItemData *element, const char* parName, const char *code) noexcept {
     try {
       string parName_(parName);
       string code_(code);

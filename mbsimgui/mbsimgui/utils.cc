@@ -381,7 +381,7 @@ namespace MBSimGUI {
       }
     }
   }
-  template void addMBSimGUIContextAction<Element>(QMenu *menu, Element *eleOrPar);
+  template void addMBSimGUIContextAction<EmbedItemData>(QMenu *menu, EmbedItemData *eleOrPar);
   template void addMBSimGUIContextAction<Parameter>(QMenu *menu, Parameter *eleOrPar);
 
 }

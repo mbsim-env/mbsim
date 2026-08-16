@@ -141,7 +141,7 @@ namespace MBSimGUI {
     }
 
     // add the context actions
-    addMBSimGUIContextAction(this, element);
+    addMBSimGUIContextAction(this, static_cast<EmbedItemData*>(element));
   }
 
   DynamicSystemSolverContextMenu::DynamicSystemSolverContextMenu(Element *element, QWidget *parent) : ElementContextMenu(element,parent,false,true) {

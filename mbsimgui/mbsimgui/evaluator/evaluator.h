@@ -30,7 +30,7 @@ class QPlainTextEdit;
 
 namespace MBSimGUI {
 
-class Element;
+class EmbedItemData;
 class Parameter;
 
 // Everything in mbsimgui which depends on the current evaluator should be added to this class.
@@ -50,7 +50,7 @@ class Evaluator {
     static std::string getKDESyntaxHighlighterName();
 
     static std::pair<std::string, std::string> getInitCode(const std::string &evaluator);
-    static std::string getElementObjCode(Element *);
+    static std::string getElementObjCode(EmbedItemData *);
     static std::string getParameterObjCode(Parameter *);
 };
 

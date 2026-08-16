@@ -27,6 +27,7 @@
 #include <xercesc/dom/DOMImplementation.hpp>
 #include <xercesc/dom/DOMLSSerializer.hpp>
 #include <xercesc/dom/DOMComment.hpp>
+#include <xercesc/dom/DOMProcessingInstruction.hpp>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -45,12 +46,25 @@ namespace MBSimGUI {
   }
 
   void Project::removeXMLElements() {
+    // delete first comment
     auto *cele = E(element)->getFirstCommentChild();
     if(cele)
       element->removeChild(cele);
+
+    // evaluator first comment
     DOMElement *ele = element->getFirstElementChild();
     if(E(ele)->getTagName()==PV%"evaluator")
       element->removeChild(ele);
+
+    // evaluator processing instructions of target MBSIMGUI_CONTEXT_ACTION
+    DOMNode *n = element->getFirstChild();
+    while(n) {
+      DOMNode *nn=n->getNextSibling();
+      if(n->getNodeType()==xercesc::DOMNode::PROCESSING_INSTRUCTION_NODE &&
+         X()%static_cast<DOMProcessingInstruction*>(n)->getTarget()=="MBSIMGUI_CONTEXT_ACTION")
+        element->removeChild(n);
+      n = nn;
+    }
   }
 
   DOMElement* Project::createXMLElement(DOMNode *parent) {

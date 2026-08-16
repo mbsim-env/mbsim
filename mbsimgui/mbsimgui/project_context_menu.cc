@@ -21,12 +21,13 @@
 #include "project_context_menu.h"
 #include "mainwindow.h"
 #include "view_menu.h"
+#include "project.h"
 
 namespace MBSimGUI {
 
   extern MainWindow *mw;
 
-  ProjectContextMenu::ProjectContextMenu(QWidget *parent) : QMenu(parent) {
+  ProjectContextMenu::ProjectContextMenu(Project *prj, QWidget *parent) : QMenu(parent) {
     auto *action=new QAction(QIcon::fromTheme("document-properties"), "Edit", this);
     action->setShortcut(QKeySequence("Ctrl+E"));
     connect(action,&QAction::triggered,this,[=](){ mw->openElementEditor(); });
@@ -36,6 +37,9 @@ namespace MBSimGUI {
     addAction(action);
     addSeparator();
     addMenu(new ViewMenu(this));
+
+    // add the context actions
+    addMBSimGUIContextAction(this, static_cast<EmbedItemData*>(prj));
   }
 
 }
