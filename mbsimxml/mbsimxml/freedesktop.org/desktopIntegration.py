@@ -8,6 +8,7 @@ try:
   import platform
   import configparser
   import re
+  import fileinput
   
   # Install all mbsim-env freedesktop.org modules
 
@@ -20,8 +21,11 @@ try:
   inp=input("Create shortcuts in start menu [Y/n]: ")
   copyToMenu=inp=="" or inp=="y" or inp=="Y"
   
-  inp=input("Add executables to PATH [Y/n]: ")
+  inp=input("Add executables-dir to PATH of users environment [Y/n]: ")
   addToPATH=inp=="" or inp=="y" or inp=="Y"
+  
+  inp=input("Add Python specific variables (MBXMLUTILS_*) to users environment [Y/n]: ")
+  addPyEnvVars=inp=="" or inp=="y" or inp=="Y"
   
   
   
@@ -103,10 +107,30 @@ try:
         if not skip:
           with open(file, "at") as f:
             print("export PATH=$PATH:"+BINDIR, file=f)
-      if os.path.isfile(f"{HOME}/.bashrc"):
-        addPath(f"{HOME}/.bashrc")
-      if os.path.isfile(f"{HOME}/.kshrc"):
-        addPath(f"{HOME}/.kshrc")
+      for fn in [f"{HOME}/.bashrc", f"{HOME}/.kshrc"]:
+        if os.path.isfile(fn):
+          addPath(fn)
+
+    if addPyEnvVars:
+      def setEnvVar(file, name, value):
+        nameRE = re.compile(rf" *export +{name} *=(.*)")
+        found=False
+        with fileinput.input(file, inplace=True) as f:
+          for line in f:
+            if nameRE.match(line.rstrip("\r\n")):
+              print(f"export {name}={value}")
+              found=True
+            else:
+              print(line, end="")
+        if not found:
+          with open(file, "at") as f:
+            print(f"export {name}={value}", file=f)
+      for fn in [f"{HOME}/.bashrc", f"{HOME}/.kshrc"]:
+        if os.path.isfile(fn):
+          setEnvVar(fn, "MBXMLUTILS_LD_LIBRARY_PATH", f"{PREFIX}/lib")
+          setEnvVar(fn, "MBXMLUTILS_PYTHONHOME", f"{PREFIX}")
+          setEnvVar(fn, "MBXMLUTILS_PYTHONPATH", f"{PREFIX}/../mbsim-env-python-site-packages:{PREFIX}/share/mbxmlutils/python:{PREFIX}/bin")
+
   
   
   
@@ -249,6 +273,19 @@ try:
         if BINDIR not in PATH:
           PATH.append(BINDIR)
           winreg.SetValueEx(env, "PATH", 0, PATHtype, ";".join(PATH))
+
+    if addPyEnvVars:
+      def setEnvVar(name, value):
+        with winreg.CreateKey(winreg.HKEY_CURRENT_USER, r'Environment') as env:
+          try:
+            (V, Vtype)=winreg.QueryValueEx(env, name)
+          except FileNotFoundError:
+            V=""
+            Vtype=winreg.REG_SZ
+          if V != value:
+            winreg.SetValueEx(env, name, 0, Vtype, value)
+      setEnvVar("MBXMLUTILS_PYTHONHOME", f"{PREFIX}")
+      setEnvVar("MBXMLUTILS_PYTHONPATH", fr"{PREFIX}\..\mbsim-env-python-site-packages;{PREFIX}\lib;{PREFIX}\lib\lib-dynload;{PREFIX}\lib\site-packages;{PREFIX}\share\mbxmlutils\python;{PREFIX}\bin")
   
     # update cache (if possible)
     if shutil.which("ie4uinit.exe") is not None:
