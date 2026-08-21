@@ -1,9 +1,11 @@
 """Helper function for matplotlib based plotting in MBSimGUI"""
 
 import PySide2.QtWidgets
+import mbxmlutils
 import mbxmlutils.Qt
 import sys
 import ctypes
+import os.path
 
 if sys.platform.startswith('linux'):
   _libmbsimgui=ctypes.cdll.LoadLibrary("libmbsimgui.so")
@@ -65,3 +67,33 @@ class _Parameter(object):
     self.nativePtr=nativePtr
   def setValue(self, code):
     _libmbsimgui.mbsimgui_Parameter_setValue(self.nativePtr, code.encode("utf8"))
+
+def setParameterUsingFileOrDirDialog(parOrEle, caption, filter, dir="", relativeTo=os.path.dirname(mbxmlutils.getOriginalFilename()), skipRefresh=False):
+  """Set the parameter defined by parOrEle to the file/dir selected by the user using a file/dir dialog box.
+
+  'parOrEle' is the parameter which should be set, either of
+  - mbsimgui_parameter
+  - (mbsimgui_element, "name of par")
+  'caption' is the title of the dialog box
+  'filter' is 'DIR' to select a directory or a Qt filter (e.g. 'Text files (*.txt);;All (*.*)') to select a file
+  'dir', if not empty, is the initial path of the dialog box
+  'relativeTo', if not None, set the parameter with a relative path relative to 'relativeTo'
+  'skipRefresh' defines whether to all mbsimgui.mw.refresh() or not"""
+  import PySide2.QtWidgets
+  import collections.abc
+  import mbsimgui
+  import os.path
+  if filter=="DIR":
+    fn = PySide2.QtWidgets.QFileDialog.getExistingDirectory(None, caption, dir)
+  else:
+    fn = PySide2.QtWidgets.QFileDialog.getOpenFileName(None, caption, dir, filter)[0]
+  if len(fn)==0:
+    return
+  if relativeTo is not None:
+    fn = os.path.relpath(fn, relativeTo)
+  if isinstance(parOrEle, collections.abc.Iterable):
+    parOrEle[0].setParameterValue(parOrEle[1], f'"{fn}"')
+  else:
+    parOrEle.setValue(f'"{fn}"')
+  if not skipRefresh:
+    mw.refresh()

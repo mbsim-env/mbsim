@@ -3767,6 +3767,26 @@ DEF mbsimgui_outdated_switch Switch {
     return settings.value("mainwindow/options/autorefresh", true).toBool();
   }
 
+  void MainWindow::setParameterValue(Parameter *parameter, const std::string &code) {
+    // update undos
+    updateUndos();
+    // delete all XML child elements
+    while(auto c = parameter->getXMLElement()->getFirstElementChild())
+      parameter->getXMLElement()->removeChild(c)->release();
+    // set new value as the first XML text child and using parameter.setValue
+    auto text = E(parameter->getXMLElement())->getFirstTextChild();
+    if(!text) { // if not text child exists -> create one
+      text = parameter->getXMLElement()->getOwnerDocument()->createTextNode(u"");
+      parameter->getXMLElement()->insertBefore(text, nullptr);
+    }
+    text->setData(X()%code);
+    // call the usual updates (but not refresh which must be called explicitly by the user in the evaluator code)
+    updateValues(parameter->getParent());
+    updateNameOfCorrespondingElementAndItsChilds(parameter->getParent()->getModelIndex());
+    elementViewFilter->updateItem(parameter->getParent()->getModelIndex(),true);
+    updateParameterTreeAll();
+  }
+
 }
 
 extern "C" {
@@ -3818,7 +3838,7 @@ extern "C" {
       string code_(code);
       QTimer::singleShot(0, [parameter, code_](){
         try {
-          parameter->setValue(code_.c_str());
+          MBSimGUI::mw->setParameterValue(parameter, code_);
         }
         catch(...) {
           cerr<<"Internal error: this should never happen: Parameter::setValue failed!"<<endl;

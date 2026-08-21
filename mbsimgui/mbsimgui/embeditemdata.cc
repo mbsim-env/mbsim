@@ -236,13 +236,17 @@ namespace MBSimGUI {
           // pre set parameter value
           mw->updateUndos();
 
-          // set parameter value
-          auto e=parameter->getXMLElement();
-          // remove all existing child nodes
-          while(e->getFirstChild())
-            e->removeChild(e->getFirstChild());
-          // and insert the code as (the only) text node
-          e->insertBefore(e->getOwnerDocument()->createTextNode(X()%code), nullptr);
+          // delete all XML child elements
+          while(auto c = parameter->getXMLElement()->getFirstElementChild())
+            parameter->getXMLElement()->removeChild(c)->release();
+          // set new value as the first XML text child and using parameter.setValue
+          auto text = E(parameter->getXMLElement())->getFirstTextChild();
+          if(!text) { // if not text child exists -> create one
+            text = parameter->getXMLElement()->getOwnerDocument()->createTextNode(u"");
+            parameter->getXMLElement()->insertBefore(text, nullptr);
+          }
+          text->setData(X()%code);
+
           // update parameter tree
           parameter->updateValue();
 

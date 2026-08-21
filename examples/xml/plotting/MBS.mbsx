@@ -64,6 +64,13 @@
             sp=scipy.interpolate.splrep(splineIn["xx"], splineIn["yy"][i]["data"], s=splineIn["yy"][i]["s"])
             ret.append(scipy.interpolate.PPoly.from_spline(sp))
         </pv:anyParameter>
+        <pv:stringParameter name="filename">
+          <?MBSIMGUI_CONTEXT_ACTION name="Select file..."
+            import mbsimgui
+            mbsimgui.setParameterUsingFileOrDirDialog(mbsimgui_parameter, "get my file", "Text files (*.txt);;All (*.*)", filename)
+          ?>
+          'path/to/dummyfile.txt'
+        </pv:stringParameter>
       </pv:Parameter>
       <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
         <?MBSIMGUI_CONTEXT_ACTION name="user dss action"
