@@ -1741,8 +1741,10 @@ namespace MBSimGUI {
       auto *n = name->item(i);
       auto *c = static_cast<QPlainTextEdit*>(code->widget(i));
 
+      auto name = n->text().toStdString();
+      boost::replace_all(name, R"(")", R"(\")");
       DOMProcessingInstruction *pi=doc->createProcessingInstruction(u"MBSIMGUI_CONTEXT_ACTION",
-        X()%("name=\""+n->text().toStdString()+"\" "+c->toPlainText().toStdString()));
+        X()%("name=\""+name+"\" "+c->toPlainText().toStdString()));
       parent->insertBefore(pi, nullptr);
     }
     return nullptr;

@@ -4,7 +4,7 @@
     <pv:scalarParameter name="showPlot">False</pv:scalarParameter>
   </pv:Parameter>
   <MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project" xmlns:pv="http://www.mbsim-env.de/MBXMLUtils">
-    <?MBSIMGUI_CONTEXT_ACTION name="user project action"
+    <?MBSIMGUI_CONTEXT_ACTION name="user \"p\"roject action"
       print("some output from user project action")
       print("and open the project file using the default text editor")
 
@@ -73,9 +73,7 @@
         </pv:stringParameter>
       </pv:Parameter>
       <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
-        <?MBSIMGUI_CONTEXT_ACTION name="user dss action"
-          print("some output from user dss action")
-        ?>
+        <?MBSIMGUI_CONTEXT_ACTION name="user dss action" print("some output from user dss action")?>
         <!-- a multi line
              comment -->
         <plotFeatureRecursive value="position">True</plotFeatureRecursive>

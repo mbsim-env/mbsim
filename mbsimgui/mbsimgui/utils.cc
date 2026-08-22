@@ -37,6 +37,7 @@
 #include "parameter.h"
 #include "evaluator/evaluator.h"
 #include <xercesc/dom/DOMProcessingInstruction.hpp>
+#include <regex>
 
 using namespace std;
 using namespace fmatvec;
@@ -309,14 +310,15 @@ namespace MBSimGUI {
       std::string nameToken("name=\"");
       if(data.substr(0, nameToken.length())!=nameToken)
         continue;
-      auto end1=data.find("\" ", nameToken.length());
-      auto end2=data.find("\"\n", nameToken.length());
-      auto end=std::min(end1, end2);
-      if(end==std::string::npos)
+      static basic_regex nameEnd(R"([^\\]"[ \n])");
+      smatch m;
+      if(!regex_search(data, m, nameEnd))
         continue;
+      auto end=m.position();
 
       // add the context action
       std::string name=data.substr(nameToken.length(), end-nameToken.length());
+      boost::replace_all(name, R"(\")", R"(")");
       std::string code=data.substr(end+2);
       ret.emplace_back(std::move(name), std::move(code));
     }
