@@ -69,7 +69,7 @@
             import mbsimgui
             mbsimgui.setParameterUsingFileOrDirDialog(mbsimgui_parameter, "get my file", "Text files (*.txt);;All (*.*)", filename)
           ?>
-          'path/to/dummyfile.txt'
+          'subdir/dummy_b.txt'
         </pv:stringParameter>
       </pv:Parameter>
       <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
