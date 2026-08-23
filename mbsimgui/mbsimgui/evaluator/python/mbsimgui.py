@@ -80,7 +80,6 @@ def setParameterUsingFileOrDirDialog(parOrEle, caption, filter, fileOrDir="", re
   'relativeTo', if not None, set the parameter with a relative path relative to 'relativeTo'
   'skipRefresh' defines whether to all mbsimgui.mw.refresh() or not"""
   import PySide2.QtWidgets
-  import collections.abc
   import mbsimgui
   if not os.path.isabs(fileOrDir):
     fileOrDir = os.path.normpath(os.path.join(relativeTo, fileOrDir))
@@ -92,7 +91,7 @@ def setParameterUsingFileOrDirDialog(parOrEle, caption, filter, fileOrDir="", re
     return
   if relativeTo is not None:
     fn = os.path.relpath(fn, relativeTo)
-  if isinstance(parOrEle, collections.abc.Iterable):
+  if isinstance(parOrEle, tuple):
     parOrEle[0].setParameterValue(parOrEle[1], f'"{fn}"')
   else:
     parOrEle.setValue(f'"{fn}"')
