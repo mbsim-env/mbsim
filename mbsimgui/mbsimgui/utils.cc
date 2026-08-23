@@ -314,7 +314,7 @@ namespace MBSimGUI {
       smatch m;
       if(!regex_search(data, m, nameEnd))
         continue;
-      auto end=m.position();
+      auto end=m.position()+1;
 
       // add the context action
       std::string name=data.substr(nameToken.length(), end-nameToken.length());
