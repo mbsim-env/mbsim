@@ -81,7 +81,7 @@ def setParameterUsingFileOrDirDialog(parOrEle, caption, filter, fileOrDir="", re
   'skipRefresh' defines whether to all mbsimgui.mw.refresh() or not"""
   import PySide2.QtWidgets
   import mbsimgui
-  if not os.path.isabs(fileOrDir):
+  if not os.path.isabs(fileOrDir) and relativeTo is not None:
     fileOrDir = os.path.normpath(os.path.join(relativeTo, fileOrDir))
   if filter=="DIR":
     fn = PySide2.QtWidgets.QFileDialog.getExistingDirectory(None, caption, fileOrDir)
