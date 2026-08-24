@@ -72,13 +72,14 @@ def setParameterUsingFileOrDirDialog(parOrEle, caption, filter, fileOrDir="", re
   """Set the parameter defined by parOrEle to the file/dir selected by the user using a file/dir dialog box.
 
   'parOrEle' is the parameter which should be set, either of
-  - mbsimgui_parameter
-  - (mbsimgui_element, "name of par")
+  - None: skip setting a parameter, just return the filename
+  - mbsimgui_parameter: set the currently edited parmeter and return the filename
+  - (mbsimgui_element, "name of par"): set the parameter name 'name of par' of the currently edited element and return the filename
   'caption' is the title of the dialog box
   'filter' is 'DIR' to select a directory or a Qt filter (e.g. 'Text files (*.txt);;All (*.*)') to select a file
   'fileOrDir', if not empty, is the initial path of the dialog box
   'relativeTo', if not None, set the parameter with a relative path relative to 'relativeTo'
-  'skipRefresh' defines whether to all mbsimgui.mw.refresh() or not"""
+  'skipRefresh' defines whether to all mbsimgui.mw.refresh() or not when a parameter is set (parOrEle is not None)"""
   import PySide2.QtWidgets
   import mbsimgui
   if not os.path.isabs(fileOrDir) and relativeTo is not None:
@@ -88,12 +89,14 @@ def setParameterUsingFileOrDirDialog(parOrEle, caption, filter, fileOrDir="", re
   else:
     fn = PySide2.QtWidgets.QFileDialog.getOpenFileName(None, caption, fileOrDir, filter)[0]
   if len(fn)==0:
-    return
+    return None
   if relativeTo is not None:
     fn = os.path.relpath(fn, relativeTo)
-  if isinstance(parOrEle, tuple):
-    parOrEle[0].setParameterValue(parOrEle[1], f'"{fn}"')
-  else:
-    parOrEle.setValue(f'"{fn}"')
-  if not skipRefresh:
-    mw.refresh()
+  if parOrEle is not None:
+    if isinstance(parOrEle, tuple):
+      parOrEle[0].setParameterValue(parOrEle[1], f'r"{fn}"')
+    else:
+      parOrEle.setValue(f'r"{fn}"')
+    if not skipRefresh:
+      mw.refresh()
+  return fn
