@@ -55,14 +55,28 @@
                   ],
           }
         </pv:anyParameter>
+        <pv:anyParameter name="smoothingSpline">
+          def smoothingSpline(x,y,lam):
+            import scipy.interpolate
+            #import scipy.interpolate
+            if lam==0:
+              # for lam==0 x,y is interpolated -> use CubicSpline which is faster then make_smoothing_spline(lam=0)
+              return scipy.interpolate.CubicSpline(x,y)
+            else:
+              # for a smoothing -> use make_smoothing_spline
+              return scipy.interpolate.PPoly.from_spline(scipy.interpolate.make_smoothing_spline(x, y, lam=lam))
+              #sp=scipy.interpolate.splrep(x, y, s=lam)
+              #return scipy.interpolate.PPoly.from_spline(sp)
+          ret=smoothingSpline
+        </pv:anyParameter>
         <pv:anyParameter name="splineOut">
           import mbxmlutils
           import numpy
           import scipy
           ret=[]
           for i in range(0,3):
-            sp=scipy.interpolate.splrep(splineIn["xx"], splineIn["yy"][i]["data"], s=splineIn["yy"][i]["s"])
-            ret.append(scipy.interpolate.PPoly.from_spline(sp))
+            sp=smoothingSpline(splineIn["xx"], splineIn["yy"][i]["data"], lam=splineIn["yy"][i]["s"])
+            ret.append(sp)
         </pv:anyParameter>
         <pv:stringParameter name="filename">
           <?MBSIMGUI_CONTEXT_ACTION name="Select file..."
@@ -117,7 +131,7 @@
                             
                                 layout = PySide2.QtWidgets.QVBoxLayout()
                                 self.setLayout(layout)
-                                plotWidget=self.createPlotWidget("splinePlot", layout="tight")
+                                plotWidget=self.createPlotWidget("splinePlot", layout="constrained")
                                 layout.addWidget(self.getPlotWidgetToolbar("splinePlot"))
                                 layout.addWidget(plotWidget)
                                 hlayout = PySide2.QtWidgets.QHBoxLayout()
@@ -143,22 +157,47 @@
                                 self.inputSL.setPageStep(self.inputSLFac/100)
                                 self.inputSL.valueChanged.connect(self.sliderChanged)
                             
-                                axes = plotWidget.figure.subplots()
-                                mbxmlutils.Qt.enableWheelZoom(axes) # enable mouse wheel zoom
+                                self.bm = []
+                                self.data = []
+                                axes = []
+                                for der in [0,1,2]:
+                                  axes.append( plotWidget.figure.add_subplot(1,3,der+1) )
+                                  mbxmlutils.Qt.enableWheelZoom(axes[der]) # enable mouse wheel zoom
                             
-                                self.data=axes.plot(self.X,numpy.zeros(self.X.shape))[0]
-                                axes.plot(splineIn["xx"],splineIn["yy"][1]["data"],marker="x",linestyle="")
-                                axes.set_title(f"Plot for g={g} o={o} firstCall={mbsimgui_firstCall} lastCall={mbsimgui_lastCall}\ncounterNames={mbsimgui_counterNames} counts={mbsimgui_counts}");
-                                plotWidget.figure.suptitle(f"suptitle line 1\nsuptitle line 2");
-                                axes.set_xlabel("x-axis\nrow2");
-                                axes.set_ylabel("x-axis\nrow2");
-                                self.bm = mbxmlutils.Qt.BitBlitManager(axes, [self.data])
+                                  if der==0:
+                                    axes[der].plot(splineIn["xx"],splineIn["yy"][1]["data"],marker="x",linestyle="",label="disturbed points")
+                                    axes[der].plot(splineIn["xx"],splineIn["yy"][0]["data"],label="undisturbed curve")
+                                  elif der==1:
+                                    axes[der].plot(splineIn["xx"],numpy.gradient(splineIn["yy"][1]["data"],splineIn["xx"]),marker="x",linestyle="",label="disturbed points")
+                                    axes[der].plot(splineIn["xx"],numpy.gradient(splineIn["yy"][0]["data"],splineIn["xx"]),label="undisturbed curve")
+                                  elif der==2:
+                                    def der2(x,y):
+                                      ret = numpy.empty_like(y, dtype=float)
+                                      ret[1:-1] = ( y[2:] - 2*y[1:-1] + y[:-2] ) / (x[1]-x[0])**2
+                                      ret[0] = numpy.nan
+                                      ret[-1] = numpy.nan
+                                      return ret
+                                    axes[der].plot(splineIn["xx"],der2(splineIn["xx"],splineIn["yy"][1]["data"]),marker="x",linestyle="",label="disturbed points")
+                                    axes[der].plot(splineIn["xx"],der2(splineIn["xx"],splineIn["yy"][0]["data"]),label="undisturbed curve")
+                                  self.data.append( axes[der].plot(self.X,numpy.zeros(self.X.shape),label="smoothed curve")[0] )
+                                  axes[der].legend()
+                                  if der==0:
+                                    axes[der].set_title(f"Plot for g={g} o={o} firstCall={mbsimgui_firstCall} lastCall={mbsimgui_lastCall}\ncounterNames={mbsimgui_counterNames} counts={mbsimgui_counts}");
+                                    plotWidget.figure.suptitle(f"suptitle line 1\nsuptitle line 2");
+                                    axes[der].set_xlabel("x-axis\nrow2");
+                                    axes[der].set_ylabel("x-axis\nrow2");
+                                    text=axes[der].annotate("Open docu in browser on click",xy=(0,0),c="blue")
+                                  else:
+                                    axes[der].set_title(f"der={der}")
+                                  self.bm.append( mbxmlutils.Qt.BitBlitManager(axes[der], [self.data[der]]) )
+                                axes[1].sharex(axes[0])
+                                axes[2].sharex(axes[0])
 
-                                text=axes.text(0,0,"Open docu in browser on click",c="blue")
                                 def onClick():
                                   import webbrowser
                                   webbrowser.open(mbxmlutils.installPrefix()+"/share/mbxmlutils/doc/http___www_mbsim-env_de_MBSimXML/mbsimxml.html")
-                                mbxmlutils.Qt.onArtistClick(text, onClick)
+                                if der==0:
+                                  mbxmlutils.Qt.onArtistClick(text, onClick)
 
                                 ok = PySide2.QtWidgets.QPushButton("Write Parameter (s)")
                                 def writeParameter():
@@ -177,13 +216,12 @@
                             
                               def sChanged(self):
                                 s=self.inputSB.value()
-                                sp1=scipy.interpolate.splrep(splineIn["xx"],splineIn["yy"][1]["data"],s=s)
-                                sp2=scipy.interpolate.PPoly.from_spline(sp1)
 
                                 # create spline using scipy
-                                self.data.set_ydata(sp2(self.X))
-
-                                self.bm.update()
+                                for der in [0,1,2]:
+                                  sp2=smoothingSpline(splineIn["xx"], splineIn["yy"][1]["data"], lam=s)
+                                  self.data[der].set_ydata(sp2.derivative(der)(self.X))
+                                  self.bm[der].update()
                                 self.inputSL.blockSignals(True)
                                 self.inputSL.setValue(self.sToSliderValue(s))
                                 self.inputSL.blockSignals(False)
@@ -196,7 +234,7 @@
                             w.show()
 
                             # create a standard matplotlib figure
-                            d=mbsimgui.StdMatplotlibDialog(layout="tight")
+                            d=mbsimgui.StdMatplotlibDialog(layout="constrained")
                             d.getToolbar().pan() # enbale pan zoom at startup
                             ax=d.getFigure().subplots()
                             ax.plot([1,2,3,4],[5,4,7,2])
