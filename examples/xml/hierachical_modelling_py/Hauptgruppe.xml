@@ -3,6 +3,14 @@
   <frameOfReference ref="../Frame[Q{numHG}]"/>
   <frames>
     <FixedRelativeFrame name="Q">
+      <openMBVRigidBody>
+        <IvBody xmlns="http://www.mbsim-env.de/OpenMBV" name="com">
+          <ivContent>
+            import mbxmlutils
+            ret = mbxmlutils.testDummyIVSphere(0.1)
+          </ivContent>
+        </IvBody>
+      </openMBVRigidBody>
       <relativePosition>[(1/math.tan(2))/(1/math.tan(2)),0*555,0]</relativePosition>
       <!-- use "cot" to test a octave internal .m file; use "det" to test a octave internal .oct file -->
       <relativeOrientation>
@@ -90,6 +98,14 @@
         <size>2*h</size>
         <offset>dummyvar=4;ret=1</offset>
       </enableOpenMBVFrameC>
+      <openMBVRigidBodyFrameC>
+        <IvBody xmlns="http://www.mbsim-env.de/OpenMBV" name="com">
+          <ivContent>
+            import mbxmlutils
+            ret = mbxmlutils.testDummyIVSphere(0.1)
+          </ivContent>
+        </IvBody>
+      </openMBVRigidBodyFrameC>
     </RigidBody>
   </objects>
   <links/>

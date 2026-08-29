@@ -669,6 +669,19 @@
               <xs:group ref="OpenMBVFrameParameters"/>
             </xs:complexType> 
           </xs:element>
+          <xs:element name="openMBVRigidBodyFrameI" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Visualisiert einen beliebigen Starrkörper an der Stelle des Frames I.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:choice>
+                <xs:element ref="ombv:RigidBody"/>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
+            </xs:complexType>
+          </xs:element>
           <xs:element name="plotFeatureFrameI" minOccurs="0" maxOccurs="unbounded">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
@@ -1243,6 +1256,19 @@
             <xs:complexType>
               <xs:group ref="OpenMBVFrameParameters"/>
             </xs:complexType> 
+          </xs:element>
+          <xs:element name="openMBVRigidBodyFrameC" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Visualisiert einen beliebigen Starrkörper an der Stelle des Frames C.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:choice>
+                <xs:element ref="ombv:RigidBody"/>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
+            </xs:complexType>
           </xs:element>
           <xs:element name="plotFeatureFrameC" minOccurs="0" maxOccurs="unbounded">
             <xs:annotation>

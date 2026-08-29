@@ -127,6 +127,13 @@ namespace MBSim {
       I->setOpenMBVFrame(ombv.createOpenMBV());
     }
 
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"openMBVRigidBodyFrameI");
+    if(e) {
+      auto rb=OpenMBV::ObjectFactory::create<OpenMBV::RigidBody>(e->getFirstElementChild());
+      I->setOpenMBVRigidBody(rb);
+      rb->initializeUsingXML(e->getFirstElementChild());
+    }
+
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"plotFeatureFrameI");
     while(e and MBXMLUtils::E(e)->getTagName()==MBSIM%"plotFeatureFrameI") {
       auto pf=getPlotFeatureFromXML(e);
