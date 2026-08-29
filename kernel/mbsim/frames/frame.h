@@ -122,6 +122,9 @@ namespace MBSim {
       void setOpenMBVFrame(const std::shared_ptr<OpenMBV::Frame> &frame) { openMBVFrame = frame; }
       std::shared_ptr<OpenMBV::Frame> &getOpenMBVFrame() { return openMBVFrame; }
 
+      void setOpenMBVRigidBody(const std::shared_ptr<OpenMBV::RigidBody> &rb) { openMBVRigidBody = rb; }
+      std::shared_ptr<OpenMBV::RigidBody> &getOpenMBVRigidBody() { return openMBVRigidBody; }
+
       void resetUpToDate() override;
       virtual void resetPositionsUpToDate();
       virtual void resetVelocitiesUpToDate();
@@ -172,6 +175,7 @@ namespace MBSim {
       fmatvec::Vec3 WaP, WpsiP;
 
       std::shared_ptr<OpenMBV::Frame> openMBVFrame;
+      std::shared_ptr<OpenMBV::RigidBody> openMBVRigidBody;
 
       bool updJac[3];
       bool updGA{true};

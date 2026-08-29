@@ -71,7 +71,7 @@ namespace MBSim {
       if(plotFeature[angularAcceleration])
 	Element::plot(evalAngularAcceleration());
     }
-    if(plotFeature[openMBV] and openMBVFrame) {
+    if(plotFeature[openMBV] && (openMBVFrame || openMBVRigidBody)) {
       array<OpenMBV::Float,8> data;
       data[0] = getTime();
       data[1] = evalPosition()(0);
@@ -82,7 +82,10 @@ namespace MBSim {
       data[5] = cardan(1);
       data[6] = cardan(2);
       data[7] = 0;
-      openMBVFrame->append(data);
+      if(openMBVFrame)
+        openMBVFrame->append(data);
+      if(openMBVRigidBody)
+        openMBVRigidBody->append(data);
     }
     Element::plot();
   }
@@ -113,6 +116,10 @@ namespace MBSim {
 	openMBVFrame->setName(name);
 	parent->getFramesOpenMBVGrp()->addObject(openMBVFrame);
       }
+      if(plotFeature[openMBV] and openMBVRigidBody) {
+	openMBVRigidBody->setName(name+"_RigidBody");
+	parent->getFramesOpenMBVGrp()->addObject(openMBVRigidBody);
+      }
     }
     Element::init(stage, config);
   }
@@ -125,6 +132,13 @@ namespace MBSim {
       OpenMBVFrame ombv;
       ombv.initializeUsingXML(ee);
       openMBVFrame=ombv.createOpenMBV(); 
+    }
+
+    ee=E(element)->getFirstElementChildNamed(MBSIM%"openMBVRigidBody");
+    if(ee) {
+      auto rb=OpenMBV::ObjectFactory::create<OpenMBV::RigidBody>(ee->getFirstElementChild());
+      setOpenMBVRigidBody(rb);
+      rb->initializeUsingXML(ee->getFirstElementChild());
     }
   }
 
