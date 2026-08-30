@@ -61,7 +61,7 @@
             #import scipy.interpolate
             if lam==0:
               # for lam==0 x,y is interpolated -> use CubicSpline which is faster then make_smoothing_spline(lam=0)
-              return scipy.interpolate.CubicSpline(x,y)
+              return scipy.interpolate.CubicSpline(x,y,bc_type="natural")
             else:
               # for a smoothing -> use make_smoothing_spline
               return scipy.interpolate.PPoly.from_spline(scipy.interpolate.make_smoothing_spline(x, y, lam=lam))
@@ -180,7 +180,7 @@
                                     axes[der].plot(splineIn["xx"],der2(splineIn["xx"],splineIn["yy"][1]["data"]),marker="x",linestyle="",label="disturbed points")
                                     axes[der].plot(splineIn["xx"],der2(splineIn["xx"],splineIn["yy"][0]["data"]),label="undisturbed curve")
                                   self.data.append( axes[der].plot(self.X,numpy.zeros(self.X.shape),label="smoothed curve")[0] )
-                                  axes[der].legend()
+                                  axes[der].legend(loc="upper right")
                                   if der==0:
                                     axes[der].set_title(f"Plot for g={g} o={o} firstCall={mbsimgui_firstCall} lastCall={mbsimgui_lastCall}\ncounterNames={mbsimgui_counterNames} counts={mbsimgui_counts}");
                                     plotWidget.figure.suptitle(f"suptitle line 1\nsuptitle line 2");
