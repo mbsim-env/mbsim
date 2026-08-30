@@ -7,7 +7,7 @@
         <IvBody xmlns="http://www.mbsim-env.de/OpenMBV" name="com">
           <ivContent>
             import mbxmlutils
-            ret = mbxmlutils.testDummyIVSphere(0.1)
+            ret = mbxmlutils.testDummyIvSphere(0.1)
           </ivContent>
         </IvBody>
       </openMBVRigidBody>
@@ -102,7 +102,7 @@
         <IvBody xmlns="http://www.mbsim-env.de/OpenMBV" name="com">
           <ivContent>
             import mbxmlutils
-            ret = mbxmlutils.testDummyIVSphere(0.1)
+            ret = mbxmlutils.testDummyIvSphere(0.1)
           </ivContent>
         </IvBody>
       </openMBVRigidBodyFrameC>
