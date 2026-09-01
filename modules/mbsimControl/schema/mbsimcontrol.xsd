@@ -1175,6 +1175,19 @@
               <xs:group ref="mbsim:OpenMBVFrameParameters"/>
             </xs:complexType>
           </xs:element>
+          <xs:element name="openMBVRigidBody" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Visualisiert einen beliebigen Starrkörper an der Stelle des Frames.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:choice>
+                <xs:element ref="ombv:RigidBody"/>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
+            </xs:complexType>
+          </xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>

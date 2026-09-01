@@ -56,6 +56,10 @@ namespace MBSimControl {
           openMBVFrame->setName("FrameChaser");
           getOpenMBVGrp()->addObject(openMBVFrame);
         }
+        if(openMBVRigidBody) {
+          openMBVRigidBody->setName("FrameChaser_RigidBody");
+          getOpenMBVGrp()->addObject(openMBVRigidBody);
+        }
       }
     }
     else
@@ -74,7 +78,7 @@ namespace MBSimControl {
   }
   void FrameChaserObserver::plot() {
     if(plotFeature[MBSim::openMBV]) {
-      if(openMBVFrame) {
+      if(openMBVFrame || openMBVRigidBody) {
         // translation and rotation is 0 per default
         Vec3 r(INIT, 0.0);
         Vec3 revCardan(INIT, 0.0);
@@ -103,7 +107,10 @@ namespace MBSimControl {
         data[5] = cardan(1);
         data[6] = cardan(2);
         data[7] = 0;
-        openMBVFrame->append(data);
+        if(openMBVFrame)
+          openMBVFrame->append(data);
+        if(openMBVRigidBody)
+          openMBVRigidBody->append(data);
       }
     }
     Observer::plot();
@@ -145,6 +152,13 @@ namespace MBSimControl {
     if(e) {
       ombvFrame = make_shared<MBSim::OpenMBVFrame>();
       ombvFrame->initializeUsingXML(e);
+    }
+
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"openMBVRigidBody");
+    if(e) {
+      auto rb=OpenMBV::ObjectFactory::create<OpenMBV::RigidBody>(e->getFirstElementChild());
+      setOpenMBVRigidBody(rb);
+      rb->initializeUsingXML(e->getFirstElementChild());
     }
   }
 

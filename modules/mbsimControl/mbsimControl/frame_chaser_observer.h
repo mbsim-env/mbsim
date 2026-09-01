@@ -44,6 +44,7 @@ namespace MBSimControl {
 
       std::shared_ptr<MBSim::OpenMBVFrame> ombvFrame;
       std::shared_ptr<OpenMBV::Frame> openMBVFrame;
+      std::shared_ptr<OpenMBV::RigidBody> openMBVRigidBody;
 
       // overrite a component of the frame observer with a double or value from a Signal
       std::variant<std::monostate, double, Signal*> x;
@@ -85,6 +86,9 @@ namespace MBSimControl {
         ombvFrame = std::shared_ptr<MBSim::OpenMBVFrame>(new MBSim::OpenMBVFrame(size, offset, path, fmatvec::Vec3({-1,1,1}),
                                                                    transparency, pointSize, lineWidth));
       }
+
+      void setOpenMBVRigidBody(const std::shared_ptr<OpenMBV::RigidBody> &rb) { openMBVRigidBody = rb; }
+      std::shared_ptr<OpenMBV::RigidBody> &getOpenMBVRigidBody() { return openMBVRigidBody; }
   };
 
 }  
