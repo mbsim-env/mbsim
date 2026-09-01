@@ -1474,6 +1474,7 @@ namespace MBSimGUI {
 
           // the embed count if its a embed
           string counterName = parent->getEmbedXMLElement()?E(parent->getEmbedXMLElement())->getAttribute("counterName"):"";
+          garbageCollectOnIdle();
           if(not counterName.empty()) {
             Eval::Value countValue;
             if(parameterLevels.size()<=count.size())
@@ -1570,6 +1571,7 @@ namespace MBSimGUI {
         for(int counterValue1Based=1; counterValue1Based<=countInt; ++counterValue1Based) {
           NewParamLevel newParamLevel(mw->eval);
 
+          mw->garbageCollectOnIdle();
           if(!start->counterName.empty()) {
             // add counter parameter
             auto counterValue=mw->eval->create(static_cast<double>(counterValue1Based));
@@ -3785,6 +3787,22 @@ DEF mbsimgui_outdated_switch Switch {
     updateNameOfCorrespondingElementAndItsChilds(parameter->getParent()->getModelIndex());
     elementViewFilter->updateItem(parameter->getParent()->getModelIndex(),true);
     updateParameterTreeAll();
+  }
+
+  void MainWindow::garbageCollectOnIdle() {
+    // if someone requested a garbage collect do it on the next idle state (but only once if several requests occured)
+    // this is done to e.g. release resorces (files) in the evaluator which are not closed propably but are not longer needed
+    static bool garbageCollect { false };
+    if(garbageCollect)
+      return;
+    garbageCollect = true;
+    QTimer::singleShot(0, [this]() { // delay it two times, since we really want this at the end (even after other singleShot(0, ...) idle timers)
+      QTimer::singleShot(0, [this]() {
+        garbageCollect = false;
+        cout<<"mfmf"<<endl;
+        eval->garbageCollect();
+      });
+    });
   }
 
 }

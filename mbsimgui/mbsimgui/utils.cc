@@ -359,8 +359,10 @@ namespace MBSimGUI {
                     code=Evaluator::getElementObjCode(eleOrPar);
                     codeVar="mbsimgui_element";
                   }
-                  if(!code.empty())
+                  if(!code.empty()) {
+                    mw->garbageCollectOnIdle();
                     mw->eval->addParam(codeVar, mw->eval->stringToValue(code));
+                  }
                 }
               );
               mw->updateEchoView("");

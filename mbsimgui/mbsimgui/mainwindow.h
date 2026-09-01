@@ -357,6 +357,8 @@ namespace MBSimGUI {
 
       void setParameterValue(Parameter *parameter, const std::string &code);
 
+      void garbageCollectOnIdle();
+
       // Creates a variable on the stack which's ctor saves the current mw->eval and instantiates a new
       // evaluator on mw->eval. The dtor restores the saved evaluator on mw->eval.
       // This must be used if for a short time, the lifetime of the stack variable, a new evaluator is needed while
