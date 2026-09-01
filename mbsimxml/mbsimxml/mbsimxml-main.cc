@@ -363,45 +363,50 @@ int main(int argc, char *argv[]) {
         else
           sigHandler=make_unique<DynamicSystemSolver::SignalHandler>();
 
-        Preprocess preprocess = MBSIMPRJ=="-" ?
-          Preprocess(MBSIMPRJstream, parser, AUTORELOADTIME>0) : // ctor for input by stdin
-          Preprocess(MBSIMPRJ, parser, AUTORELOADTIME>0);        // ctor for input by filename
-        preprocess.setCheckInterruptFunction([](){
-          DynamicSystemSolver::throwIfExitRequested();
-        });
-
-        // check Embed elements
+        shared_ptr<xercesc::DOMDocument> mainXMLDoc;
         {
-          auto checkEmbed = [](xercesc::DOMElement *e, const FQN &eleName) {
-            if(E(e)->getTagName()==PV%"Embed") {
-              if(E(e)->hasAttribute("counterName") || E(e)->hasAttribute("count") ||
-                 (E(e)->hasAttribute("onlyif") && E(e)->getAttribute("onlyif")!="1"))
-                throw runtime_error("A Embed element on "+eleName.second+" level is not allowed to have a counterName, count or onlyif attribute.");
-            }
-          };
+          Preprocess preprocess = MBSIMPRJ=="-" ?
+            Preprocess(MBSIMPRJstream, parser, AUTORELOADTIME>0) : // ctor for input by stdin
+            Preprocess(MBSIMPRJ, parser, AUTORELOADTIME>0);        // ctor for input by filename
+          preprocess.setCheckInterruptFunction([](){
+            DynamicSystemSolver::throwIfExitRequested();
+          });
 
-          auto root = preprocess.getDOMDocument()->getDocumentElement();
-          xercesc::DOMElement *mbsimProject;
-          if(E(root)->getTagName()==PV%"Embed")
-            mbsimProject = root->getLastElementChild();
-          else
-            mbsimProject = root;
-          checkEmbed(mbsimProject->getFirstElementChild(), MBSIM%"DynamicSystemSolver");
-          checkEmbed(mbsimProject->getLastElementChild(), MBSIM%"Solver");
-        }
+          // check Embed elements
+          {
+            auto checkEmbed = [](xercesc::DOMElement *e, const FQN &eleName) {
+              if(E(e)->getTagName()==PV%"Embed") {
+                if(E(e)->hasAttribute("counterName") || E(e)->hasAttribute("count") ||
+                   (E(e)->hasAttribute("onlyif") && E(e)->getAttribute("onlyif")!="1"))
+                  throw runtime_error("A Embed element on "+eleName.second+" level is not allowed to have a counterName, count or onlyif attribute.");
+              }
+            };
 
-        // create parameter override ParamSet
-        auto eval=preprocess.getEvaluator();
-        auto param = make_shared<Preprocess::ParamSet>();
-        for(auto &pa : paramArg) {
-          DynamicSystemSolver::throwIfExitRequested();
-          auto pos = pa.find('=');
-          (*param)[pa.substr(0, pos)]=eval->eval(pa.substr(pos+1));
-        }
-        preprocess.setParam(param);
+            auto root = preprocess.getDOMDocument()->getDocumentElement();
+            xercesc::DOMElement *mbsimProject;
+            if(E(root)->getTagName()==PV%"Embed")
+              mbsimProject = root->getLastElementChild();
+            else
+              mbsimProject = root;
+            checkEmbed(mbsimProject->getFirstElementChild(), MBSIM%"DynamicSystemSolver");
+            checkEmbed(mbsimProject->getLastElementChild(), MBSIM%"Solver");
+          }
 
-        // validate the project file with mbsimxml.xsd
-        auto mainXMLDoc = preprocess.processAndGetDocument();
+          // create parameter override ParamSet
+          auto eval=preprocess.getEvaluator();
+          auto param = make_shared<Preprocess::ParamSet>();
+          for(auto &pa : paramArg) {
+            DynamicSystemSolver::throwIfExitRequested();
+            auto pos = pa.find('=');
+            (*param)[pa.substr(0, pos)]=eval->eval(pa.substr(pos+1));
+          }
+          preprocess.setParam(param);
+
+          // validate the project file with mbsimxml.xsd
+          mainXMLDoc = preprocess.processAndGetDocument();
+          if(AUTORELOADTIME>0)
+            dependencies = preprocess.getDependencies();
+        } // the variable "preprocess" is deleted here, hence the below mbsimXMLDoc.reset() deletes mbsimXMLDoc (see there)
 
         if(!ONLYPP) {
           if(!mbsimMXLModulesLoaded) {
@@ -432,6 +437,8 @@ int main(int argc, char *argv[]) {
           Atom::msgStatic(Atom::Info)<<"Instantiate Solver"<<endl;
           auto solver=unique_ptr<Solver>(ObjectFactory::createAndInit<Solver>(e->getNextElementSibling()));
 
+          mainXMLDoc.reset(); // this frees a lot of xerces memory before initializeing mbsim and starting the simulation
+
           // init dss
           if(doNotIntegrate)
             dss->setTruncateSimulationFiles(false);
@@ -439,9 +446,6 @@ int main(int argc, char *argv[]) {
 
           MBSimXML::main(solver, dss, doNotIntegrate, stopAfterFirstStep, savestatevector, savestatetable);
         }
-
-        if(AUTORELOADTIME>0)
-          dependencies = preprocess.getDependencies();
       }
       catch(const SilentMBSimError &ex) {
         Atom::msgStatic(Atom::Info)<<disableEscaping<<"Silent stop:"<<endl<<ex.what()<<enableEscaping<<endl;

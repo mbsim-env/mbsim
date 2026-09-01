@@ -3799,7 +3799,6 @@ DEF mbsimgui_outdated_switch Switch {
     QTimer::singleShot(0, [this]() { // delay it two times, since we really want this at the end (even after other singleShot(0, ...) idle timers)
       QTimer::singleShot(0, [this]() {
         garbageCollect = false;
-        cout<<"mfmf"<<endl;
         eval->garbageCollect();
       });
     });
