@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
+  <evaluator xmlns="http://www.mbsim-env.de/MBXMLUtils">python</evaluator>
+  <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
+    <Parameter>
+      <scalarParameter name="T1">1.5</scalarParameter>
+      <scalarParameter name="T2">250</scalarParameter>
+    </Parameter>
+    <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
+      <plotFeatureRecursive value="generalizedPosition">True</plotFeatureRecursive>
+      <plotFeatureRecursive value="generalizedVelocity">True</plotFeatureRecursive>
+      <plotFeatureRecursive value="generalizedRelativeVelocity">True</plotFeatureRecursive>
+      <plotFeatureRecursive value="ns1:signal" xmlns:ns1="http://www.mbsim-env.de/MBSimControl">True</plotFeatureRecursive>
+      <plotFeatureRecursive value="generalizedAcceleration">True</plotFeatureRecursive>
+      <frames>
+        <FixedRelativeFrame name="B">
+          <enableOpenMBV/>
+          <relativePosition unit="m">
+            <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <ele>1</ele>
+              <ele>0</ele>
+              <ele>0</ele>
+            </xmlVector>
+          </relativePosition>
+        </FixedRelativeFrame>
+      </frames>
+      <contours/>
+      <groups/>
+      <objects>
+        <RigidBody name="Antrieb">
+          <mass unit="kg">1</mass>
+          <inertiaTensor unit="kg*m^2">
+            <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <row>
+                <ele>T1</ele>
+                <ele>0</ele>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>0</ele>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>0</ele>
+                <ele>0.01</ele>
+              </row>
+            </xmlMatrix>
+          </inertiaTensor>
+          <stateDependentRotation>
+            <RotationAboutXAxis/>
+          </stateDependentRotation>
+          <frames/>
+          <contours/>
+          <openMBVRigidBody>
+            <Cylinder xmlns="http://www.mbsim-env.de/OpenMBV" name="Cylinder2">
+              <transparency unit="-">0.3</transparency>
+              <initialRotation unit="degree">
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>90</ele>
+                </xmlVector>
+              </initialRotation>
+              <radius unit="m">1</radius>
+              <height unit="m">1</height>
+            </Cylinder>
+          </openMBVRigidBody>
+          <enableOpenMBVFrameC/>
+        </RigidBody>
+        <RigidBody name="Abtrieb">
+          <frameOfReference ref="../Frame[B]"/>
+          <mass unit="kg">1</mass>
+          <inertiaTensor unit="kg*m^2">
+            <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <row>
+                <ele>T2</ele>
+                <ele>0</ele>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>0</ele>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>0</ele>
+                <ele>0.01</ele>
+              </row>
+            </xmlMatrix>
+          </inertiaTensor>
+          <stateDependentRotation>
+            <RotationAboutXAxis/>
+          </stateDependentRotation>
+          <frames/>
+          <contours/>
+          <openMBVRigidBody>
+            <Cylinder xmlns="http://www.mbsim-env.de/OpenMBV" name="Cylinder2">
+              <diffuseColor>
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <ele>0.333333</ele>
+                  <ele>1</ele>
+                  <ele>0.333333</ele>
+                </xmlVector>
+              </diffuseColor>
+              <transparency unit="-">0.3</transparency>
+              <initialRotation unit="degree">
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>90</ele>
+                </xmlVector>
+              </initialRotation>
+              <radius unit="m">1</radius>
+              <height unit="m">1</height>
+            </Cylinder>
+          </openMBVRigidBody>
+          <enableOpenMBVFrameC/>
+        </RigidBody>
+      </objects>
+      <links>
+        <KineticExcitation name="Torque">
+          <connect ref2="../Object[Antrieb]/Frame[C]"/>
+          <momentDirection unit="-">
+            <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <row>
+                <ele>1</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+              </row>
+            </xmlMatrix>
+          </momentDirection>
+          <momentFunction>
+            <ConstantFunction>
+              <a0>5</a0>
+            </ConstantFunction>
+          </momentFunction>
+          <enableOpenMBV/>
+        </KineticExcitation>
+        <FunctionSensor xmlns="http://www.mbsim-env.de/MBSimControl" name="Gear">
+          <function>
+            <PiecewiseDefinedFunction xmlns="http://www.mbsim-env.de/MBSim">
+              <limitedFunctions>
+                <LimitedFunction>
+                  <function>
+                    <ConstantFunction>
+                      <a0>1</a0>
+                    </ConstantFunction>
+                  </function>
+                  <limit>1</limit>
+                </LimitedFunction>
+                <LimitedFunction>
+                  <function>
+                    <ConstantFunction>
+                      <a0>2</a0>
+                    </ConstantFunction>
+                  </function>
+                  <limit>2</limit>
+                </LimitedFunction>
+                <LimitedFunction>
+                  <function>
+                    <ConstantFunction>
+                      <a0>1</a0>
+                    </ConstantFunction>
+                  </function>
+                  <limit>100</limit>
+                </LimitedFunction>
+              </limitedFunctions>
+            </PiecewiseDefinedFunction>
+          </function>
+        </FunctionSensor>
+        <GeneralizedTransmission name="Transmission" xmlns="http://www.mbsim-env.de/MBSim">
+          <connect ref1="../Object[Antrieb]" ref2="../Object[Abtrieb]"/>
+          <gearFunction>
+            <SignalFunction xmlns="http://www.mbsim-env.de/MBSimControl">
+              <returnSignal ref="../../Link[Gear]"/>
+            </SignalFunction>
+          </gearFunction>
+          <transmissions>
+            <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <ele>8</ele>
+              <ele>5</ele>
+            </xmlVector>
+          </transmissions>
+          <generalizedSynchronizationForce>10</generalizedSynchronizationForce>
+          <impulsiveSynchronization>False</impulsiveSynchronization>
+        </GeneralizedTransmission>
+      </links>
+      <constraints/>
+      <observers/>
+      <enableOpenMBVFrameI/>
+      <environments>
+        <MBSimEnvironment>
+          <accelerationOfGravity unit="m/s^2">
+            <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <ele>0</ele>
+              <ele>-9.81</ele>
+              <ele>0</ele>
+            </xmlVector>
+          </accelerationOfGravity>
+        </MBSimEnvironment>
+      </environments>
+    </DynamicSystemSolver>
+  </Embed>
+  <DOPRI5Integrator xmlns="http://www.mbsim-env.de/MBSim">
+    <startTime unit="s">0</startTime>
+    <endTime unit="s">3</endTime>
+    <plotStepSize unit="s">1e-2</plotStepSize>
+  </DOPRI5Integrator>
+</MBSimProject>
