@@ -6,7 +6,7 @@
 </span>
       <span class="MBSIMGUI_ERROR">Traceback (most recent call last):
 </span>
-      <span class="MBSIMGUI_ERROR">  File "&lt;inline Python code&gt;", line 24, in &lt;module&gt;
+      <span class="MBSIMGUI_ERROR">  File "&lt;inline Python code&gt;", line 18, in &lt;module&gt;
 </span>
       <span class="MBSIMGUI_ERROR">NameError: name 'error' is not defined. Did you mean: 'OSError'?
 </span>
