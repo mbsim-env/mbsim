@@ -32,38 +32,43 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, GeneralizedTransmission)
 
   GeneralizedTransmission::~GeneralizedTransmission() {
-    delete i;
+    delete g;
+  }
+
+  void GeneralizedTransmission::updateTransmission() {
+    int num = round((*g)(getTime()));
+    if(num < 1)
+      ratio[1] = 0;
+    else if(num > i.size())
+      ratio[1] = i(i.size()-1);
+    else
+      ratio[1] = i(num-1);
   }
 
   void GeneralizedTransmission::updateGeneralizedPositions() {
-    ratio[1] = (*i)(getTime());
     DualRigidBodyLink::updateGeneralizedPositions();
   }
 
   void GeneralizedTransmission::updateGeneralizedVelocities() {
-    ratio[1] = (*i)(getTime());
     DualRigidBodyLink::updateGeneralizedVelocities();
   }
 
   void GeneralizedTransmission::updateForce() {
-    ratio[1] = (*i)(getTime());
     DualRigidBodyLink::updateForce();
   }
 
   void GeneralizedTransmission::updateMoment() {
-    ratio[1] = (*i)(getTime());
     DualRigidBodyLink::updateMoment();
   }
 
   void GeneralizedTransmission::updateR() {
-    ratio[1] = (*i)(getTime());
     DualRigidBodyLink::updateR();
   }
 
   void GeneralizedTransmission::updateGeneralizedForces() {
     if(active)
       lambda = evalla();
-    else if(fabs(i0) <= gddTol)
+    else if(i0 == 0)
       lambda(0) = 0;
     else {
       Vec gd = evalGeneralizedRelativeVelocity();
@@ -75,21 +80,18 @@ namespace MBSim {
 
   void GeneralizedTransmission::updateh(int j) {
     if(not(active)) {
-      ratio[1] = (*i)(getTime());
       DualRigidBodyLink::updateh(j);
     }
   }
 
   void GeneralizedTransmission::updateW(int j) {
     if(laSize) {
-      ratio[1] = (*i)(getTime());
       DualRigidBodyLink::updateW(j);
     }
   }
 
   void GeneralizedTransmission::updatewb() {
     if(wb.size()) {
-      ratio[1] = (*i)(getTime());
       DualRigidBodyLink::updatewb();
     }
   }
@@ -125,25 +127,23 @@ namespace MBSim {
         throwError("rigid bodies must have 1 dof!");
     }
     DualRigidBodyLink::init(stage, config);
-    if(i) i->init(stage, config);
+    if(g) g->init(stage, config);
   }
 
   void GeneralizedTransmission::plot() {
     if(plotFeature[plotRecursive]) {
       if(plotFeature[generalizedRelativeVelocity]) {
-	Element::plot((*i)(getTime()));
+	Element::plot(ratio[1]);
       }
     }
     DualRigidBodyLink::plot();
   }
 
   void GeneralizedTransmission::updateStopVector() {
-    if(active or fabs(i0) <= gddTol)
-      sv(0) = (fabs((*i)(getTime())-i0)<=gddTol)?1:-1;
+    if(active or (i0 == 0))
+      sv(0) = (round((*g)(getTime())) == i0)? 1 : -1;
     else
       sv(0) = evalGeneralizedRelativeVelocity()(0);
-//    else
- //     sv(0) = 1;
   }
 
   void GeneralizedTransmission::calclaSize(int j) {
@@ -185,15 +185,18 @@ namespace MBSim {
   }
 
   void GeneralizedTransmission::checkActive(int j) {
-    i0 = (*i)(getTime());
     if (j == 1) {
       Vec gd = evalGeneralizedRelativeVelocity();
-      active = (fabs(i0) <= gddTol) ? false : (iSync ? true : ((fabs(gd(0)) <= gdTol) ? 1 : 0));
+      i0 = round((*g)(getTime()));
+      updateTransmission();
+      active = (i0 == 0) ? false : (iSync ? true : ((fabs(gd(0)) <= gdTol) ? 1 : 0));
       if (not active)
 	gdDir = gd(0)>0?1:-1;
     }
     else if (j == 6) {
       if (rootID == 3) {
+	i0 = round((*g)(getTime()));
+	updateTransmission();
 	active = true;
       }
     }
@@ -203,6 +206,8 @@ namespace MBSim {
     }
     else if (j == 8) {
       if (jsv(0) and rootID == 1) {
+	i0 = round((*g)(getTime()));
+	updateTransmission();
 	active = false;
 	Vec gd = evalGeneralizedRelativeVelocity();
 	gdDir = gd(0)>0?1:-1;
@@ -229,13 +234,13 @@ namespace MBSim {
     rootID = 0;
     if (jsv(0)) {
       if (iSync) {
-	if (fabs((*i)(getTime())) <= gddTol)
+	if ((*g)(getTime()) == 0)
 	  rootID = 1; // Kein Stoß, wenn neue Übersetzung Null ist
 	else
 	  rootID = 3;
       }
       else {
-	if (active or fabs(i0) <= gddTol) 
+	if (active or (i0 == 0))
 	  rootID = 1; // Synchronisation wenn sich Übersetzung ändert oder Null war
 	else
 	  rootID = 2;
@@ -359,8 +364,10 @@ namespace MBSim {
 
   void GeneralizedTransmission::initializeUsingXML(DOMElement *element) {
     DualRigidBodyLink::initializeUsingXML(element);
-    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"transmissionFunction");
-    setTransmissionFunction(ObjectFactory::createAndInit<Function<double(double)>>(e->getFirstElementChild()));
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"gearFunction");
+    setGearFunction(ObjectFactory::createAndInit<Function<double(double)>>(e->getFirstElementChild()));
+    e = E(element)->getFirstElementChildNamed(MBSIM%"transmissions");
+    setTransmissions(E(e)->getText<VecV>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"generalizedSynchronizationForce");
     setGeneralizedSynchronizationForce(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"impulsiveSynchronization");

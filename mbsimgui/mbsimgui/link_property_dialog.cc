@@ -462,19 +462,23 @@ namespace MBSimGUI {
 
   GeneralizedTransmissionPropertyDialog::GeneralizedTransmissionPropertyDialog(Element *friction) : DualRigidBodyLinkPropertyDialog(friction) {
 
-    transmissionFunction = new ExtWidget("Transmission function",new ChoiceWidget(new Function1ArgWidgetFactory(friction,"t",1,FunctionWidget::scalar,1,FunctionWidget::scalar,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"transmissionFunction");
-    addToTab("Kinetics",transmissionFunction);
+    gearFunction = new ExtWidget("Gear function",new ChoiceWidget(new Function1ArgWidgetFactory(friction,"t",1,FunctionWidget::scalar,1,FunctionWidget::scalar,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"gearFunction");
+    addToTab("Kinetics",gearFunction);
+
+    transmissions = new ExtWidget("Transmissions",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),false,false,MBSIM%"transmissions");
+    addToTab("Kinetics",transmissions);
 
     sForce = new ExtWidget("Generalized synchronization force",new ChoiceWidget(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),false,false,MBSIM%"generalizedSynchronizationForce");
     addToTab("Kinetics",sForce);
 
     iSync = new ExtWidget("Impulsive synchronization",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIM%"impulsiveSynchronization");
-    addToTab("Kinetics", iSync);
+    addToTab("Kinetics",iSync);
   }
 
   DOMElement* GeneralizedTransmissionPropertyDialog::initializeUsingXML(DOMElement *parent) {
     DualRigidBodyLinkPropertyDialog::initializeUsingXML(item->getXMLElement());
-    transmissionFunction->initializeUsingXML(item->getXMLElement());
+    gearFunction->initializeUsingXML(item->getXMLElement());
+    transmissions->initializeUsingXML(item->getXMLElement());
     sForce->initializeUsingXML(item->getXMLElement());
     iSync->initializeUsingXML(item->getXMLElement());
     return parent;
@@ -482,7 +486,8 @@ namespace MBSimGUI {
 
   DOMElement* GeneralizedTransmissionPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     DualRigidBodyLinkPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
-    transmissionFunction->writeXMLFile(item->getXMLElement(),ref);
+    gearFunction->writeXMLFile(item->getXMLElement(),ref);
+    transmissions->writeXMLFile(item->getXMLElement(),ref);
     sForce->writeXMLFile(item->getXMLElement(),ref);
     iSync->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;

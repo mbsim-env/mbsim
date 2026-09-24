@@ -29,12 +29,13 @@ namespace MBSim {
 
 class GeneralizedTransmission : public DualRigidBodyLink {
     protected:
-      Function<double(double)> *i{nullptr};
+      Function<double(double)> *g{nullptr};
+      fmatvec::VecV i;
       double sForce{1};
       bool iSync{false};
       unsigned int active{1};
       fmatvec::Vec gdn, gdd;
-      double i0{0};
+      int i0{0};
       int gdDir{1};
       int rootID{0};
     public:
@@ -53,7 +54,6 @@ class GeneralizedTransmission : public DualRigidBodyLink {
       void updategd() override;
       const double& evalgdn();
       const double& evalgdd();
-
       bool isActive() const override { return true; }
       bool gActiveChanged() override { return false; }
       bool isSetValued() const override { return true; }
@@ -61,12 +61,15 @@ class GeneralizedTransmission : public DualRigidBodyLink {
       void plot() override;
       void init(InitStage stage, const InitConfigSet &config) override;
 
-      void setTransmissionFunction(Function<double(double)> *i_) { 
-        i = i_; 
-        i->setParent(this);
+      void setTransmissions(const fmatvec::VecV i_) { i <<= i_; }
+      void setGearFunction(Function<double(double)> *g_) {
+        g = g_;
+        g->setParent(this);
       }
       void setGeneralizedSynchronizationForce(double sForce_) { sForce = sForce_; }
       void setImpulsiveSynchronization(bool iSync_) { iSync = iSync_; }
+
+      void updateTransmission();
 
       void updateStopVector() override;
       void calclaSize(int j) override;

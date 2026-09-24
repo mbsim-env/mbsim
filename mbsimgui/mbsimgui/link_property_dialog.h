@@ -184,7 +184,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *transmissionFunction, *sForce, *iSync;
+      ExtWidget *gearFunction, *transmissions, *sForce, *iSync;
   };
 
   class GeneralizedGearPropertyDialog : public RigidBodyLinkPropertyDialog {

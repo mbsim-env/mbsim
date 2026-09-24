@@ -2224,9 +2224,9 @@
     <xs:complexContent>
       <xs:extension base="DualRigidBodyLinkType">
         <xs:sequence>
-          <xs:element name="transmissionFunction" minOccurs="0">
+          <xs:element name="gearFunction">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-              Legt den zeitlichen Verlauf des Übersetzungsverhältnisses fest.
+              Definiert den Gang als Funktion über der Zeit.
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:choice>
@@ -2234,6 +2234,13 @@
                 <xs:element ref="pv:Embed"/>
               </xs:choice>
             </xs:complexType>
+          </xs:element>
+          <xs:element name="transmissions" type="pv:nounitVector">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert die Übersetzungen der einzelnen Gänge.
+              </xs:documentation>
+            </xs:annotation>
           </xs:element>
           <xs:element name="generalizedSynchronizationForce" type="pv:unknownScalar">
             <xs:annotation>
