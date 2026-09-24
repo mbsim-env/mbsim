@@ -1200,7 +1200,7 @@
           </xmlVector>
         </accelerationOfGravity>
         <openMBVObject>
-          <IvScreenAnnotation name="docu" xmlns="http://www.mbsim-env.de/OpenMBV">
+          <IvScreenAnnotation xmlns="http://www.mbsim-env.de/OpenMBV" name="docu">
             <scale1To1At>[-1, -1]</scale1To1At>
             <ivFileName>"docu.wrl"</ivFileName>
           </IvScreenAnnotation>

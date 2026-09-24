@@ -60,10 +60,10 @@
             import scipy.interpolate
             #import scipy.interpolate
             if lam==0:
-              # for lam==0 x,y is interpolated -> use CubicSpline which is faster then make_smoothing_spline(lam=0)
+              # for lam==0 x,y is interpolated -&gt; use CubicSpline which is faster then make_smoothing_spline(lam=0)
               return scipy.interpolate.CubicSpline(x,y,bc_type="natural")
             else:
-              # for a smoothing -> use make_smoothing_spline
+              # for a smoothing -&gt; use make_smoothing_spline
               return scipy.interpolate.PPoly.from_spline(scipy.interpolate.make_smoothing_spline(x, y, lam=lam))
               #sp=scipy.interpolate.splrep(x, y, s=lam)
               #return scipy.interpolate.PPoly.from_spline(sp)
@@ -84,6 +84,7 @@
             mbsimgui.setParameterUsingFileOrDirDialog(mbsimgui_parameter, "get my file", "Text files (*.txt);;All (*.*)", filename)
           ?>
           'subdir/dummy_b.txt'
+        
         </pv:stringParameter>
       </pv:Parameter>
       <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
