@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
-<IvBody name="{name}" xmlns="http://www.mbsim-env.de/OpenMBV">
+<IvBody xmlns="http://www.mbsim-env.de/OpenMBV" name="{name}">
   <initialTranslation>position</initialTranslation>
   <initialRotation>rotation</initialRotation>
-  <ivContent>
-<![CDATA[
+  <ivContent><![CDATA[
 ret=rf'''#VRML V2.0 utf8
 SepNoPick {{
   # These two materials are here to allow OpenMBV to adpat transparency values for highlighting.
@@ -170,6 +169,5 @@ SepNoPick {{
   }}
 }}
 '''
-]]>
-  </ivContent>
+]]></ivContent>
 </IvBody>

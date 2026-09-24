@@ -1,5 +1,5 @@
 MBS.mbsx:10: Python exception:
 Traceback (most recent call last):
-  File "<inline Python code>", line 24, in <module>
+  File "<inline Python code>", line 18, in <module>
 NameError: name 'error' is not defined. Did you mean: 'OSError'?
 

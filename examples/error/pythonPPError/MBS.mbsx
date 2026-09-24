@@ -8,14 +8,8 @@
     <objects>
       <RigidBody name="Rigid body">
         <mass unit="kg">
-
-          <?dummyPI a dummy processing instruction?>
-
-          <!-- a dummy comment -->
-
-          <?dummyPI a dummy processing instruction?>
-
-          <!-- a dummy comment -->
+          <?dummyPI a dummy processing instruction?><!-- a dummy comment -->
+          <?dummyPI a dummy processing instruction?><!-- a dummy comment -->
 
           "linea"
           "lineb"
@@ -23,15 +17,9 @@
           "linec"
           error
           "lined"
-
-          <?dummyPI a dummy processing instruction?>
-
-          <!-- a dummy comment -->
-
-          <?dummyPI a dummy processing instruction?>
-
-          <!-- a dummy comment -->
-
+        
+          <?dummyPI a dummy processing instruction?><!-- a dummy comment -->
+          <?dummyPI a dummy processing instruction?><!-- a dummy comment -->
         </mass>
         <inertiaTensor unit="kg*m^2">
           <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
