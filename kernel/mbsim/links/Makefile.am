@@ -34,7 +34,8 @@ liblink_la_SOURCES = link.cc\
                      tyre_contact.cc \
 		     initial_condition.cc \
 		     generalized_initial_position.cc \
-		     generalized_initial_velocity.cc
+		     generalized_initial_velocity.cc \
+		     generalized_transmission.cc
 
 liblink_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS) 
 liblink_la_LIBADD = $(LDFLAGS_NOUNDEF) $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS) 
@@ -73,4 +74,5 @@ linkinclude_HEADERS = link.h\
 		      tyre_contact.h \
 		      initial_condition.h \
 		      generalized_initial_position.h \
-		      generalized_initial_velocity.h
+		      generalized_initial_velocity.h \
+		      generalized_transmission.h

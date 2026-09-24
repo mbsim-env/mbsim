@@ -177,6 +177,16 @@ namespace MBSimGUI {
       ExtWidget *frictionForceLaw, *frictionImpactLaw, *normalForceFunction, *engagementFunction;
   };
 
+  class GeneralizedTransmissionPropertyDialog : public DualRigidBodyLinkPropertyDialog {
+
+    public:
+      GeneralizedTransmissionPropertyDialog(Element *link);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *transmissionFunction, *sForce, *iSync;
+  };
+
   class GeneralizedGearPropertyDialog : public RigidBodyLinkPropertyDialog {
 
     public:

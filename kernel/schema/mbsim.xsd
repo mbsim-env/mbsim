@@ -2215,6 +2215,45 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="GeneralizedTransmission" substitutionGroup="DualRigidBodyLink" type="GeneralizedTransmissionType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+      Generalisierte Kraftübertragung mit variabler Übersetzung.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="GeneralizedTransmissionType">
+    <xs:complexContent>
+      <xs:extension base="DualRigidBodyLinkType">
+        <xs:sequence>
+          <xs:element name="transmissionFunction" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Legt den zeitlichen Verlauf des Übersetzungsverhältnisses fest.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:choice>
+                <xs:element ref="Function"/>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="generalizedSynchronizationForce" type="pv:unknownScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert die generalisierte Kraft für die Synchronisation.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="impulsiveSynchronization" type="pv:booleanFullEval">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Legt fest, ob die Synchronisation schlagartig erfolgen soll.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="GeneralizedConnection" substitutionGroup="DualRigidBodyLink" type="GeneralizedConnectionType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
     tbd

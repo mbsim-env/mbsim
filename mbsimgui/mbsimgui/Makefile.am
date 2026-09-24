@@ -91,6 +91,7 @@ libmbsimgui_la_SOURCES = \
   embeditemdata.cc \
   analyzer.cc \
   clutch.cc \
+  transmission.cc \
   connection.cc \
   constraint.cc \
   contact.cc \
@@ -156,6 +157,7 @@ mbsimguiinclude_HEADERS = analyzer.h \
   body.h \
   clone_property_dialog.h \
   clutch.h \
+  transmission.h \
   connection.h \
   constraint.h \
   contact.h \
