@@ -147,6 +147,16 @@ namespace MBSimGUI {
       ExtWidget *forceDirection, *momentDirection, *function, *integrate;
   };
 
+  class GeneralizedForcePropertyDialog : public DualRigidBodyLinkPropertyDialog {
+
+    public:
+      GeneralizedForcePropertyDialog(Element *force);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *function;
+  };
+
   class GeneralizedSpringDamperPropertyDialog : public DualRigidBodyLinkPropertyDialog {
 
     public:

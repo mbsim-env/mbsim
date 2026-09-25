@@ -2078,6 +2078,31 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="GeneralizedForce" substitutionGroup="DualRigidBodyLink" type="GeneralizedForceType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+      Generalisierte Kraft, die auf einen Körper oder alternativ zwischen zwei Körpern wirkt.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="GeneralizedForceType">
+    <xs:complexContent>
+      <xs:extension base="DualRigidBodyLinkType">
+        <xs:sequence>
+          <xs:element name="generalizedForceFunction">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Definiert die Funktion der generalisierten Kraft über der Zeit.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:choice>
+                <xs:element ref="Function"/>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="GeneralizedSpringDamper" substitutionGroup="DualRigidBodyLink" type="GeneralizedSpringDamperType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
     tbd
@@ -2096,7 +2121,7 @@
                 <xs:element ref="Function"/>
                 <xs:element ref="pv:Embed"/>
               </xs:choice>
-            </xs:complexType> 
+            </xs:complexType>
           </xs:element>
           <xs:element name="generalizedUnloadedLength" type="pv:unknownScalar">
             <xs:annotation>

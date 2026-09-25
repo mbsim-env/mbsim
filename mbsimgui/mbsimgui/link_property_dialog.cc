@@ -409,6 +409,25 @@ namespace MBSimGUI {
     return nullptr;
   }
 
+  GeneralizedForcePropertyDialog::GeneralizedForcePropertyDialog(Element *force) : DualRigidBodyLinkPropertyDialog(force) {
+
+    function = new ExtWidget("Generalized Force function",new ChoiceWidget(new Function1ArgWidgetFactory(force,"t",1,FunctionWidget::scalar,1,FunctionWidget::fixedVec,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"generalizedForceFunction");
+
+    addToTab("Kinetics",function);
+  }
+
+  DOMElement* GeneralizedForcePropertyDialog::initializeUsingXML(DOMElement *parent) {
+    DualRigidBodyLinkPropertyDialog::initializeUsingXML(item->getXMLElement());
+    function->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* GeneralizedForcePropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DualRigidBodyLinkPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    function->writeXMLFile(item->getXMLElement(),ref);
+    return nullptr;
+  }
+
   GeneralizedSpringDamperPropertyDialog::GeneralizedSpringDamperPropertyDialog(Element *springDamper) : DualRigidBodyLinkPropertyDialog(springDamper) {
 
     function = new ExtWidget("Generalized force function",new ChoiceWidget(new SpringDamperWidgetFactory(springDamper,false,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"generalizedForceFunction");

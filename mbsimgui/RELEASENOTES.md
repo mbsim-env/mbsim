@@ -6,6 +6,7 @@ MBSim
 - Feature "contact point transformation" is removed from magic formula 62 as it leads to incorrect tyre moments.
 - Enable simulation at low speed for sharp model
 - Added a new link for transmission of generalized forces with variable ratio
+- Added a new link for a generalized force on a rigid body
 
 MBSimControl
 ------------

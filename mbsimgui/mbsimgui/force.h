@@ -17,18 +17,18 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#ifndef _TRANSMISSION__H_
-#define _TRANSMISSION__H_
+#ifndef _FORCE__H_
+#define _FORCE__H_
 
 #include "link_.h"
 #include "link_property_dialog.h"
 
 namespace MBSimGUI {
 
-  class GeneralizedTransmission : public DualRigidBodyLink {
-    MBSIMGUI_OBJECTFACTORY_CLASS(GeneralizedTransmission, DualRigidBodyLink, MBSIM%"GeneralizedTransmission", "Generalized transmission");
+  class GeneralizedForce : public DualRigidBodyLink {
+    MBSIMGUI_OBJECTFACTORY_CLASS(GeneralizedForce, DualRigidBodyLink, MBSIM%"GeneralizedForce", "Generalized force");
     public:
-      PropertyDialog* createPropertyDialog() override { return new GeneralizedTransmissionPropertyDialog(this); }
+      PropertyDialog* createPropertyDialog() override { return new GeneralizedForcePropertyDialog(this); }
   };
 
 }

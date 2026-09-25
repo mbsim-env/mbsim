@@ -92,6 +92,7 @@ libmbsimgui_la_SOURCES = \
   analyzer.cc \
   clutch.cc \
   transmission.cc \
+  force.cc \
   connection.cc \
   constraint.cc \
   contact.cc \
@@ -158,6 +159,7 @@ mbsimguiinclude_HEADERS = analyzer.h \
   clone_property_dialog.h \
   clutch.h \
   transmission.h \
+  force.h \
   connection.h \
   constraint.h \
   contact.h \
