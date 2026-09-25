@@ -41,11 +41,6 @@ class GeneralizedTransmission : public DualRigidBodyLink {
     public:
       GeneralizedTransmission(const std::string &name="") : DualRigidBodyLink(name), gdn(1), gdd(1) { }
       ~GeneralizedTransmission() override;
-      void updateGeneralizedPositions() override;
-      void updateGeneralizedVelocities() override;
-      void updateForce() override;
-      void updateMoment() override;
-      void updateR() override;
       void updateGeneralizedForces() override;
       void updateh(int i=0) override;
       void updateW(int i=0) override;

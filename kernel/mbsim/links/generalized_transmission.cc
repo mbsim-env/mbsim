@@ -36,33 +36,13 @@ namespace MBSim {
   }
 
   void GeneralizedTransmission::updateTransmission() {
-    int num = round((*g)(getTime()));
-    if(num < 1)
+    i0 = round((*g)(getTime()));
+    if(i0 < 1)
       ratio[1] = 0;
-    else if(num > i.size())
+    else if(i0 > i.size())
       ratio[1] = i(i.size()-1);
     else
-      ratio[1] = i(num-1);
-  }
-
-  void GeneralizedTransmission::updateGeneralizedPositions() {
-    DualRigidBodyLink::updateGeneralizedPositions();
-  }
-
-  void GeneralizedTransmission::updateGeneralizedVelocities() {
-    DualRigidBodyLink::updateGeneralizedVelocities();
-  }
-
-  void GeneralizedTransmission::updateForce() {
-    DualRigidBodyLink::updateForce();
-  }
-
-  void GeneralizedTransmission::updateMoment() {
-    DualRigidBodyLink::updateMoment();
-  }
-
-  void GeneralizedTransmission::updateR() {
-    DualRigidBodyLink::updateR();
+      ratio[1] = i(i0-1);
   }
 
   void GeneralizedTransmission::updateGeneralizedForces() {
@@ -186,16 +166,14 @@ namespace MBSim {
 
   void GeneralizedTransmission::checkActive(int j) {
     if (j == 1) {
-      Vec gd = evalGeneralizedRelativeVelocity();
-      i0 = round((*g)(getTime()));
       updateTransmission();
+      Vec gd = evalGeneralizedRelativeVelocity();
       active = (i0 == 0) ? false : (iSync ? true : ((fabs(gd(0)) <= gdTol) ? 1 : 0));
       if (not active)
 	gdDir = gd(0)>0?1:-1;
     }
     else if (j == 6) {
       if (rootID == 3) {
-	i0 = round((*g)(getTime()));
 	updateTransmission();
 	active = true;
       }
@@ -206,7 +184,6 @@ namespace MBSim {
     }
     else if (j == 8) {
       if (jsv(0) and rootID == 1) {
-	i0 = round((*g)(getTime()));
 	updateTransmission();
 	active = false;
 	Vec gd = evalGeneralizedRelativeVelocity();
