@@ -1319,6 +1319,7 @@
               <xs:attribute name="destination" type="pv:stringFullEval" use="required"/>
               <xs:attribute name="signal" type="SignalReferenceType" use="required"/>
               <xs:attribute name="threshold" type="pv:floatFullEval" use="optional"/>
+              <xs:attribute name="direction" type="pv:floatFullEval" use="optional"/>
             </xs:complexType>
           </xs:element>
           <xs:element name="initialState" type="pv:stringFullEval" minOccurs="0">
@@ -1326,6 +1327,7 @@
               Anfangszustand.
             </xs:documentation></xs:annotation>
           </xs:element>
+	  <xs:element name="rootFinding" type="pv:booleanFullEval" minOccurs="0"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>

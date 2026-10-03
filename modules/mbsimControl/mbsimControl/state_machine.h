@@ -32,10 +32,13 @@ namespace MBSimControl {
    */
   class StateMachine : public Signal {
     struct Transition {
-      Transition(int dest_, Signal *sig_, double s0_) : dest(dest_), sig(sig_), s0(s0_) { }
+      Transition(int dest_, Signal *sig_, double s0_, int dir_) : dest(dest_), sig(sig_), s0(s0_), dir(dir_) { }
       int dest;
       Signal *sig;
       double s0;
+      int dir;
+      double newSig{0};
+      double oldSig{0};
       std::string signalStr;
     };
     struct State {
@@ -51,8 +54,9 @@ namespace MBSimControl {
       void initializeUsingXML(xercesc::DOMElement *element) override;
       void init(InitStage stage, const MBSim::InitConfigSet &config) override;
       void addState(const std::string &name, double val) { state.emplace_back(State(name,val)); }
-      Transition& addTransition(const std::string &name, const std::string &dest, Signal *sig, double s0=0);
+      Transition& addTransition(const std::string &name, const std::string &dest, Signal *sig, double s0=0, int dir=0);
       void setInitialState(const std::string &name);
+      void setRootFinding(bool rf_) { rf = rf_; }
       const State& getActiveState() const { return state[int(curis(0))]; }
       void updateSignal() override;
       int getSignalSize() const override { return 1; }
@@ -60,10 +64,12 @@ namespace MBSimControl {
       void calcsvSize() override;
       void updateStopVector() override;
       void checkActive(int j) override;
+      void aboutToUpdateInternalState() override;
 
     private:
       std::vector<State> state;
       std::vector<Transition> transition;
+      bool rf{false};
       std::string stateStr;
   };
 
