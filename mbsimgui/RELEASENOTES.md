@@ -73,6 +73,7 @@ H5Plotserie
 -----------
 - A mouse alt-left-click now replaces the x-axis of all curves of the current windows with the selection one.
 - Added file drop event (move files from file-explorer to H5PlotSerie window)
+- Allow smaller size for plot windows
 
 hdf5serie
 ---------
