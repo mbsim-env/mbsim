@@ -322,16 +322,18 @@ namespace MBSimGUI {
       void setDestination(const QString &dest_);
       void setSignal(const QString &sig_);
       void setThreshold(const QString &th_);
+      void setDirection(const QString &dir_);
       QString getSource() const;
       QString getDestination() const;
       QString getSignal() const;
       QString getThreshold() const;
+      QString getDirection() const;
       void setStringList(const std::vector<QString> &list);
     private:
       void reset();
       void showEvent(QShowEvent *event) override;
       void hideEvent(QHideEvent *event) override;
-      ExtWidget *src, *dest, *sig, *th;
+      ExtWidget *src, *dest, *sig, *th, *dir;
   };
 
   class LineEditDialog : public QDialog {

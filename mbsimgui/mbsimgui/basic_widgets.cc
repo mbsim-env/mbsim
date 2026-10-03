@@ -1475,11 +1475,12 @@ namespace MBSimGUI {
     tree = new QTreeWidget;
     tree->setMinimumSize(300,200);
     tree->setContextMenuPolicy(Qt::CustomContextMenu);
-    tree->setHeaderLabels({"Source","Destination","Signal","Threshold"});
+    tree->setHeaderLabels({"Source","Destination","Signal","Threshold","Direction"});
     tree->setColumnWidth(0,150);
     tree->setColumnWidth(1,150);
     tree->setColumnWidth(2,300);
     tree->setColumnWidth(3,80);
+    tree->setColumnWidth(4,80);
     connect(tree, &QTreeWidget::customContextMenuRequested,this,&TransitionWidget::openMenu);
     layout->addWidget(tree,0,0,5,1);
 
@@ -1513,6 +1514,7 @@ namespace MBSimGUI {
       item->setText(1, dialog->getDestination());
       item->setText(2, dialog->getSignal());
       item->setText(3, dialog->getThreshold());
+      item->setText(4, dialog->getDirection());
     }
   }
 
@@ -1532,6 +1534,7 @@ namespace MBSimGUI {
       dialog->setDestination(item->text(1));
       dialog->setSignal(item->text(2));
       dialog->setThreshold(item->text(3));
+      dialog->setDirection(item->text(4));
       dialog->show();
     }
   }
@@ -1596,6 +1599,7 @@ namespace MBSimGUI {
       item->setText(1, QString::fromStdString(E(e)->getAttributeQName("destination").second));
       item->setText(2, QString::fromStdString(E(e)->getAttributeQName("signal").second));
       item->setText(3, QString::fromStdString(E(e)->getAttributeQName("threshold").second));
+      item->setText(4, QString::fromStdString(E(e)->getAttributeQName("direction").second));
       tree->addTopLevelItem(item);
       e=e->getNextElementSibling();
     }
@@ -1610,7 +1614,10 @@ namespace MBSimGUI {
       E(ele)->setAttribute("source",tree->topLevelItem(i)->text(0).toStdString());
       E(ele)->setAttribute("destination",tree->topLevelItem(i)->text(1).toStdString());
       E(ele)->setAttribute("signal",tree->topLevelItem(i)->text(2).toStdString());
-      E(ele)->setAttribute("threshold",tree->topLevelItem(i)->text(3).toStdString());
+      if(not tree->topLevelItem(i)->text(3).isEmpty())
+	E(ele)->setAttribute("threshold",tree->topLevelItem(i)->text(3).toStdString());
+      if(not tree->topLevelItem(i)->text(4).isEmpty())
+	E(ele)->setAttribute("direction",tree->topLevelItem(i)->text(4).toStdString());
       parent->insertBefore(ele, ref);
     }
     return nullptr;
