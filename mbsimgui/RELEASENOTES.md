@@ -7,6 +7,7 @@ MBSim
 - Enable simulation at low speed for sharp model
 - Added a new link for transmission of generalized forces with variable ratio
 - Added a new link for a generalized force on a rigid body
+- Root finding is now optional for state machines
 
 MBSimControl
 ------------
