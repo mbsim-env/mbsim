@@ -88,10 +88,6 @@ namespace MBSim {
     if(stage==preInit) {
       if(not model)
 	throwError("(TyreContact::init): tyre model must be defined");
-      if(model->motorcycleKinematics() and dynamic_cast<Tyre*>(contour[1])) {
-        if(static_cast<Tyre*>(contour[1])->getShapeOfCrossSectionContour()==Tyre::flat)
-          throwError("(TyreContact::init): shape of tyre contour must be circular or elliptical");
-      }
       DF.resize(3,NONINIT);
       DM.resize(model->getDMSize(),NONINIT);
       iF = RangeV(0,2);
@@ -174,7 +170,7 @@ namespace MBSim {
         cFrame[0]->getOrientation(false).set(1, crossProduct(Wn,nx));
         cFrame[0]->getOrientation(false).set(2, Wn);
         cFrame[1]->setOrientation(cFrame[0]->getOrientation(false));
-        if(model->motorcycleKinematics()) {
+        if(model->motorcycleKinematics() and tyre->getShapeOfCrossSectionContour()!=Tyre::flat) {
           if(tyre->getShapeOfCrossSectionContour()==Tyre::circular) {
             double rc = model->getContourParameters()(0);
             Vec WrCW = tyre->getFrame()->getPosition() - ((r-rc)/nrm2(Wc))*Wc;
@@ -210,7 +206,7 @@ namespace MBSim {
         cFrame[0]->setPosition(cFrame[1]->getPosition(false) - Wn*max(g,0.));
       }
       else {
-        if(model->motorcycleKinematics()) {
+	if(model->motorcycleKinematics() and tyre->getShapeOfCrossSectionContour()!=Tyre::flat) {
           if(tyre->getShapeOfCrossSectionContour()==Tyre::circular) {
             double rc = model->getContourParameters()(0);
             auto func = new FuncPairSpatialContourCircularShape(r,rc,tyre,contour[0]);
