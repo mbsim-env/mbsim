@@ -1393,15 +1393,16 @@ namespace MBSimGUI {
     int n = num - tree->topLevelItemCount();
     if(n>0) {
       for(int i=0; i<n; i++) {
-       auto *item = new QTreeWidgetItem({"\"New state\"","0"});
-       item->setFlags(item->flags() | Qt::ItemIsEditable);
-       tree->addTopLevelItem(item);
-       tree->setCurrentItem(item);
+        auto *item = new QTreeWidgetItem({"\"New state\"","0"});
+        item->setFlags(item->flags() | Qt::ItemIsEditable);
+        tree->addTopLevelItem(item);
+        tree->setCurrentItem(item);
       }
+      Q_EMIT widgetChanged();
     }
     else if(n<0) {
       for(int i=0; i<-n; i++)
-       delete tree->takeTopLevelItem(tree->topLevelItemCount()-1);
+        delete tree->takeTopLevelItem(tree->topLevelItemCount()-1);
       Q_EMIT widgetChanged();
     }
   }
