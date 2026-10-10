@@ -1274,7 +1274,7 @@ namespace MBSimGUI {
 
   void MainWindow::loadProject() {
     if(maybeSave()) {
-      QString file=QFileDialog::getOpenFileName(this, "Open MBSim file", QFileInfo(getProjectFilePath()).absolutePath(), "MBSim files (*.mbsx);;XML files (*.xml);;All files (*.*)");
+      QString file=QFileDialog::getOpenFileName(this, "Open MBSim file", getProjectPath(), "MBSim files (*.mbsx);;XML files (*.xml);;All files (*.*)");
       if(file.startsWith("//"))
         file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
       if(not file.isEmpty())
@@ -1283,7 +1283,7 @@ namespace MBSimGUI {
   }
 
   bool MainWindow::saveProjectAs() {
-    QString file=QFileDialog::getSaveFileName(this, "Save MBSim file", getProjectFilePath(), "MBSim files (*.mbsx)");
+    QString file=QFileDialog::getSaveFileName(this, "Save MBSim file", getProjectPath(), "MBSim files (*.mbsx)");
     if(not(file.isEmpty())) {
       file = file.endsWith(".mbsx")?file:file+".mbsx";
       if(file.startsWith("//"))
@@ -3354,8 +3354,12 @@ DEF mbsimgui_outdated_switch Switch {
   }
 
   void MainWindow::createFMU() {
-    QFileInfo projectFile = QFileInfo(getProjectFilePath());
-    CreateFMUDialog dialog(projectFile.absolutePath()+"/"+projectFile.baseName()+".fmu");
+    QString fmuFileName;
+    if(projectFile.endsWith(QString::fromStdString(NO_FILENAME)))
+      fmuFileName = "MBS.fmu";
+    else
+      fmuFileName = QFileInfo(projectFile).baseName()+".fmu";
+    CreateFMUDialog dialog(getProjectDir().absoluteFilePath(fmuFileName));
     int result = dialog.exec();
     if(result) {
       if(not dialog.getFileName().isEmpty()) {
@@ -3487,11 +3491,6 @@ DEF mbsimgui_outdated_switch Switch {
     }
     else if(!singleShot.isActive())
       singleShot.start(last+delta-cur);
-  }
-
-  QString MainWindow::getProjectFilePath() const {
-    auto docFilename = D(doc)->getDocumentFilename();
-    return docFilename.string().c_str();
   }
 
   void MainWindow::openMBVObjectDoubleClicked(std::string name, OpenMBVGUI::Object* obj) {
@@ -3642,7 +3641,7 @@ DEF mbsimgui_outdated_switch Switch {
   }
 
   void MainWindow::convertDocument() {
-    QString file=QFileDialog::getOpenFileName(this, "Open MBSim file", getProjectFilePath(), "MBSim files (*.mbsx);;MBSim model files (*.mbsmx);;XML files (*.xml);;All files (*.*)");
+    QString file=QFileDialog::getOpenFileName(this, "Open MBSim file", getProjectPath(), "MBSim files (*.mbsx);;MBSim model files (*.mbsmx);;XML files (*.xml);;All files (*.*)");
     if(not(file.isEmpty())) {
       auto doc = mbxmlparserNoVal->parse(file.toStdString());
       if(!doc) {

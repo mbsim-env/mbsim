@@ -845,7 +845,7 @@ namespace MBSimGUI {
 
   void FlexibleBodyTool::load() {
     restart();
-    QString file=QFileDialog::getOpenFileName(this, "Open finite elements input data file", QFileInfo(mw->getProjectFilePath()).absolutePath(), "XML files (*.xml);;All files (*.*)");
+    QString file=QFileDialog::getOpenFileName(this, "Open finite elements input data file", mw->getProjectPath(), "XML files (*.xml);;All files (*.*)");
     if(file.startsWith("//"))
       file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
     if(not file.isEmpty()) {
