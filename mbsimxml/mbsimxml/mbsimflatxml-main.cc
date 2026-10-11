@@ -22,10 +22,6 @@ using namespace std;
 using namespace MBSim;
 using namespace fmatvec;
 
-namespace MBSim {
-  extern int baseIndexForPlot;
-}
-
 int main(int argc, char *argv[]) {
 #ifdef _WIN32
   SetConsoleCP(CP_UTF8);
