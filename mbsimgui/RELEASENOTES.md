@@ -7,6 +7,7 @@ MBSim
 - Enable simulation at low speed for sharp model
 - Added a new link for transmission of generalized forces with variable ratio
 - Added a new link for a generalized force on a rigid body
+- Root finding is now optional for state machines
 
 MBSimControl
 ------------
@@ -72,6 +73,7 @@ H5Plotserie
 -----------
 - A mouse alt-left-click now replaces the x-axis of all curves of the current windows with the selection one.
 - Added file drop event (move files from file-explorer to H5PlotSerie window)
+- Allow smaller size for plot windows
 
 hdf5serie
 ---------

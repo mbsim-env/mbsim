@@ -708,6 +708,9 @@ namespace MBSimGUI {
 
     initialState = new ExtWidget("Initial state",new TextChoiceWidget(vector<QString>(),0,true),true,false,MBSIMCONTROL%"initialState");
     addToTab("Initial conditions", initialState);
+
+    rootFinding = new ExtWidget("Root finding",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"rootFinding");
+    addToTab("General", rootFinding);
   }
 
   void StateMachinePropertyDialog::updateWidget() {
@@ -721,6 +724,7 @@ namespace MBSimGUI {
     updateWidget();
     transition->initializeUsingXML(item->getXMLElement());
     initialState->initializeUsingXML(item->getXMLElement());
+    rootFinding->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
@@ -729,6 +733,7 @@ namespace MBSimGUI {
     state->writeXMLFile(item->getXMLElement(),ref);
     transition->writeXMLFile(item->getXMLElement(),ref);
     initialState->writeXMLFile(item->getXMLElement(),ref);
+    rootFinding->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 

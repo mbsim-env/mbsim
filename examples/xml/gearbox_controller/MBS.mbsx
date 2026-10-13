@@ -29,7 +29,6 @@
           </relativePosition>
         </FixedRelativeFrame>
         <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="6" counterName="n">
-          <Parameter/>
           <FixedRelativeFrame xmlns="http://www.mbsim-env.de/MBSim" name="Z{n}">
             <enableOpenMBV>
               <size unit="cm">1</size>
@@ -377,7 +376,6 @@
                 </enableOpenMBVFrameC>
               </RigidBody>
               <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="6" counterName="n">
-                <Parameter/>
                 <RigidBody xmlns="http://www.mbsim-env.de/MBSim" name="Gearwheel{n}">
                   <frameOfReference ref="../../Frame[Z{n}]"/>
                   <mass unit="kg">0</mass>
@@ -633,7 +631,6 @@
                 </generalizedNormalForceFunction>
               </GeneralizedClutch>
               <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="6" counterName="n">
-                <Parameter/>
                 <GeneralizedClutch xmlns="http://www.mbsim-env.de/MBSim" name="GearClutch{n}">
                   <connect ref1="../Object[OutputShaft]" ref2="../Object[Gearwheel{n}]"/>
                   <generalizedFrictionForceLaw>
@@ -659,7 +656,6 @@
                 </GeneralizedClutch>
               </Embed>
               <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="6" counterName="n">
-                <Parameter/>
                 <Demultiplexer xmlns="http://www.mbsim-env.de/MBSimControl" name="GearClutchSignal{n}">
                   <inputSignal ref="../Link[GearClutchController]"/>
                   <indices>
@@ -681,7 +677,6 @@
             </links>
             <constraints>
               <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="6" counterName="n">
-                <Parameter/>
                 <GeneralizedGearConstraint xmlns="http://www.mbsim-env.de/MBSim" name="GeneralizedGearConstraint{n}">
                   <dependentRigidBody ref="../Object[Gearwheel{n}]"/>
                   <independentRigidBody ratio="-1/iG(n)" ref="../Object[IntermediateShaft]"/>
@@ -819,6 +814,7 @@
                 <transition destination="'steadystate'" signal="../Link[TimeElapsedUpshift]" source="'upshift'" threshold="tEnd"/>
                 <transition destination="'downshift'" signal="../Link[DownshiftRequest]" source="'steadystate'" threshold="tS"/>
                 <transition destination="'steadystate'" signal="../Link[TimeElapsedDownshift]" source="'downshift'" threshold="tEnd"/>
+                <rootFinding>true</rootFinding>
               </StateMachine>
               <StateMachine xmlns="http://www.mbsim-env.de/MBSimControl" name="ClutchState">
                 <state name="'open'" value="-1"/>
@@ -828,6 +824,7 @@
                 <transition destination="'open'" signal="../Link[TimeElapsedDownshift]" source="'closed'" threshold="tCde"/>
                 <transition destination="'closed'" signal="../Link[TimeElapsedDownshift]" source="'open'" threshold="tCen"/>
                 <initialState>'closed'</initialState>
+                <rootFinding>true</rootFinding>
               </StateMachine>
               <StateMachine xmlns="http://www.mbsim-env.de/MBSimControl" name="GearState">
                 <state name="'first'" value="1"/>
@@ -846,6 +843,7 @@
                 <transition destination="'third'" signal="../Link[TimeElapsedDownshift]" source="'fourth'" threshold="tG"/>
                 <transition destination="'fourth'" signal="../Link[TimeElapsedDownshift]" source="'fifth'" threshold="tG"/>
                 <transition destination="'fifth'" signal="../Link[TimeElapsedDownshift]" source="'sixth'" threshold="tG"/>
+                <rootFinding>true</rootFinding>
               </StateMachine>
               <StateMachine xmlns="http://www.mbsim-env.de/MBSimControl" name="EngineSignal">
                 <state name="'off'" value="0"/>
@@ -855,6 +853,7 @@
                 <transition destination="'off'" signal="../Link[TimeElapsedDownshift]" source="'on'" threshold="tEoff"/>
                 <transition destination="'on'" signal="../Link[TimeElapsedDownshift]" source="'off'" threshold="tEon"/>
                 <initialState>'on'</initialState>
+                <rootFinding>true</rootFinding>
               </StateMachine>
               <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
                 <Parameter>

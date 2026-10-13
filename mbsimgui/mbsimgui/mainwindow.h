@@ -250,9 +250,8 @@ namespace MBSimGUI {
       const std::pair<Parameter*,bool>& getParameterBuffer() const { return parameterBuffer; }
       Project* getProject() { return project; }
       QString getProjectFile() const { return projectFile; }
-      QString getProjectFilePath() const;
-      QString getProjectPath() const { return QFileInfo(getProjectFilePath()).canonicalPath(); }
-      QDir getProjectDir() const { return QFileInfo(getProjectFilePath()).dir(); }
+      QString getProjectPath() const { return QFileInfo(getProjectFile()).canonicalPath(); }
+      QDir getProjectDir() const { return QFileInfo(getProjectFile()).dir(); }
       bool getAutoRefresh() const;
 
       bool editorIsOpen() const { return openedEditors > 0; }

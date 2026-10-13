@@ -1619,6 +1619,8 @@ namespace MBSimGUI {
     layout->addWidget(sig);
     th = new ExtWidget("Threshold",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5));
     layout->addWidget(th);
+    dir = new ExtWidget("Direction",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5));
+    layout->addWidget(dir);
     layout->addStretch(1);
     QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
     buttonBox->addButton(QDialogButtonBox::Ok);
@@ -1646,6 +1648,10 @@ namespace MBSimGUI {
     th->getFirstWidget<VariableWidget>()->setValue(th_);
   }
 
+  void TransitionDialog::setDirection(const QString &dir_) {
+    dir->getFirstWidget<VariableWidget>()->setValue(dir_);
+  }
+
   QString TransitionDialog::getSource() const {
     return src->getWidget<TextChoiceWidget>()->getText();
   }
@@ -1660,6 +1666,10 @@ namespace MBSimGUI {
 
   QString TransitionDialog::getThreshold() const {
     return th->getFirstWidget<VariableWidget>()->getValue();
+  }
+
+  QString TransitionDialog::getDirection() const {
+    return dir->getFirstWidget<VariableWidget>()->getValue();
   }
 
   void TransitionDialog::setStringList(const vector<QString> &list) {

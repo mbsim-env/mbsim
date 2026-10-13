@@ -555,7 +555,7 @@ namespace MBSimGUI {
     gearInput = new ExtWidget("Gear inputs",new ElementsOfReferenceWidget<RigidBody>(MBSIM%"gearInput",link,1,100,true,this),false,false,"",true);
     addToTab("General",gearInput);
 
-    function = new ExtWidget("Generalized force law",new ChoiceWidget(new WidgetFactoryFor<GeneralizedForceLawWidget>,QBoxLayout::TopToBottom,0),true,false,MBSIM%"generalizedForceLaw");
+    function = new ExtWidget("Generalized force law",new ChoiceWidget(new WidgetFactoryFor<GeneralizedForceLawWidget>,QBoxLayout::TopToBottom,0),false,false,MBSIM%"generalizedForceLaw");
     addToTab("Kinetics",function);
   }
 
