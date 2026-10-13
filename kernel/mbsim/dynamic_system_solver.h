@@ -546,8 +546,9 @@ namespace MBSim {
       fmatvec::Mat dhdx();
       fmatvec::Vec dhdt();
 
-      void setRootID(int ID) {rootID = ID;}
-      int getRootID() const {return rootID;}
+      void checkRoot() { rootID=0; Group::checkRoot(); }
+      int getRootID() { return rootID; }
+      void updateRootID(int ID) { rootID = std::max(rootID, ID); }
 
       void resetUpToDate() override;
 
@@ -903,8 +904,6 @@ namespace MBSim {
 
       fmatvec::Vec corrParent;
 
-      int rootID;
-
       double gTol, gdTol, gddTol, laTol, LaTol;
 
       bool updT, updh[2], updr[2], updJrla[2], updrdt, updM, updLLM, updW[2], updV[2], updwb, updg, updgd, updG, updbc, updbi, updsv, updzd, updla, updLa, upddq, upddu, upddx;
@@ -920,6 +919,8 @@ namespace MBSim {
       int cacheSize { H5::File::getDefaultCacheSize() };
 
     private:
+      int rootID;
+
       /**
        * \brief handler for user interrupt signal
        * Set the DSS flag exitRequest to true.

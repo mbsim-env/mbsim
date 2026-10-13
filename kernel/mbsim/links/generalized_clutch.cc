@@ -319,7 +319,7 @@ namespace MBSim {
       else
         rootID = 2; // contact was sliding -> sticking
     }
-    ds->setRootID(max(ds->getRootID(), rootID));
+    ds->updateRootID(rootID);
   }
 
   void GeneralizedClutch::updaterFactors() {

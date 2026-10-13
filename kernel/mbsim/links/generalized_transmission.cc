@@ -223,7 +223,7 @@ namespace MBSim {
 	  rootID = 2;
       }
     }
-    ds->setRootID(max(ds->getRootID(), rootID));
+    ds->updateRootID(rootID);
   }
 
   void GeneralizedTransmission::updaterFactors() {

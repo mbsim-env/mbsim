@@ -686,11 +686,11 @@ namespace MBSimHydraulics {
     if(jsv(0)) {
       if(active) {
         active = false;
-        ds->setRootID(max(ds->getRootID(),1)); 
+        ds->updateRootID(1); 
       }
       else {
         active = true;
-        ds->setRootID(max(ds->getRootID(),3)); // Impact
+        ds->updateRootID(3); // Impact
       }
     }
   }

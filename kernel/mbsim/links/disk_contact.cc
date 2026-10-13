@@ -1109,7 +1109,7 @@ namespace MBSim {
       else
         rootID = 2; // contact was sliding -> sticking
     }
-    ds->setRootID(max(ds->getRootID(), rootID));
+    ds->updateRootID(rootID);
   }
 
   void DiskContact::LinearImpactEstimation(double t, Vec &gInActive_, Vec &gdInActive_, int *IndInActive_, Vec &gAct_, int *IndActive_) {
