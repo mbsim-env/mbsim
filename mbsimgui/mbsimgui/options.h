@@ -67,8 +67,6 @@ namespace MBSimGUI {
       void setPlugins(const QString &path);
       int getDefaultEvaluator() const;
       void setDefaultEvaluator(int index);
-      int getBaseIndexForPlot() const;
-      void setBaseIndexForPlot(int index);
       QString getModulePath() const;
       void setModulePath(const QString &path);
     private:

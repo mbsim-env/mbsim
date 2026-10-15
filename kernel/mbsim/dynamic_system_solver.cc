@@ -95,7 +95,7 @@ namespace MBSim {
     return sys->evalzd();
   }
 
-  DynamicSystemSolver::DynamicSystemSolver(const string &name) : Group(name), t(0), dt(0), maxIter(10000), highIter(1000), maxDampingSteps(3), iterc(0), iteri(0), lmParm(0.001), smoothSolver(direct), contactSolver(fixedpoint), impactSolver(fixedpoint), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), peds(false), tolProj(1e-12), alwaysConsiderContact(true), inverseKinetics(false), initialProjection(true), determineEquilibriumState(false), useConstraintSolverForPlot(false), rootID(0), updT(true), updrdt(true), updM(true), updLLM(true), updwb(true), updg(true), updgd(true), updG(true), updbc(true), updbi(true), updsv(true), updzd(true), updla(true), updLa(true), upddq(true), upddu(true), upddx(true), useSmoothSolver(false), qdequ(true), READZ0(false), truncateSimulationFiles(true), facSizeGs(1) {
+  DynamicSystemSolver::DynamicSystemSolver(const string &name) : Group(name), t(0), dt(0), maxIter(10000), highIter(1000), maxDampingSteps(3), iterc(0), iteri(0), lmParm(0.001), smoothSolver(direct), contactSolver(fixedpoint), impactSolver(fixedpoint), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), peds(false), tolProj(1e-12), alwaysConsiderContact(true), inverseKinetics(false), initialProjection(true), determineEquilibriumState(false), useConstraintSolverForPlot(false), updT(true), updrdt(true), updM(true), updLLM(true), updwb(true), updg(true), updgd(true), updG(true), updbc(true), updbi(true), updsv(true), updzd(true), updla(true), updLa(true), upddq(true), upddu(true), upddx(true), useSmoothSolver(false), qdequ(true), READZ0(false), truncateSimulationFiles(true), facSizeGs(1) {
     for(int i=0; i<2; i++) {
       updh[i] = true;
       updr[i] = true;
@@ -1688,7 +1688,7 @@ namespace MBSim {
     useSmoothSolver = false;
 
     checkRoot();
-    if (getRootID() == 3) { // impact (velocity jump)
+    if (rootID == 3) { // impact (velocity jump)
       bool saveUseOldLa = useOldla;
       useOldla = false;
 
@@ -1739,7 +1739,7 @@ namespace MBSim {
       }
       useOldla = saveUseOldLa;
     }
-    else if (getRootID() == 2) { // transition from slip to stick (acceleration jump)
+    else if (rootID == 2) { // transition from slip to stick (acceleration jump)
       //msg(Info) << "haften" << endl;
       checkActive(7); // decide which contacts may stick
 
@@ -1761,7 +1761,7 @@ namespace MBSim {
         if(velProjWasCalled) velProjWasCalled->get()=true;
       }
     }
-    else if (getRootID() == 1) { // contact opens or transition from stick to slip
+    else if (rootID == 1) { // contact opens or transition from stick to slip
       checkActive(8);
 
       projectGeneralizedPositions(1);
@@ -1779,7 +1779,6 @@ namespace MBSim {
     updatewbRef(wbParent);
     updaterFactorRef(rFactorParent);
 
-    setRootID(0);
     return zParent;
   }
 
