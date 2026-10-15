@@ -428,7 +428,7 @@ namespace MBSimGUI {
 
   void CompositeFunctionWidget::updateWidget() {
     int size = fo->getFirstWidget<FunctionWidget>()->getArg1Size();
-    fi->getWidget<FunctionWidget>()->resize_(size,1);
+    fi->getFirstWidget<FunctionWidget>()->resize_(size,1);
   }
 
   void CompositeFunctionWidget::updateFunctionFactory() {
