@@ -710,6 +710,7 @@ namespace MBSimGUI {
 
     choice = new ChoiceWidget(new PiecewisePolynomFunctionWidgetFactory(retDim,retType),QBoxLayout::TopToBottom,5);
     layout->addWidget(choice);
+    connect(choice,&ChoiceWidget::widgetChanged,this,&PiecewisePolynomFunctionWidget::widgetChanged);
 
     vector<QString> list2;
     list2.emplace_back("\"error\"");
