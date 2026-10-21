@@ -624,6 +624,7 @@ namespace MBSim {
       void updateInternalState();
 
       void plot() override;
+      bool isPlotting() { return plottingTask; }
 
       void postprocessing() override;
 
@@ -971,6 +972,7 @@ namespace MBSim {
       MBSimEnvironment *mbsimEnvironment = nullptr;
 
       size_t plottedRows { 0 };
+      bool plottingTask { false };
 
       std::unique_ptr<MultiDimNewtonMethod> nonlinearConstraintNewtonSolver;
       std::unique_ptr<ConstraintResiduum> constraintResiduum;
