@@ -1866,7 +1866,17 @@ namespace MBSim {
     throwIfExitRequested(); // plot is called by all solvers
     useSmoothSolver = not(useConstraintSolverForPlot);
     if (inverseKinetics) updatelaInverseKinetics();
-    Group::plot();
+    try {
+      Group::plot();
+    }
+    catch(SilentMBSimError &ex) {
+      msg(Error) << "An silent mbsim-error exception during plot was detected and is converted to a normal mbsim-error exception. The last plot at t=" << getTime() << " may be incomplete." << endl;
+      throw MBSimError(ex);
+    }
+    catch(...) {
+      msg(Error) << "An exception during plot was detected. The last plot at t=" << getTime() << " may be incomplete." << endl;
+      throw;
+    }
     if(plottedRows==0) {
       // we enable SWMR after the frist plot to ensure that readers see at least the initial plot step
       if(hdf5File)
