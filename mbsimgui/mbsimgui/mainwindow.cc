@@ -644,7 +644,7 @@ namespace MBSimGUI {
     };
     bfs__copy_file(getInstallPath()/"share"/"mbsimgui"/"MBS_tmp.ombvx",  uniqueTempDir/"MBS_tmp.ombvx",  overwrite_existing);
     bfs__copy_file(getInstallPath()/"share"/"mbsimgui"/"MBS_tmp.ombvh5", uniqueTempDir/"MBS_tmp.ombvh5", overwrite_existing);
-    inlineOpenMBVMW->openFile(uniqueTempDir.generic_string()+"/MBS_tmp.ombvh5");
+    inlineOpenMBVMW->openFile((uniqueTempDir/"MBS_tmp.ombvh5").string());
     // viewAllSlot is delayed to ensure that the scence graph if fully build and update before viewAllSlot is called
     QTimer::singleShot(0, [this](){
       inlineOpenMBVMW->viewAllSlot();
@@ -1678,7 +1678,7 @@ namespace MBSimGUI {
   void MainWindow::saveMBSimH5Data(const QString &file) {
     if(QFile::exists(file))
       QFile::remove(file);
-    QFile::copy(QString::fromStdString(uniqueTempDir.generic_string())+"/"+project->getDynamicSystemSolver()->getName()+".mbsh5",file);
+    QFile::copy(QString::fromStdString(uniqueTempDir.string())+"/"+project->getDynamicSystemSolver()->getName()+".mbsh5",file);
   }
 
   void MainWindow::saveOpenMBVDataAs() {
@@ -1698,14 +1698,14 @@ namespace MBSimGUI {
   void MainWindow::saveOpenMBVXMLData(const QString &file) {
     if(QFile::exists(file))
       QFile::remove(file);
-    if(auto fn=QString::fromStdString(uniqueTempDir.generic_string())+"/"+project->getDynamicSystemSolver()->getName()+".ombvx"; QFile::exists(fn))
+    if(auto fn=QString::fromStdString(uniqueTempDir.string())+"/"+project->getDynamicSystemSolver()->getName()+".ombvx"; QFile::exists(fn))
       QFile::copy(fn,file);
   }
 
   void MainWindow::saveOpenMBVH5Data(const QString &file) {
     if(QFile::exists(file))
       QFile::remove(file);
-    if(auto fn=QString::fromStdString(uniqueTempDir.generic_string())+"/"+project->getDynamicSystemSolver()->getName()+".ombvh5"; QFile::exists(fn))
+    if(auto fn=QString::fromStdString(uniqueTempDir.string())+"/"+project->getDynamicSystemSolver()->getName()+".ombvh5"; QFile::exists(fn))
       QFile::copy(fn,file);
   }
 
@@ -1719,7 +1719,7 @@ namespace MBSimGUI {
   void MainWindow::saveStateVector(const QString &file) {
     if(QFile::exists(file))
       QFile::remove(file);
-    QFile::copy(QString::fromStdString(uniqueTempDir.generic_string())+"/statevector.asc",file);
+    QFile::copy((uniqueTempDir/"statevector.asc").string().c_str(),file);
   }
 
   void MainWindow::saveStateTableAs() {
@@ -1732,7 +1732,7 @@ namespace MBSimGUI {
   void MainWindow::saveStateTable(const QString &file) {
     if(QFile::exists(file))
       QFile::remove(file);
-    QFile::copy(QString::fromStdString(uniqueTempDir.generic_string())+"/statetable.asc",file);
+    QFile::copy((uniqueTempDir/"statetable.asc").string().c_str(),file);
   }
 
   void MainWindow::saveLinearSystemAnalysisAs() {
@@ -1753,19 +1753,19 @@ namespace MBSimGUI {
   void MainWindow::saveInputTable(const QString &file) {
     if(QFile::exists(file))
       QFile::remove(file);
-    QFile::copy(QString::fromStdString(uniqueTempDir.generic_string())+"/inputtable.asc",file);
+    QFile::copy((uniqueTempDir/"inputtable.asc").string().c_str(),file);
   }
 
   void MainWindow::saveOutputTable(const QString &file) {
     if(QFile::exists(file))
       QFile::remove(file);
-    QFile::copy(QString::fromStdString(uniqueTempDir.generic_string())+"/outputtable.asc",file);
+    QFile::copy((uniqueTempDir/"outputtable.asc").string().c_str(),file);
   }
 
   void MainWindow::saveLinearSystemAnalysis(const QString &file) {
     if(QFile::exists(file))
       QFile::remove(file);
-    QFile::copy(QString::fromStdString(uniqueTempDir.generic_string())+"/linear_system_analysis.h5",file);
+    QFile::copy((uniqueTempDir/"linear_system_analysis.h5").string().c_str(),file);
   }
 
   void MainWindow::startProcessRefresh() {
@@ -1792,7 +1792,7 @@ namespace MBSimGUI {
 
     arg.append("--onlyLatestStdin"); // skip all input except the latest one
     arg.append("-"); // input stream mode of mbsimxml
-    QString uniqueTempDir_ = QString::fromStdString(uniqueTempDir.generic_string());
+    QString uniqueTempDir_ = QString::fromStdString(uniqueTempDir.string());
     processRefresh.setWorkingDirectory(uniqueTempDir_);
     processRefresh.start(QString::fromStdString((getInstallPath()/"bin"/"mbsimxml").string()), arg);
     refresh();
@@ -1964,7 +1964,7 @@ DEF mbsimgui_outdated_switch Switch {
 
     arg.append("--onlyLatestStdin"); // skip all input except the latest one
     arg.append("-"); // input stream mode of mbsimxml
-    QString uniqueTempDir_ = QString::fromStdString(uniqueTempDir.generic_string());
+    QString uniqueTempDir_ = QString::fromStdString(uniqueTempDir.string());
     processSimulate.setWorkingDirectory(uniqueTempDir_);
     processSimulate.start(QString::fromStdString((getInstallPath()/"bin"/"mbsimxml").string()), arg);
   }
@@ -1993,20 +1993,20 @@ DEF mbsimgui_outdated_switch Switch {
   }
 
   void MainWindow::openmbv() {
-    QString name = QString::fromStdString(uniqueTempDir.generic_string())+"/"+project->getDynamicSystemSolver()->getName()+".ombvh5";
+    QString name = (uniqueTempDir/(project->getDynamicSystemSolver()->getName()+".ombvh5").toStdString()).string().c_str();
     if(QFile::exists(name))
       QProcess::startDetached(QString::fromStdString((getInstallPath()/"bin"/"openmbv").string()), QStringList(name));
   }
 
   void MainWindow::h5plotserie() {
-    QString name = QString::fromStdString(uniqueTempDir.generic_string())+"/"+project->getDynamicSystemSolver()->getName()+".mbsh5";
+    QString name = (uniqueTempDir/(project->getDynamicSystemSolver()->getName()+".mbsh5").toStdString()).string().c_str();
     if(QFile::exists(name))
       QProcess::startDetached(QString::fromStdString((getInstallPath()/"bin"/"h5plotserie").string()), QStringList(name));
   }
 
   void MainWindow::linearSystemAnalysis() {
-    QFileInfo fileInfo = QString::fromStdString(uniqueTempDir.generic_string())+"/linear_system_analysis.h5";
-    if(fileInfo.exists() and QFile::exists(QString::fromStdString(uniqueTempDir.generic_string())+"/statetable.asc")) {
+    QFileInfo fileInfo = QString::fromStdString((uniqueTempDir/"linear_system_analysis.h5").string());
+    if(fileInfo.exists() and QFile::exists((uniqueTempDir/"statetable.asc").string().c_str())) {
       if(not lsa)
 	lsa = new LinearSystemAnalysisDialog(fileInfo,this);
       lsa->show();
@@ -2014,7 +2014,7 @@ DEF mbsimgui_outdated_switch Switch {
   }
 
   void MainWindow::showStateTable() {
-    QFileInfo fileInfo = QString::fromStdString(uniqueTempDir.generic_string())+"/statetable.asc";
+    QFileInfo fileInfo = QString::fromStdString((uniqueTempDir/"statetable.asc").string());
     if(fileInfo.exists()) {
       if(not st)
 	st = new StateTableDialog(fileInfo,this);
@@ -3372,7 +3372,7 @@ DEF mbsimgui_outdated_switch Switch {
 	  auto *newDocElement = static_cast<DOMElement*>(doc->importNode(this->doc->getDocumentElement(), true));
 	  doc->insertBefore(newDocElement, nullptr);
 	  project->processIDAndHref(newDocElement);
-	  QString uniqueTempDir_ = QString::fromStdString(uniqueTempDir.generic_string());
+	  QString uniqueTempDir_ = QString::fromStdString(uniqueTempDir.string());
 	  QString projectFile = uniqueTempDir_+"/MBS_tmp.mbsx";
           DOMParser::serialize(doc.get(), projectFile.toStdString(), true);
 	  QStringList arg;
@@ -3407,7 +3407,7 @@ DEF mbsimgui_outdated_switch Switch {
 	  connect(&processCreateFMU, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),this,[=]() {
 	    if(QFile::exists(fmuFileName))
 	      QFile::remove(fmuFileName);
-	    QFile::copy(QString::fromStdString(uniqueTempDir.generic_string())+"/"+"mbsim.fmu",fmuFileName);
+	    QFile::copy((uniqueTempDir/"mbsim.fmu").string().c_str(),fmuFileName);
 	  });
 	  statusBar()->showMessage(tr("Create FMU"));
 	}

@@ -36,8 +36,8 @@ def difftoolCmd(a, b):
   if args.difftool is not None:
     return args.difftool+' "'+a+'" "'+b+'"'
   if difftoolCmd.diffcmd is None:
-    difftool=subprocess.check_output(["git", "config", "--global", "diff.tool"]).decode("utf-8").strip()
-    difftoolCmd.diffcmd=subprocess.check_output(["git", "config", "--global", "difftool."+difftool+".cmd"]).decode("utf-8").strip()
+    difftool=subprocess.check_output(["git", "config", "--global", "diff.tool"], timeout=10).decode("utf-8").strip()
+    difftoolCmd.diffcmd=subprocess.check_output(["git", "config", "--global", "difftool."+difftool+".cmd"], timeout=10).decode("utf-8").strip()
   diff=difftoolCmd.diffcmd.replace("$LOCAL", a)
   diff=diff.replace("$REMOTE", b)
   return diff
@@ -69,7 +69,7 @@ def checkErrorFormat(dir, errorFormat):
       stdout="error~<span class=\"MBSIMGUI_ERROR\">~</span>"
     mbsFile=["MBS.mbsx"] if os.path.exists(dir+"/MBS.mbsx") else []
     cur=subprocess.check_output([prefix+"mbsimxml", "--stopafterfirststep", "--stdout", stdout]+mbsFile,
-                                env=env, stderr=subprocess.DEVNULL, cwd=dir)
+                                env=env, stderr=subprocess.DEVNULL, cwd=dir, timeout=120)
     ret[1]+=dir+": "+errorFormat+": did not return with !=0 (ret=0)\n"; ret[0]+=1
   except subprocess.CalledProcessError as ex:
     cur=ex.output
@@ -129,7 +129,7 @@ def checkGUIError(dir):
     prefix=args.prefix+"/bin/" if args.prefix is not None else ""
     mbsFile=["MBS.mbsx"] if os.path.exists(dir+"/MBS.mbsx") else []
     cur=subprocess.check_output([prefix+"mbsimgui", "--autoExit"]+mbsFile,
-                                stderr=subprocess.STDOUT, cwd=dir, env=guiEnvVars(displayNR))
+                                stderr=subprocess.STDOUT, cwd=dir, env=guiEnvVars(displayNR), timeout=120)
   except subprocess.CalledProcessError as ex:
     cur=ex.output
   cur=cur.decode("utf-8")

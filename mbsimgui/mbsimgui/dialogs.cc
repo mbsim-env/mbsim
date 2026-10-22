@@ -386,7 +386,7 @@ namespace MBSimGUI {
   }
 
   void StateTableDialog::updateWidget() {
-    ifstream is(mw->getUniqueTempDir().generic_string()+"/statetable.asc");
+    ifstream is((mw->getUniqueTempDir()/"statetable.asc").string());
     QVector<QString> name;
     QVector<QString> label;
     QVector<QString> number;
@@ -713,7 +713,7 @@ namespace MBSimGUI {
   }
 
   void InitialOutputWidget::loadData() {
-    H5::File file(mw->getUniqueTempDir().generic_string()+"/linear_system_analysis.h5", H5::File::read);
+    H5::File file(mw->getUniqueTempDir()/"linear_system_analysis.h5", H5::File::read);
     auto group=file.openChildObject<H5::Group>("initial output");
     auto data=group->openChildObject<H5::SimpleDataset<vector<double>>>("state (z)");
     auto z = data->read();
@@ -738,7 +738,7 @@ namespace MBSimGUI {
   }
 
   void EigenanalysisWidget::loadData() {
-    H5::File file(mw->getUniqueTempDir().generic_string()+"/linear_system_analysis.h5", H5::File::read);
+    H5::File file(mw->getUniqueTempDir()/"linear_system_analysis.h5", H5::File::read);
     auto group=file.openChildObject<H5::Group>("eigenanalysis");
     auto cvdata = group->openChildObject<H5::SimpleDataset<vector<complex<double>>>>("eigenvalues");
     auto w = cvdata->read();
@@ -819,7 +819,7 @@ namespace MBSimGUI {
   }
 
   void ModalAnalysisWidget::loadData() {
-    H5::File file(mw->getUniqueTempDir().generic_string()+"/linear_system_analysis.h5", H5::File::read);
+    H5::File file(mw->getUniqueTempDir()/"linear_system_analysis.h5", H5::File::read);
     auto group=file.openChildObject<H5::Group>("modal analysis");
     auto cvdata = group->openChildObject<H5::SimpleDataset<vector<complex<double>>>>("eigenvalues");
     auto w = cvdata->read();
@@ -835,7 +835,7 @@ namespace MBSimGUI {
     stateName.clear();
     stateLabel.clear();
     stateLabelNumber.clear();
-    ifstream is(mw->getUniqueTempDir().generic_string()+"/statetable.asc");
+    ifstream is(mw->getUniqueTempDir()/"statetable.asc");
      while(true) {
       getline(is,name);
       if(is.eof())
@@ -853,7 +853,7 @@ namespace MBSimGUI {
     outputName.clear();
     outputLabel.clear();
     outputLabelNumber.clear();
-    is.open(mw->getUniqueTempDir().generic_string()+"/outputtable.asc");
+    is.open(mw->getUniqueTempDir()/"outputtable.asc");
     while(true) {
       getline(is,name);
       if(is.eof())
@@ -1056,7 +1056,7 @@ namespace MBSimGUI {
   }
 
   void FrequencyResponseWidget::loadData() {
-    H5::File file(mw->getUniqueTempDir().generic_string()+"/linear_system_analysis.h5", H5::File::read);
+    H5::File file(mw->getUniqueTempDir()/"linear_system_analysis.h5", H5::File::read);
     auto group=file.openChildObject<H5::Group>("frequency response analysis");
     auto data=group->openChildObject<H5::SimpleDataset<vector<double>>>("excitation frequencies");
     auto f = data->read();
@@ -1073,7 +1073,7 @@ namespace MBSimGUI {
     stateName.clear();
     stateLabel.clear();
     stateLabelNumber.clear();
-    ifstream is(mw->getUniqueTempDir().generic_string()+"/statetable.asc");
+    ifstream is(mw->getUniqueTempDir()/"statetable.asc");
     while(true) {
       getline(is,name_);
       if(is.eof())
@@ -1091,7 +1091,7 @@ namespace MBSimGUI {
     inputName.clear();
     inputLabel.clear();
     inputLabelNumber.clear();
-    is.open(mw->getUniqueTempDir().generic_string()+"/inputtable.asc");
+    is.open(mw->getUniqueTempDir()/"inputtable.asc");
     while(true) {
       getline(is,name_);
       if(is.eof())
@@ -1109,7 +1109,7 @@ namespace MBSimGUI {
     outputName.clear();
     outputLabel.clear();
     outputLabelNumber.clear();
-    is.open(mw->getUniqueTempDir().generic_string()+"/outputtable.asc");
+    is.open(mw->getUniqueTempDir()/"outputtable.asc");
     while(true) {
       getline(is,name_);
       if(is.eof())
