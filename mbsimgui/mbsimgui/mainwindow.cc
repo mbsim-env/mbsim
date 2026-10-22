@@ -104,7 +104,7 @@ namespace MBSimGUI {
   static int currentModelID = 0;
   static int sizeOfUndosSinceLastSave = 0;
 
-  MainWindow::MainWindow(QStringList &arg) : project(nullptr), inlineOpenMBVMW(nullptr), allowUndo(true), maxUndo(10), doc(), elementBuffer(nullptr,false), parameterBuffer(nullptr,false) {
+  MainWindow::MainWindow(QStringList &arg) : project(nullptr), inlineOpenMBVMW(nullptr), allowUndo(true), maxUndo(100), doc(), elementBuffer(nullptr,false), parameterBuffer(nullptr,false) {
     QSettings settings;
 
     echoView = new EchoView();
@@ -759,7 +759,7 @@ namespace MBSimGUI {
     menu.setAutoSave(settings.value("mainwindow/options/autosave", false).toBool());
     menu.setAutoSaveInterval(settings.value("mainwindow/options/autosaveinterval", 5).toInt());
     menu.setSaveStateVector(settings.value("mainwindow/options/savestatevector", false).toBool());
-    menu.setMaxUndo(settings.value("mainwindow/options/maxundo", 10).toInt());
+    menu.setMaxUndo(settings.value("mainwindow/options/maxundo", 100).toInt());
     menu.setShowFilters(settings.value("mainwindow/options/showfilters", true).toBool());
     menu.setShowHiddenItems(settings.value("mainwindow/options/showhiddenelements", false).toBool());
     bool oldShowHiddenElement=menu.getShowHiddenItems();

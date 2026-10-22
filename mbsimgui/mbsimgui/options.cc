@@ -64,6 +64,7 @@ namespace MBSimGUI {
     sublayout->addWidget(label);
     maxUndo = new QSpinBox;
     maxUndo->setMinimum(1);
+    maxUndo->setMaximum(999);
     sublayout->addWidget(maxUndo);
 
     showFilters = new QCheckBox("Show list filters");
