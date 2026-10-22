@@ -79,8 +79,6 @@ namespace MBSim {
     if (fabs(stepPlot * dt - dtPlot) > dt * dt) {
       msg(Warn) << "Due to the plot-Step settings it is not possible to plot exactly at the correct times." << endl;
     }
-
-    s0 = clock();
   }
 
   void QuasiStaticIntegrator::subIntegrate(double tStop) {
@@ -164,9 +162,6 @@ namespace MBSim {
         step++;
         system->setUpdatela(false);
         system->plot();
-        double s1 = clock();
-        time += (s1 - s0) / CLOCKS_PER_SEC;
-        s0 = s1;
         if (msgAct(Status))
           msg(Status) << "   t = " << t << ",\tdt = " << dt << ",\titer = " << setw(5) << setiosflags(ios::left) << iter << flush;
         tPlot += dtPlot;

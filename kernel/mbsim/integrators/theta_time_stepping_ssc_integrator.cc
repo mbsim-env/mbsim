@@ -97,8 +97,6 @@ namespace MBSim {
     
     stepPlot = (int)(dtPlot/dt + 0.5);
     assert(fabs(stepPlot*dt - dtPlot) < dt*dt);
-
-    s0 = clock();
   }
 
   void ThetaTimeSteppingSSCIntegrator::subIntegrate(double tStop) {
@@ -108,9 +106,6 @@ namespace MBSim {
         step++;
         if(driftCompensation) system->projectGeneralizedPositions(t,0);
         system->plot2(z,t,dt);
-        double s1 = clock();
-        time += (s1-s0)/CLOCKS_PER_SEC;
-        s0 = s1; 
         integPlot << t << " " << dt << " " <<  iter << " " << time << " "<<system->getlaSize() << endl;
         if(msgAct(Status)) msg(Status) << "   t = " <<  t << ",\tdt = "<< dt << ",\titer = "<< setw(5) << setiosflags(ios::left) << iter << flush;
         tPlot += dtPlot;

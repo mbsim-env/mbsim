@@ -166,9 +166,6 @@ namespace MBSim {
     system->plot();
     svLast <<= system->evalsv();
 
-    double s0 = clock();
-    double time = 0;
-
     int zero = 0;
     int iflag;
 
@@ -228,10 +225,6 @@ namespace MBSim {
             msg(Status) << "   t = " <<  tPlot << ",\tdt = "<< rWork(10) << flush;
 
           system->updateInternalState();
-
-          double s1 = clock();
-          time += (s1-s0)/CLOCKS_PER_SEC;
-          s0 = s1;
 
           tPlot += dtPlot;
         }

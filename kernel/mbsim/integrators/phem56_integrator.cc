@@ -221,10 +221,6 @@ namespace MBSim {
 
           self->system->updateInternalState();
 
-          double s1 = clock();
-          self->time += (s1-self->s0)/CLOCKS_PER_SEC;
-          self->s0 = s1;
-
           self->tPlot += self->dtOut;
         }
 
@@ -384,8 +380,6 @@ namespace MBSim {
 
     tPlot = t + dtPlot;
     dtOut = dtPlot;
-
-    s0 = clock();
 
     while(t<tEnd-epsroot) {
       drift = false;

@@ -38,8 +38,6 @@ namespace MBSim {
 
       double tPlot{0};
       double dtOut{0};
-      double s0; 
-      double time{0};
 
       /** Absolute Toleranz */
       fmatvec::Vec aTol;

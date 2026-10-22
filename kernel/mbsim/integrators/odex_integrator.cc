@@ -117,10 +117,6 @@ namespace MBSim {
 
         self->system->updateInternalState();
 
-        double s1 = clock();
-        self->time += (s1-self->s0)/CLOCKS_PER_SEC;
-        self->s0 = s1;
-
         self->tPlot += self->dtOut;
       }
 
@@ -245,8 +241,6 @@ namespace MBSim {
     system->plot();
     svLast <<= system->evalsv();
     z = system->getState(); // needed, as computeInitialCondition may change the state
-
-    s0 = clock();
 
     while(t<tEnd-epsroot) {
       drift = false;

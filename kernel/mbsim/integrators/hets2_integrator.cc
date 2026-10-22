@@ -63,9 +63,6 @@ namespace MBSim {
     system->setGeneralizedRelativeAccelerationTolerance(1e-10/dt); // as we use local velocities to express accelerations within solveConstraints
 
     assert(fabs(((int) (dtPlot/dt + 0.5))*dt - dtPlot) < dt*dt);
-
-    // start timing
-    s0 = clock();
   }
 
   void HETS2Integrator::subIntegrate(double tStop) {
@@ -93,9 +90,6 @@ namespace MBSim {
         system->setUpdatela(false);
         system->setUpdateLa(false);
         system->plot();
-        double s1 = clock();
-        time += (s1-s0)/CLOCKS_PER_SEC;
-        s0 = s1; 
         if(msgAct(Status)) msg(Status) << "   t = " << system->getTime() << ",\tdt = "<< dtInfo << ",\titer = " << setw(5) << setiosflags(ios::left) << system->getIterC() << flush;
         tPlot += dtPlot;
       }

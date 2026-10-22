@@ -255,10 +255,6 @@ namespace MBSim {
 
         self->system->updateInternalState();
 
-        double s1 = clock();
-        self->time += (s1-self->s0)/CLOCKS_PER_SEC;
-        self->s0 = s1;
-
         self->tPlot += self->dtOut;
       }
 
@@ -400,8 +396,6 @@ namespace MBSim {
 
     if(formalism>0)
       y.set(Rla, system->evalla()); // set a proper initial state for lambda
-
-    s0 = clock();
 
     int iTol = 1;
 

@@ -103,7 +103,6 @@ namespace MBSim {
 
     tPlot = t + dtPlot;
 
-    s0 = clock();
     time = 0;
   }
 
@@ -183,10 +182,6 @@ namespace MBSim {
             msg(Status) << "   t = " <<  tPlot << ",\tdt = "<< dtLast << flush;
 
           system->updateInternalState();
-
-          double s1 = clock();
-          time += (s1-s0)/CLOCKS_PER_SEC;
-          s0 = s1;
 
           tPlot += dtPlot;
         }

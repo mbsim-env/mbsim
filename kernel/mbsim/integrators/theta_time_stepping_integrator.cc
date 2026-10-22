@@ -66,8 +66,6 @@ namespace MBSim {
     if(fabs(stepPlot*dt - dtPlot) > dt*dt) {
       msg(Warn) << "Due to the plot-Step settings it is not possible to plot exactly at the correct times." << endl;
     }
-
-    s0 = clock();
   }
 
   void ThetaTimeSteppingIntegrator::subIntegrate(double tStop) {
@@ -83,9 +81,6 @@ namespace MBSim {
         system->setUpdateLa(false);
         system->setUpdatezd(false);
         system->plot();
-        double s1 = clock();
-        time += (s1-s0)/CLOCKS_PER_SEC;
-        s0 = s1;
         if(msgAct(Status)) msg(Status) << "   t = " << system->getTime() << ",\tdt = "<< dt << ",\titer = "<<setw(5)<<setiosflags(ios::left) << system->getIterI() <<  flush;
         tPlot += dtPlot;
       }

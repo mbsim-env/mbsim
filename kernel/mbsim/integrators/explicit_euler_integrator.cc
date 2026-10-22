@@ -63,9 +63,6 @@ namespace MBSim {
     
     step = 0;
     integrationSteps = 0;
-    
-    s0 = clock();
-    time = 0;
   }
 
   void ExplicitEulerIntegrator::subIntegrate(double tStop) {
@@ -75,9 +72,6 @@ namespace MBSim {
         step++;
         system->resetUpToDate();
         system->plot();
-        double s1 = clock();
-        time += (s1-s0)/CLOCKS_PER_SEC;
-        s0 = s1;
         if(msgAct(Status)) msg(Status) << "   t = " << system->getTime() << ",\tdt = "<< dt << flush;
         tPlot += dtPlot;
       }

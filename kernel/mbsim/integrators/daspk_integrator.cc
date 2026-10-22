@@ -420,9 +420,6 @@ namespace MBSim {
     }
     reinit();
 
-    double s0 = clock();
-    double time = 0;
-
     while(t<tEnd-epsroot) {
       DDASPK(*delt[formalism],&neq,&t,system->getState()(),yd(),&tEnd,info(),rTol(),aTol(),&idid,work(),&lWork,iWork(),&liWork,rPar,iPar(),jac[formalism],nullptr);
       if(exception)
@@ -478,10 +475,6 @@ namespace MBSim {
             msg(Status) << "   t = " <<  tPlot << ",\tdt = "<< work(6) << flush;
 
           system->updateInternalState();
-
-          double s1 = clock();
-          time += (s1-s0)/CLOCKS_PER_SEC;
-          s0 = s1;
 
           tPlot += dtPlot;
         }
