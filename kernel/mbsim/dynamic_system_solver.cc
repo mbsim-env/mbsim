@@ -1903,8 +1903,10 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::postprocessing() {
-    openMBVGrp->flush();
-    openMBVGrp->setRowSize(plottedRows);
+    if(openMBVGrp) {
+      openMBVGrp->flush();
+      openMBVGrp->setRowSize(plottedRows);
+    }
     Group::postprocessing();
   }
 
