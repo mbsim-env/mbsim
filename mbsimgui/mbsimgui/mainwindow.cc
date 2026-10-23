@@ -95,7 +95,6 @@ namespace bfs=boost::filesystem;
 
 namespace MBSimGUI {
 
-
   MainWindow *mw;
 
   const string NO_FILENAME("{no filename}");
@@ -204,7 +203,7 @@ namespace MBSimGUI {
     action = fileMenu->addAction(QIcon::fromTheme("document-new"), "New", this, &MainWindow::newProject);
     action->setShortcut(QKeySequence::New);
     action = fileMenu->addAction(QIcon::fromTheme("document-new"), "New from template...", this, &MainWindow::newProjectFromTemplate);
-    action->setShortcut(QKeySequence::New);
+    action->setShortcut(QKeySequence("Ctrl+Meta+N"));
     action->setStatusTip("New project");
     action = fileMenu->addAction(QIcon::fromTheme("document-open"), "Open...", this, QOverload<>::of(&MainWindow::loadProject));
     action->setShortcut(QKeySequence::Open);
@@ -320,6 +319,15 @@ namespace MBSimGUI {
     auto sceneViewMenu = inlineOpenMBVMW->getSceneViewMenu();
     sceneViewMenu->removeAction(sceneViewMenu->findChild<QAction*>("MainWindow::sceneViewMenu::releaseCamera"));
     menuBar()->addMenu(sceneViewMenu);
+
+    // Shortcuts Ctrl+Z und Ctrl+Shift+Z cause problmes as they are already used within file menu. So we add a modifier key to the shurtcuts.
+    auto actions = inlineOpenMBVMW->actions();
+    for (int i = 0; i < actions.size(); ++i) {
+      if(actions.at(i)->shortcut() ==  QKeySequence("Ctrl+Z"))
+	actions.at(i)->setShortcut(QKeySequence("Ctrl+Meta+Z"));
+      else if(actions.at(i)->shortcut() ==  QKeySequence("Ctrl+Shift+Z"))
+	actions.at(i)->setShortcut(QKeySequence("Ctrl+Meta+Shift+Z"));
+    }
 
     auto autorefreshAction = new QAction(Utils::QIconCached(QString::fromStdString((iconPath/"auto-reload.svg").string())),
                                                  "Auto refresh scene view", this);
