@@ -37,7 +37,7 @@ const string Evaluator::defaultEvaluator = "octave";
 const vector<string> Evaluator::evaluators {
   "octave", // must be the first one
   "python",
-  "flatxml",
+  "xmlflat",
 };
 
 pair<string, string> Evaluator::getFalseTrueStr(const std::string &evaluator) {
