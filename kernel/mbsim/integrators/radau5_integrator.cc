@@ -646,44 +646,73 @@ namespace MBSim {
 
     int iTol = 1;
 
-    while(t<tEnd-epsroot) {
-      drift = false;
+    int nfcn   = 0;
+    int njac   = 0;
+    int nstep  = 0;
+    int naccpt = 0;
+    int nrejct = 0;
+    int ndec   = 0;
+    int nsol   = 0;
 
-      RADAU5(&neq,(*fzdot[formalism]),&t,y(),&tEnd,&dt,
-          rTol(),aTol(),&iTol,
-          *jac[formalism],&iJac,&mlJac,&muJac,
-          *mass[reduced],&iMas,&mlMas,&muMas,
-          plot,&out,
-          work(),&lWork,iWork,&liWork,rPar,iPar,&idid);
-      if(exception)
-        rethrow_exception(exception);
-      if(idid < 0)
-        throw runtime_error("RADAU5 failed with idid = "+to_string(idid));
+    auto dumpStats = [this, &nfcn, &njac, &nstep, &naccpt, &nrejct, &ndec, &nsol]() {
+      msg(Info)<<"RADAU5 integrator statistics:"<<endl;
+      msg(Info)<<"nrRHS (excluding jac): "                 <<nfcn  <<endl;
+      msg(Info)<<"nrJac: "                                 <<njac  <<endl;
+      msg(Info)<<"nrSteps: "                               <<nstep <<endl;
+      msg(Info)<<"nrStepsAccepted: "                       <<naccpt<<endl;
+      msg(Info)<<"nrStepsRejected (excluding first step): "<<nrejct<<endl;
+      msg(Info)<<"nrLUdecom: "                             <<ndec  <<endl;
+      msg(Info)<<"nrForwardBackwardSubs: "                 <<nsol  <<endl;
+    };
 
-      if(shift) {
-        system->resetUpToDate();
-        svLast = system->evalsv();
-        reinit();
+    try {
+      while(t<tEnd-epsroot) {
+        drift = false;
+
+        RADAU5(&neq,(*fzdot[formalism]),&t,y(),&tEnd,&dt,
+            rTol(),aTol(),&iTol,
+            *jac[formalism],&iJac,&mlJac,&muJac,
+            *mass[reduced],&iMas,&mlMas,&muMas,
+            plot,&out,
+            work(),&lWork,iWork,&liWork,rPar,iPar,&idid);
+
+        // iWork[13] to iWork[19] is a pure output of RADAU5 (RADAU5 set it to 0 and then counts) -> accumulated multiple RADAU5 calls
+        nfcn   += iWork[13];
+        njac   += iWork[14];
+        nstep  += iWork[15];
+        naccpt += iWork[16];
+        nrejct += iWork[17];
+        ndec   += iWork[18];
+        nsol   += iWork[19];
+
+        if(exception)
+          rethrow_exception(exception);
+        if(idid < 0)
+          throw runtime_error("RADAU5 failed with idid = "+to_string(idid));
+
+        if(shift) {
+          system->resetUpToDate();
+          svLast = system->evalsv();
+          reinit();
+        }
+
+        if(shift || drift) {
+          // set new state
+          t = system->getTime();
+          z = system->getState();
+          system->resetUpToDate();
+          if(formalism>0)
+            y.set(Rla, system->evalla()); // set a proper initial state for lambda
+          dt = dt0;
+        }
       }
 
-      if(shift || drift) {
-        // set new state
-        t = system->getTime();
-        z = system->getState();
-        system->resetUpToDate();
-        if(formalism>0)
-          y.set(Rla, system->evalla()); // set a proper initial state for lambda
-        dt = dt0;
-      }
+      dumpStats();
     }
-
-    msg(Info)<<"nrRHS (excluding jac): "<<iWork[13]<<endl;
-    msg(Info)<<"nrJac: "<<iWork[14]<<endl;
-    msg(Info)<<"nrSteps: "<<iWork[15]<<endl;
-    msg(Info)<<"nrStepsAccepted: "<<iWork[16]<<endl;
-    msg(Info)<<"nrStepsRejected (excluding first step): "<<iWork[17]<<endl;
-    msg(Info)<<"nrLUdecom: "<<iWork[18]<<endl;
-    msg(Info)<<"nrForwardBackwardSubs: "<<iWork[19]<<endl;
+    catch(...) {
+      dumpStats();
+      throw;
+    }
   }
 
   void RADAU5Integrator::reinit() {

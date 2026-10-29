@@ -240,33 +240,56 @@ namespace MBSim {
     svLast <<= system->evalsv();
     z = system->getState(); // needed, as computeInitialCondition may change the state
 
-    while(t<tEnd-epsroot) {
-      drift = false;
+    int nfcn   = 0;
+    int nstep  = 0;
+    int naccpt = 0;
+    int nrejct = 0;
 
-      DOPRI5(&zSize,fzdot,&t,z(),&tEnd,rTol(),aTol(),&iTol,plot,&out,
-          work(),&lWork,iWork(),&liWork,rPar,iPar,&idid);
-      if(exception)
-        rethrow_exception(exception);
-      if(idid < 0)
-        throw runtime_error("DOPRI5 failed with idid = "+to_string(idid));
+    auto dumpStats = [this, &nfcn, &nstep, &naccpt, &nrejct]() {
+      msg(Info)<<"DOPRI5 integrator statistics:"<<endl;
+      msg(Info)<<"nrRHS: "                                 <<nfcn  <<endl;
+      msg(Info)<<"nrSteps: "                               <<nstep <<endl;
+      msg(Info)<<"nrStepsAccepted: "                       <<naccpt<<endl;
+      msg(Info)<<"nrStepsRejected (excluding first step): "<<nrejct<<endl;
+    };
 
-      if(shift) {
-        system->resetUpToDate();
-        svLast = system->evalsv();
+    try {
+      while(t<tEnd-epsroot) {
+        drift = false;
+
+        DOPRI5(&zSize,fzdot,&t,z(),&tEnd,rTol(),aTol(),&iTol,plot,&out,
+            work(),&lWork,iWork(),&liWork,rPar,iPar,&idid);
+
+        // iWork[16] to iWork[19] is a pure output of DOPRI5 (DOPRI5 set it to 0 and then counts) -> accumulated multiple DOPRI5 calls
+        nfcn   += iWork(16);
+        nstep  += iWork(17);
+        naccpt += iWork(18);
+        nrejct += iWork(19);
+
+        if(exception)
+          rethrow_exception(exception);
+        if(idid < 0)
+          throw runtime_error("DOPRI5 failed with idid = "+to_string(idid));
+
+        if(shift) {
+          system->resetUpToDate();
+          svLast = system->evalsv();
+        }
+
+        if(shift || drift) {
+          // set new state
+          t = system->getTime();
+          z = system->getState();
+          work(6) = dt0;
+        }
       }
 
-      if(shift || drift) {
-        // set new state
-        t = system->getTime();
-        z = system->getState();
-        work(6) = dt0;
-      }
+      dumpStats();
     }
-
-    msg(Info)<<"nrRHS: "<<iWork(16)<<endl;
-    msg(Info)<<"nrSteps: "<<iWork(17)<<endl;
-    msg(Info)<<"nrStepsAccepted: "<<iWork(18)<<endl;
-    msg(Info)<<"nrStepsRejected: "<<iWork(19)<<endl;
+    catch(...) {
+      dumpStats();
+      throw;
+    }
   }
 
   void DOPRI5Integrator::initializeUsingXML(DOMElement *element) {
