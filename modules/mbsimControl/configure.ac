@@ -100,14 +100,27 @@ if test "$cross_compiling" == "yes"; then
 fi
 if test -d $PYTHON_LIBDIR/python$pythonversion/site-packages/numpy/core/include; then
   PYTHON_LIBDIR=$PYTHON_LIBDIR/python$pythonversion
+  PYTHON_PACKAGES=site-packages
+elif test -d $PYTHON_LIBDIR/python$pythonversion/site-packages/numpy/_core/include; then
+  PYTHON_LIBDIR=$PYTHON_LIBDIR/python$pythonversion
+  PYTHON_PACKAGES=site-packages
 elif test -d $PYTHON_LIBDIR/site-packages/numpy/core/include; then
   PYTHON_LIBDIR=$PYTHON_LIBDIR
+  PYTHON_PACKAGES=site-packages
+elif test -d $PYTHON_LIBDIR/site-packages/numpy/_core/include; then
+  PYTHON_LIBDIR=$PYTHON_LIBDIR
+  PYTHON_PACKAGES=site-packages
 elif test -d /usr/lib/python3/dist-packages/numpy/core/include; then # debian special handling
   PYTHON_LIBDIR=/usr/lib/python3
+  PYTHON_PACKAGES=dist-packages
+elif test -d /usr/lib/python3/dist-packages/numpy/_core/include; then # debian special handling
+  PYTHON_LIBDIR=/usr/lib/python3
+  PYTHON_PACKAGES=dist-packages
 else
   AC_MSG_ERROR([Numpy header not found in directory $PYTHON_LIBDIR/python$pythonversion/site-packages/numpy/core/include or $PYTHON_LIBDIR/site-packages/numpy/core/include])
 fi
 AC_SUBST([PYTHON_LIBDIR])
+AC_SUBST([PYTHON_PACKAGES])
 
 AC_CONFIG_FILES([Makefile mbsimControl/Makefile doc/doxyfile doc/Makefile mbsimControl.pc schema/Makefile xmldoc/Makefile xmldoc/Doxyfile swig/Makefile swig/.swig_prepare/Makefile swig/mbsimControl.i])
 

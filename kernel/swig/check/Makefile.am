@@ -15,7 +15,7 @@ mymod.py: mymod_swig_python.cc
 
 _mymod_la_SOURCES = mymod_swig_python.cc
 _mymod_la_LDFLAGS = -module -shrext $(PYTHON_SHEXT) -avoid-version
-_mymod_la_CPPFLAGS = $(PYCPPWRAPPER_CFLAGS) -I$(PYTHON_LIBDIR)/site-packages/numpy/core/include $(DEPS_CFLAGS) -D_hypot=hypot # -D_hypot is a MSVS/python bug workaround
+_mymod_la_CPPFLAGS = $(PYCPPWRAPPER_CFLAGS) -I$(PYTHON_LIBDIR)/$(PYTHON_PACKAGES)/numpy/core/include -I$(PYTHON_LIBDIR)/$(PYTHON_PACKAGES)/numpy/_core/include $(DEPS_CFLAGS) -D_hypot=hypot # -D_hypot is a MSVS/python bug workaround
 _mymod_la_LIBADD = $(PYCPPWRAPPER_LIBS) $(DEPS_LIBS)
 
 
