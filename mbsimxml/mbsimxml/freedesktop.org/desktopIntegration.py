@@ -127,7 +127,7 @@ try:
             print(f"export {name}={value}", file=f)
       for fn in [f"{HOME}/.bashrc", f"{HOME}/.kshrc"]:
         if os.path.isfile(fn):
-          setEnvVar(fn, "MBXMLUTILS_LD_LIBRARY_PATH", f"{PREFIX}/lib")
+          setEnvVar(fn, "MBXMLUTILS_LD_LIBRARY_PATH", f"{PREFIX}/lib:{PREFIX}/../mbsim-env-python-site-packages/lib")
           setEnvVar(fn, "MBXMLUTILS_PYTHONHOME", f"{PREFIX}")
           setEnvVar(fn, "MBXMLUTILS_PYTHONPATH", f"{PREFIX}/../mbsim-env-python-site-packages:{PREFIX}/share/mbxmlutils/python:{PREFIX}/bin")
 
