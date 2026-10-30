@@ -45,7 +45,7 @@ pair<string, string> Evaluator::getFalseTrueStr(const std::string &evaluator) {
     return {"false", "true"};
   else if(evaluator=="python")
     return {"False", "True"};
-  else if(evaluator=="flatxml")
+  else if(evaluator=="xmlflat")
     return {"false", "true"};
   return {"0", "1"};
 }
@@ -91,7 +91,7 @@ string Evaluator::getKDESyntaxHighlighterName() {
     return "Octave";
   else if(mw->getProject()->getEvaluator()=="python")
     return "Python";
-  else if(mw->getProject()->getEvaluator()=="flatxml")
+  else if(mw->getProject()->getEvaluator()=="xmlflat")
     return "Octave";
   else
     cerr<<"No syntax hightlighter for current evaluator "+mw->getProject()->getEvaluator()+" available."<<endl;
