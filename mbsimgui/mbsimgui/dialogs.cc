@@ -46,6 +46,8 @@
 #include <QMessageBox>
 #include <QFileInfo>
 #include <QSettings>
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wtemplate-id-cdtor"
 #include <qwt_plot.h>
 #include <qwt_plot_canvas.h>
 #include <qwt_plot_curve.h>
@@ -53,6 +55,7 @@
 #include <qwt_plot_grid.h>
 #include <qwt_symbol.h>
 #include <qwt_scale_engine.h>
+#pragma GCC diagnostic pop
 #include <boost/math/constants/constants.hpp>
 #include "hdf5serie/file.h"
 #include "hdf5serie/simpledataset.h"

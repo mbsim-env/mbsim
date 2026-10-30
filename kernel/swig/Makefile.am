@@ -70,12 +70,12 @@ _mbsim_la_SOURCES = _mbsim_swig_python.cc
 AM_DEFAULT_SOURCE_EXT = _swig_python.cc
 
 # compile flags for libtool libraries
-_fmatvec_la_CPPFLAGS = $(PYTHON_CFLAGS) $(FMATVEC_CFLAGS) -I$(PYTHON_LIBDIR)/site-packages/numpy/core/include \
+_fmatvec_la_CPPFLAGS = $(PYTHON_CFLAGS) $(FMATVEC_CFLAGS) -I$(PYTHON_LIBDIR)/$(PYTHON_PACKAGES)/numpy/core/include -I$(PYTHON_LIBDIR)/$(PYTHON_PACKAGES)/numpy/_core/include \
   -Wno-error=unused-variable -Wno-error=stringop-overflow= -D_hypot=hypot # -D_hypot is a MSVS/python bug workaround
 _mbsim_la_CPPFLAGS = $(AM_CPPFLAGS)
 # set default compile flags for all __mbsim_partXXX.la targets
 AM_CPPFLAGS = -I$(top_srcdir) -Dprotected=public -DMBSIM_COMPILE_SWIG $(PYTHON_CFLAGS) \
-  -I$(PYTHON_LIBDIR)/site-packages/numpy/core/include \
+  -I$(PYTHON_LIBDIR)/$(PYTHON_PACKAGES)/numpy/core/include -I$(PYTHON_LIBDIR)/$(PYTHON_PACKAGES)/numpy/_core/include \
   -Wno-error=unused-variable -Wno-error=write-strings -Wno-error=virtual-move-assign $(CXXFLAGSNOWERRORSTRINGOP) \
   $(DEPS_CFLAGS) -Wno-unused-label -Wno-array-bounds -D_hypot=hypot # -D_hypot is a MSVS/python bug workaround
 
