@@ -689,7 +689,7 @@ namespace MBSim {
     }
     Vec3 n = contact->getContourFrame(1)->getOrientation().col(2)*cos(ga) - contact->getContourFrame(1)->getOrientation().col(1)*sin(ga);
     slipPoint[0]->setPosition(tyre->getFrame()->getPosition()-Re*n);
-    slipPoint[1]->setPosition(slipPoint[0]->getPosition());
+    slipPoint[1]->setPosition(slipPoint[0]->getPosition(false));
     slipPoint[0]->setOrientation(contact->getContourFrame(0)->getOrientation());
     slipPoint[1]->setOrientation(contact->getContourFrame(1)->getOrientation());
     Vec3 WvD = slipPoint[1]->evalVelocity() - slipPoint[0]->evalVelocity();
