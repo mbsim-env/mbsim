@@ -47,7 +47,9 @@
 #include <QFileInfo>
 #include <QSettings>
 #pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wtemplate-id-cdtor"
+#if defined(__GNUC__) && !defined(__clang__) && __GNUC__ >= 14
+  #pragma GCC diagnostic ignored "-Wtemplate-id-cdtor"
+#endif
 #include <qwt_plot.h>
 #include <qwt_plot_canvas.h>
 #include <qwt_plot_curve.h>
