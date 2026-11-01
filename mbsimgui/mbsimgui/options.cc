@@ -58,6 +58,9 @@ namespace MBSimGUI {
     saveStateVector = new QCheckBox("Save final state vector");
     layout->addWidget(saveStateVector);
 
+    createNewProjectOnStartup = new QCheckBox("Create new project at startup");
+    layout->addWidget(createNewProjectOnStartup);
+
     sublayout = new QHBoxLayout;
     layout->addLayout(sublayout);
     label = new QLabel("Maximum number of undos");
@@ -159,6 +162,14 @@ namespace MBSimGUI {
 
   void OptionsDialog::setSaveStateVector(bool flag) {
     saveStateVector->setCheckState(flag?Qt::Checked:Qt::Unchecked);
+  }
+
+  bool OptionsDialog::getCreateNewProjectOnStartup() const {
+    return (createNewProjectOnStartup->checkState()==Qt::Checked);
+  }
+
+  void OptionsDialog::setCreateNewProjectOnStartup(bool flag) {
+    createNewProjectOnStartup->setCheckState(flag?Qt::Checked:Qt::Unchecked);
   }
 
   int OptionsDialog::getMaxUndo() const {

@@ -591,7 +591,7 @@ namespace MBSimGUI {
 
     if(projectFile.size())
       loadProject(QDir::current().absoluteFilePath(projectFile));
-    else
+    else if(settings.value("mainwindow/options/createnewprojectonstartup", true).toBool())
       newProject();
 
     setAcceptDrops(true);
@@ -764,6 +764,7 @@ namespace MBSimGUI {
     menu.setAutoSave(settings.value("mainwindow/options/autosave", false).toBool());
     menu.setAutoSaveInterval(settings.value("mainwindow/options/autosaveinterval", 5).toInt());
     menu.setSaveStateVector(settings.value("mainwindow/options/savestatevector", false).toBool());
+    menu.setCreateNewProjectOnStartup(settings.value("mainwindow/options/createnewprojectonstartup", true).toBool());
     menu.setMaxUndo(settings.value("mainwindow/options/maxundo", 100).toInt());
     menu.setShowFilters(settings.value("mainwindow/options/showfilters", true).toBool());
     menu.setShowHiddenItems(settings.value("mainwindow/options/showhiddenelements", false).toBool());
@@ -792,6 +793,7 @@ namespace MBSimGUI {
       settings.setValue("mainwindow/options/autosave"                      , menu.getAutoSave());
       settings.setValue("mainwindow/options/autosaveinterval"              , menu.getAutoSaveInterval());
       settings.setValue("mainwindow/options/savestatevector"               , menu.getSaveStateVector());
+      settings.setValue("mainwindow/options/createnewprojectonstartup"     , menu.getCreateNewProjectOnStartup());
       settings.setValue("mainwindow/options/maxundo"                       , menu.getMaxUndo());
       settings.setValue("mainwindow/options/showfilters"                   , menu.getShowFilters());
       settings.setValue("mainwindow/options/showhiddenelements"            , menu.getShowHiddenItems());
