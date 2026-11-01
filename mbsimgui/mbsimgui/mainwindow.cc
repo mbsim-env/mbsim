@@ -567,9 +567,6 @@ namespace MBSimGUI {
 
     setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
 
-    if(arg.contains("--maximized"))
-      showMaximized();
-
     QString projectFile;
     QRegExp filterProject(".+\\.mbsx");
     QDir dir;
