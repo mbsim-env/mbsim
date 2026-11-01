@@ -838,8 +838,6 @@ namespace MBSimGUI {
       if(oldPlugins!=menu.getPlugins())
         QMessageBox::information(this, "Program restart required!",
           "The MBSimGUI plugin search path has changed.\nThis needs a restart of MBSimGUI to take effect.");
-
-      project->setDefaultEvaluator(menu.getDefaultEvaluator());
     }
   }
 

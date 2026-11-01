@@ -74,10 +74,9 @@ namespace MBSimGUI {
     name = "Project";
     parent->insertBefore(element, nullptr);
     QSettings settings;
-    if(settings.value("mainwindow/options/defaultevaluator", 0).toInt()!=0) {
-      evaluator = Evaluator::evaluators[settings.value("mainwindow/options/defaultevaluator", 0).toInt()];
+    if(mw->eval->getName()!="octave") {
       DOMElement *ele = D(doc)->createElement(PV%"evaluator");
-      DOMText *text = doc->createTextNode(X()%evaluator);
+      DOMText *text = doc->createTextNode(X()%mw->eval->getName());
       ele->insertBefore(text, nullptr);
       element->insertBefore(ele, nullptr);
     }

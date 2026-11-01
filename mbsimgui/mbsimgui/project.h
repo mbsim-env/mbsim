@@ -56,15 +56,12 @@ namespace MBSimGUI {
       void maybeRemoveEmbedXMLElement() override;
       void setEvaluator(const std::shared_ptr<MBXMLUtils::Eval> &eval);
       const std::string& getEvaluator() { return evaluator; }
-      void setDefaultEvaluator(int index) { defaultEvaluator = index; }
-      int getDefaultEvaluator() const { return defaultEvaluator; }
       QString getVarTrue();
       QString getVarFalse();
     private:
       DynamicSystemSolver *dss{nullptr};
       Solver *solver{nullptr};
       std::string evaluator{Evaluator::defaultEvaluator};
-      int defaultEvaluator{0};
   };
 
 }
