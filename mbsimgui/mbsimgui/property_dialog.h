@@ -81,6 +81,8 @@ namespace MBSimGUI {
       }
 
       void addTab(const QString &name, int i=-1);
+      void setOk(bool on);
+      void setApply(bool on);
       void setCancel(bool on);
       bool getCancel() const;
       virtual void toWidget() { }

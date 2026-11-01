@@ -103,6 +103,14 @@ namespace MBSimGUI {
     layout[name]->addStretch(0);
   }
 
+  void PropertyDialog::setOk(bool on) {
+    buttonBox->button(QDialogButtonBox::Ok)->setEnabled(on);
+  }
+
+  void PropertyDialog::setApply(bool on) {
+    buttonBox->button(QDialogButtonBox::Apply)->setEnabled(on);
+  }
+
   void PropertyDialog::setCancel(bool on) {
     buttonBox->button(QDialogButtonBox::Cancel)->setEnabled(on);
   }

@@ -3162,6 +3162,10 @@ DEF mbsimgui_outdated_switch Switch {
       QModelIndex index = elementView->selectionModel()->currentIndex();
       auto *element = static_cast<EmbedItemData*>(static_cast<ElementTreeModel*>(elementView->model())->getItem(index)->getItemData());
       auto editor = new XMLPropertyDialog(element);
+      if(dynamic_cast<Project*>(element)) {
+        editor->setOk(false);
+        editor->setApply(false);
+      }
       editor->setAttribute(Qt::WA_DeleteOnClose);
       editor->toWidget();
       editor->show();
