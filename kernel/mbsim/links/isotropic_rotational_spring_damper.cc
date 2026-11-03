@@ -42,7 +42,14 @@ namespace MBSim {
 
   void IsotropicRotationalSpringDamper::updateGeneralizedPositions() {
     const SqrMat3 &A = evalGlobalRelativeOrientation();
-    rrel(0) = acos(std::max(-1.,std::min(1.,(A(0,0)+A(1,1)+A(2,2)-1)/2.)));
+
+    // we do not simply use
+    //   angle = acos( (trace(A)-1)/2 )
+    // since for A near to identity this equations highly suffers from numerical precision problems.
+    // Hence we use
+    //   angle = atan2( norm(tilde(A-A')), trace(A)-1 )
+    // which is precise even if A is near to identity
+    rrel(0) = atan2( nrm2(tilde(A-A.T())), A(0,0) + A(1,1) + A(2,2) - 1 );
     updrrel = false;
   }
 
