@@ -161,7 +161,7 @@ namespace MBSimGUI {
 
   UnknownItemPropertyDialog::UnknownItemPropertyDialog(EmbedItemData *item) : EmbedItemPropertyDialog("Element Properties", item) {
     addTab("General");
-    editor = new ExtWidget("XML Editor",new XMLEditorWidget);
+    editor = new ExtWidget("XML Editor",new XMLEditorWidget("",true,"<UnknownElement xmlns=\"http://www.mbsim-env.de/MBSim\" name=\"unknownElement\"/>"));
     addToTab("General", editor);
   }
 

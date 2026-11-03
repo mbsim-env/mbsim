@@ -1258,12 +1258,13 @@ namespace MBSimGUI {
     return onlyif->getWidget<PhysicalVariableWidget>()->getValue();
   }
 
-  XMLEditorWidget::XMLEditorWidget(const QString &text, bool syntax) {
+  XMLEditorWidget::XMLEditorWidget(const QString &text, bool syntax, const QString &placeholderText) {
     auto *layout = new QHBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
     edit = new CodeEditor;
+    edit->setPlaceholderText(placeholderText);
     edit->setMinimumSize(300,200);
     setText(text);
     if(syntax) edit->enableSyntaxHighlighter("XML");
@@ -1280,7 +1281,7 @@ namespace MBSimGUI {
 
   DOMElement* XMLEditorWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     try {
-      return static_cast<xercesc::DOMElement*>(mw->mbxmlparserNoVal->parseWithContext(edit->toPlainText().toStdString(), parent, DOMLSParser::ACTION_REPLACE));
+      return static_cast<xercesc::DOMElement*>(mw->mbxmlparserNoVal->parseWithContext(getText().toStdString(), parent, DOMLSParser::ACTION_REPLACE));
     }
     CATCH
     return nullptr;
