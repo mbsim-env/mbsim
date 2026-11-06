@@ -387,8 +387,8 @@ namespace MBSimGUI {
   class XMLEditorWidget : public Widget {
 
     public:
-      XMLEditorWidget(const QString &text="", bool syntax=true);
-      QString getText() { return edit->toPlainText(); }
+      XMLEditorWidget(const QString &text="", bool syntax=true, const QString &placeholderText="");
+      QString getText() { return edit->toPlainText().isEmpty()?edit->placeholderText():edit->toPlainText(); }
       void setText(const QString &text) { edit->setPlainText(text); }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;

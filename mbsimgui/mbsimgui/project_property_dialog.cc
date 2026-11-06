@@ -39,7 +39,8 @@ namespace MBSimGUI {
     vector<QString> list;
     for(auto &x : Evaluator::evaluators)
       list.emplace_back(x.c_str());
-    evalSelect = new ExtWidget("Evaluator",new TextChoiceWidget(list,project->getDefaultEvaluator()),true,false,PV%"evaluator");
+    auto idx = std::distance(Evaluator::evaluators.begin(), std::find(Evaluator::evaluators.begin(), Evaluator::evaluators.end(), project->getEvaluator()));
+    evalSelect = new ExtWidget("Evaluator",new TextChoiceWidget(list,idx),true,false,PV%"evaluator");
 
     // changing the evaluator is quite tricky:
     // - if the model already contains evaluator code this will fail with a changed evaluator

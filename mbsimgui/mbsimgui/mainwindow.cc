@@ -567,9 +567,6 @@ namespace MBSimGUI {
 
     setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
 
-    if(arg.contains("--maximized"))
-      showMaximized();
-
     QString projectFile;
     QRegExp filterProject(".+\\.mbsx");
     QDir dir;
@@ -594,7 +591,7 @@ namespace MBSimGUI {
 
     if(projectFile.size())
       loadProject(QDir::current().absoluteFilePath(projectFile));
-    else
+    else if(settings.value("mainwindow/options/createnewprojectonstartup", true).toBool())
       newProject();
 
     setAcceptDrops(true);
@@ -767,6 +764,7 @@ namespace MBSimGUI {
     menu.setAutoSave(settings.value("mainwindow/options/autosave", false).toBool());
     menu.setAutoSaveInterval(settings.value("mainwindow/options/autosaveinterval", 5).toInt());
     menu.setSaveStateVector(settings.value("mainwindow/options/savestatevector", false).toBool());
+    menu.setCreateNewProjectOnStartup(settings.value("mainwindow/options/createnewprojectonstartup", true).toBool());
     menu.setMaxUndo(settings.value("mainwindow/options/maxundo", 100).toInt());
     menu.setShowFilters(settings.value("mainwindow/options/showfilters", true).toBool());
     menu.setShowHiddenItems(settings.value("mainwindow/options/showhiddenelements", false).toBool());
@@ -795,6 +793,7 @@ namespace MBSimGUI {
       settings.setValue("mainwindow/options/autosave"                      , menu.getAutoSave());
       settings.setValue("mainwindow/options/autosaveinterval"              , menu.getAutoSaveInterval());
       settings.setValue("mainwindow/options/savestatevector"               , menu.getSaveStateVector());
+      settings.setValue("mainwindow/options/createnewprojectonstartup"     , menu.getCreateNewProjectOnStartup());
       settings.setValue("mainwindow/options/maxundo"                       , menu.getMaxUndo());
       settings.setValue("mainwindow/options/showfilters"                   , menu.getShowFilters());
       settings.setValue("mainwindow/options/showhiddenelements"            , menu.getShowHiddenItems());
@@ -841,8 +840,6 @@ namespace MBSimGUI {
       if(oldPlugins!=menu.getPlugins())
         QMessageBox::information(this, "Program restart required!",
           "The MBSimGUI plugin search path has changed.\nThis needs a restart of MBSimGUI to take effect.");
-
-      project->setDefaultEvaluator(menu.getDefaultEvaluator());
     }
   }
 
@@ -3165,6 +3162,10 @@ DEF mbsimgui_outdated_switch Switch {
       QModelIndex index = elementView->selectionModel()->currentIndex();
       auto *element = static_cast<EmbedItemData*>(static_cast<ElementTreeModel*>(elementView->model())->getItem(index)->getItemData());
       auto editor = new XMLPropertyDialog(element);
+      if(dynamic_cast<Project*>(element)) {
+        editor->setOk(false);
+        editor->setApply(false);
+      }
       editor->setAttribute(Qt::WA_DeleteOnClose);
       editor->toWidget();
       editor->show();

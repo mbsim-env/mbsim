@@ -38,6 +38,8 @@ namespace MBSimGUI {
       OptionsDialog(QWidget *parent);
       bool getSaveStateVector() const;
       void setSaveStateVector(bool flag);
+      bool getCreateNewProjectOnStartup() const;
+      void setCreateNewProjectOnStartup(bool flag);
       bool getAutoSave() const;
       void setAutoSaveInterval(int min);
       int getAutoSaveInterval() const;
@@ -71,7 +73,7 @@ namespace MBSimGUI {
       void setModulePath(const QString &path);
     private:
       void autoSaveChanged(int state);
-      QCheckBox *autoSave, *saveStateVector, *showFilters, *showHiddenItems, *showEmptyParameters;
+      QCheckBox *autoSave, *saveStateVector, *createNewProjectOnStartup, *showFilters, *showHiddenItems, *showEmptyParameters;
       QRadioButton *parameterViewOnlyForCurrentElement, *parameterViewAll;
       QRadioButton *errorLinkOpenElement, *errorLinkViewXMLSource, *errorLinkOpenXMLSource;
       QComboBox *defaultEvaluator;

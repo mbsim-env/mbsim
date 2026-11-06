@@ -101,6 +101,7 @@ int main(int argc, char *argv[]) {
     cout    <<""<<endl;
     cout    <<"-h|--help          Shows this help"<<endl;
     cout    <<"--fullscreen       Start in full screen mode"<<endl;
+    cout    <<"--maximized        Show window maximized on startup."<<endl;
     cout    <<"-C <dir/file>      Change current to dir to <dir>/dir of <file> first."<<endl;
     cout    <<"                   All arguments are still relative to the original current dir."<<endl;
     cout    <<"--CC               Change current dir to dir of <mbsimprjfile> first."<<endl;
@@ -179,6 +180,7 @@ int main(int argc, char *argv[]) {
 
   MainWindow mainwindow(arg);
   mainwindow.show();
+  if(arg.contains("--maximized")) mainwindow.showMaximized(); // must be done after mainwindow.show()
   if(arg.contains("--fullscreen")) mainwindow.showFullScreen(); // must be done after mainwindow.show()
   if(int ret=app.exec(); ret!=0) return ret;
   if(mainwindow.getErrorOccured()) return 1;
