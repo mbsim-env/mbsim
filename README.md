@@ -17,25 +17,48 @@ Current Daily Build Status of the MBSim-Environment
 
 
 
-# Installation
+# MBSim (Multi-Body Simulation)
 
-This project provides a simulation environment for mechanical systems. It needs openmbvc++interface. After the installation proceed with the following steps.
+MBSim is a general-purpose simulation framework for multi-body systems. Its scientific development dates back to 2007.
 
-1. Checkout from git
+MBSimGUI provides a graphical user interface (GUI) for creating and configuring multi-body simulation models.
 
-If not already done, checkout the git tree
-`git clone https://github.com/mbsim-env/mbsim.git`
+The MBSim simulation kernel provides the core infrastructure for running simulations. It supports rigid multi-body systems and includes various numerical integrators for solving ordinary differential equations (ODEs) and differential-algebraic equations (DAEs).
 
-2. Run AutoTools
+The simulation framework can be extended through specialized modules that provide additional capabilities for different physical domains, including, but not limited to:
 
-```
-aclocal
-autoheader
-libtoolize -c --force
-autoconf
-automake -a -c --force
-```
+* Flexible Bodies: Modeling and simulation of flexible structures.
+* Control: Integration of control systems and control algorithms.
+* Electronics: Modeling and simulation of electronic systems.
+* Hydraulics: Modeling and simulation of hydraulic systems.
 
-3. Proceed with configure
 
-See file INSTALL.
+
+# The MBSim Environment
+
+This repository is embed in the GitHub organization [MBSim-Env](https://github.com/mbsim-env/)
+
+The MBSim Environment (MBSim-Env) is a scientific software project with
+a long-standing history and a dedicated development and release infrastructure.
+
+For further information about the project, its scientific background,
+and its development, please visit the official project homepage:
+
+[www.mbsim-env.de](https://www.mbsim-env.de/)
+
+## Project Resources
+
+The project maintains its own infrastructure for continuous integration,
+automated testing, documentation generation, and official software releases.
+
+The following resources are available on the official project website:
+
+* [Documentation](https://www.mbsim-env.de/service/docu/) - Technical documentation and user guides.
+* [Releases](https://www.mbsim-env.de/service/releases/) - Official software releases.
+* [Nightly and CI Builds](https://www.mbsim-env.de/service/home/) - Development builds and continuous integration results.
+
+## Project History and Maintenance
+
+The official homepage also provides an overview of the scientific history and development of MBSim-Env.
+
+It is primarily maintained by [Markus Friedrich](https://github.com/friedrichatgc).
