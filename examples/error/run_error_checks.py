@@ -168,8 +168,10 @@ def adaptXML(ele, dir):
     ele.set("href", href)
 
   # text node
-  if ele.text is not None and ele.text.startswith(dirPrefix):
-    ele.text=ele.text[len(dirPrefix):]
+  if ele.text is not None:
+    textPath = os.path.normcase(os.path.normpath(ele.text[:ele.text.find(":")]))
+    if textPath.startswith(dirPrefix):
+      ele.text=ele.text[len(dirPrefix):]
 
   for child in ele:
     adaptXML(child, dir)
