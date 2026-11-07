@@ -151,12 +151,13 @@ def checkGUIError(dir):
   return ret
 
 def adaptXML(ele, dir):
-  dirPrefix=os.path.normpath(os.path.abspath(dir))+"/"
+  dirPrefix=os.path.normcase(os.path.normpath(os.path.abspath(dir))+"/")
   # href attribute
   href=ele.attrib.get("href")
   if href is not None:
     # trunc directory names
-    if href.startswith(dirPrefix):
+    hrefPath = os.path.normcase(os.path.normpath(href[:href.find("?")]))
+    if hrefPath.startswith(dirPrefix):
       href=href[len(dirPrefix):]
       ele.set("href", href)
     # remove ecount=1
