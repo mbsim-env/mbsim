@@ -1293,6 +1293,7 @@ namespace MBSimGUI {
       file = file.endsWith(".mbsx")?file:file+".mbsx";
       if(file.startsWith("//"))
         file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
+      doc->setDocumentURI(X()%file.toStdString());
       E(doc->getDocumentElement())->setOriginalFilename(file.toStdString());
       projectFile = QDir::current().relativeFilePath(file);
       setCurrentProjectFile(file);
