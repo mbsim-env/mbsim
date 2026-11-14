@@ -3,7 +3,7 @@
 
 #include "system.h"
 
-#include <boost/timer.hpp>
+#include <chrono>
 
 using namespace MBSim;
 using namespace fmatvec;
@@ -32,7 +32,7 @@ int main(int argc, char *argv[]) {
     integrator->setAbsoluteTolerance(1e-4);
     integrator->setRelativeTolerance(1e-5);
 
-    boost::timer timer;
+    auto start = chrono::high_resolution_clock::now();
 
     integrator->integrate(*sys);
     Vec u = sys->getu();
@@ -40,7 +40,8 @@ int main(int argc, char *argv[]) {
     sys->getu() = u;
     sys->writez("Assembly.h5");
 
-    double elapsedIntegrationTime = timer.elapsed();
+    auto end = chrono::high_resolution_clock::now();
+    double elapsedIntegrationTime = chrono::duration_cast<chrono::seconds>(end-start).count();
 
     cout << "******** Results of speed are:****************" << endl;
     cout << "*  Time elapsed: " << elapsedIntegrationTime << endl;
@@ -68,12 +69,13 @@ int main(int argc, char *argv[]) {
     integrator->setAbsoluteTolerance(1e-4);
     integrator->setRelativeTolerance(1e-5);
 
-    boost::timer timer;
+    auto start = chrono::high_resolution_clock::now();
 
     integrator->integrate(*sys);
     sys->writez("PreINIT.h5");
 
-    double elapsedIntegrationTime = timer.elapsed();
+    auto end = chrono::high_resolution_clock::now();
+    double elapsedIntegrationTime = chrono::duration_cast<chrono::seconds>(end-start).count();
 
     cout << "******** Results of speed are:****************" << endl;
     cout << "*  Time elapsed: " << elapsedIntegrationTime << endl;
@@ -101,11 +103,12 @@ int main(int argc, char *argv[]) {
     integrator->setAbsoluteTolerance(1e-4);
     integrator->setRelativeTolerance(1e-5);
 
-    boost::timer timer;
+    auto start = chrono::high_resolution_clock::now();
 
     integrator->integrate(*sys);
 
-    double elapsedIntegrationTime = timer.elapsed();
+    auto end = chrono::high_resolution_clock::now();
+    double elapsedIntegrationTime = chrono::duration_cast<chrono::seconds>(end-start).count();
 
     cout << "******** Results of speed are:****************" << endl;
     cout << "*  Time elapsed: " << elapsedIntegrationTime << endl;

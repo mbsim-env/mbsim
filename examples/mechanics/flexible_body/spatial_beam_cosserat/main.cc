@@ -1,7 +1,7 @@
 #include "system.h"
 #include <mbsim/integrators/integrators.h>
 
-#include <boost/timer.hpp>
+#include <chrono>
 
 using namespace MBSim;
 using namespace std;
@@ -19,10 +19,10 @@ int main (int argc, char* argv[]) {
   integrator.setStepSize(1e-4);
   integrator.setPlotStepSize(1e-4);
 
-  boost::timer timer;
-  timer.restart();
+  auto start = chrono::high_resolution_clock::now();
   integrator.integrate(*sys);
-  double calctime = timer.elapsed();
+  auto end = chrono::high_resolution_clock::now();
+  double calctime = chrono::duration_cast<chrono::seconds>(end-start).count();
 
   cout << "finished after calculation time [s] : " << calctime << endl;
 

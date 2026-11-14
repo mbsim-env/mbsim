@@ -1,7 +1,6 @@
 #include "system.h"
+#include <chrono>
 #include <mbsim/integrators/integrators.h>
-
-#include <boost/timer.hpp>
 
 #include <hdf5serie/vectorserie.h>
 #include <fmatvec/fmatvec.h>
@@ -35,10 +34,10 @@ int main (int argc, char* argv[]) {
     integrator->setStepSize(dtFull);
     integrator->setPlotStepSize(dtPlot);
 
-    boost::timer timer;
-    timer.restart();
+    auto start = chrono::high_resolution_clock::now();
     integrator->integrate(*sys);
-    double calctime = timer.elapsed();
+    auto end = chrono::high_resolution_clock::now();
+    double calctime = chrono::duration_cast<chrono::seconds>(end-start).count();
 
     sys->writez("z0.h5");
 
@@ -63,10 +62,10 @@ int main (int argc, char* argv[]) {
     integrator->setStepSize(dtRed);
     integrator->setPlotStepSize(dtPlot);
 
-    boost::timer timer;
-    timer.restart();
+    auto start = chrono::high_resolution_clock::now();
     integrator->integrate(*sys);
-    double calctime = timer.elapsed();
+    auto end = chrono::high_resolution_clock::now();
+    double calctime = chrono::duration_cast<chrono::seconds>(end-start).count();
 
     cout << "Finished reduced Simulation after calculation time [s] : " << calctime << endl;
 
