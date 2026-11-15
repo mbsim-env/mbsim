@@ -59,7 +59,7 @@
       <frameOfReference ref="../Frame[I]"/>
       <frameForKinematics ref="Frame[C]"/>
       <mass><!-- comment for mass -->m</mass>
-      <inertiaTensor>[1,0,0 ; 0,1,0 ; 0,0,1]</inertiaTensor>
+      <inertiaTensor unit="kg*mm^2">[1,0,0 ; 0,1,0 ; 0,0,1]*1e6</inertiaTensor>
       <stateDependentTranslation>
         <pv:Embed>
           <!-- just to check Embed for a Function element-->
