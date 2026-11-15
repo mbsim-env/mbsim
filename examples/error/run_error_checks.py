@@ -27,7 +27,7 @@ argparser.add_argument("--prefix", type=str, default=None, help="install prefix,
 argparser.add_argument("--novnc", action="store_true", help="do not use a vnc server on linux to start mbsimgui")
 
 # argument completion in bash
-if importlib.util.find_spec("numpy") is not None:
+if importlib.util.find_spec("argcomplete") is not None:
   import argcomplete
   argcomplete.autocomplete(argparser)
 
