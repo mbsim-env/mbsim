@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# PYTHON_ARGCOMPLETE_OK
 
 import subprocess
 import os
@@ -11,6 +12,7 @@ import psutil
 import difflib
 import re
 import xml.etree.cElementTree as ET
+import importlib.util
 
 argparser=argparse.ArgumentParser(
   description='''Running and checking MBSimXML/GUI models with errors in the input.'''
@@ -23,6 +25,11 @@ actionGroup.add_argument("--showdiff", action="store_true", help="show a diff of
 argparser.add_argument("--difftool", type=str, default=None, help="default diff tool if git cannot be used to autodetect")
 argparser.add_argument("--prefix", type=str, default=None, help="install prefix, use PATH if not given")
 argparser.add_argument("--novnc", action="store_true", help="do not use a vnc server on linux to start mbsimgui")
+
+# argument completion in bash
+if importlib.util.find_spec("numpy") is not None:
+  import argcomplete
+  argcomplete.autocomplete(argparser)
 
 args=argparser.parse_args()
 
