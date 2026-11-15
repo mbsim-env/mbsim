@@ -40,7 +40,7 @@ namespace MBSimGUI {
   DOMElement* ClonePropertyDialog::initializeUsingXML(DOMElement *parent) {
     name->getWidget<TextWidget>()->setText(QString::fromStdString(MBXMLUtils::E(item->getXMLElement())->getAttribute("name")));
     DOMElement *embed = item->getEmbedXMLElement();
-    if(embed) {
+    if(embed and (E(embed)->hasAttribute("count") or E(embed)->hasAttribute("counterName") or E(embed)->hasAttribute("onlyif"))) {
       clone->setActive(true);
       auto cw = clone->getWidget<CloneWidget>();
       if(E(embed)->hasAttribute("count"))
