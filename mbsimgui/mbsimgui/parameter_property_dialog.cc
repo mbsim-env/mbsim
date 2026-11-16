@@ -217,13 +217,13 @@ namespace MBSimGUI {
     addToTab("General",label);
 
     bool hidden = false;
-    for(auto &x : Evaluator::getImportActions())
-      actionList.emplace_back(pair<QString,QString>{get<0>(x).c_str(), get<2>(x).c_str()});
     int defaultIdx = Evaluator::getImportActionDefaultIdx();
     if(Evaluator::getImportActionOnlyOneNoneDepr()>=0)
       hidden = true;
-    vector<QString> list;
-    transform(actionList.begin(), actionList.end(), back_insert_iterator(list), [](const auto& x){ return x.second; });
+    vector<pair<QString, bool>> list;
+    transform(Evaluator::getImportActions().begin(), Evaluator::getImportActions().end(), back_insert_iterator(list), [](const auto& x){
+      return pair<QString, bool>{get<2>(x).c_str(), get<1>(x)};
+    });
     action = new ExtWidget("Action",new TextChoiceWidget(list,defaultIdx,false));
     action->setHidden(hidden);
     addToTab("General", action);
@@ -244,8 +244,10 @@ namespace MBSimGUI {
     auto xmlAction = E(parameter->getXMLElement())->getAttribute("action");
     int actionIdx = 0;
     if(!xmlAction.empty()) {
-      auto it = find_if(actionList.begin(), actionList.end(), [&xmlAction](const auto &x){ return x.first.toStdString() == xmlAction; });
-      actionIdx = distance(actionList.begin(), it);
+      auto it = find_if(Evaluator::getImportActions().begin(), Evaluator::getImportActions().end(), [&xmlAction](const auto &x){
+        return get<0>(x) == xmlAction;
+      });
+      actionIdx = distance(Evaluator::getImportActions().begin(), it);
     }
     if(Evaluator::getImportActions().size()==1) // only one option available -> do not show at all
       hidden = true;
@@ -269,9 +271,9 @@ namespace MBSimGUI {
     value->writeXMLFile(parameter->getXMLElement(),ref);
 
     optional<QString> actionStr;
-    auto it=actionList.begin()+action->getWidget<TextChoiceWidget>()->getCurrentIndex();
-    if(!it->first.isEmpty())
-      actionStr=it->first;
+    auto it=Evaluator::getImportActions().begin()+action->getWidget<TextChoiceWidget>()->getCurrentIndex();
+    if(!get<0>(*it).empty())
+      actionStr=get<0>(*it).c_str();
     if(actionStr)
       E(static_cast<DOMElement*>(parent))->setAttribute("action", actionStr.value().toStdString());
     else

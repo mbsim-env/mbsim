@@ -262,6 +262,7 @@ namespace MBSimGUI {
   class TextChoiceWidget : public BasicTextWidget {
 
     public:
+      TextChoiceWidget(const std::vector<std::pair<QString, bool>> &list, int num=0, bool editable=false);
       TextChoiceWidget(const std::vector<QString> &list, int num=0, bool editable=false);
       QString getText() const override { return text->currentText(); }
       void setStringList(const std::vector<QString> &list);

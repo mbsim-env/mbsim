@@ -695,17 +695,35 @@ namespace MBSimGUI {
     return ele;
   }
 
-  TextChoiceWidget::TextChoiceWidget(const vector<QString> &list, int num, bool editable) {
+  // same as TextChoiceWidget::TextChoiceWidget(const vector<QString> &list, int num, bool editable)
+  // with a boolean flag which marks a item as deprecated (drawn with "disabled" foreground color)
+  TextChoiceWidget::TextChoiceWidget(const vector<pair<QString, bool>> &list, int num, bool editable) {
     text = new CustomComboBox;
     text->setEditable(editable);
-    for(const auto & i : list)
-      text->addItem(i);
+    for(const auto & [name, disabled] : list) {
+      text->addItem(name);
+      if(disabled)
+        text->setItemData(text->count()-1, QApplication::palette().color(QPalette::Disabled, QPalette::Text), Qt::ForegroundRole);
+    }
     text->setCurrentIndex(num);
     auto* layout = new QHBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
     layout->addWidget(text);
     connect(text,&CustomComboBox::currentTextChanged,this,&Widget::widgetChanged);
+  }
+
+  namespace {
+    auto noneDepr(const vector<QString> &list) {
+      vector<pair<QString, bool>> ret;
+      transform(list.begin(), list.end(), back_inserter(ret), [](const auto &n){
+        return pair{n, false};
+      });
+      return ret;
+    }
+  }
+  TextChoiceWidget::TextChoiceWidget(const vector<QString> &list, int num, bool editable) :
+    TextChoiceWidget(noneDepr(list), num, editable) {
   }
 
   void TextChoiceWidget::setStringList(const vector<QString> &list) {

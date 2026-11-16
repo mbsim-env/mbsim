@@ -50,17 +50,23 @@ pair<string, string> Evaluator::getFalseTrueStr(const std::string &evaluator) {
   return {"0", "1"};
 }
 
-vector<tuple<string, bool, string>> Evaluator::getImportActions() {
+const vector<tuple<string, bool, string>>& Evaluator::getImportActions() {
   if(mw->getProject()->getEvaluator()=="octave") {
-    return {{"", false, ""}};
+    static const vector<tuple<string, bool, string>> ret {
+      {"", false, ""},
+    };
+    return ret;
   }
   if(mw->getProject()->getEvaluator()=="python") {
-    return {
-      {"addNewVarsToInstance", true, "add new variables globally (deprecated)"},
+    static const vector<tuple<string, bool, string>> ret {
+      {"addNewVarsToInstance", true , "[deprecated] add new variables globally"},
       {"addAllVarsAsParams"  , false, "add all variables locally"},
+      {"addNothing"          , false, "add nothing"},
     };
+    return ret;
   }
-  return {};
+  static const vector<tuple<string, bool, string>> ret {};
+  return ret;
 }
 
 int Evaluator::getImportActionDefaultIdx() {

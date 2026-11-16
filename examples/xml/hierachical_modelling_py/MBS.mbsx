@@ -7,6 +7,16 @@
       <scalarParameter name="Tend">4</scalarParameter>
       <!-- test the conversion from a Python value to a vector/matrix represented as a numpy 1D/2D array -->
       <import action="addAllVarsAsParams">import numpy</import>
+      <import label="testvar1" action="addAllVarsAsParams">
+        testvar1=9
+      </import>
+      <import label="testvar2" action="addNothing">
+        testvar2=testvar1*2
+      </import>
+      <import label="testvar3" action="addNothing">
+        # testvar2 is NO available
+        testvar3=18*2
+      </import>
       <anyParameter name="listScalar">
         <?MBSIMGUI_EVALLANG Python?>[1,2,3]
       </anyParameter>

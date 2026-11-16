@@ -43,7 +43,7 @@ class Evaluator {
 
     static std::pair<std::string, std::string> getFalseTrueStr(const std::string &evaluator);
 
-    static std::vector<std::tuple<std::string, bool, std::string>> getImportActions();
+    static const std::vector<std::tuple<std::string, bool, std::string>>& getImportActions();
     static int getImportActionDefaultIdx();
     static int getImportActionOnlyOneNoneDepr();
 
