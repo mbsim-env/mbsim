@@ -19,6 +19,8 @@ _libmbsimgui.mbsimgui_Parameter_setValue.restype=None
 _libmbsimgui.mbsimgui_Parameter_setValue.argtypes=[ctypes.c_void_p, ctypes.c_char_p]
 _libmbsimgui.mbsimgui_MainWindow_refresh.restype=None
 _libmbsimgui.mbsimgui_MainWindow_refresh.argtypes=[]
+_libmbsimgui.mbsimgui_MainWindow_maybeSave.restype=ctypes.c_int
+_libmbsimgui.mbsimgui_MainWindow_maybeSave.argtypes=[]
 
 class BasicPropertyDialog(PySide2.QtWidgets.QDialog):
   """reimplementation of the C++ class MBSimGUI::BasicPropertyDialog -> keep it simple and in sync"""
@@ -49,6 +51,8 @@ class _MainWindow(object):
     mbxmlutils.Qt.blockUntilDialogsAreClosed(*args)
   def refresh(self):
     _libmbsimgui.mbsimgui_MainWindow_refresh()
+  def maybeSave(self):
+    return _libmbsimgui.mbsimgui_MainWindow_maybeSave() != 0
 
 mw=_MainWindow()
 

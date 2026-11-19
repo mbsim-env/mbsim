@@ -3864,6 +3864,7 @@ extern "C" {
       string code_(code);
       QTimer::singleShot(0, [parameter, code_](){
         try {
+          assert(MBSimGUI::mw);
           MBSimGUI::mw->setParameterValue(parameter, code_);
         }
         catch(...) {
@@ -3880,6 +3881,7 @@ extern "C" {
     try {
       QTimer::singleShot(0, [](){
         try {
+          assert(MBSimGUI::mw);
           MBSimGUI::mw->refresh();
         }
         catch(...) {
@@ -3890,6 +3892,17 @@ extern "C" {
     catch(...) {
       cerr<<"Internal error: this should never happen: MainWindow::refresh() failed!"<<endl;
     }
+  }
+
+  int mbsimgui_MainWindow_maybeSave() noexcept {
+    try {
+      assert(MBSimGUI::mw);
+      return MBSimGUI::mw->maybeSave() ? 1 : 0;
+    }
+    catch(...) {
+      cerr<<"Internal error: this should never happen: MainWindow::maybeSave() failed!"<<endl;
+    }
+    return 0;
   }
 
 }

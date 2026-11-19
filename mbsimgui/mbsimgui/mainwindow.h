@@ -132,7 +132,6 @@ namespace MBSimGUI {
       void dropEvent(QDropEvent *event) override;
       void closeEvent(QCloseEvent *event) override;
       void showEvent(QShowEvent *event) override;
-      bool maybeSave();
       void setCurrentProjectFile(const QString &fileName);
       void updateRecentProjectFileActions();
       void move(bool up);
@@ -224,6 +223,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* pasteElement(Element *parent, Element *element);
       xercesc::DOMElement* loadEmbedItemData(EmbedItemData *parent, const QString &title);
       void clearEchoView(const QString &initialText="");
+      bool maybeSave();
 
       template<class Container>
       QModelIndex getContainerIndex(Element *parent);
