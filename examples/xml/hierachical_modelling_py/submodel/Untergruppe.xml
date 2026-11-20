@@ -7,6 +7,7 @@
   <groups/>
   <objects>
     <RigidBody name="Box1">
+      <plotFeature value="openMBV">False</plotFeature>
       <generalizedInitialPosition>[l012[0] + h1/2 + 0.2]</generalizedInitialPosition>
       <generalizedInitialVelocity>[0]</generalizedInitialVelocity>
       <frameOfReference ref="../Frame[I]"/>

@@ -113,14 +113,14 @@ namespace MBSim {
       void setjsv(const fmatvec::VecInt& jsv_) { jsv = jsv_; }
       void setInternalState(const fmatvec::Vec& internalState) { curis = internalState; nextis = internalState; }
       virtual H5::GroupBase *getPlotGroup() { return plotGroup; }
-      std::shared_ptr<OpenMBV::Group> getOpenMBVGrp() override { return openMBVGrp; }
-      std::shared_ptr<OpenMBV::Group> getFramesOpenMBVGrp() override { return framesOpenMBVGrp; }
-      std::shared_ptr<OpenMBV::Group> getContoursOpenMBVGrp() override { return contoursOpenMBVGrp; }
-      std::shared_ptr<OpenMBV::Group> getGroupsOpenMBVGrp() override { return groupsOpenMBVGrp; }
-      std::shared_ptr<OpenMBV::Group> getObjectsOpenMBVGrp() override { return objectsOpenMBVGrp; }
-      std::shared_ptr<OpenMBV::Group> getLinksOpenMBVGrp() override { return linksOpenMBVGrp; }
-      std::shared_ptr<OpenMBV::Group> getConstraintsOpenMBVGrp() override { return constraintsOpenMBVGrp; }
-      std::shared_ptr<OpenMBV::Group> getObserversOpenMBVGrp() override { return observersOpenMBVGrp; }
+      std::shared_ptr<OpenMBV::Group> getOpenMBVGrp() override;
+      std::shared_ptr<OpenMBV::Group> getFramesOpenMBVGrp() override;
+      std::shared_ptr<OpenMBV::Group> getContoursOpenMBVGrp() override;
+      std::shared_ptr<OpenMBV::Group> getGroupsOpenMBVGrp() override;
+      std::shared_ptr<OpenMBV::Group> getObjectsOpenMBVGrp() override;
+      std::shared_ptr<OpenMBV::Group> getLinksOpenMBVGrp() override;
+      std::shared_ptr<OpenMBV::Group> getConstraintsOpenMBVGrp() override;
+      std::shared_ptr<OpenMBV::Group> getObserversOpenMBVGrp() override;
 
       virtual void calcxSize();
       const fmatvec::Vec& getx() const { return x; };
@@ -805,6 +805,15 @@ namespace MBSim {
       void addFrame(Frame *frame_);
       void addContour(Contour *contour_);
 
+      std::shared_ptr<OpenMBV::Group> openMBVGrp;
+      std::shared_ptr<OpenMBV::Group> framesOpenMBVGrp;
+      std::shared_ptr<OpenMBV::Group> contoursOpenMBVGrp;
+      std::shared_ptr<OpenMBV::Group> groupsOpenMBVGrp;
+      std::shared_ptr<OpenMBV::Group> objectsOpenMBVGrp;
+      std::shared_ptr<OpenMBV::Group> linksOpenMBVGrp;
+      std::shared_ptr<OpenMBV::Group> constraintsOpenMBVGrp;
+      std::shared_ptr<OpenMBV::Group> observersOpenMBVGrp;
+
     protected:
       /**
        * \brief parent frame
@@ -982,14 +991,6 @@ namespace MBSim {
       std::vector<Frame*> frame;
       std::vector<Contour*> contour;
 
-      std::shared_ptr<OpenMBV::Group> openMBVGrp;
-      std::shared_ptr<OpenMBV::Group> framesOpenMBVGrp;
-      std::shared_ptr<OpenMBV::Group> contoursOpenMBVGrp;
-      std::shared_ptr<OpenMBV::Group> groupsOpenMBVGrp;
-      std::shared_ptr<OpenMBV::Group> objectsOpenMBVGrp;
-      std::shared_ptr<OpenMBV::Group> linksOpenMBVGrp;
-      std::shared_ptr<OpenMBV::Group> constraintsOpenMBVGrp;
-      std::shared_ptr<OpenMBV::Group> observersOpenMBVGrp;
       std::shared_ptr<H5::File> hdf5File;
 
       /** A pointer to frame "I" */

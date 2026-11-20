@@ -89,19 +89,9 @@ namespace MBSim {
     }
     else if(stage==plotting) {
       if(plotFeature[openMBV]) {
-        openMBVGrp=OpenMBV::ObjectFactory::create<OpenMBV::Group>();
-        openMBVGrp->setName(name);
-        openMBVGrp->setExpand(false);
-        parent->getObjectsOpenMBVGrp()->addObject(openMBVGrp);
-	framesOpenMBVGrp = OpenMBV::ObjectFactory::create<OpenMBV::Group>();
-	framesOpenMBVGrp->setName("frames");
-	openMBVGrp->addObject(framesOpenMBVGrp);
-	contoursOpenMBVGrp = OpenMBV::ObjectFactory::create<OpenMBV::Group>();
-	contoursOpenMBVGrp->setName("contours");
-	openMBVGrp->addObject(contoursOpenMBVGrp);
         if(openMBVBody) {
           openMBVBody->setName(name);
-          openMBVGrp->addObject(openMBVBody);
+          getOpenMBVGrp()->addObject(openMBVBody);
         }
       }
     }
@@ -233,6 +223,34 @@ namespace MBSim {
   void Body::resetGyroscopicAccelerationsUpToDate() {
     for(auto & i : frame)
       i->resetGyroscopicAccelerationsUpToDate();
+  }
+
+  shared_ptr<OpenMBV::Group> Body::getOpenMBVGrp() {
+    if(!openMBVGrp) {
+      openMBVGrp=OpenMBV::ObjectFactory::create<OpenMBV::Group>();
+      openMBVGrp->setName(name);
+      openMBVGrp->setExpand(false);
+      parent->getObjectsOpenMBVGrp()->addObject(openMBVGrp);
+    }
+    return openMBVGrp;
+  }
+
+  shared_ptr<OpenMBV::Group> Body::getFramesOpenMBVGrp() {
+    if(!framesOpenMBVGrp) {
+      framesOpenMBVGrp = OpenMBV::ObjectFactory::create<OpenMBV::Group>();
+      framesOpenMBVGrp->setName("frames");
+      getOpenMBVGrp()->addObject(framesOpenMBVGrp);
+    }
+    return framesOpenMBVGrp;
+  }
+
+  shared_ptr<OpenMBV::Group> Body::getContoursOpenMBVGrp() {
+    if(!contoursOpenMBVGrp) {
+      contoursOpenMBVGrp = OpenMBV::ObjectFactory::create<OpenMBV::Group>();
+      contoursOpenMBVGrp->setName("contours");
+      getOpenMBVGrp()->addObject(contoursOpenMBVGrp);
+    }
+    return contoursOpenMBVGrp;
   }
 
 }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <Group xmlns="http://www.mbsim-env.de/MBSim" name="Hauptgruppe{numHG+1}" xmlns:ombv="http://www.mbsim-env.de/OpenMBV" xmlns:pv="http://www.mbsim-env.de/MBXMLUtils">
+  <plotFeature value="openMBV">False</plotFeature>
   <frameOfReference ref="../Frame[Q{numHG}]"/>
   <frames>
     <FixedRelativeFrame name="Q">

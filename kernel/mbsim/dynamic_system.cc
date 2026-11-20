@@ -448,33 +448,6 @@ namespace MBSim {
         plotGroup->createChildAttribute<H5::SimpleAttribute<string>>("Description")()->write(string("Object of class: ")+boost::core::demangle(typeid(*this).name()));
         plotVectorSerie = nullptr;
       }
-      if (plotFeature[openMBV]) {
-        openMBVGrp = OpenMBV::ObjectFactory::create<OpenMBV::Group>();
-        openMBVGrp->setName(name);
-        if (parent)
-          parent->getGroupsOpenMBVGrp()->addObject(openMBVGrp);
-	framesOpenMBVGrp = OpenMBV::ObjectFactory::create<OpenMBV::Group>();
-	framesOpenMBVGrp->setName("frames");
-	openMBVGrp->addObject(framesOpenMBVGrp);
-	contoursOpenMBVGrp = OpenMBV::ObjectFactory::create<OpenMBV::Group>();
-	contoursOpenMBVGrp->setName("contours");
-	openMBVGrp->addObject(contoursOpenMBVGrp);
-	groupsOpenMBVGrp = OpenMBV::ObjectFactory::create<OpenMBV::Group>();
-	groupsOpenMBVGrp->setName("groups");
-	openMBVGrp->addObject(groupsOpenMBVGrp);
-	objectsOpenMBVGrp = OpenMBV::ObjectFactory::create<OpenMBV::Group>();
-	objectsOpenMBVGrp->setName("objects");
-	openMBVGrp->addObject(objectsOpenMBVGrp);
-	linksOpenMBVGrp = OpenMBV::ObjectFactory::create<OpenMBV::Group>();
-	linksOpenMBVGrp->setName("links");
-	openMBVGrp->addObject(linksOpenMBVGrp);
-	constraintsOpenMBVGrp = OpenMBV::ObjectFactory::create<OpenMBV::Group>();
-	constraintsOpenMBVGrp->setName("constraints");
-	openMBVGrp->addObject(constraintsOpenMBVGrp);
-	observersOpenMBVGrp = OpenMBV::ObjectFactory::create<OpenMBV::Group>();
-	observersOpenMBVGrp->setName("observers");
-	openMBVGrp->addObject(observersOpenMBVGrp);
-      }
       Element::init(stage, config);
     }
 
@@ -1886,6 +1859,79 @@ namespace MBSim {
     for (auto & i : observer)
       for(int j=0; j<i->getisSize(); j++)
         ds->getStateTable()[ds->getqSize()+ds->getuSize()+ds->getxSize()+i->getisInd()+j] = StateTable(i->getPath(),'i',j);
+  }
+
+  shared_ptr<OpenMBV::Group> DynamicSystem::getOpenMBVGrp() {
+    if(!openMBVGrp) {
+      openMBVGrp = OpenMBV::ObjectFactory::create<OpenMBV::Group>();
+      openMBVGrp->setName(name);
+      if (parent)
+        parent->getGroupsOpenMBVGrp()->addObject(openMBVGrp);
+    }
+    return openMBVGrp;
+  }
+
+  shared_ptr<OpenMBV::Group> DynamicSystem::getFramesOpenMBVGrp() {
+    if(!framesOpenMBVGrp) {
+      framesOpenMBVGrp = OpenMBV::ObjectFactory::create<OpenMBV::Group>();
+      framesOpenMBVGrp->setName("frames");
+      getOpenMBVGrp()->addObject(framesOpenMBVGrp);
+    }
+    return framesOpenMBVGrp;
+  }
+
+  shared_ptr<OpenMBV::Group> DynamicSystem::getContoursOpenMBVGrp() {
+    if(!contoursOpenMBVGrp) {
+      contoursOpenMBVGrp = OpenMBV::ObjectFactory::create<OpenMBV::Group>();
+      contoursOpenMBVGrp->setName("contours");
+      getOpenMBVGrp()->addObject(contoursOpenMBVGrp);
+    }
+    return contoursOpenMBVGrp;
+  }
+
+  shared_ptr<OpenMBV::Group> DynamicSystem::getGroupsOpenMBVGrp() {
+    if(!groupsOpenMBVGrp) {
+      groupsOpenMBVGrp = OpenMBV::ObjectFactory::create<OpenMBV::Group>();
+      groupsOpenMBVGrp->setName("groups");
+      getOpenMBVGrp()->addObject(groupsOpenMBVGrp);
+    }
+    return groupsOpenMBVGrp;
+  }
+
+  shared_ptr<OpenMBV::Group> DynamicSystem::getObjectsOpenMBVGrp() {
+    if(!objectsOpenMBVGrp) {
+      objectsOpenMBVGrp = OpenMBV::ObjectFactory::create<OpenMBV::Group>();
+      objectsOpenMBVGrp->setName("objects");
+      getOpenMBVGrp()->addObject(objectsOpenMBVGrp);
+    }
+    return objectsOpenMBVGrp;
+  };
+
+  shared_ptr<OpenMBV::Group> DynamicSystem::getLinksOpenMBVGrp() {
+    if(!linksOpenMBVGrp) {
+      linksOpenMBVGrp = OpenMBV::ObjectFactory::create<OpenMBV::Group>();
+      linksOpenMBVGrp->setName("links");
+      getOpenMBVGrp()->addObject(linksOpenMBVGrp);
+    }
+    return linksOpenMBVGrp;
+  }
+
+  shared_ptr<OpenMBV::Group> DynamicSystem::getConstraintsOpenMBVGrp() {
+    if(!constraintsOpenMBVGrp) {
+      constraintsOpenMBVGrp = OpenMBV::ObjectFactory::create<OpenMBV::Group>();
+      constraintsOpenMBVGrp->setName("constraints");
+      getOpenMBVGrp()->addObject(constraintsOpenMBVGrp);
+    }
+    return constraintsOpenMBVGrp;
+  }
+
+  shared_ptr<OpenMBV::Group> DynamicSystem::getObserversOpenMBVGrp() {
+    if(!observersOpenMBVGrp) {
+      observersOpenMBVGrp = OpenMBV::ObjectFactory::create<OpenMBV::Group>();
+      observersOpenMBVGrp->setName("observers");
+      getOpenMBVGrp()->addObject(observersOpenMBVGrp);
+    }
+    return observersOpenMBVGrp;
   }
 
 }

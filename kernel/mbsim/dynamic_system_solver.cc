@@ -490,14 +490,14 @@ namespace MBSim {
         if(!envs.empty()) {
           auto openmbvEnv=OpenMBV::ObjectFactory::create<OpenMBV::Group>();
           openmbvEnv->setName("environments");
-          openMBVGrp->addObject(openmbvEnv);
+          getOpenMBVGrp()->addObject(openmbvEnv);
           for(auto env : envs) {
             env->setEnvironment(true);
             openmbvEnv->addObject(env);
           }
         }
         // write openmbv files
-        openMBVGrp->write(true, truncateSimulationFiles, embedOmbvxInH5);
+        getOpenMBVGrp()->write(true, truncateSimulationFiles, embedOmbvxInH5);
       }
 
       // copy the content of the .buildInfo.json file to the HDF5 file:
@@ -1887,7 +1887,7 @@ namespace MBSim {
       if(hdf5File)
         hdf5File->enableSWMR();
       if(openMBVGrp) {
-        openMBVGrp->setRowSize(1);
+        getOpenMBVGrp()->setRowSize(1);
         openMBVGrp->enableSWMR();
       }
     }
@@ -1895,7 +1895,7 @@ namespace MBSim {
     if(hdf5File)
       hdf5File->flushIfRequested();
     if(openMBVGrp) {
-      openMBVGrp->flushIfRequested([this](auto grp) {
+      getOpenMBVGrp()->flushIfRequested([this](auto grp) {
         // if a flush happens then this function is called
         grp->setRowSize(plottedRows);
       });
@@ -1904,7 +1904,7 @@ namespace MBSim {
 
   void DynamicSystemSolver::postprocessing() {
     if(openMBVGrp) {
-      openMBVGrp->flush();
+      getOpenMBVGrp()->flush();
       openMBVGrp->setRowSize(plottedRows);
     }
     Group::postprocessing();
