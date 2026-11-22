@@ -259,7 +259,7 @@ namespace MBSimGUI {
     elementView->setColumnWidth(0,250);
     elementView->setColumnWidth(1,200);
     elementView->hideColumn(1);
-    elementViewFilter = new OpenMBVGUI::AbstractViewFilter(elementView, 0, 3);
+    elementViewFilter = new OpenMBVGUI::AbstractViewFilter(elementView);
     elementViewFilter->setColumnMap(unordered_map<QString,pair<int,QString>>({
           {":",make_pair<int,QString>(3,"type")},
           {"#",make_pair<int,QString>(2,"comment")},
@@ -276,7 +276,7 @@ namespace MBSimGUI {
     parameterView->setModel(new ParameterTreeModel(this));
     parameterView->setColumnWidth(0,150);
     parameterView->setColumnWidth(1,200);
-    parameterViewFilter = new OpenMBVGUI::AbstractViewFilter(parameterView, 0, 3);
+    parameterViewFilter = new OpenMBVGUI::AbstractViewFilter(parameterView);
     parameterViewFilter->setColumnMap(unordered_map<QString,pair<int,QString>>({
           {":",make_pair<int,QString>(3,"type")},
           {"#",make_pair<int,QString>(2,"comment")},

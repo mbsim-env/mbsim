@@ -262,7 +262,12 @@ namespace MBSimGUI {
     eleList->hideColumn(1);
     auto commentDelegate=new SingleLineDelegate(eleList);
     eleList->setItemDelegateForColumn(2, commentDelegate);
-    auto *eleFilter = new OpenMBVGUI::AbstractViewFilter(eleList, 0, 3);
+    auto *eleFilter = new OpenMBVGUI::AbstractViewFilter(eleList);
+    eleFilter->setColumnMap({
+      {"" , {0, "name"}},
+      {":", {3, "type"}},
+      {"#", {2, "comment"}},
+    });
     layout->addWidget(eleFilter);
     layout->addWidget(eleList);
     connect(eleList, &QTreeView::pressed, this, &BasicElementBrowser::selectionChanged);
