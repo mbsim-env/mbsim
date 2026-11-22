@@ -260,6 +260,11 @@ namespace MBSimGUI {
     elementView->setColumnWidth(1,200);
     elementView->hideColumn(1);
     elementViewFilter = new OpenMBVGUI::AbstractViewFilter(elementView, 0, 3);
+    elementViewFilter->setColumnMap(unordered_map<QString,pair<int,QString>>({
+          {":",make_pair<int,QString>(3,"type")},
+          {"#",make_pair<int,QString>(2,"comment")},
+          {"",make_pair<int,QString>(0,"name")}
+          }));
     elementViewFilter->hide();
     // if new rows get insert update the item in the AbstractViewFilter
     connect(elementView->model(), &QAbstractItemModel::rowsInserted, this, [this](const QModelIndex &parent, int first, int last) {
@@ -272,6 +277,12 @@ namespace MBSimGUI {
     parameterView->setColumnWidth(0,150);
     parameterView->setColumnWidth(1,200);
     parameterViewFilter = new OpenMBVGUI::AbstractViewFilter(parameterView, 0, 3);
+    parameterViewFilter->setColumnMap(unordered_map<QString,pair<int,QString>>({
+          {":",make_pair<int,QString>(3,"type")},
+          {"#",make_pair<int,QString>(2,"comment")},
+          {"$",make_pair<int,QString>(1,"value")},
+          {"",make_pair<int,QString>(0,"name")}
+          }));
     parameterViewFilter->hide();
 
     auto editMenu = new QMenu("Edit", menuBar());
