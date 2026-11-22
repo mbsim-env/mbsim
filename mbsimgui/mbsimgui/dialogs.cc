@@ -264,9 +264,9 @@ namespace MBSimGUI {
     eleList->setItemDelegateForColumn(2, commentDelegate);
     auto *eleFilter = new OpenMBVGUI::AbstractViewFilter(eleList);
     eleFilter->setColumnMap({
-      {"" , {0, "name"}},
       {":", {3, "type"}},
       {"#", {2, "comment"}},
+      {"" , {0, "name"}},
     });
     layout->addWidget(eleFilter);
     layout->addWidget(eleList);
