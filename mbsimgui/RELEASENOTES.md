@@ -1,4 +1,4 @@
-Release NEXT
+Release 10.5
 ============
 
 MBSim
@@ -73,6 +73,8 @@ MBSimGUI
 - Use a unique pretty printing of the XML files in mbsimgui such that loading and saving the same model again in mbsimgui does
   not change the binary representation of the XML files.
 - Print the line number in the XML file in each code-editor dialog
+- Now, the model tree and the parameter list can be searched by comments when the search string starts with "#". The parameter list
+  can also be searched by values when the string starts with "$".
 
 H5Plotserie
 -----------
@@ -86,6 +88,7 @@ hdf5serie
   is locked in none SWMR mode which improved the interactivity when a file is used in a GUI. This is done by first writing,
   in none SWMR mode, to another file then rename the file to the original filename and open it in SWMR mode.
 - Allow datasets of type fixed length string. This enables compression on strings.
+- Enable filtering on columns defined by the user.
 
 OpenMBV
 -------
@@ -110,6 +113,7 @@ OpenMBV
 - Enabled dragger manipulation
 - Save/load camera now also handles the current move camera with body state
 - Allow to draw arrows per component
+- Enable filtering on columns defined by the user.
 
 fmatvec
 -------
