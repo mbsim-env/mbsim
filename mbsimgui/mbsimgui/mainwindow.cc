@@ -261,9 +261,9 @@ namespace MBSimGUI {
     elementView->hideColumn(1);
     elementViewFilter = new OpenMBVGUI::AbstractViewFilter(elementView);
     elementViewFilter->setColumnMap(unordered_map<QString,pair<int,QString>>({
-          {":",make_pair<int,QString>(3,"type")},
-          {"#",make_pair<int,QString>(2,"comment")},
-          {"",make_pair<int,QString>(0,"name")}
+          {":", {3,"type"}},
+          {"#", {2,"comment"}},
+          {"" , {0,"name"}}
           }));
     elementViewFilter->hide();
     // if new rows get insert update the item in the AbstractViewFilter
@@ -278,10 +278,10 @@ namespace MBSimGUI {
     parameterView->setColumnWidth(1,200);
     parameterViewFilter = new OpenMBVGUI::AbstractViewFilter(parameterView);
     parameterViewFilter->setColumnMap(unordered_map<QString,pair<int,QString>>({
-          {":",make_pair<int,QString>(3,"type")},
-          {"#",make_pair<int,QString>(2,"comment")},
-          {"$",make_pair<int,QString>(1,"value")},
-          {"",make_pair<int,QString>(0,"name")}
+          {":", {3,"type"}},
+          {"#", {2,"comment"}},
+          {"$", {1,"value"}},
+          {"" , {0,"name"}}
           }));
     parameterViewFilter->hide();
 
