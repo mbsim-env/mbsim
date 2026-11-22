@@ -8,6 +8,7 @@ MBSim
 - Added a new link for transmission of generalized forces with variable ratio
 - Added a new link for a generalized force on a rigid body
 - Root finding is now optional for state machines
+- Allow UNC path on Windows
 
 MBSimControl
 ------------
@@ -30,6 +31,9 @@ MBSimXML
 - Added a "storage" attribute to plot attributes which allows to save plotAttributes as datasets in instead of attributes.
   This allows e.g. to use compression for plotAttributes (HDF5 uses compression only on datasets but not on attributes)
 - Avoid that the evaluator octave and python is not loaded in one "mbsimxml" "-" process since this is not possible, at least on Windows
+- Added new action for import-parameter "addNothing" which just executes the code but does not add anything to the parameter stack
+- Implemented a homotopy newton-solver for nonlinear constraint force
+- Allow arbitray rigid-bodies for Frame visualizations
 
 MBSimFMI
 --------
@@ -68,6 +72,7 @@ MBSimGUI
 - Improved evaluator code editor widget in dialogs
 - Use a unique pretty printing of the XML files in mbsimgui such that loading and saving the same model again in mbsimgui does
   not change the binary representation of the XML files.
+- Print the line number in the XML file in each code-editor dialog
 
 H5Plotserie
 -----------
@@ -102,6 +107,9 @@ OpenMBV
   other object.
 - Added RigidSpineExtrusion: the same as SpineExtrusion with a cardan based spine but a fixed shape which can move
   rotate globally like a RigidBody.
+- Enabled dragger manipulation
+- Save/load camera now also handles the current move camera with body state
+- Allow to draw arrows per component
 
 fmatvec
 -------
