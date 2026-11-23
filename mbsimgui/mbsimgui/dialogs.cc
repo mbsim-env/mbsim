@@ -266,7 +266,7 @@ namespace MBSimGUI {
     eleFilter->setColumnMap({
       {"" , {0, "name"}},
       {"#", {2, "comment"}},
-      {":", {3, "type"}},
+      {":", {3, "type"}}
     });
     layout->addWidget(eleFilter);
     layout->addWidget(eleList);
