@@ -190,6 +190,7 @@ namespace MBSimGUI {
       void updateStatusMessageSlot(const QByteArray &data);
 
       TreeItemData* currentlyEditedItem { nullptr };
+      bool autoExit;
     Q_SIGNALS:
       void updateEchoView(const QByteArray &data);
       void updateStatusMessage(const QByteArray &data);

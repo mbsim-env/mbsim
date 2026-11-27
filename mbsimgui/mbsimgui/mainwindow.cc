@@ -524,7 +524,8 @@ namespace MBSimGUI {
 
     startProcessRefresh();
 
-    if(!arg.contains("--autoExit")) { // normal run (no --autoExit) -> pass also the output of process/processRefresh to readyReadStandardOutput
+    autoExit = arg.contains("--autoExit");
+    if(!autoExit) { // normal run (no --autoExit) -> pass also the output of process/processRefresh to readyReadStandardOutput
       startProcessSimulate();
       processSimulateFinishedConnection=connect(&processSimulate,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
         [this](){ startProcessSimulate(false); });
@@ -3294,6 +3295,8 @@ DEF mbsimgui_outdated_switch Switch {
     restoreState(settings.value("mainwindow/state").toByteArray());
     elementView->header()->restoreState(settings.value("mainwindow/elementview/header/state").toByteArray());
     parameterView->header()->restoreState(settings.value("mainwindow/parameterview/header/state").toByteArray());
+    if(autoExit)
+      setWindowState(Qt::WindowMinimized);
     QMainWindow::showEvent(event);
   }
 
