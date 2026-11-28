@@ -569,7 +569,9 @@ namespace MBSimGUI {
           cout<<allOutputSimulate.toStdString();
           if(exitCode!=0)
             setErrorOccured();
-          close();
+          auto ret=close();
+          (void)ret;
+          assert(ret);
         });
         simulate();
       });
@@ -3295,8 +3297,11 @@ DEF mbsimgui_outdated_switch Switch {
     restoreState(settings.value("mainwindow/state").toByteArray());
     elementView->header()->restoreState(settings.value("mainwindow/elementview/header/state").toByteArray());
     parameterView->header()->restoreState(settings.value("mainwindow/parameterview/header/state").toByteArray());
-    if(autoExit)
+    static bool firstCall = true;
+    if(autoExit && firstCall) {
+      firstCall = false;
       setWindowState(Qt::WindowMinimized);
+    }
     QMainWindow::showEvent(event);
   }
 
