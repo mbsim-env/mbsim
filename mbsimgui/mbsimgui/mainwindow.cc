@@ -624,11 +624,11 @@ namespace MBSimGUI {
 
   void MainWindow::initInlineOpenMBV() {
     std::list<string> arg;
-    arg.emplace_back("--wst");
-    arg.push_back((getInstallPath()/"share"/"mbsimgui"/"inlineopenmbv.ombvwst").string());
+    arg.emplace_back("--winst");
+    arg.push_back((getInstallPath()/"share"/"mbsimgui"/"inlineopenmbv.ombvwinst").string());
     arg.emplace_back("--hdf5RefreshDelta");
     arg.emplace_back("0");
-    inlineOpenMBVMW = new OpenMBVGUI::MainWindow(arg, true);
+    inlineOpenMBVMW = new OpenMBVGUI::MainWindow(arg);
     // QMainWindow (base of OpenMBVGUI::MainWindow) set the window flag Qt::Window in its ctor but we use here QMainWindow as a widget
     // -> reset the windows flag to Qt::Widget
     inlineOpenMBVMW->setWindowFlags(Qt::Widget);

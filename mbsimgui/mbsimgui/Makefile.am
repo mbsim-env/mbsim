@@ -270,7 +270,7 @@ mbsimgui_QT_BUILT_SOURCES =
 BUILT_SOURCES = $(libmbsimgui_QT_BUILT_SOURCES) $(mbsimgui_QT_BUILT_SOURCES) $(MAYBE_SIGWATCH_MOC)
 
 mbsimguisharedir = @datadir@/mbsimgui
-dist_mbsimguishare_DATA = inlineopenmbv.ombvwst \
+dist_mbsimguishare_DATA = inlineopenmbv.ombvwinst \
   MBS_tmp.ombvx \
   MBS_tmp.ombvh5
 
